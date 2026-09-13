@@ -1,4 +1,8 @@
 import './globals.css';
+import type { Metadata } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import AccessibilityTools from '@/components/AccessibilityTools';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Plus_Jakarta_Sans, Amiri } from 'next/font/google';
 import PWAInstall from '@/components/PWAInstall';
@@ -127,6 +131,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <a className="skip-link" href="#main-content">Aller au contenu principal</a>
+        {children}
+        <AccessibilityTools />
+        <ServiceWorkerRegistration />
+        <SpeedInsights />
         <RegisterSW />
         <PWAInstall />
         <Accessibility />

@@ -195,13 +195,6 @@ input:focus {
   display: none;
 }
 
-/* Focus visible */
-:focus-visible {
-  outline: 2px solid #0d6255;
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
 /* Contraste WCAG AA (4.5:1) pour le texte secondaire
    Tailwind slate-400 (#94a3b8, ~2.4-2.6:1) et slate-500 (#64748b,
    ~4.3-4.5:1) sont utilisés partout dans l'app comme texte secondaire
@@ -228,3 +221,26 @@ input:focus {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Accessibility controls (PWA a11y toolbar) — additive helpers
+   --------------------------------------------------------------------------- */
+html[data-text-size='large'] { font-size: 112.5%; }
+html[data-text-size='xlarge'] { font-size: 125%; }
+html[data-contrast='high'] body { background: #fff; color: #000; }
+html[data-contrast='high'] main { background: #fff !important; color: #000 !important; }
+html[data-contrast='high'] main * { border-color: currentColor; }
+
+/* Focus visible (stronger a11y outline) */
+:focus-visible { outline: 3px solid #e6a44e; outline-offset: 3px; }
+
+.skip-link { position: fixed; left: 1rem; top: -5rem; z-index: 100; background: #fff; color: #0d3f38; padding: .75rem 1rem; font-weight: 700; }
+.skip-link:focus { top: 1rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.accessibility-tools { position: fixed; z-index: 50; left: 1rem; bottom: 1rem; max-width: min(22rem, calc(100vw - 2rem)); border: 2px solid #0d3f38; border-radius: 1rem; padding: .75rem; background: #fff; color: #0d3f38; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.accessibility-tools__title { margin: 0 0 .5rem; font-weight: 800; }
+.accessibility-tools__buttons { display: flex; flex-wrap: wrap; gap: .4rem; }
+.accessibility-tools button { min-height: 2.75rem; border: 2px solid #0d3f38; border-radius: .5rem; padding: .4rem .6rem; background: #fff; color: #0d3f38; font-weight: 700; }
+.accessibility-tools button[aria-pressed='true'], .accessibility-tools button:hover { background: #0d3f38; color: #fff; }
+@media (max-width: 640px) { .accessibility-tools { right: .5rem; left: .5rem; bottom: .5rem; } }
+.accessibility-tools select { min-height: 2.75rem; border: 2px solid #0d3f38; border-radius: .5rem; padding: .4rem; background: #fff; color: #0d3f38; font-weight: 700; }
