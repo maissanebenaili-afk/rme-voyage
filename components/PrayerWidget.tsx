@@ -8,6 +8,7 @@ type PrayerTimes = Record<string, string>;
 export default function PrayerWidget() {
   const [prayers, setPrayers] = useState<PrayerTimes | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [location, setLocation] = useState("Paris, France");
   const [retryKey, setRetryKey] = useState(0);
   const [isOffline, setIsOffline] = useState(() =>
     typeof navigator === "undefined" ? false : !navigator.onLine,
@@ -46,7 +47,6 @@ export default function PrayerWidget() {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             const { latitude, longitude } = pos.coords;
-            setCoords({ lat: latitude, lon: longitude });
             setLocation(`${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`);
             fetchPrayers(latitude, longitude);
           },
@@ -63,10 +63,9 @@ export default function PrayerWidget() {
     async function fetchPrayers(lat: number, lon: number) {
       try {
         setErrorMessage(null);
-        const res = await fetch("/api/prayer?latitude=48.8566&longitude=2.3522&method=3", { signal: controller.signal });
         const res = await fetch(
-          `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=3`,
-          { signal: controller.signal }
+          `/api/prayer?latitude=${lat}&longitude=${lon}&method=3`,
+          { signal: controller.signal },
         );
         if (!res.ok) throw new Error("Prayer API error");
         const data = await res.json();
@@ -107,14 +106,6 @@ export default function PrayerWidget() {
       </div>
     );
   }
-
-  if (!prayers) return <div className="rounded-2xl border bg-white p-5 text-sm text-slate-500">Chargement des horaires de prière…</div>;
-  if (error)
-    return (
-      <div className="rounded-2xl border bg-white p-5 text-sm text-slate-500">
-        Horaires indisponibles. Vérifiez votre connexion.
-      </div>
-    );
 
   if (!prayers)
     return (
