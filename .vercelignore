@@ -1,1 +1,7 @@
-.git\n.gitignore\n.eslintrc.json\n.prettierrc.json\nREADME.md\nDEPLOYMENT.md\nARCHITECTURE.md\nAUDIT_PREDEPLOIEMENT.md\nROADMAP-V1.md\n__tests__\njest.config.js\njest.setup.js\n.next\nnode_modules\n*.test.ts\n*.test.tsx\n*.spec.ts\n*.spec.tsx\n"
+.git
+.next
+node_modules
+.qa-shots
+.qa-geocode-test
+coverage
+*.tsbuildinfo

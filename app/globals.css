@@ -2,11 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: #fbf7ef; color: #163b37; }
+:root {
+  /* Identity typefaces — Fontshare CDN, loaded in app/layout.tsx <head> */
+  --font-boska: 'Boska', Georgia, serif;
+  --font-gensans: 'General Sans', 'Plus Jakarta Sans', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-amiri: 'Amiri', serif;
+  color-scheme: light dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  hanging-punctuation: first last;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-gensans), var(--font-jakarta), var(--font-inter), sans-serif;
+  background: #f8f7f2;
+  color: #173a36;
+  min-height: 100dvh;
+}
+
 * { box-sizing: border-box; }
-::selection { background: #d9824b; color: white; }
 
 input { background: #fffdf8; border-color: #ded5c5; }
 input:focus { border-color: #0d6255; }

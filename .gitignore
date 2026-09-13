@@ -43,4 +43,6 @@ Thumbs.db
 capacitor.config.json
 /.idea
 /android
-/ios
+/ios.qa-shots/
+.qa-geocode-test/
+.qa-shots/
