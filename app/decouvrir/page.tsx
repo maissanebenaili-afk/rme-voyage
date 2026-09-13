@@ -25,53 +25,12 @@ const features = [
 ];
 
 export const metadata = {
-  title: 'Découvrir RME Route',
   title: 'Découvrir RME Voyage',
   description: 'La plateforme pour préparer vos trajets entre l’Europe et le Maroc.',
 };
 
 export default function DiscoverPage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
-        <Link href="/" className="text-lg font-black tracking-tight">
-          RME Route
-        </Link>
-        <Link
-          href="/telecharger"
-          className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/10"
-        >
-          Ouvrir l&apos;application
-        </Link>
-      </nav>
-
-      <section className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:pt-24">
-        <div>
-          <p className="mb-5 text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">
-            Europe ↔ Maroc
-          </p>
-          <h1 className="max-w-3xl text-5xl font-black leading-[1.05] tracking-tight sm:text-7xl">
-            Votre voyage vers le Maroc, mieux préparé.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-            RME Route rassemble les outils essentiels pour planifier votre itinéraire, estimer votre
-            budget et retrouver les services utiles sur la route.
-          </p>
-          <div className="mt-9 flex flex-wrap gap-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-6 py-3 font-bold text-slate-950 hover:bg-emerald-300"
-            >
-              Préparer mon voyage <ArrowRight size={18} />
-            </Link>
-            <a
-              href="#fonctionnalites"
-              className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 font-bold hover:bg-white/10"
-            >
-              Découvrir le service
-            </a>
-          </div>
-        </div>
     <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#0d3f38] text-white">
       {/* Background decorations, consistent with homepage hero */}
       <div className="relative isolate">
