@@ -1,32 +1,3 @@
-import CostCalculator from "@/components/CostCalculator";
-import NewsFeed from "@/components/NewsFeed";
-import PrayerWidget from "@/components/PrayerWidget";
-import RmeGuides from "@/components/RmeGuides";
-import RouteSearch from "@/components/RouteSearch";
-import ServicesMap from "@/components/ServicesMap";
-import { AUDIENCE_PROFILES } from "@/lib/rmeContent";
-
-export default function Home() {
-  return (
-    <main className="min-h-screen px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-6xl space-y-5">
-        <header className="rounded-3xl bg-emerald-800 p-6 text-white shadow-lg">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-100">
-                RME = Ressortissants Marocains à l'Étranger
-              </div>
-              <div className="mt-2 text-3xl font-black sm:text-4xl">RME Route 🇲🇦</div>
-              <p className="mt-3 max-w-3xl text-emerald-50">
-                Assistant de mobilité et d'assistance pour les voyages diaspora
-                centrés sur le Maroc: préparation du trajet, budget, traversée,
-                arrêts utiles, famille, prières et repères communautaires.
-              </p>
-            </div>
-            <div className="rounded-2xl bg-white/10 p-4 text-sm text-emerald-50 lg:max-w-sm">
-              Un MVP ambitieux mais honnête: pas de promesse d'accord officiel,
-              pas de données temps réel inventées, et une structure pensée pour
-              devenir plus complète à mesure que les intégrations réelles arrivent.
 'use client';
 
 import Link from 'next/link';
@@ -135,7 +106,6 @@ export default function Home() {
               <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Prières & Qibla inclus</span>
             </div>
           </div>
-        </header>
 
           {/* Hero card */}
           <div className="relative mx-auto w-full max-w-md animate-scale-in delay-300">

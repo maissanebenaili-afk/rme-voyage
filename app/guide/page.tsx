@@ -37,8 +37,6 @@ export default function GuidePage() {
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fffdf8] text-[#173a36]">
       <header className="border-b border-white/10 bg-[#0d3f38] text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
-          <Link href="/" className="text-xl font-black tracking-tight">
-            RME Route
           <Link href="/" className="flex items-center gap-2 text-lg font-black tracking-tight">
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#e6a44e] text-sm text-[#103d37]">R</span>
             RME <span className="font-medium text-[#f5cd93]">Voyage</span>
@@ -55,9 +53,6 @@ export default function GuidePage() {
       <section className="relative isolate overflow-hidden bg-[#0d3f38] px-5 pb-24 pt-14 text-white sm:px-8 sm:pt-20">
         <div className="pointer-events-none absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#eead59]/15 blur-3xl" />
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
-          <div>
-            <p className="text-sm font-extrabold uppercase tracking-[.18em] text-amber-300">
-              Le guide de route des RME
           <div className="animate-fade-up">
             <p className="text-sm font-extrabold uppercase tracking-[.18em] text-[#f5cd93]">
               Le guide de route des MRE
@@ -65,8 +60,6 @@ export default function GuidePage() {
             <h1 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               Partir au Maroc, sans laisser votre budget au hasard.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-emerald-50">
-              RME Route vous aide à organiser le trajet, comparer vos options et garder les
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/80">
               RME Voyage vous aide à organiser le trajet, comparer vos options et garder les
               informations pratiques au même endroit.
@@ -155,8 +148,6 @@ export default function GuidePage() {
             <div className="rounded-3xl bg-[#fdf3ee] p-7">
               <ShieldCheck className="text-[#0d6255]" size={34} />
               <h3 className="mt-5 text-xl font-black">Monétisation transparente</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                RME Route peut recevoir une commission lorsqu’une réservation est réalisée auprès
               <p className="mt-3 text-sm leading-6 text-[#5a716c]">
                 RME Voyage peut recevoir une commission lorsqu’une réservation est réalisée auprès
                 d’un partenaire. Cela ne modifie pas le prix indiqué par ce partenaire.
@@ -198,7 +189,6 @@ export default function GuidePage() {
             Votre prochain trajet commence ici.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg">
-            Préparez votre voyage Europe ↔ Maroc avec RME Route.
             Préparez votre voyage Europe ↔ Maroc avec RME Voyage.
           </p>
           <Link
