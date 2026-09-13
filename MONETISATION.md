@@ -1,4 +1,4 @@
-# MRE Route — monétisation V1
+# RME Voyage — monétisation V1
 
 ## Principe
 

@@ -1,0 +1,73 @@
+{
+  "name": "RME Voyage",
+  "short_name": "RME Voyage",
+  "description": "Compagnon de voyage Europe-Maroc avec IA Darija",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d3f38",
+  "theme_color": "#0d3f38",
+  "lang": "fr",
+  "dir": "auto",
+  "categories": ["travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Hadak AI",
+      "short_name": "Hadak AI",
+      "description": "Assistant IA Darija pour la route",
+      "url": "/?feature=hadak",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "SOS Urgences",
+      "short_name": "SOS",
+      "description": "Numéros d'urgence et services sur la route",
+      "url": "/?feature=sos",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Itinéraire",
+      "short_name": "Itinéraire",
+      "description": "Planifiez votre trajet Europe-Maroc",
+      "url": "/?feature=itineraire",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Prières",
+      "short_name": "Prières",
+      "description": "Horaires de prière et Qibla",
+      "url": "/?feature=prayers",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Accueil RME Voyage"
+    }
+  ]
+}

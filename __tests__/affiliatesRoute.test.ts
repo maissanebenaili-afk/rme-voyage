@@ -5,12 +5,13 @@ import { NextRequest } from "next/server";
 import { GET } from "../app/api/affiliates/route";
 
 describe("GET /api/affiliates", () => {
-  const originalTravelpayoutsPartnerId = process.env.TRAVELPAYOUTS_PARTNER_ID;
+  const originalTravelpayoutsPartnerId = process.env.TRAVELPAYOUTS_FLIGHT_URL;
   const originalDirectFerriesPartnerId = process.env.DIRECT_FERRIES_PARTNER_ID;
   const originalDirectFerriesBaseUrl = process.env.DIRECT_FERRIES_BASE_URL;
 
   afterEach(() => {
-    process.env.TRAVELPAYOUTS_PARTNER_ID = originalTravelpayoutsPartnerId;
+    if (originalTravelpayoutsPartnerId === undefined) delete process.env.TRAVELPAYOUTS_FLIGHT_URL;
+    else process.env.TRAVELPAYOUTS_FLIGHT_URL = originalTravelpayoutsPartnerId;
     process.env.DIRECT_FERRIES_PARTNER_ID = originalDirectFerriesPartnerId;
     process.env.DIRECT_FERRIES_BASE_URL = originalDirectFerriesBaseUrl;
   });
@@ -27,7 +28,7 @@ describe("GET /api/affiliates", () => {
   });
 
   it("returns configured false when no flight partner is configured", async () => {
-    delete process.env.TRAVELPAYOUTS_PARTNER_ID;
+    delete process.env.TRAVELPAYOUTS_FLIGHT_URL;
 
     const response = GET(
       new NextRequest("http://localhost/api/affiliates?type=flight&origin=Paris&destination=Tanger"),
@@ -41,7 +42,7 @@ describe("GET /api/affiliates", () => {
   });
 
   it("returns the built flight affiliate URL when configured", async () => {
-    process.env.TRAVELPAYOUTS_PARTNER_ID = "test-marker";
+    process.env.TRAVELPAYOUTS_FLIGHT_URL = "https://tp.media/r?marker=test-marker&u=https%3A%2F%2Fwww.skyscanner.fr%2F";
 
     const response = GET(
       new NextRequest(
