@@ -170,8 +170,8 @@ export default function JuryPack() {
         {/* Pitch */}
         <div className="mb-12 rounded-3xl border border-[#eead59]/15 bg-white/5 p-8 text-center sm:p-12">
           <p className="text-lg font-medium leading-relaxed text-white/90 sm:text-xl">
-            RME Voyage est la première plateforme d'assistance voyage pour les Marocains
-            de l'étranger, combinant un assistant IA en Darija, des outils de voyage
+            RME Voyage est la première plateforme d&apos;assistance voyage pour les Marocains
+            de l&apos;étranger, combinant un assistant IA en Darija, des outils de voyage
             intelligents et une accessibilité totale — le tout en une seule PWA installable.
           </p>
           <p className="mt-4 text-sm text-[#eead59]">
@@ -186,7 +186,7 @@ export default function JuryPack() {
             <div className="mb-4 flex items-center gap-2 text-[#eead59]">
               <QrCode className="h-5 w-5" />
               <span className="text-sm font-bold uppercase tracking-wide">
-                Scannez pour l'app
+                Scannez pour l&apos;app
               </span>
             </div>
             <div className="rounded-3xl bg-[#fffdf8] p-6 shadow-xl">
@@ -240,7 +240,7 @@ export default function JuryPack() {
         <div className="mb-12 rounded-3xl border border-[#eead59]/15 bg-white/5 p-8">
           <div className="mb-6 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-[#eead59]" />
-            <h3 className="font-display text-lg font-semibold text-white">Points d'innovation</h3>
+            <h3 className="font-display text-lg font-semibold text-white">Points d&apos;innovation</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {innovations.map((item, i) => (
@@ -273,7 +273,7 @@ export default function JuryPack() {
             }}
           >
             <Globe className="h-5 w-5" />
-            Ouvrir l'aperçu de l'app
+            Ouvrir l&apos;aperçu de l&apos;app
             <ExternalLink className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </a>
           <a
@@ -288,7 +288,7 @@ export default function JuryPack() {
           </a>
         </div>
         <p className="mx-auto mt-4 max-w-md text-center text-xs text-white/35">
-          Liens de démonstration — disponibilité selon l'environnement d'hébergement au moment de la consultation.
+          Liens de démonstration — disponibilité selon l&apos;environnement d&apos;hébergement au moment de la consultation.
         </p>
 
         {/* Footer */}

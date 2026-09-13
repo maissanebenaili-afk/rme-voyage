@@ -452,7 +452,7 @@ export function CustomsCalculator() {
         <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Calculateur douane</h2>
       </div>
       <p className="mt-1 text-sm text-[#0d3f38]/70">
-        Estimez les droits de douane à l'entrée au Maroc.
+        Estimez les droits de douane à l&apos;entrée au Maroc.
       </p>
 
       {/* Inputs */}
@@ -632,7 +632,7 @@ export function EmergencyContacts() {
     <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
       <div className="flex items-center gap-2">
         <Phone className="text-red-500" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Contacts d'urgence</h2>
+        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Contacts d&apos;urgence</h2>
       </div>
       <p className="mt-1 text-sm text-[#0d3f38]/70">
         Numéros utiles au Maroc — appelez en un tap.
@@ -948,7 +948,7 @@ export function ZakaatCalculator() {
       </div>
 
       <p className="mt-3 text-xs text-[#0d3f38]/70">
-        Le nisab correspond à l'équivalent de 85g d'or (≈ {fmt(nisabMAD)} MAD).
+        Le nisab correspond à l&apos;équivalent de 85g d&apos;or (≈ {fmt(nisabMAD)} MAD).
         La zakat est obligatoire si votre capital dépasse ce seuil pendant une
         année lunaire.
       </p>
@@ -1259,7 +1259,7 @@ export function FuelPriceComparator() {
 
       <p className="mt-3 text-xs text-[#0d3f38]/70">
         Prix indicatifs 2026 — susceptibles de varier. Le carburant marocain
-        reste subventionné par l'État.
+        reste subventionné par l&apos;État.
       </p>
     </section>
   );

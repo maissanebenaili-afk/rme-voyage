@@ -116,10 +116,10 @@ export default function PWAInstall() {
             {/* Content */}
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-[#f8f7f2] text-base leading-tight">
-                Installer l'application
+                Installer l&apos;application
               </h3>
               <p className="text-xs text-[#f8f7f2]/70 mt-0.5 leading-relaxed">
-                Accédez à RME Voyage hors ligne, plus rapide qu'un navigateur.
+                Accédez à RME Voyage hors ligne, plus rapide qu&apos;un navigateur.
               </p>
 
               {/* Buttons */}
@@ -131,7 +131,7 @@ export default function PWAInstall() {
                     background: 'linear-gradient(135deg, #eead59, #d4a04a)',
                     color: '#0d3f38',
                   }}
-                  aria-label="Installer l'application RME Voyage"
+                  aria-label="Installer l&apos;application RME Voyage"
                 >
                   <Download size={15} strokeWidth={2.5} />
                   Installer
@@ -205,7 +205,7 @@ export default function PWAInstall() {
                     1. Appuyez sur le bouton Partager
                   </p>
                   <p className="text-xs text-[#f8f7f2]/60 mt-0.5">
-                    L'icône carrée avec la flèche vers le haut, en bas de l'écran.
+                    L&apos;icône carrée avec la flèche vers le haut, en bas de l&apos;écran.
                   </p>
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default function PWAInstall() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#f8f7f2]">
-                    2. Sélectionnez « Sur l'écran d'accueil »
+                    2. Sélectionnez « Sur l&apos;écran d&apos;accueil »
                   </p>
                   <p className="text-xs text-[#f8f7f2]/60 mt-0.5">
                     Faites défiler et choisissez cette option.
@@ -237,7 +237,7 @@ export default function PWAInstall() {
                     3. Appuyez sur « Ajouter »
                   </p>
                   <p className="text-xs text-[#f8f7f2]/60 mt-0.5">
-                    L'application apparaît sur votre écran d'accueil.
+                    L&apos;application apparaît sur votre écran d&apos;accueil.
                   </p>
                 </div>
               </div>
@@ -252,9 +252,9 @@ export default function PWAInstall() {
                   background: 'linear-gradient(135deg, #eead59, #d4a04a)',
                   color: '#0d3f38',
                 }}
-                aria-label="J'ai compris, fermer"
+                aria-label="J&apos;ai compris, fermer"
               >
-                J'ai compris
+                J&apos;ai compris
               </button>
             </div>
           </div>
