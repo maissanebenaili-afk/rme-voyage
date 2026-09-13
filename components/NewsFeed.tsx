@@ -1,4 +1,4 @@
-import { BellRing, Info, AlertTriangle, Calendar } from "lucide-react";
+import { BellRing, Info, AlertTriangle, Calendar, Rss } from "lucide-react";
 
 const newsItems = [
   {
@@ -41,9 +41,13 @@ export default function NewsFeed() {
     <section className="rounded-2xl bg-white p-5 shadow-sm border">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold">📰 Infos voyage</h2>
-        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-          Mise à jour régulière
-        </span>
+        <a
+          href="/rss.xml"
+          className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700 transition hover:bg-emerald-200"
+          aria-label="S’abonner au flux RSS RME Voyage"
+        >
+          <Rss size={14} aria-hidden="true" /> RSS
+        </a>
       </div>
 
       <div className="mt-4 space-y-3">
