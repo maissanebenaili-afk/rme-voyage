@@ -1,4 +1,4 @@
-# MRE Route — feuille de route V1
+# RME Voyage — feuille de route V1
 
 ## Maintenant
 1. Configurer les comptes d'affiliation.
@@ -21,6 +21,6 @@
 
 ## Règle produit
 
-MRE Route ne doit pas essayer de devenir un clone généraliste de Waze.
+RME Voyage ne doit pas essayer de devenir un clone généraliste de Waze.
 Son avantage concurrentiel est le voyage Europe ↔ Maroc :
 coût complet + ferry + avion + services MRE + communauté.

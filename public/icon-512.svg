@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="108" fill="#0d3f38"/>
+  <!-- Compass rose / star -->
+  <g transform="translate(256 240)">
+    <!-- Compass needle star (gold) -->
+    <polygon points="0,-144 38,-38 144,0 38,38 0,144 -38,38 -144,0 -38,-38" fill="#eead59"/>
+    <!-- North needle (brighter gold) -->
+    <polygon points="0,-144 38,-38 0,0 -38,-38" fill="#f4d98a"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="21" fill="#0d3f38"/>
+    <circle cx="0" cy="0" r="13" fill="#eead59"/>
+  </g>
+  <!-- Letter R -->
+  <text x="256" y="452" text-anchor="middle" font-family="Georgia, serif" font-size="112" font-weight="700" fill="#eead59">R</text>
+</svg>

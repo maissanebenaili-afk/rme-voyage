@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Ship, Plane, ExternalLink } from "lucide-react";
+import { comparisonFallbacks, verifiedPartnerUrl, type BookingType } from "@/lib/bookingLinks";
 
-type Props = {
-  origin: string;
-  destination: string;
-  date?: string;
-};
+type Props = { origin: string; destination: string; date?: string };
 
 export default function BookingCards({ origin, destination, date }: Props) {
   const [loading, setLoading] = useState<"flight"|"ferry"|null>(null);
@@ -78,6 +76,10 @@ export default function BookingCards({ origin, destination, date }: Props) {
           </span>
         </button>
       </div>
+      <p className="mt-4 text-xs leading-5 text-sable-700">
+        Un lien affilié peut rémunérer RME Voyage si les conditions du partenaire sont remplies.
+        Aucun tarif ni aucune réservation n’est garanti par l’application.
+      </p>
     </section>
   );
 }

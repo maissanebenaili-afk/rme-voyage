@@ -39,5 +39,5 @@ export function GET(request: NextRequest) {
   return NextResponse.json({
     configured: Boolean(affiliateUrl),
     affiliateUrl,
-  });
+  }, { headers: { 'Cache-Control': 'no-store' } });
 }

@@ -1,54 +1,15 @@
+import { verifiedPartnerUrl } from './bookingLinks';
+
 export type AffiliateProvider = 'travelpayouts' | 'directferries';
+type Trip = { origin: string; destination: string; date?: string };
 
-function clean(value: string | undefined) {
-  return (value || '').trim();
+// Use the COMPLETE link supplied by the approved partner dashboard.
+// A publisher ID alone does not prove programme approval, tracking format,
+// product ID or support for city/date deep links. Never manufacture those.
+export function buildFlightAffiliateUrl(_params: Trip) {
+  return verifiedPartnerUrl(process.env.TRAVELPAYOUTS_FLIGHT_URL, 'flight');
 }
 
-export function buildFlightAffiliateUrl(params: {
-  origin: string;
-  destination: string;
-  date?: string;
-}) {
-  const marker = clean(process.env.TRAVELPAYOUTS_PARTNER_ID);
-  const { origin, destination, date } = params;
-
-  // Never invent a partner marker. Return null until the account is configured.
-  if (!marker) return null;
-
-  const datePart = date || '';
-  const target =
-    `https://www.skyscanner.fr/transport/vols/` +
-    `${encodeURIComponent(origin.toLowerCase())}/` +
-    `${encodeURIComponent(destination.toLowerCase())}/` +
-    `${encodeURIComponent(datePart)}/`;
-
-  return `https://tp.media/r?marker=${encodeURIComponent(marker)}&p=4116&u=${encodeURIComponent(target)}`;
-}
-
-export function buildFerryAffiliateUrl(params: {
-  origin: string;
-  destination: string;
-  date?: string;
-}) {
-  const marker = clean(process.env.DIRECT_FERRIES_PARTNER_ID);
-  if (!marker) return null;
-
-  // Provider-specific URL templates must be confirmed from the affiliate account.
-  // We deliberately do not fabricate a production endpoint.
-  const base = clean(process.env.DIRECT_FERRIES_BASE_URL);
-  if (!base) return null;
-
-  let url: URL;
-
-  try {
-    url = new URL(base);
-  } catch {
-    return null;
-  }
-
-  url.searchParams.set('partner', marker);
-  url.searchParams.set('origin', params.origin);
-  url.searchParams.set('destination', params.destination);
-  if (params.date) url.searchParams.set('date', params.date);
-  return url.toString();
+export function buildFerryAffiliateUrl(_params: Trip) {
+  return verifiedPartnerUrl(process.env.DIRECT_FERRIES_AFFILIATE_URL, 'ferry');
 }
