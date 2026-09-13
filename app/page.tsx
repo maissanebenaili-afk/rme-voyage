@@ -325,6 +325,7 @@ export default function Home() {
                 <li><Link href="/guide" className="hover:text-white">Guide</Link></li>
                 <li><Link href="/decouvrir" className="hover:text-white">Découvrir</Link></li>
                 <li><Link href="/telecharger" className="hover:text-white">Télécharger</Link></li>
+                <li><a href="/rss.xml" className="hover:text-white">Flux RSS</a></li>
               </ul>
             </div>
             <div>
