@@ -32,14 +32,14 @@ describe("GET /api/route", () => {
 
   it("geocodes both places then returns the OSRM route with lat/lon flipped for Leaflet", async () => {
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
-      const url = input.toString();
-      if (url.includes("nominatim") && url.includes("q=Paris")) {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org" && url.searchParams.get("q") === "Paris") {
         return jsonResponse([{ lat: "48.8566", lon: "2.3522" }]);
       }
-      if (url.includes("nominatim") && url.includes("q=Tanger")) {
+      if (url.hostname === "nominatim.openstreetmap.org" && url.searchParams.get("q") === "Tanger") {
         return jsonResponse([{ lat: "35.7595", lon: "-5.834" }]);
       }
-      if (url.includes("router.project-osrm.org")) {
+      if (url.hostname === "router.project-osrm.org") {
         return jsonResponse({
           code: "Ok",
           routes: [
@@ -81,8 +81,8 @@ describe("GET /api/route", () => {
 
   it("returns 404 when OSRM finds no route between the two points", async () => {
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
-      const url = input.toString();
-      if (url.includes("nominatim")) return jsonResponse([{ lat: "1", lon: "1" }]);
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") return jsonResponse([{ lat: "1", lon: "1" }]);
       return jsonResponse({ code: "NoRoute" });
     });
     global.fetch = fetchMock as unknown as typeof fetch;
