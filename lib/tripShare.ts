@@ -28,7 +28,6 @@ const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 // Caractères de contrôle (hors espace) interdits dans from/to : évite tout
 // contenu ambigu/binaire dans un lien censé ne contenir que du texte ville.
-// eslint-disable-next-line no-control-regex
 const CONTROL_CHARS_RE = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/;
 
 function truncate(value: string, max = SHARE_FIELD_MAX_LENGTH): string {

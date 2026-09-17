@@ -104,6 +104,8 @@ export default function HadakVoice({
   const [transcript, setTranscript] = useState('');
   const [interim, setInterim] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [synthSupported, setSynthSupported] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
@@ -118,6 +120,7 @@ export default function HadakVoice({
     // Speech Synthesis
     if ('speechSynthesis' in window) {
       synthRef.current = window.speechSynthesis;
+      setSynthSupported(true);
     }
 
     // Speech Recognition (webkit prefix for Chrome/Edge/Safari)
@@ -167,6 +170,7 @@ export default function HadakVoice({
       };
 
       recognitionRef.current = rec;
+      setSpeechSupported(true);
     }
 
     return () => {
@@ -265,9 +269,6 @@ export default function HadakVoice({
     },
     [lang]
   );
-
-  const speechSupported = !!recognitionRef.current;
-  const synthSupported = !!synthRef.current;
 
   /* ================================================================ */
   /*  Render                                                          */

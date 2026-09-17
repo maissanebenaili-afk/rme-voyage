@@ -10,6 +10,25 @@ export default function QiblaCompass() {
   const [error, setError] = useState(false);
   const [location, setLocation] = useState<string>("");
 
+  // Calculate Qibla direction from any location to Mecca (Kaaba)
+  // Kaaba coordinates: 21.4225° N, 39.8262° E
+  function calculateQibla(lat: number, lon: number): number {
+    const kaabaLat = 21.4225;
+    const kaabaLon = 39.8262;
+
+    const phiK = (kaabaLat * Math.PI) / 180;
+    const lambdaK = (kaabaLon * Math.PI) / 180;
+    const phi = (lat * Math.PI) / 180;
+    const lambda = (lon * Math.PI) / 180;
+
+    const y = Math.sin(lambdaK - lambda);
+    const x =
+      Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
+    const qibla = (Math.atan2(y, x) * 180) / Math.PI;
+
+    return (qibla + 360) % 360;
+  }
+
   useEffect(() => {
     let watchId: number;
 
@@ -69,25 +88,6 @@ export default function QiblaCompass() {
       if (watchId) clearInterval(watchId);
     };
   }, []);
-
-  // Calculate Qibla direction from any location to Mecca (Kaaba)
-  // Kaaba coordinates: 21.4225° N, 39.8262° E
-  function calculateQibla(lat: number, lon: number): number {
-    const kaabaLat = 21.4225;
-    const kaabaLon = 39.8262;
-
-    const phiK = (kaabaLat * Math.PI) / 180;
-    const lambdaK = (kaabaLon * Math.PI) / 180;
-    const phi = (lat * Math.PI) / 180;
-    const lambda = (lon * Math.PI) / 180;
-
-    const y = Math.sin(lambdaK - lambda);
-    const x =
-      Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(lambdaK - lambda);
-    const qibla = (Math.atan2(y, x) * 180) / Math.PI;
-
-    return (qibla + 360) % 360;
-  }
 
   if (loading)
     return (
