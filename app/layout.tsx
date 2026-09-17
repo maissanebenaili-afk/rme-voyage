@@ -140,7 +140,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RegisterSW />
         <PWAInstall />
         <Accessibility />
-        {children}
       </body>
     </html>
   );
