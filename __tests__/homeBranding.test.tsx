@@ -2,11 +2,11 @@ import { render, screen } from "@testing-library/react";
 
 import Home from "../app/page";
 
-jest.mock("@/components/RouteSearch", () => () => <div>RouteSearch</div>);
-jest.mock("@/components/CostCalculator", () => () => <div>CostCalculator</div>);
-jest.mock("@/components/PrayerWidget", () => () => <div>PrayerWidget</div>);
-jest.mock("@/components/ServicesMap", () => () => <div>ServicesMap</div>);
-jest.mock("@/components/NewsFeed", () => () => <div>NewsFeed</div>);
+jest.mock("@/components/RouteSearch", () => function RouteSearchMock() { return <div>RouteSearch</div>; });
+jest.mock("@/components/CostCalculator", () => function CostCalculatorMock() { return <div>CostCalculator</div>; });
+jest.mock("@/components/PrayerWidget", () => function PrayerWidgetMock() { return <div>PrayerWidget</div>; });
+jest.mock("@/components/ServicesMap", () => function ServicesMapMock() { return <div>ServicesMap</div>; });
+jest.mock("@/components/NewsFeed", () => function NewsFeedMock() { return <div>NewsFeed</div>; });
 
 describe("Homepage branding", () => {
   it("shows RME Voyage positioning and promise", () => {

@@ -14,7 +14,6 @@ const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>('fr');
-  const [mounted, setMounted] = useState(false);
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);
@@ -29,7 +28,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
       try {
         const browserLang = navigator.language?.split('-')[0];
@@ -47,7 +45,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t, isRtl }}>
-      {mounted ? children : children}
+      {children}
     </LanguageContext.Provider>
   );
 }
