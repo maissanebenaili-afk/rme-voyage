@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { RouteInfo, RoutePoint } from "./InteractiveMap";
 
 const InteractiveMap = dynamic(() => import("./InteractiveMap"), {
   ssr: false,
@@ -14,6 +15,13 @@ const InteractiveMap = dynamic(() => import("./InteractiveMap"), {
   ),
 });
 
-export default function InteractiveMapWrapper() {
-  return <InteractiveMap />;
+type InteractiveMapWrapperProps = {
+  routeGeometry?: RoutePoint[];
+  routeInfo?: RouteInfo;
+  status?: "idle" | "loading" | "error" | "ready";
+  errorMessage?: string;
+};
+
+export default function InteractiveMapWrapper(props: InteractiveMapWrapperProps) {
+  return <InteractiveMap {...props} />;
 }

@@ -9,6 +9,15 @@ jest.mock('@/components/BookingCards', () => {
   }
 })
 
+// InteractiveMapWrapper pulls in react-leaflet (needs a real DOM/canvas setup
+// covered separately by interactiveMap.test.tsx) — here we only care that
+// RouteSearch passes it the right status/geometry/error props.
+jest.mock('@/components/InteractiveMapWrapper', () => {
+  return function MockInteractiveMapWrapper(props: Record<string, unknown>) {
+    return <div data-testid="map-mock" data-status={props.status as string} data-error={props.errorMessage as string} />
+  }
+})
+
 function setLocation(href: string) {
   const url = new URL(href)
   ;(window as unknown as { location: Location }).location = {
@@ -40,9 +49,9 @@ describe('RouteSearch', () => {
     // après coup.
     expect(originInput).toHaveValue('Marrakech, Maroc')
 
-    // Le lien "Ouvrir l'itinéraire" doit refléter la ville réellement
+    // Le lien "Ouvrir dans Google Maps" doit refléter la ville réellement
     // sélectionnée, preuve que l'état n'a pas été perdu.
-    const directionsLink = await screen.findByRole('link', { name: /Ouvrir l.itinéraire/i })
+    const directionsLink = await screen.findByRole('link', { name: /Ouvrir dans Google Maps/i })
     expect(directionsLink).toHaveAttribute('href', expect.stringContaining('Marrakech'))
   })
 
@@ -55,7 +64,7 @@ describe('RouteSearch', () => {
 
   it('builds a Google Maps Directions URL using the standard api=1 syntax', async () => {
     render(<RouteSearch />)
-    const link = await screen.findByRole('link', { name: /Ouvrir l.itinéraire/i })
+    const link = await screen.findByRole('link', { name: /Ouvrir dans Google Maps/i })
     const href = link.getAttribute('href') || ''
     expect(href).toContain('https://www.google.com/maps/dir/?')
     expect(href).toContain('api=1')
@@ -68,7 +77,7 @@ describe('RouteSearch', () => {
     render(<RouteSearch />)
     fireEvent.change(screen.getByLabelText('Destination'), { target: { value: 'Paris, France' } })
 
-    expect(screen.queryByRole('link', { name: /Ouvrir l.itinéraire/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Ouvrir dans Google Maps/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Partager mon trajet/i })).toBeDisabled()
   })
 
@@ -193,5 +202,43 @@ describe('RouteSearch', () => {
     expect(screen.getByLabelText('Départ')).toHaveValue('Lyon')
     // Date invalide ignorée : le champ reste vide.
     expect(screen.getByLabelText('Date')).toHaveValue('')
+  })
+
+  it('does not show the route map until "Calculer l\'itinéraire" is clicked', () => {
+    render(<RouteSearch />)
+    expect(screen.queryByTestId('map-mock')).not.toBeInTheDocument()
+  })
+
+  it('calculates and displays the route on success', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({ geometry: [[48.8566, 2.3522], [35.7595, -5.834]], distanceMeters: 1850000, durationSeconds: 65400 }),
+    })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('button', { name: /Calculer l.itinéraire/i }))
+
+    expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'loading')
+    await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'ready'))
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('/api/route?origin=Paris%2C+France&destination=Tanger%2C+Maroc'),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    )
+  })
+
+  it('shows the upstream error message when the route API fails', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      json: () => Promise.resolve({ error: 'Destination introuvable : Nullepart' }),
+    }) as unknown as typeof fetch
+
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('button', { name: /Calculer l.itinéraire/i }))
+
+    await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'error'))
+    expect(screen.getByTestId('map-mock')).toHaveAttribute('data-error', 'Destination introuvable : Nullepart')
   })
 })
