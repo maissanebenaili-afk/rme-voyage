@@ -48,8 +48,11 @@ export function findStaleFacts(version: AgentVersion, facts: GlobalDataFact[]): 
     const currentValue = parseFloat(numStr);
     if (Number.isNaN(currentValue)) continue;
 
-    const diffRatio = Math.abs(currentValue - fact.value) / fact.value;
-    if (diffRatio < DRIFT_TOLERANCE) continue;
+    // fact.value === 0 would make a ratio meaningless (divide by zero); fall back to
+    // an absolute-difference check so a genuine 0 -> 0 fact never looks "stale".
+    const isFresh =
+      fact.value === 0 ? currentValue === 0 : Math.abs(currentValue - fact.value) / fact.value < DRIFT_TOLERANCE;
+    if (isFresh) continue;
 
     patches.push({
       kind: 'update_entry',

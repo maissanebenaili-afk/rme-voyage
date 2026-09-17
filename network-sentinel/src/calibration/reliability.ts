@@ -13,10 +13,11 @@ const DEFAULT_SEVERITY: Record<AlertKind, Severity> = {
   device_returned: 'info',
 };
 
-function demote(severity: Severity): Severity {
-  if (severity === 'alert') return 'warning';
-  if (severity === 'warning') return 'info';
-  return 'info';
+const SEVERITY_ORDER: Severity[] = ['info', 'warning', 'alert'];
+
+function demoteBy(severity: Severity, steps: number): Severity {
+  const index = Math.max(0, SEVERITY_ORDER.indexOf(severity) - steps);
+  return SEVERITY_ORDER[index];
 }
 
 /**
@@ -35,12 +36,13 @@ export function computeReliability(kind: AlertKind, feedback: Feedback[]): Relia
   let calibratedSeverity = DEFAULT_SEVERITY[kind];
   if (totalFeedback >= MIN_SAMPLES) {
     if (confirmedRate < DEMOTE_THRESHOLD) {
-      calibratedSeverity = demote(DEFAULT_SEVERITY[kind]);
-    } else if (confirmedRate >= PROMOTE_THRESHOLD) {
-      calibratedSeverity = DEFAULT_SEVERITY[kind];
-    } else {
-      calibratedSeverity = DEFAULT_SEVERITY[kind];
+      // Mostly dismissed: quiet it down two levels.
+      calibratedSeverity = demoteBy(DEFAULT_SEVERITY[kind], 2);
+    } else if (confirmedRate < PROMOTE_THRESHOLD) {
+      // Mixed track record: quiet it down one level rather than fully trusting or muting it.
+      calibratedSeverity = demoteBy(DEFAULT_SEVERITY[kind], 1);
     }
+    // confirmedRate >= PROMOTE_THRESHOLD: keep the full default severity.
   }
 
   return { kind, totalFeedback, confirmedCount, confirmedRate, calibratedSeverity };

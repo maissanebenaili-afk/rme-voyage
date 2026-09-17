@@ -37,7 +37,7 @@ export async function runImprovementCycle(opts: LoopOptions): Promise<LoopResult
   const headId = await getHeadId();
   let version: AgentVersion;
   if (!headId) {
-    version = SEED_VERSION;
+    version = { ...SEED_VERSION, knowledge: SEED_VERSION.knowledge.map((e) => ({ ...e, keywords: [...e.keywords] })) };
     await saveVersion(version);
     await setHead(version.id);
     notes.push('No existing version found — seeded initial agent version.');

@@ -38,4 +38,30 @@ describe('computeReliability', () => {
     expect(stats.totalFeedback).toBe(0);
     expect(stats.calibratedSeverity).toBe('warning');
   });
+
+  it('demotes by one level (not fully) in the mixed-reliability middle band', () => {
+    const history = [
+      feedback('mac_churn', true),
+      feedback('mac_churn', true),
+      feedback('mac_churn', false),
+      feedback('mac_churn', false),
+      feedback('mac_churn', false),
+    ];
+    const stats = computeReliability('mac_churn', history);
+    expect(stats.confirmedRate).toBeCloseTo(0.4);
+    expect(stats.calibratedSeverity).toBe('warning'); // one step down from 'alert', not fully muted to 'info'
+  });
+
+  it('demotes by two levels when confirmation rate is low, bottoming out at info', () => {
+    const history = [
+      feedback('mac_churn', true),
+      feedback('mac_churn', false),
+      feedback('mac_churn', false),
+      feedback('mac_churn', false),
+      feedback('mac_churn', false),
+    ];
+    const stats = computeReliability('mac_churn', history);
+    expect(stats.confirmedRate).toBeCloseTo(0.2);
+    expect(stats.calibratedSeverity).toBe('info');
+  });
 });
