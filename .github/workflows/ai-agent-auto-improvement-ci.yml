@@ -1,5 +1,8 @@
 name: AI Agent Auto-Improvement CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
