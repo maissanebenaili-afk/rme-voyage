@@ -1,0 +1,42 @@
+name: AI Agent Auto-Improvement CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ai-agent-auto-improvement/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ai-agent-auto-improvement/**'
+
+jobs:
+  typecheck-and-test:
+    name: Typecheck & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai-agent-auto-improvement
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ai-agent-auto-improvement/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test

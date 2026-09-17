@@ -1,0 +1,22 @@
+{
+  "name": "ai-agent-auto-improvement",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent that automatically evaluates and improves a pluggable AI system using live global data.",
+  "scripts": {
+    "improve": "tsx src/cli.ts improve",
+    "report": "tsx src/cli.ts report",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.1"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "network-sentinel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local, free, zero-dependency network security watcher that self-calibrates alert reliability from confirmed feedback over time.",
+  "scripts": {
+    "scan": "tsx src/cli.ts scan",
+    "alerts": "tsx src/cli.ts alerts",
+    "confirm": "tsx src/cli.ts confirm",
+    "report": "tsx src/cli.ts report",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.1"
+  }
+}
