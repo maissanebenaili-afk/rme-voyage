@@ -432,11 +432,21 @@ export default function HadakAI() {
         body: JSON.stringify({ message: content, lang }),
       });
 
+      // Check HTTP status BEFORE parsing JSON — 503/429/502/500 with fallback flag
+      // should still trigger the local knowledge base, not display the error message
+      if (!response.ok) {
+        console.error('Hadak API error, falling back to local KB:', response.status);
+        const { content: answer, topic } = getAnswer(content, lang);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+        setLastTopic(topic);
+        return;
+      }
+
       let data: { response: string; fallback?: boolean };
       try {
         data = (await response.json()) as { response: string; fallback?: boolean };
       } catch {
-        // JSON parse error — likely 404 or server error with HTML response
+        // JSON parse error — likely malformed response
         console.error('Failed to parse Hadak response, status:', response.status);
         const { content: answer, topic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
