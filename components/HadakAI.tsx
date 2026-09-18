@@ -22,11 +22,42 @@ import {
   Users,
   Star,
   Package,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
-/*  Types                                                              */
+/*  Web Speech API — types minimaux (absents de lib.dom.d.ts)          */
 /* ------------------------------------------------------------------ */
+
+interface SpeechRecognitionResultLike {
+  isFinal: boolean;
+  [index: number]: { transcript: string };
+}
+interface SpeechRecognitionEventLike extends Event {
+  results: ArrayLike<SpeechRecognitionResultLike>;
+}
+interface SpeechRecognitionLike extends EventTarget {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  maxAlternatives: number;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: Event) => void) | null;
+  onend: (() => void) | null;
+}
+
+const SPEECH_LANG: Record<Lang, string> = {
+  da: 'ar-MA',
+  fr: 'fr-FR',
+  en: 'en-US',
+  ar: 'ar-SA',
+  es: 'es-ES',
+};
 
 type Lang = 'da' | 'fr' | 'en' | 'ar' | 'es';
 
@@ -55,12 +86,6 @@ type TopicKey =
   | 'ramadan'
   | 'packing';
 
-/* ------------------------------------------------------------------ */
-/*  Knowledge base                                                     */
-/*  Each topic has: an icon, keyword triggers (lower-cased), and       */
-/*  multilingual answers. Default language is Darija (da).              */
-/* ------------------------------------------------------------------ */
-
 const TOPIC_ICON: Record<TopicKey, typeof Plane> = {
   greeting: Sparkles,
   route: Compass,
@@ -84,7 +109,6 @@ const TOPIC_ICON: Record<TopicKey, typeof Plane> = {
 interface Topic {
   keywords: string[];
   answers: Record<Lang, string>;
-  // contextual quick-replies offered after this topic is answered
   followups: TopicKey[];
 }
 
@@ -278,10 +302,6 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
   },
 };
 
-/* ------------------------------------------------------------------ */
-/*  Language selector labels                                          */
-/* ------------------------------------------------------------------ */
-
 const LANG_LABELS: Record<Lang, string> = {
   da: 'Darija',
   fr: 'Français',
@@ -299,10 +319,6 @@ const LANG_FLAG: Record<Lang, string> = {
 };
 
 const ALL_LANGS: Lang[] = ['da', 'fr', 'en', 'ar', 'es'];
-
-/* ------------------------------------------------------------------ */
-/*  Quick suggestions - context-aware                                  */
-/* ------------------------------------------------------------------ */
 
 const TOPIC_LABELS: Record<TopicKey, Record<Lang, string>> = {
   greeting: { da: 'Salam!', fr: 'Bonjour', en: 'Hello', ar: 'مرحبا', es: 'Hola' },
@@ -326,10 +342,6 @@ const TOPIC_LABELS: Record<TopicKey, Record<Lang, string>> = {
 
 const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'documents', 'ramadan'];
 
-/* ------------------------------------------------------------------ */
-/*  Answer finder                                                      */
-/* ------------------------------------------------------------------ */
-
 function findTopic(query: string): TopicKey | null {
   const q = query.toLowerCase();
   let best: { topic: TopicKey; score: number } | null = null;
@@ -337,7 +349,7 @@ function findTopic(query: string): TopicKey | null {
     let score = 0;
     for (const kw of data.keywords) {
       if (q.includes(kw.toLowerCase())) {
-        score += kw.length; // longer keyword = more specific
+        score += kw.length;
       }
     }
     if (score > 0 && (!best || score > best.score)) {
@@ -352,7 +364,6 @@ function getAnswer(query: string, lang: Lang): { content: string; topic: TopicKe
   if (topic) {
     return { content: KNOWLEDGE[topic].answers[lang] || KNOWLEDGE[topic].answers.da, topic };
   }
-  // Fallback - Hadak introduces what he can do
   const fallback: Record<Lang, string> = {
     da: 'Hmm, ma fhamtch mzyan... Hadak n9der y3awnek f: l\'route, l\'prières, l\'ferry, l\'budget, l\'documents, l\'currency, l\'douane, l\'urgence, l\'météo, l\'3iyad, l\'halal, l\'SIM, l\'carburant, l\'3a2ila, l\'Ramdan, w l\'packing. Sowlni 3la wahda mn homa!',
     fr: 'Hmm, je n\'ai pas bien compris... Hadak peut t\'aider avec : la route, les prières, le ferry, le budget, les documents, la monnaie, la douane, les urgences, la météo, les jours fériés, le halal, la SIM, le carburant, la famille, le Ramadan et le bagage. Pose-moi une question sur l\'un de ces sujets !',
@@ -363,10 +374,6 @@ function getAnswer(query: string, lang: Lang): { content: string; topic: TopicKe
   return { content: fallback[lang] || fallback.da, topic: null };
 }
 
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
-
 export default function HadakAI() {
   const [open, setOpen] = useState(false);
   const [lang, setLang] = useState<Lang>('da');
@@ -375,20 +382,92 @@ export default function HadakAI() {
   const [isTyping, setIsTyping] = useState(false);
   const [lastTopic, setLastTopic] = useState<TopicKey | null>(null);
   const [langOpen, setLangOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const handleSendRef = useRef<(text?: string) => void>(() => {});
 
   const isRtl = lang === 'ar' || lang === 'da';
 
-  /* Auto-scroll to bottom on new messages / typing */
+  useEffect(() => {
+    const hasRecognition =
+      typeof window !== 'undefined' &&
+      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+    const hasSynthesis = typeof window !== 'undefined' && 'speechSynthesis' in window;
+    setSpeechSupported(hasRecognition && hasSynthesis);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      recognitionRef.current?.stop();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  }, [open]);
+
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.stop();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  const speak = (text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = SPEECH_LANG[lang];
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const toggleListening = () => {
+    if (!speechSupported) return;
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognitionCtor =
+      (window as unknown as { SpeechRecognition?: new () => SpeechRecognitionLike; webkitSpeechRecognition?: new () => SpeechRecognitionLike })
+        .SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionLike }).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return;
+
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = SPEECH_LANG[lang];
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1]?.[0]?.transcript?.trim();
+      if (transcript) {
+        handleSendRef.current(transcript);
+      }
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    setIsListening(true);
+    recognition.start();
+  };
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
     }
   }, [messages, isTyping]);
 
-  /* Greeting message when chat opens */
   useEffect(() => {
     if (open && messages.length === 0) {
       const greeting = KNOWLEDGE.greeting.answers[lang] || KNOWLEDGE.greeting.answers.da;
@@ -396,14 +475,12 @@ export default function HadakAI() {
     }
   }, [open, messages.length, lang]);
 
-  /* Focus input when opening */
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [open]);
 
-  /* Close language dropdown on outside click */
   useEffect(() => {
     if (!langOpen) return;
     const handler = (e: MouseEvent) => {
@@ -416,27 +493,47 @@ export default function HadakAI() {
     return () => document.removeEventListener('click', handler);
   }, [langOpen]);
 
-  const handleSend = (text?: string) => {
+  const handleSend = async (text?: string) => {
     const content = (text ?? input).trim();
     if (!content || isTyping) return;
 
     const userMsg: Message = { role: 'user', content };
-    setMessages((prev) => [...prev, userMsg]);
+    const history = [...messages, userMsg];
+    setMessages(history);
     setInput('');
     setIsTyping(true);
 
-    /* Simulate Hadak "thinking" - varies by message length */
-    const delay = 500 + Math.min(content.length * 15, 600) + Math.random() * 300;
+    try {
+      const response = await fetch('/api/hadak', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          messages: history.slice(-20).map(({ role, content: c }) => ({ role, content: c })),
+        }),
+      });
 
-    setTimeout(() => {
-      const { content: answer, topic } = getAnswer(userMsg.content, lang);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
-      setLastTopic(topic);
+      if (response.ok) {
+        const data = await response.json();
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.content, topic: null }]);
+        setLastTopic(null);
+        if (voiceEnabled) speak(data.content);
+        return;
+      }
+    } catch {
+    } finally {
       setIsTyping(false);
-    }, delay);
+    }
+
+    const { content: answer, topic } = getAnswer(userMsg.content, lang);
+    setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+    setLastTopic(topic);
+    if (voiceEnabled) speak(answer);
   };
 
-  /* Quick suggestions based on context */
+  useEffect(() => {
+    handleSendRef.current = handleSend;
+  });
+
   const getSuggestions = (): TopicKey[] => {
     if (lastTopic && KNOWLEDGE[lastTopic]) {
       return KNOWLEDGE[lastTopic].followups.filter((f) => f in KNOWLEDGE).slice(0, 4);
@@ -448,9 +545,6 @@ export default function HadakAI() {
 
   return (
     <>
-      {/* ============================= */}
-      {/*  Floating chat bubble button   */}
-      {/* ============================= */}
       <motion.button
         onClick={() => setOpen(!open)}
         className="group fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full shadow-2xl"
@@ -469,7 +563,6 @@ export default function HadakAI() {
         whileTap={{ scale: 0.94 }}
         aria-label={open ? 'Close Hadak chat' : 'Open Hadak chat'}
       >
-        {/* Pulsing ring when closed */}
         {!open && (
           <>
             <motion.span
@@ -501,9 +594,6 @@ export default function HadakAI() {
         </motion.span>
       </motion.button>
 
-      {/* ============================= */}
-      {/*  Chat panel                    */}
-      {/* ============================= */}
       <AnimatePresence>
       {open && (
         <motion.div
@@ -518,7 +608,6 @@ export default function HadakAI() {
           exit={{ opacity: 0, y: 16, scale: 0.96 }}
           transition={{ type: 'spring', stiffness: 340, damping: 30 }}
         >
-          {/* ---- Header ---- */}
           <div
             className="relative flex items-center gap-3 px-4 py-4"
             style={{
@@ -526,7 +615,6 @@ export default function HadakAI() {
               borderBottom: '1px solid rgba(238, 173, 89, 0.15)',
             }}
           >
-            {/* Avatar */}
             <div
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
               style={{
@@ -537,7 +625,6 @@ export default function HadakAI() {
               <Sparkles className="h-5 w-5 text-[#0d3f38]" />
             </div>
 
-            {/* Name + status */}
             <div className="flex-1 min-w-0">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 Hadak
@@ -551,7 +638,24 @@ export default function HadakAI() {
               </div>
             </div>
 
-            {/* Language selector */}
+            {speechSupported && (
+              <button
+                onClick={() => {
+                  const next = !voiceEnabled;
+                  setVoiceEnabled(next);
+                  if (!next && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                  }
+                }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10"
+                aria-label={voiceEnabled ? 'Désactiver les réponses vocales' : 'Activer les réponses vocales'}
+                aria-pressed={voiceEnabled}
+                title={voiceEnabled ? 'Réponses vocales activées' : 'Réponses vocales désactivées'}
+              >
+                {voiceEnabled ? <Volume2 className="h-4 w-4 text-[#eead59]" /> : <VolumeX className="h-4 w-4" />}
+              </button>
+            )}
+
             <div className="relative" data-lang-dropdown>
               <button
                 onClick={(e) => {
@@ -600,7 +704,6 @@ export default function HadakAI() {
             </div>
           </div>
 
-          {/* ---- Messages area ---- */}
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto px-4 py-4 space-y-3"
@@ -649,7 +752,6 @@ export default function HadakAI() {
               );
             })}
 
-            {/* ---- Typing indicator ---- */}
             <AnimatePresence>
             {isTyping && (
               <motion.div
@@ -690,7 +792,6 @@ export default function HadakAI() {
             </AnimatePresence>
           </div>
 
-          {/* ---- Quick suggestion buttons ---- */}
           <AnimatePresence>
           {suggestions.length > 0 && !isTyping && (
             <motion.div
@@ -728,7 +829,6 @@ export default function HadakAI() {
           )}
           </AnimatePresence>
 
-          {/* ---- Input area ---- */}
           <div
             className="p-3"
             style={{ borderTop: '1px solid rgba(238, 173, 89, 0.12)' }}
@@ -763,6 +863,36 @@ export default function HadakAI() {
                 }}
                 disabled={isTyping}
               />
+              {speechSupported && (
+                <button
+                  onClick={toggleListening}
+                  disabled={isTyping}
+                  className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
+                  style={{
+                    background: isListening
+                      ? 'linear-gradient(135deg, #e05252 0%, #b83a3a 100%)'
+                      : 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(238, 173, 89, 0.15)',
+                  }}
+                  aria-label={isListening ? 'Arrêter la dictée vocale' : 'Parler à Hadak'}
+                  aria-pressed={isListening}
+                  title={isListening ? 'Arrêter la dictée vocale' : 'Parler à Hadak'}
+                >
+                  {isListening && (
+                    <motion.span
+                      className="absolute inset-0 rounded-full"
+                      style={{ backgroundColor: 'rgba(224, 82, 82, 0.35)' }}
+                      animate={{ scale: [1, 1.6, 1.6], opacity: [0.6, 0, 0] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
+                    />
+                  )}
+                  {isListening ? (
+                    <MicOff className="h-4 w-4 text-white" />
+                  ) : (
+                    <Mic className="h-4 w-4 text-white/80" />
+                  )}
+                </button>
+              )}
               <button
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isTyping}
@@ -781,9 +911,6 @@ export default function HadakAI() {
       )}
       </AnimatePresence>
 
-      {/* ============================= */}
-      {/*  Keyframe animations          */}
-      {/* ============================= */}
       <style jsx>{`
         @keyframes hadak-typing {
           0%, 60%, 100% {
@@ -795,7 +922,6 @@ export default function HadakAI() {
             transform: scale(1.2);
           }
         }
-        /* Custom scrollbar */
         .overflow-y-auto::-webkit-scrollbar {
           width: 4px;
         }

@@ -30,7 +30,6 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import HadakAI from '@/components/HadakAI';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
 import SmartPacking from '@/components/SmartPacking';
-import HadakVoice from '@/components/HadakVoice';
 import JuryPack from '@/components/JuryPack';
 
 const benefits = [
@@ -358,7 +357,6 @@ export default function Home() {
         </div>
       </footer>
       <HadakAI />
-      <HadakVoice />
     </main>
   );
 }
