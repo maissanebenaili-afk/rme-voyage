@@ -416,7 +416,7 @@ export default function HadakAI() {
     return () => document.removeEventListener('click', handler);
   }, [langOpen]);
 
-  const handleSend = (text?: string) => {
+  const handleSend = async (text?: string) => {
     const content = (text ?? input).trim();
     if (!content || isTyping) return;
 
@@ -425,15 +425,28 @@ export default function HadakAI() {
     setInput('');
     setIsTyping(true);
 
-    /* Simulate Hadak "thinking" - varies by message length */
-    const delay = 500 + Math.min(content.length * 15, 600) + Math.random() * 300;
+    try {
+      const response = await fetch('/api/hadak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: content, lang }),
+      });
 
-    setTimeout(() => {
-      const { content: answer, topic } = getAnswer(userMsg.content, lang);
+      const data = (await response.json()) as { response: string; fallback?: boolean };
+
+      const answer = data.response || 'Une erreur s\'est produite.';
+      const topic = !data.fallback ? findTopic(content) : null;
+
       setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
       setLastTopic(topic);
+    } catch (error) {
+      console.error('Error calling Hadak API:', error);
+      const { content: answer, topic } = getAnswer(content, lang);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+      setLastTopic(topic);
+    } finally {
       setIsTyping(false);
-    }, delay);
+    }
   };
 
   /* Quick suggestions based on context */
