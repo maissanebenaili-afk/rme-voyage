@@ -1,0 +1,12 @@
+[
+  {
+    "id": "fuel-diesel-2024",
+    "topic": "fuel_diesel_price_mad_per_l",
+    "statement": "Diesel price in Morocco ≈ 13.20 MAD/L",
+    "value": 13.2,
+    "unit": "MAD/L",
+    "fetchedAt": "2024-01-01T00:00:00.000Z",
+    "sourceUrl": "https://example.org/morocco-fuel-prices",
+    "sourceName": "Sample fixture — replace with a real fuel-price feed (e.g. government open data or a scraper)"
+  }
+]

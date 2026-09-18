@@ -57,33 +57,33 @@ const THEME = {
 // ---------- Constants ----------
 const CATEGORIES: CategoryMeta[] = [
   { id: 'documents', label: 'Documents', icon: FileText },
-  { id: 'electronics', label: 'Electronics', icon: Smartphone },
-  { id: 'clothing', label: 'Clothing', icon: Sun },
-  { id: 'health', label: 'Health & Hygiene', icon: Pill },
-  { id: 'spiritual', label: 'Spiritual', icon: Heart },
-  { id: 'gifts', label: 'Gifts', icon: ShoppingBag },
-  { id: 'misc', label: 'Miscellaneous', icon: Camera },
+  { id: 'electronics', label: 'Électronique', icon: Smartphone },
+  { id: 'clothing', label: 'Vêtements', icon: Sun },
+  { id: 'health', label: 'Santé & Hygiène', icon: Pill },
+  { id: 'spiritual', label: 'Spirituel', icon: Heart },
+  { id: 'gifts', label: 'Cadeaux', icon: ShoppingBag },
+  { id: 'misc', label: 'Divers', icon: Camera },
 ];
 
 const TRIP_TYPES: { id: TripType; label: string; icon: typeof Luggage }[] = [
-  { id: 'family', label: 'Family', icon: Luggage },
+  { id: 'family', label: 'Famille', icon: Luggage },
   { id: 'solo', label: 'Solo', icon: Plane },
-  { id: 'business', label: 'Business', icon: FileText },
-  { id: 'religious', label: 'Religious', icon: Heart },
+  { id: 'business', label: 'Affaires', icon: FileText },
+  { id: 'religious', label: 'Religieux', icon: Heart },
 ];
 
 const DURATIONS: { id: Duration; label: string; days: string }[] = [
-  { id: 'weekend', label: 'Weekend', days: '2–3 days' },
-  { id: 'short', label: 'Short', days: '4–7 days' },
-  { id: 'long', label: 'Long', days: '8–15 days' },
-  { id: 'extended', label: 'Extended', days: '16+ days' },
+  { id: 'weekend', label: 'Week-end', days: '2–3 jours' },
+  { id: 'short', label: 'Court', days: '4–7 jours' },
+  { id: 'long', label: 'Long', days: '8–15 jours' },
+  { id: 'extended', label: 'Prolongé', days: '16+ jours' },
 ];
 
 const SEASONS: { id: Season; label: string; icon: typeof Sun }[] = [
-  { id: 'summer', label: 'Summer', icon: Sun },
-  { id: 'winter', label: 'Winter', icon: Moon },
-  { id: 'spring', label: 'Spring', icon: Sun },
-  { id: 'autumn', label: 'Autumn', icon: Moon },
+  { id: 'summer', label: 'Été', icon: Sun },
+  { id: 'winter', label: 'Hiver', icon: Moon },
+  { id: 'spring', label: 'Printemps', icon: Sun },
+  { id: 'autumn', label: 'Automne', icon: Moon },
 ];
 
 // ---------- Item Generators ----------
@@ -95,38 +95,38 @@ function generateItems(tripType: TripType, duration: Duration, season: Season): 
   const items: Omit<PackingItem, 'id' | 'checked'>[] = [];
 
   // --- Documents ---
-  items.push({ name: 'Passport (valid 6+ months)', category: 'documents', aiSuggested: true });
-  items.push({ name: 'CNIE (Moroccan ID)', category: 'documents', aiSuggested: true });
-  items.push({ name: 'Flight / ferry tickets', category: 'documents', aiSuggested: true });
-  items.push({ name: 'Hotel reservation confirmations', category: 'documents', aiSuggested: true });
-  items.push({ name: 'Travel insurance documents', category: 'documents', aiSuggested: true });
+  items.push({ name: 'Passeport (valide 6+ mois)', category: 'documents', aiSuggested: true });
+  items.push({ name: 'CNIE (carte d\'identité marocaine)', category: 'documents', aiSuggested: true });
+  items.push({ name: 'Billets d\'avion / ferry', category: 'documents', aiSuggested: true });
+  items.push({ name: 'Confirmations de réservation d\'hôtel', category: 'documents', aiSuggested: true });
+  items.push({ name: 'Documents d\'assurance voyage', category: 'documents', aiSuggested: true });
 
   if (tripType === 'business') {
-    items.push({ name: 'Business cards', category: 'documents', aiSuggested: true });
-    items.push({ name: 'Meeting agenda / documents', category: 'documents', aiSuggested: true });
+    items.push({ name: 'Cartes de visite', category: 'documents', aiSuggested: true });
+    items.push({ name: 'Ordre du jour / documents de réunion', category: 'documents', aiSuggested: true });
   }
   if (tripType === 'family') {
-    items.push({ name: "Children's birth certificates", category: 'documents', aiSuggested: true });
-    items.push({ name: 'Family medical records', category: 'documents', aiSuggested: true });
+    items.push({ name: 'Actes de naissance des enfants', category: 'documents', aiSuggested: true });
+    items.push({ name: 'Carnets de santé familiaux', category: 'documents', aiSuggested: true });
   }
   if (tripType === 'religious') {
-    items.push({ name: 'Vaccination certificate (meningitis)', category: 'documents', aiSuggested: true });
-    items.push({ name: 'Umrah / Hajj visa', category: 'documents', aiSuggested: true });
+    items.push({ name: 'Certificat de vaccination (méningite)', category: 'documents', aiSuggested: true });
+    items.push({ name: 'Visa Omra / Hajj', category: 'documents', aiSuggested: true });
   }
 
   // --- Electronics ---
-  items.push({ name: 'Phone + charger', category: 'electronics', aiSuggested: true });
-  items.push({ name: 'Power bank (10,000+ mAh)', category: 'electronics', aiSuggested: true });
-  items.push({ name: 'Universal power adapter (Type C/E)', category: 'electronics', aiSuggested: true });
-  items.push({ name: 'Headphones / earbuds', category: 'electronics', aiSuggested: true });
+  items.push({ name: 'Téléphone + chargeur', category: 'electronics', aiSuggested: true });
+  items.push({ name: 'Batterie externe (10 000+ mAh)', category: 'electronics', aiSuggested: true });
+  items.push({ name: 'Adaptateur secteur universel (Type C/E)', category: 'electronics', aiSuggested: true });
+  items.push({ name: 'Écouteurs / casque audio', category: 'electronics', aiSuggested: true });
 
   if (duration === 'long' || duration === 'extended') {
-    items.push({ name: 'Laptop + charger', category: 'electronics', aiSuggested: true });
-    items.push({ name: 'USB cable (spare)', category: 'electronics', aiSuggested: true });
+    items.push({ name: 'Ordinateur portable + chargeur', category: 'electronics', aiSuggested: true });
+    items.push({ name: 'Câble USB (de secours)', category: 'electronics', aiSuggested: true });
   }
   if (tripType === 'business') {
-    items.push({ name: 'Laptop + charger', category: 'electronics', aiSuggested: true });
-    items.push({ name: 'Presentation clicker', category: 'electronics', aiSuggested: true });
+    items.push({ name: 'Ordinateur portable + chargeur', category: 'electronics', aiSuggested: true });
+    items.push({ name: 'Télécommande de présentation', category: 'electronics', aiSuggested: true });
   }
 
   // --- Clothing ---
@@ -134,96 +134,96 @@ function generateItems(tripType: TripType, duration: Duration, season: Season): 
     duration === 'weekend' ? 4 : duration === 'short' ? 7 : duration === 'long' ? 12 : 16;
 
   items.push({
-    name: `${clothingCount}× underwear`,
+    name: `${clothingCount}× sous-vêtements`,
     category: 'clothing',
     aiSuggested: true,
   });
-  items.push({ name: `${Math.ceil(clothingCount / 2)}× socks`, category: 'clothing', aiSuggested: true });
+  items.push({ name: `${Math.ceil(clothingCount / 2)}× paires de chaussettes`, category: 'clothing', aiSuggested: true });
   items.push({ name: `${Math.ceil(clothingCount / 3)}× t-shirts`, category: 'clothing', aiSuggested: true });
-  items.push({ name: 'Comfortable walking shoes', category: 'clothing', aiSuggested: true });
+  items.push({ name: 'Chaussures de marche confortables', category: 'clothing', aiSuggested: true });
 
   if (season === 'summer') {
-    items.push({ name: 'Light breathable shirts', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Shorts (modest length for Morocco)', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Sun hat / cap', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Chemises légères et respirantes', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Shorts (longueur décente pour le Maroc)', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Chapeau / casquette', category: 'clothing', aiSuggested: true });
   }
   if (season === 'winter') {
-    items.push({ name: 'Warm jacket / coat', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Sweater / fleece', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Warm scarf', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Long pants', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Veste / manteau chaud', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Pull / polaire', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Écharpe chaude', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Pantalons longs', category: 'clothing', aiSuggested: true });
   }
   if (season === 'spring' || season === 'autumn') {
-    items.push({ name: 'Light jacket / cardigan', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Layered outfits', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Veste légère / gilet', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Tenues superposables', category: 'clothing', aiSuggested: true });
   }
   if (tripType === 'religious') {
-    items.push({ name: 'Ihram garments (if applicable)', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Modest prayer clothing', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Habits d\'ihram (le cas échéant)', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Tenue de prière décente', category: 'clothing', aiSuggested: true });
   }
   if (tripType === 'business') {
-    items.push({ name: 'Business attire (2–3 outfits)', category: 'clothing', aiSuggested: true });
-    items.push({ name: 'Dress shoes', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Tenues professionnelles (2–3 tenues)', category: 'clothing', aiSuggested: true });
+    items.push({ name: 'Chaussures habillées', category: 'clothing', aiSuggested: true });
   }
 
   // --- Health & Hygiene ---
-  items.push({ name: 'Personal medications', category: 'health', aiSuggested: true });
-  items.push({ name: 'First-aid kit', category: 'health', aiSuggested: true });
-  items.push({ name: 'Toothbrush + toothpaste', category: 'health', aiSuggested: true });
-  items.push({ name: 'Deodorant', category: 'health', aiSuggested: true });
-  items.push({ name: 'Hand sanitizer', category: 'health', aiSuggested: true });
+  items.push({ name: 'Médicaments personnels', category: 'health', aiSuggested: true });
+  items.push({ name: 'Trousse de premiers secours', category: 'health', aiSuggested: true });
+  items.push({ name: 'Brosse à dents + dentifrice', category: 'health', aiSuggested: true });
+  items.push({ name: 'Déodorant', category: 'health', aiSuggested: true });
+  items.push({ name: 'Gel hydroalcoolique', category: 'health', aiSuggested: true });
 
   if (season === 'summer') {
-    items.push({ name: 'Sunscreen SPF 50+', category: 'health', aiSuggested: true });
-    items.push({ name: 'After-sun lotion', category: 'health', aiSuggested: true });
-    items.push({ name: 'Insect repellent', category: 'health', aiSuggested: true });
+    items.push({ name: 'Crème solaire SPF 50+', category: 'health', aiSuggested: true });
+    items.push({ name: 'Lotion après-soleil', category: 'health', aiSuggested: true });
+    items.push({ name: 'Répulsif anti-insectes', category: 'health', aiSuggested: true });
   }
   if (season === 'winter') {
-    items.push({ name: 'Lip balm', category: 'health', aiSuggested: true });
-    items.push({ name: 'Cold / flu medicine', category: 'health', aiSuggested: true });
+    items.push({ name: 'Baume à lèvres', category: 'health', aiSuggested: true });
+    items.push({ name: 'Médicaments contre le rhume / la grippe', category: 'health', aiSuggested: true });
   }
   if (tripType === 'family') {
-    items.push({ name: "Children's medications", category: 'health', aiSuggested: true });
-    items.push({ name: 'Wet wipes', category: 'health', aiSuggested: true });
+    items.push({ name: 'Médicaments pour enfants', category: 'health', aiSuggested: true });
+    items.push({ name: 'Lingettes humides', category: 'health', aiSuggested: true });
   }
 
   // --- Spiritual ---
   if (tripType === 'religious' || tripType === 'family') {
-    items.push({ name: 'Prayer mat (travel size)', category: 'spiritual', aiSuggested: true });
-    items.push({ name: 'Quran app downloaded offline', category: 'spiritual', aiSuggested: true });
-    items.push({ name: 'Qibla compass app', category: 'spiritual', aiSuggested: true });
-    items.push({ name: 'Prayer schedule app', category: 'spiritual', aiSuggested: true });
-    items.push({ name: 'Tasbih / prayer beads', category: 'spiritual', aiSuggested: true });
+    items.push({ name: 'Tapis de prière (format voyage)', category: 'spiritual', aiSuggested: true });
+    items.push({ name: 'Application Coran téléchargée hors ligne', category: 'spiritual', aiSuggested: true });
+    items.push({ name: 'Application boussole Qibla', category: 'spiritual', aiSuggested: true });
+    items.push({ name: 'Application horaires de prière', category: 'spiritual', aiSuggested: true });
+    items.push({ name: 'Tasbih / chapelet de prière', category: 'spiritual', aiSuggested: true });
   } else {
-    items.push({ name: 'Qibla compass app (optional)', category: 'spiritual', aiSuggested: true });
+    items.push({ name: 'Application boussole Qibla (optionnel)', category: 'spiritual', aiSuggested: true });
   }
 
   // --- Gifts (Moroccan specialties) ---
-  items.push({ name: 'Moroccan dates (medjool)', category: 'gifts', aiSuggested: true });
-  items.push({ name: 'Argan oil (cosmetic / culinary)', category: 'gifts', aiSuggested: true });
-  items.push({ name: 'Leather goods (babouches, bags)', category: 'gifts', aiSuggested: true });
-  items.push({ name: 'Moroccan tea set / teapot', category: 'gifts', aiSuggested: true });
-  items.push({ name: 'Saffron / spices', category: 'gifts', aiSuggested: true });
+  items.push({ name: 'Dattes marocaines (medjool)', category: 'gifts', aiSuggested: true });
+  items.push({ name: 'Huile d\'argan (cosmétique / culinaire)', category: 'gifts', aiSuggested: true });
+  items.push({ name: 'Maroquinerie (babouches, sacs)', category: 'gifts', aiSuggested: true });
+  items.push({ name: 'Service à thé marocain / théière', category: 'gifts', aiSuggested: true });
+  items.push({ name: 'Safran / épices', category: 'gifts', aiSuggested: true });
 
   if (tripType === 'family') {
-    items.push({ name: 'Board games / activities for kids', category: 'gifts', aiSuggested: true });
+    items.push({ name: 'Jeux de société / activités pour enfants', category: 'gifts', aiSuggested: true });
   }
 
   // --- Miscellaneous ---
-  items.push({ name: 'Reusable water bottle', category: 'misc', aiSuggested: true });
-  items.push({ name: 'Snacks for travel', category: 'misc', aiSuggested: true });
-  items.push({ name: 'Moroccan SIM card (Maroc Telecom / Inwi)', category: 'misc', aiSuggested: true });
-  items.push({ name: 'Cash in MAD (Moroccan Dirham)', category: 'misc', aiSuggested: true });
+  items.push({ name: 'Gourde réutilisable', category: 'misc', aiSuggested: true });
+  items.push({ name: 'Collations pour le trajet', category: 'misc', aiSuggested: true });
+  items.push({ name: 'Carte SIM marocaine (Maroc Telecom / Inwi)', category: 'misc', aiSuggested: true });
+  items.push({ name: 'Espèces en MAD (dirham marocain)', category: 'misc', aiSuggested: true });
 
   if (season === 'summer') {
-    items.push({ name: 'Sunglasses (UV protection)', category: 'misc', aiSuggested: true });
+    items.push({ name: 'Lunettes de soleil (protection UV)', category: 'misc', aiSuggested: true });
   }
   if (season === 'winter' || season === 'autumn') {
-    items.push({ name: 'Travel umbrella', category: 'misc', aiSuggested: true });
+    items.push({ name: 'Parapluie de voyage', category: 'misc', aiSuggested: true });
   }
   if (duration === 'long' || duration === 'extended') {
-    items.push({ name: 'Laundry bag', category: 'misc', aiSuggested: true });
-    items.push({ name: 'Travel pillow', category: 'misc', aiSuggested: true });
+    items.push({ name: 'Sac à linge', category: 'misc', aiSuggested: true });
+    items.push({ name: 'Oreiller de voyage', category: 'misc', aiSuggested: true });
   }
 
   return items.map((it) => ({ ...it, id: uid(), checked: false }));
@@ -237,38 +237,38 @@ function getForgottenItems(
   existingNames: Set<string>
 ): Omit<PackingItem, 'id' | 'checked'>[] {
   const candidates: Omit<PackingItem, 'id' | 'checked'>[] = [
-    { name: 'Photocopies of passport (separate bag)', category: 'documents', aiSuggested: true },
-    { name: 'Emergency contact list', category: 'documents', aiSuggested: true },
-    { name: 'Spare phone charger cable', category: 'electronics', aiSuggested: true },
-    { name: 'Travel-size shampoo & conditioner', category: 'health', aiSuggested: true },
-    { name: 'Razors / shaving kit', category: 'health', aiSuggested: true },
-    { name: 'Moisturizer', category: 'health', aiSuggested: true },
-    { name: 'Travel wallet / money belt', category: 'misc', aiSuggested: true },
-    { name: 'Zip-lock bags', category: 'misc', aiSuggested: true },
-    { name: 'Reading material / e-book', category: 'misc', aiSuggested: true },
-    { name: 'Reusable shopping bag', category: 'misc', aiSuggested: true },
-    { name: 'Moroccan phrasebook / translation app', category: 'misc', aiSuggested: true },
+    { name: 'Photocopies du passeport (sac séparé)', category: 'documents', aiSuggested: true },
+    { name: 'Liste de contacts d\'urgence', category: 'documents', aiSuggested: true },
+    { name: 'Câble de chargeur de secours', category: 'electronics', aiSuggested: true },
+    { name: 'Shampoing & après-shampoing format voyage', category: 'health', aiSuggested: true },
+    { name: 'Rasoirs / nécessaire de rasage', category: 'health', aiSuggested: true },
+    { name: 'Crème hydratante', category: 'health', aiSuggested: true },
+    { name: 'Ceinture porte-valeurs / portefeuille de voyage', category: 'misc', aiSuggested: true },
+    { name: 'Sachets zip', category: 'misc', aiSuggested: true },
+    { name: 'Lecture / livre électronique', category: 'misc', aiSuggested: true },
+    { name: 'Sac cabas réutilisable', category: 'misc', aiSuggested: true },
+    { name: 'Guide de conversation / application de traduction', category: 'misc', aiSuggested: true },
   ];
 
   if (season === 'summer') {
-    candidates.push({ name: 'Aloe vera gel (sunburn relief)', category: 'health', aiSuggested: true });
-    candidates.push({ name: 'Light scarf for sun protection', category: 'clothing', aiSuggested: true });
+    candidates.push({ name: 'Gel d\'aloe vera (apaisant coup de soleil)', category: 'health', aiSuggested: true });
+    candidates.push({ name: 'Écharpe légère pour se protéger du soleil', category: 'clothing', aiSuggested: true });
   }
   if (season === 'winter') {
-    candidates.push({ name: 'Thermal underwear', category: 'clothing', aiSuggested: true });
-    candidates.push({ name: 'Warm gloves', category: 'clothing', aiSuggested: true });
+    candidates.push({ name: 'Sous-vêtements thermiques', category: 'clothing', aiSuggested: true });
+    candidates.push({ name: 'Gants chauds', category: 'clothing', aiSuggested: true });
   }
   if (tripType === 'family') {
-    candidates.push({ name: 'Small backpack for day trips', category: 'misc', aiSuggested: true });
-    candidates.push({ name: "Children's entertainment (tablet, books)", category: 'misc', aiSuggested: true });
+    candidates.push({ name: 'Petit sac à dos pour les excursions', category: 'misc', aiSuggested: true });
+    candidates.push({ name: 'Divertissement pour enfants (tablette, livres)', category: 'misc', aiSuggested: true });
   }
   if (tripType === 'business') {
-    candidates.push({ name: 'Portable projector (if presenting)', category: 'electronics', aiSuggested: true });
-    candidates.push({ name: 'Spare business attire', category: 'clothing', aiSuggested: true });
+    candidates.push({ name: 'Projecteur portable (si présentation)', category: 'electronics', aiSuggested: true });
+    candidates.push({ name: 'Tenue professionnelle de rechange', category: 'clothing', aiSuggested: true });
   }
   if (duration === 'extended') {
-    candidates.push({ name: 'Multi-plug extension cord', category: 'electronics', aiSuggested: true });
-    candidates.push({ name: 'Travel-size detergent', category: 'health', aiSuggested: true });
+    candidates.push({ name: 'Multiprise de voyage', category: 'electronics', aiSuggested: true });
+    candidates.push({ name: 'Lessive format voyage', category: 'health', aiSuggested: true });
   }
 
   return candidates.filter((c) => !existingNames.has(c.name.toLowerCase()));
@@ -336,7 +336,7 @@ export default function SmartPacking() {
       const existing = new Set(items.map((it) => it.name.toLowerCase()));
       const forgotten = getForgottenItems(tripType, season, duration, existing);
       if (forgotten.length === 0) {
-        setShowAIHint("You've covered everything — your list looks complete!");
+        setShowAIHint('Vous avez tout prévu — votre liste est complète !');
       } else {
         const pickCount = Math.min(3, forgotten.length);
         const picks = forgotten.slice(0, pickCount);
@@ -344,7 +344,7 @@ export default function SmartPacking() {
           ...picks.map((p) => ({ ...p, id: uid(), checked: false })),
           ...prev,
         ]);
-        setShowAIHint(`Added ${pickCount} item${pickCount > 1 ? 's' : ''} you might have forgotten.`);
+        setShowAIHint(`${pickCount} élément${pickCount > 1 ? 's' : ''} potentiellement oublié${pickCount > 1 ? 's' : ''} ajouté${pickCount > 1 ? 's' : ''}.`);
       }
       setAiSuggesting(false);
       setTimeout(() => setShowAIHint(null), 4000);
@@ -416,7 +416,7 @@ export default function SmartPacking() {
                 lineHeight: 1.1,
               }}
             >
-              Smart Packing List
+              Liste de bagages intelligente
             </h1>
             <p
               style={{
@@ -426,7 +426,7 @@ export default function SmartPacking() {
                 fontWeight: 500,
               }}
             >
-              AI-powered packing for Europe ↔ Morocco travel
+              Bagages optimisés par IA pour vos voyages Europe ↔ Maroc
             </p>
           </div>
         </div>
@@ -452,9 +452,9 @@ export default function SmartPacking() {
                   opacity: 0.85,
                 }}
               >
-                <span>Packing Progress</span>
+                <span>Progression du bagage</span>
                 <span style={{ color: THEME.gold, fontWeight: 700 }}>
-                  {checkedItems}/{totalItems} packed · {progressPct}%
+                  {checkedItems}/{totalItems} emballés · {progressPct}%
                 </span>
               </div>
               <div
@@ -501,7 +501,7 @@ export default function SmartPacking() {
               }}
             >
               <RotateCcw size={14} />
-              Reset
+              Réinitialiser
             </button>
           </div>
         )}
@@ -525,7 +525,7 @@ export default function SmartPacking() {
                 opacity: 0.7,
               }}
             >
-              Trip Type
+              Type de voyage
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {TRIP_TYPES.map((t) => {
@@ -572,7 +572,7 @@ export default function SmartPacking() {
                 opacity: 0.7,
               }}
             >
-              Duration
+              Durée
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {DURATIONS.map((d) => {
@@ -626,7 +626,7 @@ export default function SmartPacking() {
                 opacity: 0.7,
               }}
             >
-              Season
+              Saison
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {SEASONS.map((s) => {
@@ -689,12 +689,12 @@ export default function SmartPacking() {
               {generating ? (
                 <>
                   <Sparkles size={20} className="sparkle-spin" />
-                  Generating your smart list...
+                  Génération de votre liste...
                 </>
               ) : (
                 <>
                   <Sparkles size={20} />
-                  Generate Smart List
+                  Générer la liste intelligente
                 </>
               )}
             </button>
@@ -756,7 +756,7 @@ export default function SmartPacking() {
                 color: THEME.darkGreen,
               }}
             >
-              Your smart packing list awaits
+              Votre liste de bagages intelligente vous attend
             </h3>
             <p
               style={{
@@ -768,9 +768,9 @@ export default function SmartPacking() {
                 lineHeight: 1.6,
               }}
             >
-              Select your trip type, duration, and season — then let AI craft a personalized
-              packing list with documents, electronics, clothing, spiritual items, and Moroccan
-              gift suggestions.
+              Choisissez votre type de voyage, sa durée et la saison — l'IA crée ensuite une
+              liste personnalisée avec documents, électronique, vêtements, articles spirituels
+              et idées de cadeaux marocains.
             </p>
           </div>
         )}
@@ -812,7 +812,7 @@ export default function SmartPacking() {
                 opacity: 0.6,
               }}
             >
-              Analyzing your trip context...
+              Analyse du contexte de votre voyage...
             </p>
           </div>
         )}
@@ -859,7 +859,7 @@ export default function SmartPacking() {
                     color: THEME.darkGreen,
                   }}
                 >
-                  {aiSuggesting ? 'Thinking of what you might have forgotten...' : 'AI Smart Suggest'}
+                  {aiSuggesting ? 'Réflexion sur ce que vous pourriez avoir oublié...' : 'Suggestion IA'}
                 </div>
                 <div
                   style={{
@@ -869,7 +869,7 @@ export default function SmartPacking() {
                     marginTop: 2,
                   }}
                 >
-                  Context-aware suggestions based on your trip
+                  Suggestions contextuelles basées sur votre voyage
                 </div>
               </div>
               <button
@@ -892,7 +892,7 @@ export default function SmartPacking() {
                 }}
               >
                 <Sparkles size={14} />
-                {aiSuggesting ? '...' : 'AI Suggest'}
+                {aiSuggesting ? '...' : 'Suggérer'}
               </button>
             </div>
 
@@ -955,7 +955,7 @@ export default function SmartPacking() {
                           marginTop: 1,
                         }}
                       >
-                        {catChecked}/{catItems.length} packed
+                        {catChecked}/{catItems.length} emballés
                       </div>
                     </div>
                   </div>
@@ -1035,7 +1035,7 @@ export default function SmartPacking() {
                             }}
                           >
                             <Sparkles size={9} />
-                            AI
+                            IA
                           </span>
                         )}
                         {item.custom && (
@@ -1056,7 +1056,7 @@ export default function SmartPacking() {
                             }}
                           >
                             <Plus size={9} />
-                            Custom
+                            Perso
                           </span>
                         )}
 
@@ -1119,7 +1119,7 @@ export default function SmartPacking() {
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addCustomItem()}
-                placeholder="Add a custom item..."
+                placeholder="Ajouter un article personnalisé..."
                 style={{
                   flex: 1,
                   border: 'none',
@@ -1173,7 +1173,7 @@ export default function SmartPacking() {
                 }}
               >
                 <Plus size={16} />
-                Add
+                Ajouter
               </button>
             </div>
           </div>
@@ -1197,7 +1197,7 @@ export default function SmartPacking() {
         }}
       >
         <Sparkles size={12} />
-        Smart Packing · Europe ↔ Morocco Travel Assistant
+        Bagages intelligents · Assistant de voyage Europe ↔ Maroc
       </div>
 
       {/* ===== Inline Styles ===== */}

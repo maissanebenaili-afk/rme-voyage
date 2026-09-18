@@ -2,7 +2,7 @@
 
 import { NextRequest } from "next/server";
 
-import { middleware } from "../middleware";
+import { proxy } from "../proxy";
 
 function buildRequest(
   path: string,
@@ -16,7 +16,7 @@ function buildRequest(
 
 describe("middleware", () => {
   it("sets hardened security headers including X-Frame-Options: DENY", () => {
-    const response = middleware(buildRequest("/"));
+    const response = proxy(buildRequest("/"));
 
     expect(response.headers.get("X-Frame-Options")).toBe("DENY");
     expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
@@ -24,8 +24,30 @@ describe("middleware", () => {
     expect(response.headers.get("Content-Security-Policy")).not.toContain("unsafe-eval");
   });
 
+  it("allows same-origin microphone (Hadak voice) but keeps camera disabled", () => {
+    const response = proxy(buildRequest("/"));
+
+    const policy = response.headers.get("Permissions-Policy");
+    expect(policy).toContain("microphone=(self)");
+    expect(policy).toContain("camera=()");
+  });
+
+  it("rate limits /api/hadak more strictly than the standard API routes", () => {
+    const ip = "203.0.113.55";
+    let last;
+
+    for (let i = 0; i < 9; i++) {
+      last = proxy(
+        buildRequest("/api/hadak", { method: "POST", headers: { "x-forwarded-for": ip } }),
+      );
+    }
+
+    expect(last!.status).toBe(429);
+    expect(last!.headers.get("Retry-After")).toBeTruthy();
+  });
+
   it("does not attach CORS headers for a disallowed origin on API routes", () => {
-    const response = middleware(
+    const response = proxy(
       buildRequest("/api/prayer?latitude=1&longitude=1", {
         headers: { origin: "https://evil.example.com" },
       }),
@@ -35,7 +57,7 @@ describe("middleware", () => {
   });
 
   it("attaches CORS headers for an allowed origin on API routes", () => {
-    const response = middleware(
+    const response = proxy(
       buildRequest("/api/prayer?latitude=1&longitude=1", {
         headers: { origin: "https://rme-voyage.com" },
       }),
@@ -45,7 +67,7 @@ describe("middleware", () => {
   });
 
   it("answers CORS preflight OPTIONS requests without hitting the route handler", () => {
-    const response = middleware(
+    const response = proxy(
       buildRequest("/api/affiliates", {
         method: "OPTIONS",
         headers: { origin: "https://rme-voyage.com" },
@@ -62,7 +84,7 @@ describe("middleware", () => {
     let last;
 
     for (let i = 0; i < 31; i++) {
-      last = middleware(
+      last = proxy(
         buildRequest("/api/prayer?latitude=1&longitude=1", {
           headers: { "x-forwarded-for": ip },
         }),
@@ -78,7 +100,7 @@ describe("middleware", () => {
     let last;
 
     for (let i = 0; i < 40; i++) {
-      last = middleware(buildRequest("/", { headers: { "x-forwarded-for": ip } }));
+      last = proxy(buildRequest("/", { headers: { "x-forwarded-for": ip } }));
     }
 
     expect(last!.status).not.toBe(429);

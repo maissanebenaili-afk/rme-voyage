@@ -50,7 +50,7 @@ export default function DiscoverPage() {
           </Link>
         </nav>
 
-        <section className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-10 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:pt-16">
+        <section className="mx-auto grid max-w-6xl gap-8 px-5 pb-14 pt-8 sm:gap-12 sm:px-8 sm:pb-20 sm:pt-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:pt-16">
           <div className="animate-fade-up">
             <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[.16em] text-[#f5cd93]">
               <Sparkles size={14} /> Europe ↔ Maroc
@@ -82,17 +82,17 @@ export default function DiscoverPage() {
             <div className="absolute inset-0 -rotate-2 rounded-[2rem] bg-[#e6a44e]/90" />
             <div className="relative rounded-[2rem] border border-white/10 bg-[#153f39] p-7 shadow-2xl sm:p-9">
               <p className="text-sm font-bold text-[#f5cd93]">Un seul point de départ</p>
-              <div className="mt-7 space-y-5">
-                <div className="rounded-2xl bg-white/10 p-5">
+              <div className="mt-5 space-y-4 sm:mt-7 sm:space-y-5">
+                <div className="rounded-2xl bg-white/10 p-4 sm:p-5">
                   <p className="text-sm text-white/60">Itinéraire</p>
                   <p className="mt-1 text-xl font-bold">Europe → Maroc</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl bg-white/10 p-5">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="rounded-2xl bg-white/10 p-4 sm:p-5">
                     <p className="text-sm text-white/60">Transport</p>
                     <p className="mt-1 font-bold">Comparé</p>
                   </div>
-                  <div className="rounded-2xl bg-white/10 p-5">
+                  <div className="rounded-2xl bg-white/10 p-4 sm:p-5">
                     <p className="text-sm text-white/60">Budget</p>
                     <p className="mt-1 font-bold">Estimé</p>
                   </div>

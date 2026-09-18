@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import BookingCards from "./BookingCards";
 import CityAutocomplete from "./CityAutocomplete";
-import { Navigation, Calendar, ExternalLink, Share2 } from "lucide-react";
+import InteractiveMapWrapper from "./InteractiveMapWrapper";
+import { Navigation, Calendar, ExternalLink, Share2, Route as RouteIcon } from "lucide-react";
 import type { CitySuggestion } from "@/lib/geocoding";
+import type { RouteInfo, RoutePoint } from "./InteractiveMap";
 import {
   buildGoogleMapsDirectionsUrl,
   buildShareUrl,
@@ -12,6 +14,8 @@ import {
   shareTripLink,
   validateRoute,
 } from "@/lib/tripShare";
+
+type RouteCalcStatus = "idle" | "loading" | "error" | "ready";
 
 export default function RouteSearch() {
   const [origin, setOrigin] = useState("Paris, France");
@@ -30,6 +34,12 @@ export default function RouteSearch() {
     | { status: "manual"; url: string }
   >({ status: "idle" });
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const routeRequestRef = useRef<AbortController | null>(null);
+
+  const [routeStatus, setRouteStatus] = useState<RouteCalcStatus>("idle");
+  const [routeGeometry, setRouteGeometry] = useState<RoutePoint[] | undefined>(undefined);
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | undefined>(undefined);
+  const [routeError, setRouteError] = useState<string | undefined>(undefined);
 
   // Réhydratation depuis un lien partagé (/?from=...&to=...&date=...#planifier).
   // Paramètres invalides ou absents sont simplement ignorés.
@@ -46,6 +56,7 @@ export default function RouteSearch() {
   useEffect(() => {
     return () => {
       if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+      routeRequestRef.current?.abort();
     };
   }, []);
 
@@ -53,6 +64,38 @@ export default function RouteSearch() {
   const directionsUrl = validation.valid
     ? buildGoogleMapsDirectionsUrl(origin, destination)
     : null;
+
+  async function calculateRoute() {
+    if (!validation.valid) return;
+    routeRequestRef.current?.abort();
+    const controller = new AbortController();
+    routeRequestRef.current = controller;
+
+    setRouteStatus("loading");
+    setRouteError(undefined);
+
+    try {
+      const params = new URLSearchParams({ origin, destination });
+      const response = await fetch(`/api/route?${params.toString()}`, {
+        signal: controller.signal,
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setRouteError(data.error || "Itinéraire indisponible.");
+        setRouteStatus("error");
+        return;
+      }
+
+      setRouteGeometry(data.geometry);
+      setRouteInfo({ distanceMeters: data.distanceMeters, durationSeconds: data.durationSeconds });
+      setRouteStatus("ready");
+    } catch (error) {
+      if ((error as Error).name === "AbortError") return;
+      setRouteError("Itinéraire indisponible. Vérifiez votre connexion et réessayez.");
+      setRouteStatus("error");
+    }
+  }
 
   function scheduleReset() {
     if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
@@ -148,15 +191,26 @@ export default function RouteSearch() {
         )}
 
         <div className="mt-4 flex flex-wrap gap-2">
+          {validation.valid && (
+            <button
+              type="button"
+              onClick={calculateRoute}
+              disabled={routeStatus === "loading"}
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <RouteIcon size={16} />
+              {routeStatus === "loading" ? "Calcul en cours…" : "Calculer l'itinéraire"}
+            </button>
+          )}
           {directionsUrl && (
             <a
               href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-zellige-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zellige-600"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-sable-300 bg-sable-50 px-4 py-2.5 text-sm font-semibold text-zellige-800 transition hover:bg-sable-100"
             >
               <ExternalLink size={16} />
-              Ouvrir l&apos;itinéraire
+              Ouvrir dans Google Maps
             </a>
           )}
           <button
@@ -206,6 +260,14 @@ export default function RouteSearch() {
           personnes de votre choix.
         </p>
       </section>
+      {routeStatus !== "idle" && (
+        <InteractiveMapWrapper
+          status={routeStatus}
+          routeGeometry={routeGeometry}
+          routeInfo={routeInfo}
+          errorMessage={routeError}
+        />
+      )}
       <BookingCards origin={origin} destination={destination} date={date || undefined} />
     </>
   );

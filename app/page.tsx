@@ -30,7 +30,6 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import HadakAI from '@/components/HadakAI';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
 import SmartPacking from '@/components/SmartPacking';
-import HadakVoice from '@/components/HadakVoice';
 import JuryPack from '@/components/JuryPack';
 
 const benefits = [
@@ -179,20 +178,6 @@ export default function Home() {
         <div className="space-y-6">
           <RouteSearch />
           <CostCalculator />
-        </div>
-      </section>
-
-      {/* Map Section */}
-      <section className="bg-[#e8efe7] py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">Visualisez</p>
-            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">Votre trajet sur la carte.</h2>
-            <p className="mt-4 text-lg leading-8 text-[#5a716c]">
-              Du départ en Europe à l'arrivée au Maroc, visualisez chaque étape de votre voyage.
-            </p>
-          </div>
-          {/* Interactive map available in production with Vercel */}
         </div>
       </section>
 
@@ -358,7 +343,6 @@ export default function Home() {
         </div>
       </footer>
       <HadakAI />
-      <HadakVoice />
     </main>
   );
 }
