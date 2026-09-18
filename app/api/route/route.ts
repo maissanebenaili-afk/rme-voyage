@@ -1,4 +1,4 @@
-import { siteUrl } from "@/lib/siteUrl";
+import { geocodePlace } from "@/lib/serverGeocode";
 
 /**
  * Server-side directions endpoint: geocodes two free-text places (Nominatim)
@@ -18,36 +18,6 @@ import { siteUrl } from "@/lib/siteUrl";
  * changes.
  */
 
-interface LatLon {
-  lat: number;
-  lon: number;
-}
-
-async function geocode(place: string): Promise<LatLon | null> {
-  const url = new URL("https://nominatim.openstreetmap.org/search");
-  url.searchParams.set("q", place);
-  url.searchParams.set("format", "jsonv2");
-  url.searchParams.set("limit", "1");
-
-  const response = await fetch(url, {
-    headers: {
-      accept: "application/json",
-      "user-agent": `RME-Voyage/1.0 (${siteUrl})`,
-    },
-    next: { revalidate: 86_400 },
-  });
-  if (!response.ok) return null;
-
-  const results = (await response.json()) as { lat: string; lon: string }[];
-  const first = results[0];
-  if (!first) return null;
-
-  const lat = Number.parseFloat(first.lat);
-  const lon = Number.parseFloat(first.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-  return { lat, lon };
-}
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const origin = searchParams.get("origin")?.trim();
@@ -58,8 +28,8 @@ export async function GET(request: Request) {
   }
 
   const [originPoint, destinationPoint] = await Promise.all([
-    geocode(origin),
-    geocode(destination),
+    geocodePlace(origin),
+    geocodePlace(destination),
   ]);
 
   if (!originPoint) {

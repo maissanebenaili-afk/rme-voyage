@@ -31,7 +31,7 @@ type RateLimitEntry = { count: number; resetAt: number };
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 // Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route'];
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services'];
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak'];
 
 function getClientKey(request: NextRequest): string {
