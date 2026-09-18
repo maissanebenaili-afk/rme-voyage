@@ -22,7 +22,45 @@ import {
   Users,
   Star,
   Package,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
+
+/* ------------------------------------------------------------------ */
+/*  Web Speech API — types minimaux (absents de lib.dom.d.ts)          */
+/* ------------------------------------------------------------------ */
+
+interface SpeechRecognitionResultLike {
+  isFinal: boolean;
+  [index: number]: { transcript: string };
+}
+interface SpeechRecognitionEventLike extends Event {
+  results: ArrayLike<SpeechRecognitionResultLike>;
+}
+interface SpeechRecognitionLike extends EventTarget {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  maxAlternatives: number;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: Event) => void) | null;
+  onend: (() => void) | null;
+}
+
+// Reconnaissance (STT) : dictée vocale mappée sur BCP-47. La darija n'a pas
+// de code dédié dans la Web Speech API : on retombe sur l'arabe marocain
+// (ar-MA), le plus proche disponible côté navigateur.
+const SPEECH_LANG: Record<Lang, string> = {
+  da: 'ar-MA',
+  fr: 'fr-FR',
+  en: 'en-US',
+  ar: 'ar-SA',
+  es: 'es-ES',
+};
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -125,8 +163,8 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
   ferry: {
     keywords: ['ferry', 'bateau', 'boat', 'traversée', 'crossing', 'barco', 'عبارة', 'باخرة', 'tanger', 'algeciras', 'barcelona', 'tanger-med', 'med'],
     answers: {
-      da: 'L\'ferry kaymchi men Algeciras (España) l Tanger Med wla Ceuta. L\'prix: 80-200€ 3la koll voiture 7sb l\'mawsem. F l\'sif, khessak t\'reserve zmen! Men Barcelona kayn croisières men marra f l\'usbu3.',
-      fr: 'Les ferries vers le Maroc partent d\'Algeciras (Espagne) vers Tanger Med ou Ceuta. Tarifs : 80-200€ par véhicule selon la saison. En été, réserve à l\'avance ! Depuis Barcelone, il y a des croisières hebdomadaires.',
+      da: 'L\'ferry kaymchi men Algeciras (España) l Tanger Med wla Ceuta. L\'prix: 80-200€ 3la koll voiture 7sb l\'mawsem. F l\'sif, khessak t\'reserve zmen! Men Barcelona kayn croisères men marra f l\'usbu3.',
+      fr: 'Les ferries vers le Maroc partent d\'Algeciras (Espagne) vers Tanger Med ou Ceuta. Tarifs : 80-200€ par véhicule selon la saison. En été, réserve à l\'avance ! Depuis Barcelone, il y a des croisères hebdomadaires.',
       en: 'Ferries to Morocco depart from Algeciras (Spain) to Tanger Med or Ceuta. Fares: €80-200 per vehicle depending on season. Book ahead in summer! From Barcelona there are weekly cruises.',
       ar: 'تعبر العبارات إلى المغرب من الجزيرة الخضراء (إسبانيا) إلى طنجة المتوسط أو سبتة. الأسعار: 80-200 يورو لكل مركبة حسب الموسم. احجز مسبقًا في الصيف! من برشلونة هناك رحلات أسبوعية.',
       es: 'Los ferris a Marruecos salen desde Algeciras (España) hacia Tánger Med o Ceuta. Tarifas: 80-200€ por vehículo según temporada. ¡Reserva con antelación en verano! Desde Barcelona hay cruceros semanales.',
@@ -194,7 +232,7 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
       da: 'L\'météo f l\'Maroc: sif kaykon s7khon (30-45°C f l\'dakhil), l\'khelif kaykon m3tadel f l\'Atlas (20-25°C). F l\'sahel, l\'bhar kaybrred shwia. L\'matar kaybqa 9al f l\'sif. Khdem l\'app dyal l\'météo bach t3ref l\'nhar dyal l\'safar. 7fed l\'crème solaire!',
       fr: 'La météo au Maroc : l\'été est chaud (30-45°C à l\'intérieur), l\'hiver est doux dans l\'Atlas (20-25°C). Sur la côte, la mer rafraîchit un peu. La pluie est rare en été. Consulte l\'app météo avant de partir. N\'oublie pas la crème solaire !',
       en: 'Weather in Morocco: summer is hot (30-45°C inland), winter is mild in the Atlas (20-25°C). On the coast, the sea cools things down. Rain is rare in summer. Check the weather app before your trip. Don\'t forget sunscreen!',
-      ar: 'الطقس في المغرب: الصيف حار (30-45°م في الداخل)، الشتاء معتدل في الأطلس (20-25°م). على الساحل، البحر يبرّد قليلاً. المطر نادر في الصيف. راجع تطبيق الطقس قبل سفرك. لا تنسَ واقي الشمس!',
+      ar: 'الطقس في المغرب: الصيف حار (30-45°م في الداخل)، الشتاء معتدل في الأطلس (20-25°م). على الساحل، البحر يبرّد قليلًا. المطر نادر في الصيف. راجع تطبيق الطقس قبل سفرك. لا تنسَ واقي الشمس!',
       es: 'El clima en Marruecos: el verano es caluroso (30-45°C en el interior), el invierno es suave en el Atlas (20-25°C). En la costa, el mar refresca. La lluvia es rara en verano. Consulta la app del tiempo antes de viajar. ¡No olvides el protector solar!',
     },
     followups: ['packing', 'ramadan', 'route'],
@@ -375,11 +413,89 @@ export default function HadakAI() {
   const [isTyping, setIsTyping] = useState(false);
   const [lastTopic, setLastTopic] = useState<TopicKey | null>(null);
   const [langOpen, setLangOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const handleSendRef = useRef<(text?: string) => void>(() => {});
 
   const isRtl = lang === 'ar' || lang === 'da';
+
+  /* Web Speech API support (STT + TTS) — vérifié une fois côté client. */
+  useEffect(() => {
+    const hasRecognition =
+      typeof window !== 'undefined' &&
+      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+    const hasSynthesis = typeof window !== 'undefined' && 'speechSynthesis' in window;
+    setSpeechSupported(hasRecognition && hasSynthesis);
+  }, []);
+
+  /* Coupe la reconnaissance et la synthèse en cours si le panneau se ferme. */
+  useEffect(() => {
+    if (!open) {
+      recognitionRef.current?.stop();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  }, [open]);
+
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.stop();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  const speak = (text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = SPEECH_LANG[lang];
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const toggleListening = () => {
+    if (!speechSupported) return;
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognitionCtor =
+      (window as unknown as { SpeechRecognition?: new () => SpeechRecognitionLike; webkitSpeechRecognition?: new () => SpeechRecognitionLike })
+        .SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionLike }).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) return;
+
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = SPEECH_LANG[lang];
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1]?.[0]?.transcript?.trim();
+      if (transcript) {
+        // On envoie directement, comme une vraie conversation vocale plutôt
+        // que de forcer un clic supplémentaire sur "Envoyer".
+        handleSendRef.current(transcript);
+      }
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    setIsListening(true);
+    recognition.start();
+  };
 
   /* Auto-scroll to bottom on new messages / typing */
   useEffect(() => {
@@ -416,25 +532,54 @@ export default function HadakAI() {
     return () => document.removeEventListener('click', handler);
   }, [langOpen]);
 
-  const handleSend = (text?: string) => {
+  const handleSend = async (text?: string) => {
     const content = (text ?? input).trim();
     if (!content || isTyping) return;
 
     const userMsg: Message = { role: 'user', content };
-    setMessages((prev) => [...prev, userMsg]);
+    const history = [...messages, userMsg];
+    setMessages(history);
     setInput('');
     setIsTyping(true);
 
-    /* Simulate Hadak "thinking" - varies by message length */
-    const delay = 500 + Math.min(content.length * 15, 600) + Math.random() * 300;
+    try {
+      const response = await fetch('/api/hadak', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          // Le backend ne connaît que role/content — jamais le topic local.
+          messages: history.slice(-20).map(({ role, content: c }) => ({ role, content: c })),
+        }),
+      });
 
-    setTimeout(() => {
-      const { content: answer, topic } = getAnswer(userMsg.content, lang);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
-      setLastTopic(topic);
+      if (response.ok) {
+        const data = await response.json();
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.content, topic: null }]);
+        setLastTopic(null);
+        if (voiceEnabled) speak(data.content);
+        return;
+      }
+      // 503 (pas de clé configurée), 429 (limite atteinte) ou 502 (erreur
+      // amont) : on ne casse jamais la conversation, on retombe sur la base
+      // de connaissances locale ci-dessous.
+    } catch {
+      // Réseau indisponible : même repli.
+    } finally {
       setIsTyping(false);
-    }, delay);
+    }
+
+    const { content: answer, topic } = getAnswer(userMsg.content, lang);
+    setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+    setLastTopic(topic);
+    if (voiceEnabled) speak(answer);
   };
+
+  /* Toujours pointer sur la dernière version de handleSend : la callback
+     onresult de SpeechRecognition est enregistrée une fois par écoute mais
+     ne doit jamais capturer un état obsolète (lang, voiceEnabled...). */
+  useEffect(() => {
+    handleSendRef.current = handleSend;
+  });
 
   /* Quick suggestions based on context */
   const getSuggestions = (): TopicKey[] => {
@@ -550,6 +695,25 @@ export default function HadakAI() {
                 </p>
               </div>
             </div>
+
+            {/* Voice reply toggle */}
+            {speechSupported && (
+              <button
+                onClick={() => {
+                  const next = !voiceEnabled;
+                  setVoiceEnabled(next);
+                  if (!next && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                  }
+                }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10"
+                aria-label={voiceEnabled ? 'Désactiver les réponses vocales' : 'Activer les réponses vocales'}
+                aria-pressed={voiceEnabled}
+                title={voiceEnabled ? 'Réponses vocales activées' : 'Réponses vocales désactivées'}
+              >
+                {voiceEnabled ? <Volume2 className="h-4 w-4 text-[#eead59]" /> : <VolumeX className="h-4 w-4" />}
+              </button>
+            )}
 
             {/* Language selector */}
             <div className="relative" data-lang-dropdown>
@@ -763,6 +927,36 @@ export default function HadakAI() {
                 }}
                 disabled={isTyping}
               />
+              {speechSupported && (
+                <button
+                  onClick={toggleListening}
+                  disabled={isTyping}
+                  className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
+                  style={{
+                    background: isListening
+                      ? 'linear-gradient(135deg, #e05252 0%, #b83a3a 100%)'
+                      : 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(238, 173, 89, 0.15)',
+                  }}
+                  aria-label={isListening ? 'Arrêter la dictée vocale' : 'Parler à Hadak'}
+                  aria-pressed={isListening}
+                  title={isListening ? 'Arrêter la dictée vocale' : 'Parler à Hadak'}
+                >
+                  {isListening && (
+                    <motion.span
+                      className="absolute inset-0 rounded-full"
+                      style={{ backgroundColor: 'rgba(224, 82, 82, 0.35)' }}
+                      animate={{ scale: [1, 1.6, 1.6], opacity: [0.6, 0, 0] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
+                    />
+                  )}
+                  {isListening ? (
+                    <MicOff className="h-4 w-4 text-white" />
+                  ) : (
+                    <Mic className="h-4 w-4 text-white/80" />
+                  )}
+                </button>
+              )}
               <button
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isTyping}
