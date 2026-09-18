@@ -26,7 +26,7 @@ type RateLimitEntry = { count: number; resetAt: number };
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 // Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer'];
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route'];
 
 function getClientKey(request: NextRequest): string {
   // x-forwarded-for peut contenir plusieurs IPs (client, proxies) ; on garde
