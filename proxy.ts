@@ -111,7 +111,7 @@ function applyCorsHeaders(response: NextResponse, request: NextRequest) {
 // Middleware
 // ---------------------------------------------------------------------------
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip static assets entirely.
@@ -174,7 +174,7 @@ export function middleware(request: NextRequest) {
   // la CSP pour rien.
   // Gate strictement sur 'development' (et non "!== 'production'") : Jest
   // exécute les tests avec NODE_ENV="test", qui n'est ni development ni
-  // production. Le test de sécurité __tests__/middleware.test.ts vérifie
+  // production. Le test de sécurité __tests__/proxy.test.ts vérifie
   // que le CSP ne contient JAMAIS 'unsafe-eval' pour garantir qu'aucune
   // régression future ne l'active accidentellement hors dev. Avec
   // "!== 'production'", l'environnement de test aurait aussi reçu

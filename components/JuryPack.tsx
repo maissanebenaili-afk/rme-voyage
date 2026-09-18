@@ -220,7 +220,7 @@ export default function JuryPack() {
                     className="flex flex-col items-center gap-2 rounded-2xl bg-white/5 p-4 text-center transition-colors hover:bg-white/10"
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-40px' }}
+                    viewport={{ once: true, amount: 0, margin: '0px 0px 200px 0px' }}
                     transition={{ duration: 0.35, delay: idx * 0.06, ease: 'easeOut' }}
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eead59]/15">
@@ -248,7 +248,7 @@ export default function JuryPack() {
                 className="flex items-start gap-3 rounded-xl bg-white/5 p-3 transition-colors hover:bg-white/10"
                 initial={{ opacity: 0, x: -8 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
+                viewport={{ once: true, amount: 0, margin: '0px 0px 200px 0px' }}
                 transition={{ duration: 0.3, delay: i * 0.04, ease: 'easeOut' }}
               >
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#eead59]" />
