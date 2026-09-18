@@ -432,7 +432,17 @@ export default function HadakAI() {
         body: JSON.stringify({ message: content, lang }),
       });
 
-      const data = (await response.json()) as { response: string; fallback?: boolean };
+      let data: { response: string; fallback?: boolean };
+      try {
+        data = (await response.json()) as { response: string; fallback?: boolean };
+      } catch {
+        // JSON parse error — likely 404 or server error with HTML response
+        console.error('Failed to parse Hadak response, status:', response.status);
+        const { content: answer, topic } = getAnswer(content, lang);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+        setLastTopic(topic);
+        return;
+      }
 
       const answer = data.response || 'Une erreur s\'est produite.';
       const topic = !data.fallback ? findTopic(content) : null;
