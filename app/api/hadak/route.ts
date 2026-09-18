@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
 
     // No API key configured — fall back gracefully to keyword-based responses
     if (!apiKey) {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
+    const model = 'gpt-4o';
 
     // Build system prompt for Hadak in the user's language
     const systemPrompts: Record<string, string> = {
@@ -45,19 +45,22 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
 
     const systemPrompt = systemPrompts[lang] || systemPrompts.da;
 
-    // Call Anthropic Messages API
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Call OpenAI Chat Completions API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model,
         max_tokens: 1024,
-        system: systemPrompt,
+        temperature: 0.7,
         messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
           {
             role: 'user',
             content: message,
@@ -102,11 +105,11 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
     }
 
     const data = (await response.json()) as {
-      content?: Array<{ type: string; text?: string }>;
+      choices?: Array<{ message?: { content?: string } }>;
     };
     const assistantMessage =
-      data.content?.[0]?.type === 'text' && data.content[0].text
-        ? data.content[0].text
+      data.choices?.[0]?.message?.content
+        ? data.choices[0].message.content
         : 'No response generated';
 
     return NextResponse.json({
