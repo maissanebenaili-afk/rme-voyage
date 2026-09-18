@@ -20,14 +20,20 @@ import type { NextRequest } from 'next/server';
 // partagé et durable : Upstash Redis (`@upstash/ratelimit`) ou Vercel KV.
 // TODO (v1.1+): remplacer ce Map en mémoire par Upstash/Vercel KV.
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance
 
 type RateLimitEntry = { count: number; resetAt: number };
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 // Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
-// /api/hadak has stricter limits (8/min) since it calls a paid LLM.
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/hadak'];
+const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, routes gratuites
+
+// /api/hadak appelle un LLM payant à l'appel (Anthropic) : limite nettement
+// plus stricte que les autres routes (upstream gratuits) pour borner le coût
+// par IP en cas d'abus/boucle client.
+const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
+
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services'];
+const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak'];
 
 function getClientKey(request: NextRequest): string {
   // x-forwarded-for peut contenir plusieurs IPs (client, proxies) ; on garde
@@ -38,7 +44,7 @@ function getClientKey(request: NextRequest): string {
   return ip || 'anonymous';
 }
 
-function isRateLimited(key: string): { limited: boolean; retryAfterSeconds: number } {
+function isRateLimited(key: string, maxRequests: number): { limited: boolean; retryAfterSeconds: number } {
   const now = Date.now();
   const entry = rateLimitStore.get(key);
 
@@ -48,7 +54,7 @@ function isRateLimited(key: string): { limited: boolean; retryAfterSeconds: numb
   }
 
   entry.count += 1;
-  if (entry.count > RATE_LIMIT_MAX_REQUESTS) {
+  if (entry.count > maxRequests) {
     return { limited: true, retryAfterSeconds: Math.ceil((entry.resetAt - now) / 1000) };
   }
 
@@ -103,10 +109,10 @@ function applyCorsHeaders(response: NextResponse, request: NextRequest) {
 }
 
 // ---------------------------------------------------------------------------
-// Middleware
+// Proxy (formerly Middleware)
 // ---------------------------------------------------------------------------
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip static assets entirely.
@@ -123,6 +129,7 @@ export function middleware(request: NextRequest) {
   }
 
   const isRateLimitedRoute = RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isAiRateLimitedRoute = AI_RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isApiRoute = pathname.startsWith('/api/');
 
   // Preflight CORS requests never need to reach the route handler.
@@ -132,9 +139,10 @@ export function middleware(request: NextRequest) {
   }
 
   // Rate limiting for the sensitive public API routes.
-  if (isRateLimitedRoute) {
+  if (isRateLimitedRoute || isAiRateLimitedRoute) {
     const key = `${getClientKey(request)}:${pathname}`;
-    const { limited, retryAfterSeconds } = isRateLimited(key);
+    const maxRequests = isAiRateLimitedRoute ? AI_RATE_LIMIT_MAX_REQUESTS : RATE_LIMIT_MAX_REQUESTS;
+    const { limited, retryAfterSeconds } = isRateLimited(key, maxRequests);
     pruneExpiredEntries(Date.now());
 
     if (limited) {
