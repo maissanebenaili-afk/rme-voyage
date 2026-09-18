@@ -24,6 +24,28 @@ describe("middleware", () => {
     expect(response.headers.get("Content-Security-Policy")).not.toContain("unsafe-eval");
   });
 
+  it("allows same-origin microphone (Hadak voice) but keeps camera disabled", () => {
+    const response = middleware(buildRequest("/"));
+
+    const policy = response.headers.get("Permissions-Policy");
+    expect(policy).toContain("microphone=(self)");
+    expect(policy).toContain("camera=()");
+  });
+
+  it("rate limits /api/hadak more strictly than the standard API routes", () => {
+    const ip = "203.0.113.55";
+    let last;
+
+    for (let i = 0; i < 9; i++) {
+      last = middleware(
+        buildRequest("/api/hadak", { method: "POST", headers: { "x-forwarded-for": ip } }),
+      );
+    }
+
+    expect(last!.status).toBe(429);
+    expect(last!.headers.get("Retry-After")).toBeTruthy();
+  });
+
   it("does not attach CORS headers for a disallowed origin on API routes", () => {
     const response = middleware(
       buildRequest("/api/prayer?latitude=1&longitude=1", {
