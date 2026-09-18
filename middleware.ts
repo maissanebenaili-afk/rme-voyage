@@ -20,13 +20,19 @@ import type { NextRequest } from 'next/server';
 // partagé et durable : Upstash Redis (`@upstash/ratelimit`) ou Vercel KV.
 // TODO (v1.1+): remplacer ce Map en mémoire par Upstash/Vercel KV.
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance
+const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, routes gratuites
+
+// /api/hadak appelle un LLM payant à l'appel (Anthropic) : limite nettement
+// plus stricte que les autres routes (upstream gratuits) pour borner le coût
+// par IP en cas d'abus/boucle client.
+const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
 type RateLimitEntry = { count: number; resetAt: number };
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 // Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
 const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route'];
+const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak'];
 
 function getClientKey(request: NextRequest): string {
   // x-forwarded-for peut contenir plusieurs IPs (client, proxies) ; on garde
@@ -37,7 +43,7 @@ function getClientKey(request: NextRequest): string {
   return ip || 'anonymous';
 }
 
-function isRateLimited(key: string): { limited: boolean; retryAfterSeconds: number } {
+function isRateLimited(key: string, maxRequests: number): { limited: boolean; retryAfterSeconds: number } {
   const now = Date.now();
   const entry = rateLimitStore.get(key);
 
@@ -47,7 +53,7 @@ function isRateLimited(key: string): { limited: boolean; retryAfterSeconds: numb
   }
 
   entry.count += 1;
-  if (entry.count > RATE_LIMIT_MAX_REQUESTS) {
+  if (entry.count > maxRequests) {
     return { limited: true, retryAfterSeconds: Math.ceil((entry.resetAt - now) / 1000) };
   }
 
@@ -122,6 +128,7 @@ export function middleware(request: NextRequest) {
   }
 
   const isRateLimitedRoute = RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isAiRateLimitedRoute = AI_RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isApiRoute = pathname.startsWith('/api/');
 
   // Preflight CORS requests never need to reach the route handler.
@@ -131,9 +138,10 @@ export function middleware(request: NextRequest) {
   }
 
   // Rate limiting for the sensitive public API routes.
-  if (isRateLimitedRoute) {
+  if (isRateLimitedRoute || isAiRateLimitedRoute) {
     const key = `${getClientKey(request)}:${pathname}`;
-    const { limited, retryAfterSeconds } = isRateLimited(key);
+    const maxRequests = isAiRateLimitedRoute ? AI_RATE_LIMIT_MAX_REQUESTS : RATE_LIMIT_MAX_REQUESTS;
+    const { limited, retryAfterSeconds } = isRateLimited(key, maxRequests);
     pruneExpiredEntries(Date.now());
 
     if (limited) {
@@ -196,7 +204,10 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('X-DNS-Prefetch-Control', 'on');
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  // Microphone autorisé en same-origin uniquement : Hadak (assistant vocal)
+  // utilise la Web Speech API du navigateur, jamais d'enregistrement envoyé
+  // à un serveur tiers. Caméra toujours désactivée (aucun usage dans l'app).
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(self)');
 
   return response;
 }
