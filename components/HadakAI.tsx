@@ -402,6 +402,7 @@ export default function HadakAI() {
   const [langOpen, setLangOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+  const [isOffline, setIsOffline] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -509,6 +510,7 @@ export default function HadakAI() {
       // should still trigger the local knowledge base, not display the error message
       if (!response.ok) {
         console.error('Hadak API error, falling back to local KB:', response.status);
+        setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
         setLastTopic(topic);
@@ -521,6 +523,7 @@ export default function HadakAI() {
       } catch {
         // JSON parse error — likely malformed response
         console.error('Failed to parse Hadak response, status:', response.status);
+        setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
         setLastTopic(topic);
@@ -528,12 +531,14 @@ export default function HadakAI() {
       }
 
       if (data.fallback || !data.response) {
+        setIsOffline(true);
         const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic }]);
         setLastTopic(localTopic);
         return;
       }
 
+      setIsOffline(false);
       const answer = data.response;
       const topic = findTopic(content);
 
@@ -541,6 +546,7 @@ export default function HadakAI() {
       setLastTopic(topic);
     } catch (error) {
       console.error('Error calling Hadak API:', error);
+      setIsOffline(true);
       const { content: answer, topic } = getAnswer(content, lang);
       setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
       setLastTopic(topic);
@@ -655,6 +661,11 @@ export default function HadakAI() {
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 Hadak
                 <span className="text-xs font-normal text-[#eead59]">AI</span>
+                {isOffline && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#eead59]/20 px-2 py-0.5 text-[10px] font-bold text-[#eead59]">
+                    ⚡ Mode limité
+                  </span>
+                )}
               </h3>
               <div className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
