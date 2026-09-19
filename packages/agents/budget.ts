@@ -1,4 +1,5 @@
 import { AgentConfig, AgentResponse } from '../types/agent';
+import { getRegionalKnowledge } from '../utils/regional-knowledge';
 
 export class BudgetAgent {
   private config: AgentConfig;
@@ -59,26 +60,41 @@ export class BudgetAgent {
     const daysMatch = message.match(/(\d+)\s*(?:days?|jours?|d[ií]as)/i);
     const days = daysMatch ? parseInt(daysMatch[1]) : 7;
 
-    // TODO: Integrate with real cost APIs
+    // Regional cost estimates (USD per day)
+    const regionalCosts: Record<string, any> = {
+      Morocco: { accommodation: 45, food: 30, transport: 15, activities: 20, currency: 'MAD' },
+      Senegal: { accommodation: 40, food: 25, transport: 12, activities: 15, currency: 'XOF' },
+      Guinea: { accommodation: 35, food: 20, transport: 10, activities: 12, currency: 'GNF' },
+      Mali: { accommodation: 30, food: 18, transport: 8, activities: 10, currency: 'XOF' },
+      Nigeria: { accommodation: 50, food: 28, transport: 15, activities: 18, currency: 'NGN' },
+      Kenya: { accommodation: 55, food: 32, transport: 18, activities: 25, currency: 'KES' },
+      Tanzania: { accommodation: 48, food: 28, transport: 14, activities: 20, currency: 'TZS' },
+      DRC: { accommodation: 35, food: 22, transport: 12, activities: 14, currency: 'CDF' },
+    };
+
+    const country = this.config.country || 'Morocco';
+    const costData = regionalCosts[country] || { accommodation: 45, food: 30, transport: 15, activities: 20, currency: 'USD' };
+
     const budgetBreakdown = {
-      accommodation: 45 * days,
-      food: 30 * days,
-      transport: 100,
-      activities: 80,
-      contingency: 50,
+      accommodation: costData.accommodation * days,
+      food: costData.food * days,
+      transport: costData.transport * days + 50, // Add inter-city transport
+      activities: costData.activities * days,
+      contingency: Math.round((costData.accommodation + costData.food + costData.transport + costData.activities) * days * 0.1),
     };
 
     const total = Object.values(budgetBreakdown).reduce((a, b) => a + b, 0);
 
     return {
-      text: this.formatBudgetResponse(budgetBreakdown, total, days, lang),
+      text: this.formatBudgetResponse(budgetBreakdown, total, days, lang, country),
       agent: 'BUDGET',
       confidence: 0.8,
       metadata: {
         queryType: 'budget',
         days,
         estimatedTotal: total,
-        currency: 'USD',
+        currency: costData.currency,
+        country,
       },
       followups: [
         `Adjust budget for premium accommodations`,
@@ -92,28 +108,62 @@ export class BudgetAgent {
     // Extract currency pairs from message
     const currencyMatch = message.match(/([A-Z]{3})\s*(?:to|vers|a)\s*([A-Z]{3})/i);
 
-    // TODO: Integrate with exchange rate API
+    // Comprehensive exchange rates for African diaspora
     const rates: Record<string, number> = {
+      // Europe-Africa
       'EUR-MAD': 10.5,
       'USD-MAD': 9.8,
       'GBP-MAD': 12.3,
       'EUR-USD': 1.08,
       'USD-EUR': 0.92,
+      // West African
+      'EUR-XOF': 655.96,  // CFA Franc
+      'USD-XOF': 607.26,
+      'EUR-GNF': 9180.0,  // Guinean Franc
+      'USD-GNF': 8500.0,
+      // East African
+      'EUR-KES': 134.5,   // Kenyan Shilling
+      'USD-KES': 124.6,
+      'EUR-TZS': 2830.0,  // Tanzanian Shilling
+      'USD-TZS': 2620.0,
+      // Central African
+      'EUR-CDF': 2850.0,  // Congolese Franc
+      'USD-CDF': 2640.0,
+      // Nigerian
+      'EUR-NGN': 1650.0,  // Nigerian Naira
+      'USD-NGN': 1530.0,
+      // Reverse rates
+      'MAD-EUR': 0.095,
+      'MAD-USD': 0.102,
+      'XOF-EUR': 0.00153,
+      'XOF-USD': 0.00165,
+      'KES-EUR': 0.0074,
+      'KES-USD': 0.008,
     };
 
     const from = currencyMatch ? currencyMatch[1].toUpperCase() : 'EUR';
     const to = currencyMatch ? currencyMatch[2].toUpperCase() : 'MAD';
     const rateKey = `${from}-${to}`;
-    const rate = rates[rateKey] || 10.5;
+    let rate = rates[rateKey];
+
+    if (!rate) {
+      rate = 10.5; // Default fallback
+    }
 
     return {
       text: this.formatExchangeResponse(from, to, rate, lang),
       agent: 'BUDGET',
       confidence: 0.85,
-      metadata: { queryType: 'exchange', from, to, rate, timestamp: new Date().toISOString() },
+      metadata: {
+        queryType: 'exchange',
+        from,
+        to,
+        rate,
+        timestamp: new Date().toISOString(),
+      },
       followups: [
         `Ask for conversion of specific amount`,
-        `Request historical rate trends`,
+        `Request rates for other currency pairs`,
       ],
     };
   }
@@ -152,24 +202,64 @@ export class BudgetAgent {
     breakdown: any,
     total: number,
     days: number,
-    lang: string
+    lang: string,
+    country: string = 'Morocco'
   ): string {
-    const text = `
-💰 ${days}-day trip budget:
+    const perDay = (total / days).toFixed(0);
+    const template = `
+💰 ${days}-day trip budget (${country}):
 - Accommodation: $${breakdown.accommodation}
 - Food: $${breakdown.food}
 - Transport: $${breakdown.transport}
 - Activities: $${breakdown.activities}
 - Contingency: $${breakdown.contingency}
 ---
-Total: $${total} (${(total / days).toFixed(0)}/day)`;
+Total: $${total} (~$${perDay}/day)`;
 
     const responses: Record<string, string> = {
-      da: `💰 Budjet n ${days} yam: ${text}`,
-      fr: `${text}`,
-      en: `${text}`,
-      ar: `${text}`,
-      es: `${text}`,
+      da: `💰 Budjet n ${days} yam (${country}):
+- Accommodation: $${breakdown.accommodation}
+- Food: $${breakdown.food}
+- Transport: $${breakdown.transport}
+- Activities: $${breakdown.activities}
+- Contingency: $${breakdown.contingency}
+Total: $${total}`,
+      fr: `💰 Budget de ${days} jours (${country}):
+- Hébergement: $${breakdown.accommodation}
+- Nourriture: $${breakdown.food}
+- Transport: $${breakdown.transport}
+- Activités: $${breakdown.activities}
+- Urgence: $${breakdown.contingency}
+Total: $${total} (~$${perDay}/jour)`,
+      en: template,
+      ar: `💰 ميزانية ${days} يوم (${country}):
+- الإقامة: $${breakdown.accommodation}
+- الطعام: $${breakdown.food}
+- النقل: $${breakdown.transport}
+- الأنشطة: $${breakdown.activities}
+- الطوارئ: $${breakdown.contingency}
+الإجمالي: $${total}`,
+      es: `💰 Presupuesto de ${days} días (${country}):
+- Alojamiento: $${breakdown.accommodation}
+- Comida: $${breakdown.food}
+- Transporte: $${breakdown.transport}
+- Actividades: $${breakdown.activities}
+- Contingencia: $${breakdown.contingency}
+Total: $${total} (~$${perDay}/día)`,
+      wo: `💰 Budjet ${days} fan (${country}):
+- Hébergement: $${breakdown.accommodation}
+- Manger: $${breakdown.food}
+- Transport: $${breakdown.transport}
+- Activités: $${breakdown.activities}
+- Urgence: $${breakdown.contingency}
+Total: $${total}`,
+      sw: `💰 Bajeti ya siku ${days} (${country}):
+- Makazi: $${breakdown.accommodation}
+- Chakula: $${breakdown.food}
+- Usafiri: $${breakdown.transport}
+- Shughuli: $${breakdown.activities}
+- Dharura: $${breakdown.contingency}
+Jumla: $${total}`,
     };
 
     return responses[lang] || responses.en;
