@@ -22,6 +22,7 @@ import {
   Users,
   Star,
   Package,
+  Clock,
   Mic,
   MicOff,
   Volume2,
@@ -61,7 +62,8 @@ type TopicKey =
   | 'fuel'
   | 'family'
   | 'ramadan'
-  | 'packing';
+  | 'packing'
+  | 'time';
 
 /* ------------------------------------------------------------------ */
 /*  Knowledge base                                                     */
@@ -87,6 +89,7 @@ const TOPIC_ICON: Record<TopicKey, typeof Plane> = {
   family: Users,
   ramadan: Star,
   packing: Package,
+  time: Clock,
 };
 
 interface Topic {
@@ -284,6 +287,17 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
     },
     followups: ['documents', 'weather', 'family'],
   },
+  time: {
+    keywords: ['heure', 'time', 'hora', 'وقت', 'quelle heure', 'what time', 'horaire', 'clock', 'maintenant', 'now', 'ahora', 'horas', 'l\'heure', 'wa9t', 'وقت'],
+    answers: {
+      da: 'L\'wa9t f l\'Maghrib: UTC+1 (ma kaytaghayrch). F l\'Maghrib daba, 7seb +1h men Greenwich (London). L\'wa9t f bladan okhra bhal New York, Paris... Hadak ma ka3refhash bla mode IA — check l\'phone dyalek!',
+      fr: 'Le Maroc est en UTC+1 toute l\'année (pas de changement d\'heure). Pour l\'heure dans d\'autres villes (New York, Paris, Dubai...), consulte l\'horloge mondiale de ton téléphone.',
+      en: 'Morocco is UTC+1 year-round (no daylight saving). For the time in other cities (New York, Paris, Dubai...), check the world clock on your phone.',
+      ar: 'المغرب في UTC+1 طوال العام (بدون تغيير للتوقيت). لمعرفة الوقت في مدن أخرى (نيويورك، باريس، دبي...)، راجع ساعة العالم في هاتفك.',
+      es: 'Marruecos es UTC+1 todo el año (sin cambio de hora). Para conocer la hora en otras ciudades (Nueva York, París, Dubái...), consulta el reloj mundial de tu teléfono.',
+    },
+    followups: ['prayer', 'route', 'weather'],
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -330,6 +344,7 @@ const TOPIC_LABELS: Record<TopicKey, Record<Lang, string>> = {
   family: { da: 'M3a l\'3a2ila?', fr: 'En famille ?', en: 'With family?', ar: 'مع العائلة؟', es: '¿En familia?' },
   ramadan: { da: 'Ramdan?', fr: 'Ramadan ?', en: 'Ramadan?', ar: 'رمضان؟', es: '¿Ramadán?' },
   packing: { da: 'Packing?', fr: 'Bagage ?', en: 'Packing?', ar: 'الحقائب؟', es: '¿Equipaje?' },
+  time: { da: 'L\'wa9t?', fr: 'Heure ?', en: 'Time?', ar: 'الوقت؟', es: '¿Hora?' },
 };
 
 const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'documents', 'ramadan'];
