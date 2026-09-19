@@ -51,7 +51,7 @@ async function confirmAlert(alertId: string | undefined, verdict: string | undef
   const alerts = await loadAlerts();
   const alert = alerts.find((a) => a.id === alertId);
   if (!alert) {
-    console.error(`No alert found with id "${alertId}"`);
+    console.error('No alert found');
     process.exit(1);
   }
   await appendFeedback({

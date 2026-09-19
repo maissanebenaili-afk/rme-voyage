@@ -95,7 +95,7 @@ export async function GET(request: Request) {
 
   const center = await geocodePlace(place);
   if (!center) {
-    return Response.json({ error: `Lieu introuvable : ${place}` }, { status: 404 });
+    return Response.json({ error: 'Location not found' }, { status: 404 });
   }
 
   const filter = OVERPASS_FILTERS[category];

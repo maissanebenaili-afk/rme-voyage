@@ -20,6 +20,11 @@ import type { NextRequest } from 'next/server';
 // partagé et durable : Upstash Redis (`@upstash/ratelimit`) ou Vercel KV.
 // TODO (v1.1+): remplacer ce Map en mémoire par Upstash/Vercel KV.
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+
+type RateLimitEntry = { count: number; resetAt: number };
+const rateLimitStore = new Map<string, RateLimitEntry>();
+
+// Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
 const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, routes gratuites
 
 // /api/hadak appelle un LLM payant à l'appel (Anthropic) : limite nettement
@@ -27,10 +32,6 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, ro
 // par IP en cas d'abus/boucle client.
 const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
-type RateLimitEntry = { count: number; resetAt: number };
-const rateLimitStore = new Map<string, RateLimitEntry>();
-
-// Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
 const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services'];
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak'];
 
@@ -108,7 +109,7 @@ function applyCorsHeaders(response: NextResponse, request: NextRequest) {
 }
 
 // ---------------------------------------------------------------------------
-// Middleware
+// Proxy (formerly Middleware)
 // ---------------------------------------------------------------------------
 
 export function proxy(request: NextRequest) {
@@ -174,7 +175,7 @@ export function proxy(request: NextRequest) {
   // la CSP pour rien.
   // Gate strictement sur 'development' (et non "!== 'production'") : Jest
   // exécute les tests avec NODE_ENV="test", qui n'est ni development ni
-  // production. Le test de sécurité __tests__/proxy.test.ts vérifie
+  // production. Le test de sécurité __tests__/middleware.test.ts vérifie
   // que le CSP ne contient JAMAIS 'unsafe-eval' pour garantir qu'aucune
   // régression future ne l'active accidentellement hors dev. Avec
   // "!== 'production'", l'environnement de test aurait aussi reçu
@@ -190,6 +191,7 @@ export function proxy(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com https://cdn.fontshare.com",
     "font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com",
     "img-src 'self' data: https: blob:",
+    // Note: Anthropic API called server-side, not from browser — not needed in CSP
     "connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com",
     "frame-src 'self' https://www.openstreetmap.org",
     "frame-ancestors 'none'",
@@ -204,9 +206,6 @@ export function proxy(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('X-DNS-Prefetch-Control', 'on');
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-  // Microphone autorisé en same-origin uniquement : Hadak (assistant vocal)
-  // utilise la Web Speech API du navigateur, jamais d'enregistrement envoyé
-  // à un serveur tiers. Caméra toujours désactivée (aucun usage dans l'app).
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(self)');
 
   return response;

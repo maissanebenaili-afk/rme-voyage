@@ -14,7 +14,7 @@ export class LiveCurrencyRateSource implements GlobalDataSource {
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) {
-      throw new Error(`open.er-api.com returned HTTP ${res.status}`);
+      throw new Error('Failed to fetch exchange rate data');
     }
     const data = (await res.json()) as {
       result?: string;

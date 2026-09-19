@@ -15,8 +15,16 @@ const DEFAULT_PATH = path.resolve(HERE, '../../../fixtures/facts.sample.json');
  */
 export class StaticFactsSource implements GlobalDataSource {
   name = 'static-facts-file';
+  private readonly filePath: string;
 
-  constructor(private readonly filePath: string = DEFAULT_PATH) {}
+  constructor(filePath: string = DEFAULT_PATH) {
+    const resolvedPath = path.resolve(filePath);
+    const defaultResolved = path.resolve(DEFAULT_PATH);
+    if (!resolvedPath.startsWith(path.dirname(defaultResolved))) {
+      throw new Error('Invalid facts source path');
+    }
+    this.filePath = resolvedPath;
+  }
 
   async fetch(): Promise<GlobalDataFact[]> {
     const raw = await fs.readFile(this.filePath, 'utf-8');

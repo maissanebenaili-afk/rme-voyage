@@ -48,7 +48,8 @@ export class AnthropicProposer implements Proposer {
     });
 
     if (!res.ok) {
-      throw new Error(`Anthropic API error ${res.status}: ${await res.text()}`);
+      await res.text();
+      throw new Error(`Failed to propose entry (HTTP ${res.status})`);
     }
 
     const data = (await res.json()) as { content?: { type: string; text?: string }[] };

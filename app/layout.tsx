@@ -1,7 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Analytics } from '@vercel/analytics/next';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import { Inter, Plus_Jakarta_Sans, Amiri } from 'next/font/google';
 import PWAInstall from '@/components/PWAInstall';
@@ -134,7 +133,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <ServiceWorkerRegistration />
         <SpeedInsights />
-        <Analytics />
         <RegisterSW />
         <PWAInstall />
         <Accessibility />

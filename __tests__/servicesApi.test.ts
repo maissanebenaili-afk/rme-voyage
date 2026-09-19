@@ -52,7 +52,7 @@ describe("GET /api/services", () => {
     const data = await response.json();
 
     expect(response.status).toBe(404);
-    expect(data.error).toMatch(/Nullepart/);
+    expect(data.error).toMatch(/Location not found/);
   });
 
   it("geocodes the place then returns Overpass results sorted by distance, nearest first", async () => {
