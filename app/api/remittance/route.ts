@@ -55,16 +55,18 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: 'Invalid amount' }, { status: 400 });
   }
 
-  // Fetch mid-market rate — free, no API key required
+  // Fetch mid-market rate — fawaz-ahmed currency API, free, no key, supports MAD
   let midRate: number;
   try {
+    const baseCurrency = from.toLowerCase();
+    const targetCurrency = to.toLowerCase();
     const rateRes = await fetch(
-      `https://api.frankfurter.app/latest?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${encodeURIComponent(baseCurrency)}.json`,
       { next: { revalidate: 3600 } }
     );
     if (!rateRes.ok) throw new Error('upstream');
-    const rateData = (await rateRes.json()) as { rates?: Record<string, number> };
-    midRate = rateData.rates?.[to] ?? 0;
+    const rateData = (await rateRes.json()) as Record<string, Record<string, number>>;
+    midRate = rateData[baseCurrency]?.[targetCurrency] ?? 0;
     if (!midRate) throw new Error('no rate');
   } catch {
     return Response.json({ error: 'Exchange rate unavailable' }, { status: 502 });
