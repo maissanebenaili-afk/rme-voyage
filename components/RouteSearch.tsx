@@ -190,8 +190,16 @@ export default function RouteSearch() {
           </ul>
         )}
 
+        {transportMode !== "car" && (
+          <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+            {transportMode === "flight"
+              ? "✈️ La recherche de vols arrive bientôt. En attendant, consultez Google Flights ou Skyscanner."
+              : "⛴️ L'itinéraire voiture + ferry arrive bientôt. Le calcul routier seul est disponible pour l'instant."}
+          </p>
+        )}
+
         <div className="mt-4 flex flex-wrap gap-2">
-          {validation.valid && (
+          {validation.valid && transportMode === "car" && (
             <button
               type="button"
               onClick={calculateRoute}

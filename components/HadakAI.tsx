@@ -403,11 +403,12 @@ export default function HadakAI() {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const [isOffline, setIsOffline] = useState(false);
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isRtl = lang === 'ar' || lang === 'da';
+  const isRtl = lang === 'ar';
 
   /* Auto-scroll to bottom on new messages / typing */
   useEffect(() => {
@@ -452,7 +453,7 @@ export default function HadakAI() {
     const recognitionInstance = new SpeechRecognitionConstructor();
     recognitionInstance.continuous = false;
     recognitionInstance.interimResults = false;
-    recognitionInstance.lang = lang === 'ar' ? 'ar-SA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
+    recognitionInstance.lang = lang === 'ar' ? 'ar-SA' : lang === 'da' ? 'ar-MA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
 
     recognitionInstance.onstart = () => {
       setIsListening(true);
@@ -488,6 +489,23 @@ export default function HadakAI() {
       setInput('');
       recognition.start();
     }
+  };
+
+  const speakMessage = (content: string, idx: number) => {
+    if (!('speechSynthesis' in window)) return;
+    if (speakingIdx === idx) {
+      window.speechSynthesis.cancel();
+      setSpeakingIdx(null);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(content);
+    utterance.lang = lang === 'ar' ? 'ar-SA' : lang === 'da' ? 'ar-MA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
+    utterance.rate = 0.95;
+    utterance.onstart = () => setSpeakingIdx(idx);
+    utterance.onend = () => setSpeakingIdx(null);
+    utterance.onerror = () => setSpeakingIdx(null);
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleSend = async (text?: string) => {
@@ -752,22 +770,34 @@ export default function HadakAI() {
                       )}
                     </div>
                   )}
-                  <div
-                    className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'text-[#0d3f38] font-medium'
-                        : 'text-white/95'
-                    }`}
-                    style={{
-                      background:
+                  <div className="flex flex-col gap-1">
+                    <div
+                      className={`max-w-full rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                         msg.role === 'user'
-                          ? 'linear-gradient(135deg, #eead59 0%, #d49934 100%)'
-                          : 'rgba(255, 255, 255, 0.08)',
-                      borderTopRightRadius: msg.role === 'user' ? '6px' : undefined,
-                      borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
-                    }}
-                  >
-                    {msg.content}
+                          ? 'text-[#0d3f38] font-medium'
+                          : 'text-white/95'
+                      }`}
+                      style={{
+                        background:
+                          msg.role === 'user'
+                            ? 'linear-gradient(135deg, #eead59 0%, #d49934 100%)'
+                            : 'rgba(255, 255, 255, 0.08)',
+                        borderTopRightRadius: msg.role === 'user' ? '6px' : undefined,
+                        borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
+                      }}
+                    >
+                      {msg.content}
+                    </div>
+                    {msg.role === 'assistant' && (
+                      <button
+                        onClick={() => speakMessage(msg.content, i)}
+                        className="self-start ms-1 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] text-white/40 hover:text-[#eead59] transition-colors"
+                        aria-label={speakingIdx === i ? 'Arrêter' : 'Écouter'}
+                      >
+                        <Volume2 className={`h-3 w-3 ${speakingIdx === i ? 'text-[#eead59]' : ''}`} />
+                        {speakingIdx === i ? 'Stop' : 'Écouter'}
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               );

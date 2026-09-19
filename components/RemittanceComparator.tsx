@@ -25,6 +25,7 @@ interface RemittanceData {
 export default function RemittanceComparator() {
   const { t } = useLanguage();
   const [amount, setAmount] = useState(500);
+  const [currency, setCurrency] = useState<'EUR' | 'GBP' | 'CHF'>('EUR');
   const [data, setData] = useState<RemittanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -35,7 +36,7 @@ export default function RemittanceComparator() {
     debounceRef.current = setTimeout(() => {
       setLoading(true);
       setError(false);
-      fetch(`/api/remittance?amount=${amount}`)
+      fetch(`/api/remittance?amount=${amount}&from=${currency}`)
         .then((r) => {
           if (!r.ok) throw new Error('fetch failed');
           return r.json() as Promise<RemittanceData>;
@@ -44,7 +45,7 @@ export default function RemittanceComparator() {
         .catch(() => { setError(true); setLoading(false); });
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [amount]);
+  }, [amount, currency]);
 
   return (
     <section id="transfert" className="w-full max-w-3xl mx-auto px-4 py-10">
@@ -52,7 +53,7 @@ export default function RemittanceComparator() {
 
       {data && !loading && (
         <p className="text-sm text-[#173a36]/60 mb-6">
-          {t('remittanceMidRate')}: <span className="font-semibold">1 EUR = {data.midRate.toFixed(4)} MAD</span>
+          {t('remittanceMidRate')}: <span className="font-semibold">1 {currency} = {data.midRate.toFixed(4)} MAD</span>
         </p>
       )}
 
@@ -70,7 +71,17 @@ export default function RemittanceComparator() {
             onChange={(e) => setAmount(Math.max(1, Math.min(100000, Number(e.target.value))))}
             className="w-36 rounded-xl border border-[#173a36]/20 bg-white px-4 py-2 text-lg font-semibold text-[#173a36] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/50"
           />
-          <span className="text-[#173a36]/50 text-sm">EUR → MAD</span>
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value as 'EUR' | 'GBP' | 'CHF')}
+            className="rounded-xl border border-[#173a36]/20 bg-white px-3 py-2 text-sm font-semibold text-[#173a36] focus:outline-none focus:ring-2 focus:ring-[#d4af37]/50"
+            aria-label="Devise d'envoi"
+          >
+            <option value="EUR">EUR 🇪🇺</option>
+            <option value="GBP">GBP 🇬🇧</option>
+            <option value="CHF">CHF 🇨🇭</option>
+          </select>
+          <span className="text-[#173a36]/50 text-sm">→ MAD</span>
         </div>
       </div>
 
