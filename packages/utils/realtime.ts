@@ -53,7 +53,7 @@ export async function getPrayerTimes(
     url.searchParams.set('longitude', coords.lon.toString());
     url.searchParams.set('method', '5');
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error('Aladhan API error');
@@ -143,7 +143,7 @@ export async function getWeather(
     url.searchParams.set('appid', apiKey);
     url.searchParams.set('units', 'metric');
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error('OpenWeatherMap API error');
