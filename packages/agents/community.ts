@@ -11,7 +11,7 @@ export class CommunityAgent {
     const { userId, lang } = this.config;
 
     // Extract location from message
-    const locationMatch = message.match(/(?:à|in|في|a)\s+(\w+)/i);
+    const locationMatch = message.match(/(?:à|in|a)\s+([a-zA-Z]+)/i);
     const location = locationMatch ? locationMatch[1] : null;
 
     if (!location) {

@@ -56,7 +56,7 @@ export class BudgetAgent {
     lang: string
   ): Promise<AgentResponse> {
     // Extract budget components from message
-    const daysMatch = message.match(/(\d+)\s*(?:days?|jours?|أيام|días)/i);
+    const daysMatch = message.match(/(\d+)\s*(?:days?|jours?|d[ií]as)/i);
     const days = daysMatch ? parseInt(daysMatch[1]) : 7;
 
     // TODO: Integrate with real cost APIs
@@ -90,7 +90,7 @@ export class BudgetAgent {
 
   private async getExchangeRates(message: string, lang: string): Promise<AgentResponse> {
     // Extract currency pairs from message
-    const currencyMatch = message.match(/(\w{3})\s*(?:to|vers|إلى|a)\s*(\w{3})/i);
+    const currencyMatch = message.match(/([A-Z]{3})\s*(?:to|vers|a)\s*([A-Z]{3})/i);
 
     // TODO: Integrate with exchange rate API
     const rates: Record<string, number> = {
@@ -120,7 +120,7 @@ export class BudgetAgent {
 
   private async estimateItemCost(message: string, lang: string): Promise<AgentResponse> {
     // Extract item from message
-    const itemMatch = message.match(/(?:cost|price|coût|precio)\s+(?:of|d'|de|del)\s+(\w+)/i);
+    const itemMatch = message.match(/(?:cost|price|coût)\s+(?:of|de)\s+([a-z]+)/i);
     const item = itemMatch ? itemMatch[1] : 'hotel';
 
     // TODO: Integrate with cost database

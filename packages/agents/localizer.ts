@@ -64,7 +64,7 @@ export class LocalizerAgent {
 
   private async getPrayerTimes(message: string, lang: string): Promise<AgentResponse> {
     // Extract city from message
-    const cityMatch = message.match(/(?:à|in|في|a)\s+(\w+)/i);
+    const cityMatch = message.match(/(?:à|in|a)\s+([a-zA-Z]+)/i);
     const city = cityMatch ? cityMatch[1] : 'your location';
 
     // TODO: Integrate with Aladhan API or similar
@@ -89,7 +89,7 @@ export class LocalizerAgent {
   }
 
   private async getWeather(message: string, lang: string): Promise<AgentResponse> {
-    const cityMatch = message.match(/(?:à|in|في|a)\s+(\w+)/i);
+    const cityMatch = message.match(/(?:à|in|a)\s+([a-zA-Z]+)/i);
     const city = cityMatch ? cityMatch[1] : 'your location';
 
     // TODO: Integrate with OpenWeatherMap or similar
@@ -113,7 +113,7 @@ export class LocalizerAgent {
   }
 
   private async getLocalInfo(message: string, lang: string): Promise<AgentResponse> {
-    const cityMatch = message.match(/(?:à|in|في|a)\s+(\w+)/i);
+    const cityMatch = message.match(/(?:à|in|a)\s+([a-zA-Z]+)/i);
     const city = cityMatch ? cityMatch[1] : 'your location';
 
     // TODO: Integrate with local database or APIs
