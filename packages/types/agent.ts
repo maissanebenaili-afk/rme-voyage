@@ -1,9 +1,13 @@
+import type { LanguageCode } from '../utils/languages';
+
 export interface AgentConfig {
   userId: string;
-  lang: 'da' | 'fr' | 'en' | 'ar' | 'es';
+  lang: LanguageCode;
   conversationHistory: ConversationMessage[];
   timezone?: string;
   currentLocation?: string;
+  region?: string;
+  country?: string;
 }
 
 export interface ConversationMessage {
