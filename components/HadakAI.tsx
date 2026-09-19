@@ -510,8 +510,15 @@ export default function HadakAI() {
         return;
       }
 
-      const answer = data.response || 'Une erreur s\'est produite.';
-      const topic = !data.fallback ? findTopic(content) : null;
+      if (data.fallback || !data.response) {
+        const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
+        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic }]);
+        setLastTopic(localTopic);
+        return;
+      }
+
+      const answer = data.response;
+      const topic = findTopic(content);
 
       setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
       setLastTopic(topic);
