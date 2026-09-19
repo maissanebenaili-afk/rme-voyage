@@ -1,0 +1,94 @@
+import type { NextRequest } from 'next/server';
+
+const PROVIDERS = [
+  {
+    id: 'wise',
+    name: 'Wise',
+    spread: 0.005,
+    fee: 3.89,
+    time: '1-2j',
+    affiliateEnvKey: 'WISE_AFFILIATE_URL',
+  },
+  {
+    id: 'worldremit',
+    name: 'WorldRemit',
+    spread: 0.015,
+    fee: 2.49,
+    time: '24h',
+    affiliateEnvKey: 'WORLDREMIT_AFFILIATE_URL',
+  },
+  {
+    id: 'remitly',
+    name: 'Remitly',
+    spread: 0.010,
+    fee: 3.99,
+    time: '1-3j',
+    affiliateEnvKey: 'REMITLY_AFFILIATE_URL',
+  },
+  {
+    id: 'western-union',
+    name: 'Western Union',
+    spread: 0.020,
+    fee: 1.99,
+    time: 'Instant',
+    affiliateEnvKey: 'WESTERN_UNION_AFFILIATE_URL',
+  },
+  {
+    id: 'moneygram',
+    name: 'MoneyGram',
+    spread: 0.018,
+    fee: 1.99,
+    time: 'Instant',
+    affiliateEnvKey: 'MONEYGRAM_AFFILIATE_URL',
+  },
+] as const;
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+
+  const rawAmount = searchParams.get('amount');
+  const from = searchParams.get('from') || 'EUR';
+  const to = searchParams.get('to') || 'MAD';
+
+  const amount = rawAmount ? parseFloat(rawAmount) : 500;
+  if (!isFinite(amount) || amount <= 0 || amount > 1_000_000) {
+    return Response.json({ error: 'Invalid amount' }, { status: 400 });
+  }
+
+  // Fetch mid-market rate — free, no API key required
+  let midRate: number;
+  try {
+    const rateRes = await fetch(
+      `https://api.frankfurter.app/latest?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
+      { next: { revalidate: 3600 } }
+    );
+    if (!rateRes.ok) throw new Error('upstream');
+    const rateData = (await rateRes.json()) as { rates?: Record<string, number> };
+    midRate = rateData.rates?.[to] ?? 0;
+    if (!midRate) throw new Error('no rate');
+  } catch {
+    return Response.json({ error: 'Exchange rate unavailable' }, { status: 502 });
+  }
+
+  const results = PROVIDERS.map((p) => {
+    const netSent = amount - p.fee;
+    const received = netSent > 0 ? netSent * midRate * (1 - p.spread) : 0;
+    return {
+      id: p.id,
+      name: p.name,
+      fee: p.fee,
+      appliedRate: parseFloat((midRate * (1 - p.spread)).toFixed(4)),
+      received: parseFloat(received.toFixed(2)),
+      time: p.time,
+      affiliateUrl: process.env[p.affiliateEnvKey] || null,
+    };
+  }).sort((a, b) => b.received - a.received);
+
+  return Response.json({
+    from,
+    to,
+    amount,
+    midRate,
+    providers: results,
+  });
+}
