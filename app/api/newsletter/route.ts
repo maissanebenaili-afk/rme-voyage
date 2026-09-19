@@ -9,7 +9,14 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  // Linear-time structural validation — avoids ReDoS from nested quantifiers.
+  const atIdx = email.indexOf('@');
+  const isValidEmail =
+    atIdx > 0 &&
+    atIdx < email.length - 1 &&
+    !email.includes(' ') &&
+    (() => { const domain = email.slice(atIdx + 1); const dot = domain.lastIndexOf('.'); return dot > 0 && dot < domain.length - 1; })();
+  if (!isValidEmail) {
     return Response.json({ error: 'Email invalide' }, { status: 400 });
   }
 
