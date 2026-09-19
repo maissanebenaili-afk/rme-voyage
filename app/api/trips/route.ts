@@ -188,7 +188,20 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
       }
 
-      updatedTrip = { ...userTrips[tripIndex], ...updateData };
+      const existingTrip = userTrips[tripIndex];
+      updatedTrip = {
+        id: existingTrip.id,
+        user_id: existingTrip.user_id,
+        origin: existingTrip.origin,
+        destination: existingTrip.destination,
+        start_date: existingTrip.start_date,
+        end_date: existingTrip.end_date,
+        budget_usd: updateData.budget_usd !== undefined ? updateData.budget_usd : existingTrip.budget_usd,
+        currency: existingTrip.currency,
+        status: updateData.status || existingTrip.status,
+        created_at: existingTrip.created_at,
+        updated_at: updateData.updated_at,
+      };
       userTrips[tripIndex] = updatedTrip;
     }
 
