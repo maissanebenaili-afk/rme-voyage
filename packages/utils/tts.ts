@@ -115,9 +115,7 @@ export async function speakAssistantResponse(
   try {
     // Add slight delays at sentence/punctuation boundaries for clarity
     const processedText = text
-      .replace(/\. /g, '. ') // Ensure space after period
-      .replace(/\? /g, '? ')
-      .replace(/! /g, '! ')
+      .replace(/([.!?])([^ ])/g, '$1 $2') // Ensure space after punctuation
       .replace(/:/g, ': '); // Add space after colons
 
     await speak(processedText, {

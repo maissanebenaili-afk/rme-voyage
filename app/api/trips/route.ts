@@ -43,8 +43,16 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, origin, destination, startDate, endDate, budgetUsd, currency = 'USD' } =
-      await req.json();
+    const body = await req.json();
+
+    // Explicitly extract only expected fields to prevent prototype pollution
+    const userId = body.userId as string;
+    const origin = body.origin as string;
+    const destination = body.destination as string;
+    const startDate = body.startDate as string;
+    const endDate = body.endDate as string;
+    const budgetUsd = body.budgetUsd as number | undefined;
+    const currency = (body.currency as string) || 'USD';
 
     // Validate required fields
     if (!userId || !origin || !destination || !startDate || !endDate) {
@@ -103,7 +111,13 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const { tripId, userId, status, budgetUsd } = await req.json();
+    const body = await req.json();
+
+    // Explicitly extract only expected fields to prevent prototype pollution
+    const tripId = body.tripId as string;
+    const userId = body.userId as string;
+    const status = body.status as string | undefined;
+    const budgetUsd = body.budgetUsd as number | undefined;
 
     if (!tripId || !userId) {
       return NextResponse.json(
