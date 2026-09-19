@@ -6,12 +6,10 @@ export const runtime = 'edge';
 
 export async function GET() {
   try {
-    // Comprehensive health checks
+    // Comprehensive health checks (Edge Runtime compatible)
     const checks = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      memoryUsage: Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100,
       services: {
         database: {
           supabase: isSupabaseConfigured() ? 'configured' : 'not_configured',
@@ -22,7 +20,7 @@ export async function GET() {
           exchangerate: 'available', // Free tier available
         },
         auth: {
-          anthropic: process.env.OPENAI_API_KEY ? 'configured' : 'not_configured',
+          openai: process.env.OPENAI_API_KEY ? 'configured' : 'not_configured',
         },
       },
       endpoints: {

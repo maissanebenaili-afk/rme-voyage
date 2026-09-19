@@ -63,7 +63,7 @@ export class CommunityAgent {
       }
 
       return (
-        data?.map((tip) => ({
+        data?.map((tip: any) => ({
           user: `User_${tip.user_id.slice(0, 8)}`,
           tip: tip.content,
           rating: tip.rating,
