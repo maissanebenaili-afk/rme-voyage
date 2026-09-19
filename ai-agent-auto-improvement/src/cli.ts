@@ -51,7 +51,7 @@ async function main() {
   const command = process.argv[2] ?? 'improve';
   if (command === 'improve') return runImprove();
   if (command === 'report') return runReport();
-  console.error(`Unknown command "${command}". Use "improve" or "report".`);
+  console.error('Unknown command. Use "improve" or "report".');
   process.exit(1);
 }
 
