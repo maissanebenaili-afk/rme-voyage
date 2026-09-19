@@ -33,6 +33,11 @@ import {
 
 type Lang = 'da' | 'fr' | 'en' | 'ar' | 'es';
 
+interface SpeechRecognitionEvent {
+  results: any[];
+  resultIndex: number;
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -379,7 +384,7 @@ export default function HadakAI() {
   const [lastTopic, setLastTopic] = useState<TopicKey | null>(null);
   const [langOpen, setLangOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<any>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -423,10 +428,10 @@ export default function HadakAI() {
 
   /* Initialize Web Speech API */
   useEffect(() => {
-    const SpeechRecognition = window.webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognition) return;
+    const SpeechRecognitionConstructor = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    if (!SpeechRecognitionConstructor) return;
 
-    const recognitionInstance = new SpeechRecognition();
+    const recognitionInstance = new SpeechRecognitionConstructor();
     recognitionInstance.continuous = false;
     recognitionInstance.interimResults = false;
     recognitionInstance.lang = lang === 'ar' ? 'ar-SA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
@@ -439,7 +444,7 @@ export default function HadakAI() {
       setIsListening(false);
     };
 
-    recognitionInstance.onresult = (event) => {
+    recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
       let transcript = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript;
