@@ -11,9 +11,9 @@ export class CommunityAgent {
   async processQuery(message: string): Promise<AgentResponse> {
     const { userId, lang } = this.config;
 
-    // Extract location from message
-    const locationMatch = message.match(/(?:à|in|a)\s+([a-zA-Z\s\-']+)/i);
-    const location = locationMatch ? locationMatch[1].trim().slice(0, 100) : null;
+    // Extract location from message - limit to realistic location name length
+    const locationMatch = message.match(/(?:à|in|a)\s+([a-zA-Z\s\-']{1,100})/i);
+    const location = locationMatch ? locationMatch[1].trim() : null;
 
     if (!location || !/^[a-zA-Z\s\-']+$/.test(location)) {
       return {
