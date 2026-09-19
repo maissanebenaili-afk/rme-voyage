@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.ANTHROPIC_API_KEY
+      || process.env['ANTHROPIC_API_CLÉ']
+      || process.env.ANTHROPIC_API_CLE;
 
     if (!apiKey) {
       // No key — component falls back to local keyword KB automatically
