@@ -1,18 +1,35 @@
 import { NextResponse } from 'next/server';
+import { isSupabaseConfigured } from '../../../packages/utils/supabase';
 
 export const revalidate = 60; // Revalidate every 60 seconds
+export const runtime = 'edge';
 
 export async function GET() {
   try {
-    // Basic health checks
+    // Comprehensive health checks
     const checks = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       memoryUsage: Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100,
-      apis: {
-        prayer: process.env.NODE_ENV === 'production' ? 'configured' : 'optional',
-        hadak: process.env.ANTHROPIC_API_KEY ? 'configured' : 'optional',
+      services: {
+        database: {
+          supabase: isSupabaseConfigured() ? 'configured' : 'not_configured',
+        },
+        apis: {
+          aladhan: 'available', // Free, always available
+          openweathermap: process.env.OPENWEATHERMAP_API_KEY ? 'configured' : 'not_configured',
+          exchangerate: 'available', // Free tier available
+        },
+        auth: {
+          anthropic: process.env.OPENAI_API_KEY ? 'configured' : 'not_configured',
+        },
+      },
+      endpoints: {
+        chat: 'POST /api/chat',
+        trips: 'GET/POST/PUT/DELETE /api/trips',
+        tips: 'GET/POST /api/tips',
+        health: 'GET /api/health',
       },
     };
 

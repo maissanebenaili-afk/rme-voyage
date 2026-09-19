@@ -23,14 +23,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate language
-    const validLanguages = ['da', 'fr', 'en', 'ar', 'es'];
+    // Validate language - supports 15 panafricana languages
+    const validLanguages = [
+      'da', // Darija (Moroccan Arabic)
+      'fr', // French
+      'en', // English
+      'ar', // Modern Standard Arabic
+      'es', // Spanish
+      'wo', // Wolof (Senegal)
+      'ff', // Pulaar/Fula
+      'bm', // Bambara (Mali)
+      'yo', // Yoruba (Nigeria)
+      'ig', // Igbo (Nigeria)
+      'ha', // Hausa (Nigeria)
+      'sw', // Swahili (Kenya/Tanzania)
+      'ln', // Lingala (DRC)
+      'rw', // Kinyarwanda (Rwanda)
+      'mg', // Malagasy (Madagascar)
+    ];
     const lang = validLanguages.includes(language) ? language : 'en';
 
     // Create agent config
     const config: AgentConfig = {
       userId,
-      lang: lang as 'da' | 'fr' | 'en' | 'ar' | 'es',
+      lang: lang as any,
       conversationHistory: conversationHistory || [],
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       currentLocation: undefined,
