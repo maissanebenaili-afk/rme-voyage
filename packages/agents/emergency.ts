@@ -1,4 +1,5 @@
 import { AgentConfig, AgentResponse } from '../types/agent';
+import { getRegionalKnowledge, getEmergencyContactForCountry } from '../utils/regional-knowledge';
 
 export class EmergencyAgent {
   private config: AgentConfig;
@@ -71,21 +72,20 @@ export class EmergencyAgent {
     currentLocation: string | undefined,
     lang: string
   ): Promise<AgentResponse> {
-    const emergencyNumbers = {
-      Morocco: { police: '19', ambulance: '15', fire: '10' },
-      France: { police: '17', ambulance: '15', fire: '18' },
-      Spain: { police: '091', ambulance: '061', fire: '080' },
-      UK: { police: '999', ambulance: '999', fire: '999' },
-    };
+    const country = this.config.country || 'Morocco';
+    const regional = getRegionalKnowledge(country);
+    const emergencyNumbers = regional ? regional.emergencyNumbers : { police: '112', ambulance: '112', fire: '112' };
 
     return {
-      text: this.formatCriticalResponse(lang, currentLocation),
+      text: this.formatCriticalResponse(lang, currentLocation, country, emergencyNumbers),
       agent: 'EMERGENCY',
       confidence: 0.95,
       metadata: {
         queryType: 'critical',
         emergencyLevel: 'critical',
         location: currentLocation,
+        country,
+        emergencyNumbers,
         timestamp: new Date().toISOString(),
       },
       followups: [
@@ -148,24 +148,28 @@ export class EmergencyAgent {
     return 'other';
   }
 
-  private formatCriticalResponse(lang: string, location?: string): string {
+  private formatCriticalResponse(lang: string, location?: string, country: string = 'Morocco', numbers?: any): string {
+    const nums = numbers || { police: '19', ambulance: '15', fire: '10' };
+    const template = (prefix: string, labels: string[]) => `${prefix}
+⚠️ Location: ${location || 'Unknown'} (${country})
+🚔 Police: ${nums.police}
+🚑 Ambulance: ${nums.ambulance}
+🚒 Fire: ${nums.fire}
+📍 Enable location sharing
+👨‍💼 Contact your embassy
+🆘 Emergency logged`;
+
     const responses: Record<string, string> = {
-      da: `🚨 EMERGENCY DETECTED! Contact local emergency services immediately:
-⚠️ Your location appears to be: ${location || 'Unknown'}
-🚗 Call 999 (International) or local emergency number
-📍 Enable location sharing with emergency services
-👨‍💼 Contact your embassy immediately
-🆘 We're logging this incident`,
-      fr: `🚨 URGENCE DÉTECTÉE! Contactez immédiatement les services d'urgence:
-⚠️ Votre localisation: ${location || 'Inconnue'}
-🚗 Appelez 999 (International) ou le numéro d'urgence local
-📍 Partagez votre localisation avec les services d'urgence
-👨‍💼 Contactez votre ambassade immédiatement
-🆘 Nous enregistrons cet incident`,
-      en: `🚨 EMERGENCY DETECTED! Contact local emergency services immediately:
-⚠️ Your location: ${location || 'Unknown'}
-🚗 Call 999 (International) or local emergency number
-📍 Enable location sharing with emergency services
+      da: template(`🚨 URGENCE DÉTÉTÉE! Contactez les services d'urgence:`, ['Police', 'Ambulance', 'Fire']),
+      fr: template(`🚨 URGENCE DÉTECTÉE! Contactez immédiatement:`, ['Police', 'Ambulance', 'Pompiers']),
+      en: template(`🚨 EMERGENCY! Contact services immediately:`, ['Police', 'Ambulance', 'Fire']),
+      ar: template(`🚨 حالة طوارئ! تواصل مع الخدمات:`, ['الشرطة', 'الإسعاف', 'الإطفاء']),
+      es: template(`🚨 ¡EMERGENCIA! Contacte con los servicios:`, ['Policía', 'Ambulancia', 'Bomberos']),
+      wo: template(`🚨 URGENSE! Kontaktu services:`, ['Police', 'Ambulanse', 'Feu']),
+      sw: template(`🚨 DHARURA! Wasiliana na huduma:`, ['Polisi', 'Ambulansi', 'Moto']),
+    };
+
+    return responses[lang] || responses.en;
 👨‍💼 Contact your embassy immediately
 🆘 We're logging this incident`,
       ar: `🚨 تم اكتشاف حالة طارئة! اتصل بخدمات الطوارئ المحلية على الفور:

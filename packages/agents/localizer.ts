@@ -1,4 +1,5 @@
 import { AgentConfig, AgentResponse } from '../types/agent';
+import { getRegionalKnowledge } from '../utils/regional-knowledge';
 
 export class LocalizerAgent {
   private config: AgentConfig;
@@ -116,21 +117,30 @@ export class LocalizerAgent {
     const cityMatch = message.match(/(?:à|in|a)\s+([a-zA-Z]+)/i);
     const city = cityMatch ? cityMatch[1] : 'your location';
 
-    // TODO: Integrate with local database or APIs
-    const localInfo = {
-      halal: ['Restaurant Marrakech', 'Cafe Berber', 'Tagine House'],
-      simCards: ['Orange Morocco', 'Maroc Telecom', 'Free Morocco'],
-      pharmacies: ['Pharmacie du Centre', 'Pharmacie Moderne'],
+    // Extract country from config if available
+    const country = this.config.country || 'Morocco';
+    const regional = getRegionalKnowledge(country);
+
+    const localInfo = regional ? {
+      halal: regional.halalServices ? regional.simProviders.slice(0, 2) : ['Not widely available'],
+      simCards: regional.simProviders,
+      pharmacies: regional.pharmacyChains,
+      operator: regional,
+    } : {
+      halal: ['Local halal services available'],
+      simCards: ['Check with locals'],
+      pharmacies: ['Ask for local pharmacy'],
+      operator: null,
     };
 
     return {
-      text: this.formatLocalInfo(localInfo, city, lang),
+      text: this.formatLocalInfo(localInfo, city, lang, country),
       agent: 'LOCALIZER',
       confidence: 0.8,
-      metadata: { queryType: 'local', city },
+      metadata: { queryType: 'local', city, country },
       followups: [
-        `Get more specific recommendations`,
-        `Ask for phone numbers and addresses`,
+        `Get specific restaurant or pharmacy names`,
+        `Ask for SIM card setup help`,
       ],
     };
   }
@@ -174,14 +184,21 @@ export class LocalizerAgent {
   private formatLocalInfo(
     info: any,
     city: string,
-    lang: string
+    lang: string,
+    country: string = 'Morocco'
   ): string {
+    const formatList = (items: string[]) => items.slice(0, 3).join(', ');
+
     const responses: Record<string, string> = {
-      da: `🏘️ F ${city}: Halal: ${info.halal.join(', ')} | SIM: ${info.simCards.join(', ')}`,
-      fr: `🏘️ À ${city}: Halal: ${info.halal.join(', ')} | Cartes SIM: ${info.simCards.join(', ')}`,
-      en: `🏘️ In ${city}: Halal: ${info.halal.join(', ')} | SIM cards: ${info.simCards.join(', ')}`,
-      ar: `🏘️ في ${city}: حلال: ${info.halal.join(', ')} | بطاقات SIM: ${info.simCards.join(', ')}`,
-      es: `🏘️ En ${city}: Halal: ${info.halal.join(', ')} | Tarjetas SIM: ${info.simCards.join(', ')}`,
+      da: `🏘️ F ${city} (${country}): Halal: ${formatList(info.halal)} | SIM: ${formatList(info.simCards)} | Pharmacies: ${formatList(info.pharmacies)}`,
+      fr: `🏘️ À ${city} (${country}): Halal: ${formatList(info.halal)} | Cartes SIM: ${formatList(info.simCards)} | Pharmacies: ${formatList(info.pharmacies)}`,
+      en: `🏘️ In ${city} (${country}): Halal: ${formatList(info.halal)} | SIM cards: ${formatList(info.simCards)} | Pharmacies: ${formatList(info.pharmacies)}`,
+      ar: `🏘️ في ${city} (${country}): حلال: ${formatList(info.halal)} | بطاقات SIM: ${formatList(info.simCards)} | الصيدليات: ${formatList(info.pharmacies)}`,
+      es: `🏘️ En ${city} (${country}): Halal: ${formatList(info.halal)} | Tarjetas SIM: ${formatList(info.simCards)} | Farmacias: ${formatList(info.pharmacies)}`,
+      wo: `🏘️ Ci ${city} (${country}): Halal: ${formatList(info.halal)} | SIM: ${formatList(info.simCards)} | Jëmandali: ${formatList(info.pharmacies)}`,
+      ff: `🏘️ E ${city} (${country}): Halal: ${formatList(info.halal)} | SIM: ${formatList(info.simCards)} | Daakunde: ${formatList(info.pharmacies)}`,
+      yo: `🏘️ Ni ${city} (${country}): Halal: ${formatList(info.halal)} | SIM: ${formatList(info.simCards)} | Òtèrà ìjòsun: ${formatList(info.pharmacies)}`,
+      sw: `🏘️ Katika ${city} (${country}): Halal: ${formatList(info.halal)} | SIM: ${formatList(info.simCards)} | Duka la dawa: ${formatList(info.pharmacies)}`,
     };
 
     return responses[lang] || responses.en;
