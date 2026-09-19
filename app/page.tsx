@@ -26,6 +26,7 @@ import NewsFeed from '@/components/NewsFeed';
 import QiblaCompass from '@/components/QiblaCompass';
 import TravelChecklist from '@/components/TravelChecklist';
 import CurrencyConverter from '@/components/CurrencyConverter';
+import RemittanceComparator from '@/components/RemittanceComparator';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import HadakAI from '@/components/HadakAI';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
@@ -197,6 +198,7 @@ export default function Home() {
               <QiblaCompass />
             </div>
             <CurrencyConverter />
+            <RemittanceComparator />
             <ServicesMap />
             <NewsFeed />
             <TravelChecklist />
