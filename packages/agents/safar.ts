@@ -72,8 +72,8 @@ class SafarAgent {
       });
 
       return response;
-    } catch (error) {
-      console.error(`[SafarAgent] Error routing to ${agentType}:`, error);
+    } catch {
+      console.error('[SafarAgent] Error routing message');
       return this.fallbackResponse(userMessage);
     }
   }

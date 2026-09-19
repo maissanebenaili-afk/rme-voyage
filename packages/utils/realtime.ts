@@ -69,8 +69,8 @@ export async function getPrayerTimes(
       Maghrib: timings.Maghrib.split(' ')[0],
       Isha: timings.Isha.split(' ')[0],
     };
-  } catch (error) {
-    console.error('[getPrayerTimes] Error:', error);
+  } catch {
+    console.error('[getPrayerTimes] Error');
     const mockTimes: Record<string, PrayerTimes> = {
       Casablanca: {
         Fajr: '05:15',
@@ -158,8 +158,8 @@ export async function getWeather(
       windSpeed: Math.round(data.wind.speed),
       description: data.weather[0].description,
     };
-  } catch (error) {
-    console.error('[getWeather] Error:', error);
+  } catch {
+    console.error('[getWeather] Error');
     const mockWeather: Record<string, WeatherData> = {
       Casablanca: {
         temp: 22,
@@ -227,8 +227,8 @@ export async function getExchangeRate(
       rate,
       timestamp: new Date().toISOString(),
     };
-  } catch (error) {
-    console.error('[getExchangeRate] Error:', error);
+  } catch {
+    console.error('[getExchangeRate] Error');
     const rates: Record<string, Record<string, number>> = {
       EUR: { USD: 1.08, MAD: 10.5, GBP: 0.83, XOF: 655.96, NGN: 1650.0, KES: 134.5, TZS: 2830.0 },
       USD: { EUR: 0.92, MAD: 9.8, GBP: 0.77, XOF: 607.26, NGN: 1530.0, KES: 124.6, TZS: 2620.0 },
@@ -308,8 +308,8 @@ export async function getFerrySchedules(
 
     const key = `${from}-${to}`;
     return schedules[key] || [];
-  } catch (error) {
-    console.error('[getFerrySchedules] Error:', error);
+  } catch {
+    console.error('[getFerrySchedules] Error');
     return [];
   }
 }

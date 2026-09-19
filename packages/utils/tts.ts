@@ -124,8 +124,8 @@ export async function speakAssistantResponse(
       pitch: 1.0,
       volume: 0.9,
     });
-  } catch (error) {
-    console.error('[speakAssistantResponse] Error:', error);
+  } catch {
+    console.error('[speakAssistantResponse] Error');
     // Don't throw - voice output is optional
   }
 }

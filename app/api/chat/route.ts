@@ -70,12 +70,12 @@ export async function POST(req: NextRequest) {
       },
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('[Chat API] Error:', error);
+  } catch {
+    console.error('[Chat API] Error');
     return NextResponse.json(
       {
         error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Failed to process request',
       },
       { status: 500 }
     );
