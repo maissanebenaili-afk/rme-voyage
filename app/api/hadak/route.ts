@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY
-      || process.env['ANTHROPIC_API_CLÉ']
-      || process.env.ANTHROPIC_API_CLE;
+      || Object.entries(process.env)
+          .find(([k]) => /^ANTHROPIC.API.(KEY|CL[EÉeéÉ])$/i.test(k))?.[1];
 
     if (!apiKey) {
       // No key — component falls back to local keyword KB automatically
