@@ -1,180 +1,106 @@
-# RME Voyage — Architecture
+# SAFAR - Architecture Complète
 
-## Vue d'ensemble
+## Vision
+Application conversationnelle AI-native pour la diaspora marocaine. L'utilisateur parle → l'agent comprend et guide intelligemment. Pas de navigation confuse, juste dialogue naturel.
 
-```
-┌───────────���─────────────────────────────┐
-│           Client Browser / Mobile       │
-│  Next.js 15 App Router + React 19       │
-│  (TypeScript, Tailwind CSS)             │
-└────────────────┬────────────────────────┘
-                 │ HTTP
-                 ▼
-┌─────────────────────────────────────────┐
-│      Next.js Server (API Routes)        │
-│  /api/prayer → AlAdhan Proxy            │
-│  /api/affiliates → Link Building        │
-│  /api/geo* → Future Geocoding           │
-└────────────────┬────────────────────────┘
-                 │
-      ┌──────────┼──────────┐
-      │          │          │
-      ▼          ▼          ▼
-   AlAdhan   TP.Media   DirectFerries
-   (Prayers)  (Flights)   (Ferries)
-```
+**Marché:** 4M+ Marocains en diaspora (EU), 2x/an voyage au Maroc. Vide applicatif majeur.
 
-## Stack Technique
+---
+
+## 1. TECH STACK (Optimisé énergie + performance)
 
 ### Frontend
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript 5.7 (strict mode)
-- **UI:** React 19 + Tailwind CSS 3.4
-- **Icons:** Lucide React
-- **Mobile:** Capacitor 7 (iOS/Android)
+- **Framework:** Astro + React islands (ultra-léger)
+- **UI:** Tailwind CSS + shadcn/ui
+- **État:** Zustand (minimal overhead)
+- **Voice:** Web Speech API (navigateur natif)
+- **Bundler:** Vite (dev rapide)
 
 ### Backend
-- **Runtime:** Node.js (via Next.js Server)
-- **API:** REST endpoints (/api/*)
-- **Database:** Supabase (PostgreSQL) - prepared for future
-- **Auth:** Supabase Auth - prepared for future
+- **Compute:** Vercel Edge Functions (serverless, éco-responsable)
+- **DB:** Supabase (PostgreSQL + realtime)
+- **Cache:** Redis (Upstash)
+- **AI:** OpenAI API
 
-### Deployment
-- **Web:** Vercel, Netlify, Railway, etc.
-- **Mobile:** Capacitor + App Store/Google Play
-- **PWA:** manifest.webmanifest configured
+### Infrastructure
+- **Hosting:** Vercel (edge)
+- **Storage:** S3/R2
+- **Monitoring:** Sentry + PostHog
 
-## Répertoire (structure attendue)
+---
 
-```
-├── app/
-│   ├── layout.tsx          # Root layout + metadata
-│   └── page.tsx            # Home page
-│
-├── api/
-│   ├── prayer/
-│   │   └── route.ts        # AlAdhan proxy
-│   └── affiliates/
-│       └── route.ts        # Flight/Ferry affiliate links
-│
-├── components/
-│   ├── RouteSearch.tsx     # Trip search form
-│   ├── BookingCards.tsx    # Booking buttons (flights/ferries)
-│   ├── CostCalculator.tsx  # Budget calculator
-│   ├── PrayerWidget.tsx    # Prayer times ("use client")
-│   ├── ServicesMap.tsx     # Services map
-│   └── NewsFeed.tsx        # Travel news
-│
-├── lib/
-│   ├── affiliate.ts        # Affiliate URL builders
-│   ├── costCalculator.ts   # Cost calculation logic
-│   └── config.ts           # Market configurations
-│
-├── globals.css             # Tailwind imports
-├── manifest.webmanifest    # PWA metadata
-├── capacitor.config.ts     # Capacitor config
-│
-├── package.json
-├── tsconfig.json
-├── next.config.mjs
-├── tailwind.config.ts
-├── postcss.config.mjs
-│
-├── .gitignore
-├── .env.example
-├── README.md
-├── DEPLOYMENT.md
-├── ARCHITECTURE.md
-├── RME_ROUTE_ETAT.md
-└── MONETISATION.md
-```
+## 2. ARCHITECTURE AGENTS
 
-## Flux de Données
+### Agent Principal: SAFAR
+- Écoute utilisateur (voix/texte)
+- Comprend intention + contexte
+- Délègue aux agents spécialisés
+- Orchestre réponses
 
-### 1. Recherche de Trajet
-```
-User → RouteSearch Component
-       → /api/affiliates?type=flight&origin=Paris&destination=Tanger
-       → buildFlightAffiliateUrl() en backend
-       → TP.Media Link (si TRAVELPAYOUTS_PARTNER_ID défini)
-       → Redirect utilisateur
-```
+### Sous-agents
+1. **NAVIGATOR** - itinéraires (Google Maps, OSRM)
+2. **LOCALIZER** - infos pratiques (prière, météo, ferry, douane)
+3. **COMMUNITY** - tips voyageurs
+4. **BUDGET** - calcul voyage
+5. **EMERGENCY** - urgences
 
-### 2. Calcul de Budget
-```
-User → CostCalculator Component (client-side)
-     → calculateTravelCost() (lib/costCalculator.ts)
-     → Breakdown: Fuel + Tolls + Ferry = Total
-     → Display en temps réel
-```
+---
 
-### 3. Horaires de Prière
-```
-PrayerWidget ("use client") → /api/prayer?latitude=48.8566&longitude=2.3522
-                            → AlAdhan API proxy
-                            → Cache + Display Fajr/Dhuhr/Asr/Maghrib/Isha
-```
+## 3. MONETIZATION (Freemium)
 
-## Principes de Conception
+### Free Tier
+- Chat limité (10 msg/jour)
+- Infos basiques
+- Tips communauté
+- 1 trip/mois
 
-### 1. **Secrets → Server-side Only**
-- ✅ TRAVELPAYOUTS_PARTNER_ID en env backend
-- ❌ Jamais en client-side ou bundle JS
+### Premium ($4.99/mois)
+- Chat illimité
+- Export PDF/iCal
+- Alertes temps réel
+- Budget tracker avancé
 
-### 2. **API Routes sont Essentielles**
-- `/api/prayer` = proxy sécurisé vers AlAdhan
-- `/api/affiliates` = validation + link building
-- ❌ Ne pas utiliser `output: export` tant que ces routes existent
+### Revenue
+- Abonnement (70% margin)
+- Affiliate ferry/hôtels
+- Publicités discrètes
 
-### 3. **Mobile-First Design**
-- Tailwind responsive (sm:, md:, lg:)
-- Manifest.webmanifest pour PWA
-- Capacitor prêt pour iOS/Android natif
+---
 
-### 4. **Validation & Error Handling**
-- Affiliate URLs: `if (!marker) return null` (graceful fallback)
-- Prayer API: AbortController + error state
-- Cost Calculator: Math.max(0, value) pour valeurs négatives
+## 4. ROADMAP
 
-### 5. **Pas de Données Fictives en Production**
-- RME_ROUTE_ETAT.md documente l'état réel
-- Footer disclaimer: "MVP. Données temps réel nécessitent sources vérifiées."
-- Configurations de test ≠ production
+**Phase 1 (MVP - 3 semaines):**
+- Chat SAFAR + voice
+- Infos temps réel
+- Trip planner
+- Community tips
 
-## Sécurité
+**Phase 2 (4-6 semaines):**
+- Agent NAVIGATOR
+- Real-time ferry/trafic
+- App mobile iOS/Android
 
-- ✅ TypeScript strict (noImplicitAny, strictNullChecks)
-- ✅ Pas de eval(), innerHTML, ou inputs non validés
-- ✅ Env vars en backend, pas exposées au client
-- ✅ CORS headers à configurer côté API externe
-- ✅ Rate limiting à implémenter sur /api/affiliates
+**Phase 3 (2-3 mois):**
+- Multi-device sync
+- Voyage collaboratif
+- Partenaires
 
-## Performance
+---
 
-- ✅ images.unoptimized: true (Capacitor compatible)
-- ✅ Next.js compression enabled
-- ✅ CSS-in-JS via Tailwind (no flash of unstyled content)
-- ✅ API routes cachées par CDN si applicable
-- 🔄 TODO: Service Worker pour offline-first PWA
+## 5. SUCCESS METRICS
 
-## Testing (à implémenter)
+- MAU: 1k (M1) → 10k (M3)
+- DAU/MAU: >40%
+- Conversion F2P: 5-10%
+- ARPU: $2-5/mois
+- Uptime: >99.5%
 
-```bash
-# Unit tests (Jest)
-npm run test
+---
 
-# E2E tests (Cypress)
-npm run test:e2e
-
-# Build validation
-npm run build
-```
-
-## Intégrations Futures
-
-1. **Géocodage** → Google Maps API ou Nominatim
-2. **Routing** → OSRM ou Mapbox Directions
-3. **Authentification** → Supabase Auth
-4. **Database** → Supabase PostgreSQL
-5. **Analytics** → Vercel Analytics ou Segment
-6. **Error Tracking** → Sentry ou LogRocket
+## NEXT STEPS
+1. Créer structure projet
+2. Implémenter Frontend (SAFAR + voice)
+3. Implémenter Agents
+4. Intégrer APIs
+5. Beta testing
+6. Launch App Store
