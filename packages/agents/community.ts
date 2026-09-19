@@ -1,4 +1,5 @@
 import { AgentConfig, AgentResponse } from '../types/agent';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 
 export class CommunityAgent {
   private config: AgentConfig;
@@ -28,8 +29,9 @@ export class CommunityAgent {
       };
     }
 
-    // TODO: Query Supabase for community tips
-    const tips = this.getMockTips(location);
+    const tips = isSupabaseConfigured()
+      ? await this.getSupabaseTips(location)
+      : this.getMockTips(location);
 
     return {
       text: this.formatCommunityResponse(tips, location, lang),
@@ -42,6 +44,35 @@ export class CommunityAgent {
         `Share your own tip about this location`,
       ],
     };
+  }
+
+  private async getSupabaseTips(
+    location: string
+  ): Promise<Array<{ user: string; tip: string; rating: number }>> {
+    try {
+      const { data, error } = await supabase
+        .from('community_tips')
+        .select('content, rating, user_id')
+        .eq('location', location)
+        .order('rating', { ascending: false })
+        .limit(3);
+
+      if (error) {
+        console.error('[CommunityAgent] Supabase error:', error);
+        return this.getMockTips(location);
+      }
+
+      return (
+        data?.map((tip) => ({
+          user: `User_${tip.user_id.slice(0, 8)}`,
+          tip: tip.content,
+          rating: tip.rating,
+        })) || this.getMockTips(location)
+      );
+    } catch (error) {
+      console.error('[CommunityAgent] Error fetching tips:', error);
+      return this.getMockTips(location);
+    }
   }
 
   private getMockTips(location: string): Array<{ user: string; tip: string; rating: number }> {

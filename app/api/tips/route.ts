@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabase, isSupabaseConfigured, type CommunityTip } from '../../../packages/utils/supabase';
 
 export const runtime = 'edge';
 
-// Mock community tips data (will be replaced with Supabase queries)
+// Mock community tips data (fallback when Supabase is not configured)
 const mockTips = {
   Marrakech: [
     {
@@ -75,18 +76,46 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get('category');
     const sort = searchParams.get('sort') || 'rating'; // rating, upvotes, recent
 
-    let tips = location ? mockTips[location as keyof typeof mockTips] || [] : Object.values(mockTips).flat();
+    let tips: any[] = [];
 
-    // Filter by category if specified
-    if (category) {
-      tips = tips.filter((t) => t.category === category);
-    }
+    if (isSupabaseConfigured()) {
+      let query = supabase.from('community_tips').select('*');
 
-    // Sort
-    if (sort === 'upvotes') {
-      tips.sort((a, b) => b.upvotes - a.upvotes);
-    } else if (sort === 'rating') {
-      tips.sort((a, b) => b.rating - a.rating);
+      if (location) {
+        query = query.eq('location', location);
+      }
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      // Apply sorting
+      if (sort === 'upvotes') {
+        query = query.order('upvotes', { ascending: false });
+      } else if (sort === 'rating') {
+        query = query.order('rating', { ascending: false });
+      } else {
+        query = query.order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query;
+      if (error) {
+        console.error('[Tips API] Supabase GET Error:', error);
+        return NextResponse.json({ error: 'Failed to fetch tips' }, { status: 500 });
+      }
+      tips = data || [];
+    } else {
+      tips = location ? mockTips[location as keyof typeof mockTips] || [] : Object.values(mockTips).flat();
+
+      if (category) {
+        tips = tips.filter((t) => t.category === category);
+      }
+
+      if (sort === 'upvotes') {
+        tips.sort((a, b) => b.upvotes - a.upvotes);
+      } else if (sort === 'rating') {
+        tips.sort((a, b) => b.rating - a.rating);
+      }
     }
 
     return NextResponse.json({
@@ -108,9 +137,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { location, category, content, userId } = await req.json();
+    const body = await req.json();
+    const location = body.location as string;
+    const category = (body.category as string) || 'general';
+    const content = body.content as string;
+    const userId = body.userId as string;
 
-    // Validate required fields
     if (!location || !content || !userId) {
       return NextResponse.json(
         { error: 'Location, content, and userId are required' },
@@ -118,20 +150,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // TODO: Save to Supabase
     const newTip = {
-      id: Math.random().toString(36).substr(2, 9),
-      user: `User_${userId.slice(0, 8)}`,
-      tip: content,
-      category: category || 'general',
-      rating: 0,
+      user_id: userId,
+      location,
+      category,
+      content,
+      rating: 0.0,
       upvotes: 0,
+      downvotes: 0,
     };
+
+    let createdTip = newTip;
+
+    if (isSupabaseConfigured()) {
+      const { data, error } = await supabase.from('community_tips').insert([newTip]).select();
+      if (error) {
+        console.error('[Tips API] Supabase POST Error:', error);
+        return NextResponse.json({ error: 'Failed to create tip' }, { status: 500 });
+      }
+      createdTip = data?.[0] || newTip;
+    } else {
+      createdTip = {
+        id: Math.random().toString(36).substr(2, 9),
+        user: `User_${userId.slice(0, 8)}`,
+        tip: content,
+        category,
+        rating: 0,
+        upvotes: 0,
+      } as any;
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Tip submitted successfully',
-      data: newTip,
+      data: createdTip,
     });
   } catch (error) {
     console.error('[Tips API] Error:', error);

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabase, isSupabaseConfigured, type Trip } from '../../../packages/utils/supabase';
 
 export const runtime = 'edge';
 
-// Mock trips data (will be replaced with Supabase queries)
+// Mock trips data (fallback when Supabase is not configured)
 const mockTrips: Record<string, any[]> = {};
 
 export async function GET(req: NextRequest) {
@@ -18,12 +19,22 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // TODO: Query Supabase for user's trips
-    const userTrips = mockTrips[userId] || [];
+    let filteredTrips: any[] = [];
 
-    let filteredTrips = userTrips;
-    if (status) {
-      filteredTrips = userTrips.filter((trip) => trip.status === status);
+    if (isSupabaseConfigured()) {
+      let query = supabase.from('trips').select('*').eq('user_id', userId);
+      if (status) {
+        query = query.eq('status', status);
+      }
+      const { data, error } = await query;
+      if (error) {
+        console.error('[Trips API] Supabase GET Error:', error);
+        return NextResponse.json({ error: 'Failed to fetch trips' }, { status: 500 });
+      }
+      filteredTrips = data || [];
+    } else {
+      const userTrips = mockTrips[userId] || [];
+      filteredTrips = status ? userTrips.filter((trip) => trip.status === status) : userTrips;
     }
 
     return NextResponse.json({
@@ -73,32 +84,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create trip object
-    const tripId = Math.random().toString(36).substr(2, 9);
     const newTrip = {
-      id: tripId,
-      userId,
+      user_id: userId,
       origin,
       destination,
-      startDate,
-      endDate,
-      budgetUsd: budgetUsd || null,
+      start_date: startDate,
+      end_date: endDate,
+      budget_usd: budgetUsd || null,
       currency,
       status: 'planning',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
 
-    // TODO: Save to Supabase
-    if (!mockTrips[userId]) {
-      mockTrips[userId] = [];
+    let createdTrip = newTrip;
+
+    if (isSupabaseConfigured()) {
+      const { data, error } = await supabase.from('trips').insert([newTrip]).select();
+      if (error) {
+        console.error('[Trips API] Supabase POST Error:', error);
+        return NextResponse.json({ error: 'Failed to create trip' }, { status: 500 });
+      }
+      createdTrip = data?.[0] || newTrip;
+    } else {
+      const tripId = Math.random().toString(36).substr(2, 9);
+      createdTrip = {
+        id: tripId,
+        user_id: userId,
+        origin,
+        destination,
+        start_date: startDate,
+        end_date: endDate,
+        budget_usd: budgetUsd || null,
+        currency,
+        status: 'planning',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as any;
+      if (!mockTrips[userId]) {
+        mockTrips[userId] = [];
+      }
+      mockTrips[userId].push(createdTrip);
     }
-    mockTrips[userId].push(newTrip);
 
     return NextResponse.json({
       success: true,
       message: 'Trip created successfully',
-      data: newTrip,
+      data: createdTrip,
     });
   } catch (error) {
     console.error('[Trips API] POST Error:', error);
@@ -126,25 +156,41 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // TODO: Update trip in Supabase
-    const userTrips = mockTrips[userId] || [];
-    const tripIndex = userTrips.findIndex((t) => t.id === tripId);
+    const updateData: Record<string, any> = { updated_at: new Date().toISOString() };
+    if (status) updateData.status = status;
+    if (budgetUsd !== undefined) updateData.budget_usd = budgetUsd;
 
-    if (tripIndex === -1) {
-      return NextResponse.json(
-        { error: 'Trip not found' },
-        { status: 404 }
-      );
+    let updatedTrip: any = null;
+
+    if (isSupabaseConfigured()) {
+      const { data, error } = await supabase
+        .from('trips')
+        .update(updateData)
+        .eq('id', tripId)
+        .eq('user_id', userId)
+        .select();
+
+      if (error) {
+        console.error('[Trips API] Supabase PUT Error:', error);
+        return NextResponse.json({ error: 'Failed to update trip' }, { status: 500 });
+      }
+
+      if (!data || data.length === 0) {
+        return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+      }
+
+      updatedTrip = data[0];
+    } else {
+      const userTrips = mockTrips[userId] || [];
+      const tripIndex = userTrips.findIndex((t) => t.id === tripId);
+
+      if (tripIndex === -1) {
+        return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+      }
+
+      updatedTrip = { ...userTrips[tripIndex], ...updateData };
+      userTrips[tripIndex] = updatedTrip;
     }
-
-    const updatedTrip = {
-      ...userTrips[tripIndex],
-      ...(status && { status }),
-      ...(budgetUsd !== undefined && { budgetUsd }),
-      updatedAt: new Date().toISOString(),
-    };
-
-    userTrips[tripIndex] = updatedTrip;
 
     return NextResponse.json({
       success: true,
@@ -173,18 +219,27 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // TODO: Delete from Supabase
-    const userTrips = mockTrips[userId] || [];
-    const tripIndex = userTrips.findIndex((t) => t.id === tripId);
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase
+        .from('trips')
+        .delete()
+        .eq('id', tripId)
+        .eq('user_id', userId);
 
-    if (tripIndex === -1) {
-      return NextResponse.json(
-        { error: 'Trip not found' },
-        { status: 404 }
-      );
+      if (error) {
+        console.error('[Trips API] Supabase DELETE Error:', error);
+        return NextResponse.json({ error: 'Failed to delete trip' }, { status: 500 });
+      }
+    } else {
+      const userTrips = mockTrips[userId] || [];
+      const tripIndex = userTrips.findIndex((t) => t.id === tripId);
+
+      if (tripIndex === -1) {
+        return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
+      }
+
+      userTrips.splice(tripIndex, 1);
     }
-
-    userTrips.splice(tripIndex, 1);
 
     return NextResponse.json({
       success: true,

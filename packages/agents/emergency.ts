@@ -170,23 +170,6 @@ export class EmergencyAgent {
     };
 
     return responses[lang] || responses.en;
-👨‍💼 Contact your embassy immediately
-🆘 We're logging this incident`,
-      ar: `🚨 تم اكتشاف حالة طارئة! اتصل بخدمات الطوارئ المحلية على الفور:
-⚠️ موقعك: ${location || 'غير معروف'}
-🚗 اتصل برقم 999 (دولي) أو رقم الطوارئ المحلي
-📍 شارك موقعك مع خدمات الطوارئ
-👨‍💼 اتصل بسفارتك على الفور
-🆘 نحن نسجل هذا الحادث`,
-      es: `🚨 ¡EMERGENCIA DETECTADA! Contacte inmediatamente a los servicios de emergencia:
-⚠️ Su ubicación: ${location || 'Desconocida'}
-🚗 Llame al 999 (Internacional) o al número local de emergencia
-📍 Comparta su ubicación con los servicios de emergencia
-👨‍💼 Contacte a su embajada inmediatamente
-🆘 Estamos registrando este incidente`,
-    };
-
-    return responses[lang] || responses.en;
   }
 
   private formatUrgentResponse(
