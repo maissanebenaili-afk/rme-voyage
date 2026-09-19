@@ -46,3 +46,4 @@ capacitor.config.json
 /ios.qa-shots/
 .qa-geocode-test/
 .qa-shots/
+tsconfig.tsbuildinfo

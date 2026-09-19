@@ -22,6 +22,7 @@ import {
   Users,
   Star,
   Package,
+  Clock,
   Mic,
   MicOff,
   Volume2,
@@ -61,7 +62,8 @@ type TopicKey =
   | 'fuel'
   | 'family'
   | 'ramadan'
-  | 'packing';
+  | 'packing'
+  | 'time';
 
 /* ------------------------------------------------------------------ */
 /*  Knowledge base                                                     */
@@ -87,6 +89,7 @@ const TOPIC_ICON: Record<TopicKey, typeof Plane> = {
   family: Users,
   ramadan: Star,
   packing: Package,
+  time: Clock,
 };
 
 interface Topic {
@@ -284,6 +287,17 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
     },
     followups: ['documents', 'weather', 'family'],
   },
+  time: {
+    keywords: ['heure', 'time', 'hora', 'وقت', 'quelle heure', 'what time', 'horaire', 'clock', 'maintenant', 'now', 'ahora', 'horas', 'l\'heure', 'wa9t', 'وقت'],
+    answers: {
+      da: 'L\'wa9t f l\'Maghrib: UTC+1 (ma kaytaghayrch). F l\'Maghrib daba, 7seb +1h men Greenwich (London). L\'wa9t f bladan okhra bhal New York, Paris... Hadak ma ka3refhash bla mode IA — check l\'phone dyalek!',
+      fr: 'Le Maroc est en UTC+1 toute l\'année (pas de changement d\'heure). Pour l\'heure dans d\'autres villes (New York, Paris, Dubai...), consulte l\'horloge mondiale de ton téléphone.',
+      en: 'Morocco is UTC+1 year-round (no daylight saving). For the time in other cities (New York, Paris, Dubai...), check the world clock on your phone.',
+      ar: 'المغرب في UTC+1 طوال العام (بدون تغيير للتوقيت). لمعرفة الوقت في مدن أخرى (نيويورك، باريس، دبي...)، راجع ساعة العالم في هاتفك.',
+      es: 'Marruecos es UTC+1 todo el año (sin cambio de hora). Para conocer la hora en otras ciudades (Nueva York, París, Dubái...), consulta el reloj mundial de tu teléfono.',
+    },
+    followups: ['prayer', 'route', 'weather'],
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -330,6 +344,7 @@ const TOPIC_LABELS: Record<TopicKey, Record<Lang, string>> = {
   family: { da: 'M3a l\'3a2ila?', fr: 'En famille ?', en: 'With family?', ar: 'مع العائلة؟', es: '¿En familia?' },
   ramadan: { da: 'Ramdan?', fr: 'Ramadan ?', en: 'Ramadan?', ar: 'رمضان؟', es: '¿Ramadán?' },
   packing: { da: 'Packing?', fr: 'Bagage ?', en: 'Packing?', ar: 'الحقائب؟', es: '¿Equipaje?' },
+  time: { da: 'L\'wa9t?', fr: 'Heure ?', en: 'Time?', ar: 'الوقت؟', es: '¿Hora?' },
 };
 
 const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'documents', 'ramadan'];
@@ -387,6 +402,7 @@ export default function HadakAI() {
   const [langOpen, setLangOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+  const [isOffline, setIsOffline] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -494,6 +510,7 @@ export default function HadakAI() {
       // should still trigger the local knowledge base, not display the error message
       if (!response.ok) {
         console.error('Hadak API error, falling back to local KB:', response.status);
+        setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
         setLastTopic(topic);
@@ -506,6 +523,7 @@ export default function HadakAI() {
       } catch {
         // JSON parse error — likely malformed response
         console.error('Failed to parse Hadak response, status:', response.status);
+        setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
         setLastTopic(topic);
@@ -513,12 +531,14 @@ export default function HadakAI() {
       }
 
       if (data.fallback || !data.response) {
+        setIsOffline(true);
         const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
         setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic }]);
         setLastTopic(localTopic);
         return;
       }
 
+      setIsOffline(false);
       const answer = data.response;
       const topic = findTopic(content);
 
@@ -526,6 +546,7 @@ export default function HadakAI() {
       setLastTopic(topic);
     } catch (error) {
       console.error('Error calling Hadak API:', error);
+      setIsOffline(true);
       const { content: answer, topic } = getAnswer(content, lang);
       setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
       setLastTopic(topic);
@@ -640,6 +661,11 @@ export default function HadakAI() {
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 Hadak
                 <span className="text-xs font-normal text-[#eead59]">AI</span>
+                {isOffline && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#eead59]/20 px-2 py-0.5 text-[10px] font-bold text-[#eead59]">
+                    ⚡ Mode limité
+                  </span>
+                )}
               </h3>
               <div className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
