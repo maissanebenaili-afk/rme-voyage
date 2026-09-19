@@ -20,19 +20,19 @@ import {
 
 /* ──────────────────────────────────────────────
    Theme constants — RME Voyage
-   Dark green #0d3f38 · Gold #eead59 · Cream #f8f7f2
+   Dark green #0f1f3d · Gold #f59e0b · Cream #f8fafc
    ────────────────────────────────────────────── */
 const THEME = {
-  green: "#0d3f38",
-  gold: "#eead59",
-  cream: "#f8f7f2",
+  green: "#0f1f3d",
+  gold: "#f59e0b",
+  cream: "#f8fafc",
 } as const;
 
 const cardBase =
   "rounded-2xl border p-5 shadow-sm transition-all duration-300 hover:shadow-md";
-const greenBg = "bg-[#0d3f38] text-[#f8f7f2]";
-const goldText = "text-[#eead59]";
-const creamBg = "bg-[#f8f7f2]";
+const greenBg = "bg-[#0f1f3d] text-[#f8fafc]";
+const goldText = "text-[#f59e0b]";
+const creamBg = "bg-[#f8fafc]";
 
 /* ============================================================
    1. WeatherMorocco — Open-Meteo forecast for 6 Moroccan cities
@@ -137,14 +137,14 @@ export function WeatherMorocco() {
   }, []);
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
-        <CloudRain className="text-[#0d3f38]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">
+        <CloudRain className="text-[#0f1f3d]" size={22} />
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">
           Météo du Maroc
         </h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Températures actuelles dans 6 villes — données Open-Meteo
       </p>
 
@@ -154,18 +154,18 @@ export function WeatherMorocco() {
           return (
             <div
               key={city.name}
-              className="flex flex-col items-center rounded-xl border border-[#0d3f38]/10 bg-white p-4 transition-all duration-300 hover:scale-[1.03] hover:shadow-md"
+              className="flex flex-col items-center rounded-xl border border-[#0f1f3d]/10 bg-white p-4 transition-all duration-300 hover:scale-[1.03] hover:shadow-md"
             >
               {city.loading ? (
                 <div className="flex w-full animate-pulse flex-col items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-[#0d3f38]/10" />
-                  <div className="h-4 w-16 rounded bg-[#0d3f38]/10" />
-                  <div className="h-3 w-20 rounded bg-[#0d3f38]/10" />
+                  <div className="h-8 w-8 rounded-full bg-[#0f1f3d]/10" />
+                  <div className="h-4 w-16 rounded bg-[#0f1f3d]/10" />
+                  <div className="h-3 w-20 rounded bg-[#0f1f3d]/10" />
                 </div>
               ) : city.error ? (
                 <div className="flex flex-col items-center gap-1 text-center">
                   <span className="text-2xl">⚠️</span>
-                  <span className="text-sm font-semibold text-[#0d3f38]">
+                  <span className="text-sm font-semibold text-[#0f1f3d]">
                     {city.name}
                   </span>
                   <span className="text-xs text-red-500">Indisponible</span>
@@ -173,13 +173,13 @@ export function WeatherMorocco() {
               ) : (
                 <>
                   <span className="text-3xl">{info.emoji}</span>
-                  <span className="mt-1 text-sm font-bold text-[#0d3f38]">
+                  <span className="mt-1 text-sm font-bold text-[#0f1f3d]">
                     {city.name}
                   </span>
-                  <span className="text-2xl font-black text-[#0d3f38]">
+                  <span className="text-2xl font-black text-[#0f1f3d]">
                     {city.temp}°C
                   </span>
-                  <span className="text-xs text-[#0d3f38]/70">{info.label}</span>
+                  <span className="text-xs text-[#0f1f3d]/70">{info.label}</span>
                 </>
               )}
             </div>
@@ -328,12 +328,12 @@ export function DarijaPhrasebook() {
   );
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
         <span className="text-xl">📚</span>
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Darija — Guide de conversation</h2>
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Darija — Guide de conversation</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Apprenez le darija marocain. Cliquez pour écouter la prononciation.
       </p>
 
@@ -341,14 +341,14 @@ export function DarijaPhrasebook() {
       <div className="mt-4 relative">
         <Search
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0d3f38]/70"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f1f3d]/70"
         />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher une phrase..."
-          className="w-full rounded-xl border border-[#0d3f38]/15 bg-white py-2.5 pl-10 pr-4 text-sm text-[#0d3f38] outline-none transition focus:border-[#eead59] focus:ring-2 focus:ring-[#eead59]/20"
+          className="w-full rounded-xl border border-[#0f1f3d]/15 bg-white py-2.5 pl-10 pr-4 text-sm text-[#0f1f3d] outline-none transition focus:border-[#f59e0b] focus:ring-2 focus:ring-[#f59e0b]/20"
         />
       </div>
 
@@ -364,7 +364,7 @@ export function DarijaPhrasebook() {
             className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all duration-200 ${
               activeCategory === idx
                 ? greenBg + " shadow-sm"
-                : "bg-white text-[#0d3f38]/70 hover:bg-[#0d3f38]/5"
+                : "bg-white text-[#0f1f3d]/70 hover:bg-[#0f1f3d]/5"
             }`}
           >
             {cat.emoji} {cat.name}
@@ -375,21 +375,21 @@ export function DarijaPhrasebook() {
       {/* Phrases */}
       <div className="mt-4 space-y-2">
         {filteredPhrases.length === 0 ? (
-          <p className="py-6 text-center text-sm text-[#0d3f38]/70">
+          <p className="py-6 text-center text-sm text-[#0f1f3d]/70">
             Aucune phrase trouvée
           </p>
         ) : (
           filteredPhrases.map((phrase, idx) => (
             <div
               key={`${activeCategory}-${idx}`}
-              className="flex items-center gap-3 rounded-xl border border-[#0d3f38]/10 bg-white p-3 transition-all duration-200 hover:border-[#eead59] hover:shadow-sm"
+              className="flex items-center gap-3 rounded-xl border border-[#0f1f3d]/10 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b] hover:shadow-sm"
             >
               <button
                 onClick={() => speak(phrase, idx)}
                 className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg transition-all duration-200 ${
                   speakingIdx === idx
-                    ? goldText + " bg-[#0d3f38] animate-pulse"
-                    : "bg-[#0d3f38]/5 text-[#0d3f38] hover:bg-[#eead59] hover:text-[#0d3f38]"
+                    ? goldText + " bg-[#0f1f3d] animate-pulse"
+                    : "bg-[#0f1f3d]/5 text-[#0f1f3d] hover:bg-[#f59e0b] hover:text-[#0f1f3d]"
                 }`}
                 aria-label="Écouter"
               >
@@ -397,14 +397,14 @@ export function DarijaPhrasebook() {
               </button>
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-base font-bold text-[#0d3f38]">
+                  <span className="text-base font-bold text-[#0f1f3d]">
                     {phrase.darija}
                   </span>
-                  <span className="text-lg text-[#0d3f38]/70" dir="rtl">
+                  <span className="text-lg text-[#0f1f3d]/70" dir="rtl">
                     {phrase.arabic}
                   </span>
                 </div>
-                <p className="text-sm text-[#0d3f38]/70">{phrase.french}</p>
+                <p className="text-sm text-[#0f1f3d]/70">{phrase.french}</p>
               </div>
             </div>
           ))
@@ -445,19 +445,19 @@ export function CustomsCalculator() {
   const currency = (n: number) => `${n.toLocaleString("fr-FR")} MAD`;
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
-        <Calculator className="text-[#0d3f38]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Calculateur douane</h2>
+        <Calculator className="text-[#0f1f3d]" size={22} />
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Calculateur douane</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Estimez les droits de douane à l'entrée au Maroc.
       </p>
 
       {/* Inputs */}
       <div className="mt-4 space-y-3">
         <div>
-          <label className="text-xs font-semibold text-[#0d3f38]/70">
+          <label className="text-xs font-semibold text-[#0f1f3d]/70">
             Électronique (valeur en MAD)
           </label>
           <input
@@ -465,11 +465,11 @@ export function CustomsCalculator() {
             value={electronics || ""}
             onChange={(e) => setElectronics(Math.max(0, Number(e.target.value)))}
             placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0d3f38]/15 bg-white p-3 text-sm font-bold text-[#0d3f38] outline-none transition focus:border-[#eead59]"
+            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-[#0d3f38]/70">
+          <label className="text-xs font-semibold text-[#0f1f3d]/70">
             Cadeaux (valeur en MAD)
           </label>
           <input
@@ -477,14 +477,14 @@ export function CustomsCalculator() {
             value={gifts || ""}
             onChange={(e) => setGifts(Math.max(0, Number(e.target.value)))}
             placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0d3f38]/15 bg-white p-3 text-sm font-bold text-[#0d3f38] outline-none transition focus:border-[#eead59]"
+            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
           />
-          <p className="mt-1 text-xs text-[#0d3f38]/70">
+          <p className="mt-1 text-xs text-[#0f1f3d]/70">
             Franchise: {currency(DUTY_FREE_GIFTS)}
           </p>
         </div>
         <div>
-          <label className="text-xs font-semibold text-[#0d3f38]/70">
+          <label className="text-xs font-semibold text-[#0f1f3d]/70">
             Effets personnels (valeur en MAD)
           </label>
           <input
@@ -492,41 +492,41 @@ export function CustomsCalculator() {
             value={personal || ""}
             onChange={(e) => setPersonal(Math.max(0, Number(e.target.value)))}
             placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0d3f38]/15 bg-white p-3 text-sm font-bold text-[#0d3f38] outline-none transition focus:border-[#eead59]"
+            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
           />
-          <p className="mt-1 text-xs text-[#0d3f38]/70">
+          <p className="mt-1 text-xs text-[#0f1f3d]/70">
             Franchise: {currency(DUTY_FREE_PERSONAL)}
           </p>
         </div>
       </div>
 
       {/* Results */}
-      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0d3f38] to-[#0d3f38]/90 p-4 text-[#f8f7f2]">
-        <p className="text-xs uppercase tracking-wide text-[#eead59]">Droits estimés</p>
-        <p className="mt-1 text-3xl font-black text-[#eead59]">
+      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0f1f3d] to-[#0f1f3d]/90 p-4 text-[#f8fafc]">
+        <p className="text-xs uppercase tracking-wide text-[#f59e0b]">Droits estimés</p>
+        <p className="mt-1 text-3xl font-black text-[#f59e0b]">
           {currency(Math.round(totalDuty))}
         </p>
         <div className="mt-3 space-y-1 border-t border-white/10 pt-3 text-xs">
           {electronics > 0 && (
             <div className="flex justify-between">
-              <span className="text-[#f8f7f2]/70">Électronique (20%)</span>
+              <span className="text-[#f8fafc]/70">Électronique (20%)</span>
               <span>{currency(Math.round(electronicsDuty))}</span>
             </div>
           )}
           {personalExcess > 0 && (
             <div className="flex justify-between">
-              <span className="text-[#f8f7f2]/70">Personnel (excédent 20%)</span>
+              <span className="text-[#f8fafc]/70">Personnel (excédent 20%)</span>
               <span>{currency(Math.round(personalExcess * DUTY_RATE))}</span>
             </div>
           )}
           {giftsExcess > 0 && (
             <div className="flex justify-between">
-              <span className="text-[#f8f7f2]/70">Cadeaux (excédent 20%)</span>
+              <span className="text-[#f8fafc]/70">Cadeaux (excédent 20%)</span>
               <span>{currency(Math.round(giftsExcess * DUTY_RATE))}</span>
             </div>
           )}
           {totalDuty === 0 && (
-            <p className="text-center text-[#eead59]">✓ Aucun droit à payer</p>
+            <p className="text-center text-[#f59e0b]">✓ Aucun droit à payer</p>
           )}
         </div>
       </div>
@@ -535,7 +535,7 @@ export function CustomsCalculator() {
       <div className="mt-4">
         <div className="flex items-center gap-2">
           <AlertTriangle size={16} className="text-red-500" />
-          <h3 className="text-sm font-bold text-[#0d3f38]">Articles restreints</h3>
+          <h3 className="text-sm font-bold text-[#0f1f3d]">Articles restreints</h3>
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {RESTRICTED_ITEMS.map((item) => (
@@ -628,12 +628,12 @@ export function EmergencyContacts() {
   );
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
         <Phone className="text-red-500" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Contacts d'urgence</h2>
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Contacts d'urgence</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Numéros utiles au Maroc — appelez en un tap.
       </p>
 
@@ -650,7 +650,7 @@ export function EmergencyContacts() {
             className={`flex-1 rounded-lg px-3 py-2 text-xs font-bold transition-all duration-200 ${
               tab === t.key
                 ? t.color
-                : "bg-white text-[#0d3f38]/70 hover:bg-[#0d3f38]/5"
+                : "bg-white text-[#0f1f3d]/70 hover:bg-[#0f1f3d]/5"
             }`}
           >
             {t.label}
@@ -668,7 +668,7 @@ export function EmergencyContacts() {
               className="flex flex-col items-center rounded-xl border-2 border-red-200 bg-white p-3 transition-all duration-200 hover:border-red-500 hover:shadow-md"
             >
               <span className="text-2xl">{item.emoji}</span>
-              <span className="mt-1 text-xs font-semibold text-[#0d3f38]">
+              <span className="mt-1 text-xs font-semibold text-[#0f1f3d]">
                 {item.label}
               </span>
               <span className="text-lg font-black text-red-500">{item.number}</span>
@@ -683,18 +683,18 @@ export function EmergencyContacts() {
           {EMBASSIES.map((emb) => (
             <div
               key={emb.name}
-              className="rounded-xl border border-[#eead59]/30 bg-white p-3 transition-all duration-200 hover:border-[#eead59] hover:shadow-sm"
+              className="rounded-xl border border-[#f59e0b]/30 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b] hover:shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-bold text-[#0d3f38]">{emb.name}</h3>
-                  <p className="text-xs text-[#0d3f38]/70">{emb.city}</p>
-                  <p className="mt-1 text-xs text-[#0d3f38]/70">{emb.address}</p>
-                  <p className="text-xs text-[#0d3f38]/70">🕒 {emb.hours}</p>
+                  <h3 className="text-sm font-bold text-[#0f1f3d]">{emb.name}</h3>
+                  <p className="text-xs text-[#0f1f3d]/70">{emb.city}</p>
+                  <p className="mt-1 text-xs text-[#0f1f3d]/70">{emb.address}</p>
+                  <p className="text-xs text-[#0f1f3d]/70">🕒 {emb.hours}</p>
                 </div>
                 <a
                   href={`tel:${emb.phone}`}
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#eead59] text-[#0d3f38] transition hover:bg-[#0d3f38] hover:text-[#eead59]"
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#f59e0b] text-[#0f1f3d] transition hover:bg-[#0f1f3d] hover:text-[#f59e0b]"
                   aria-label="Appeler"
                 >
                   <Phone size={18} />
@@ -711,16 +711,16 @@ export function EmergencyContacts() {
           {CONSULATES.map((con) => (
             <div
               key={con.name}
-              className="rounded-xl border border-[#0d3f38]/10 bg-white p-3 transition-all duration-200 hover:border-[#eead59] hover:shadow-sm"
+              className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b] hover:shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-bold text-[#0d3f38]">{con.name}</h3>
-                  <p className="mt-1 text-xs text-[#0d3f38]/70">{con.address}</p>
+                  <h3 className="text-sm font-bold text-[#0f1f3d]">{con.name}</h3>
+                  <p className="mt-1 text-xs text-[#0f1f3d]/70">{con.address}</p>
                 </div>
                 <a
                   href={`tel:${con.phone}`}
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#eead59] text-[#0d3f38] transition hover:bg-[#0d3f38] hover:text-[#eead59]"
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#f59e0b] text-[#0f1f3d] transition hover:bg-[#0f1f3d] hover:text-[#f59e0b]"
                   aria-label="Appeler"
                 >
                   <Phone size={18} />
@@ -780,27 +780,27 @@ export function MoroccanCalendar() {
   const upcoming = sortedHolidays.filter((h) => daysUntil(h.date) >= -1);
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
-        <Calendar className="text-[#0d3f38]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Calendrier marocain</h2>
+        <Calendar className="text-[#0f1f3d]" size={22} />
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Calendrier marocain</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Fêtes religieuses et nationales du Maroc
       </p>
 
       {/* Next event countdown */}
       {nextEvent && (
-        <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0d3f38] to-[#0d3f38]/90 p-4 text-center">
-          <p className="text-xs uppercase tracking-wide text-[#eead59]">
+        <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0f1f3d] to-[#0f1f3d]/90 p-4 text-center">
+          <p className="text-xs uppercase tracking-wide text-[#f59e0b]">
             Prochain événement
           </p>
           <p className="mt-1 text-2xl">{nextEvent.emoji}</p>
-          <p className="text-lg font-bold text-[#f8f7f2]">{nextEvent.name}</p>
-          <p className="mt-2 text-4xl font-black text-[#eead59]">
+          <p className="text-lg font-bold text-[#f8fafc]">{nextEvent.name}</p>
+          <p className="mt-2 text-4xl font-black text-[#f59e0b]">
             {daysUntil(nextEvent.date)}
           </p>
-          <p className="text-xs text-[#f8f7f2]/70">
+          <p className="text-xs text-[#f8fafc]/70">
             {daysUntil(nextEvent.date) === 0
               ? "C'est aujourd'hui!"
               : `jour${daysUntil(nextEvent.date) > 1 ? "s" : ""} restant${
@@ -821,14 +821,14 @@ export function MoroccanCalendar() {
               key={holiday.name}
               className={`flex items-center gap-3 rounded-xl border p-3 transition-all duration-200 ${
                 isNext
-                  ? "border-[#eead59] bg-[#eead59]/10"
-                  : "border-[#0d3f38]/10 bg-white hover:shadow-sm"
+                  ? "border-[#f59e0b] bg-[#f59e0b]/10"
+                  : "border-[#0f1f3d]/10 bg-white hover:shadow-sm"
               }`}
             >
               <span className="text-2xl">{holiday.emoji}</span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-[#0d3f38]">{holiday.name}</p>
-                <p className="text-xs text-[#0d3f38]/70">
+                <p className="text-sm font-bold text-[#0f1f3d]">{holiday.name}</p>
+                <p className="text-xs text-[#0f1f3d]/70">
                   {eventDate.toLocaleDateString("fr-FR", {
                     day: "numeric",
                     month: "long",
@@ -839,8 +839,8 @@ export function MoroccanCalendar() {
               <span
                 className={`rounded-full px-2 py-1 text-xs font-bold ${
                   holiday.type === "islamic"
-                    ? "bg-[#0d3f38]/10 text-[#0d3f38]"
-                    : "bg-[#eead59]/20 text-[#0d3f38]"
+                    ? "bg-[#0f1f3d]/10 text-[#0f1f3d]"
+                    : "bg-[#f59e0b]/20 text-[#0f1f3d]"
                 }`}
               >
                 {days >= 0 ? `J-${days}` : "Passé"}
@@ -874,19 +874,19 @@ export function ZakaatCalculator() {
     n.toLocaleString("fr-FR", { maximumFractionDigits: 2 });
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
-        <Star className="text-[#eead59]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Calculateur de Zakat</h2>
+        <Star className="text-[#f59e0b]" size={22} />
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Calculateur de Zakat</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Calculez votre zakat — 2.5% du capital / زكاة
       </p>
 
       {/* Input */}
       <div className="mt-4 flex gap-2">
         <div className="flex-1">
-          <label className="text-xs font-semibold text-[#0d3f38]/70">
+          <label className="text-xs font-semibold text-[#0f1f3d]/70">
             Épargne / Capital
           </label>
           <input
@@ -894,17 +894,17 @@ export function ZakaatCalculator() {
             value={amount || ""}
             onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
             placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0d3f38]/15 bg-white p-3 text-sm font-bold text-[#0d3f38] outline-none transition focus:border-[#eead59]"
+            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
           />
         </div>
         <div className="w-24">
-          <label className="text-xs font-semibold text-[#0d3f38]/70">
+          <label className="text-xs font-semibold text-[#0f1f3d]/70">
             Devise
           </label>
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value as "EUR" | "MAD")}
-            className="mt-1 w-full rounded-xl border border-[#0d3f38]/15 bg-white p-3 text-sm font-bold text-[#0d3f38] outline-none"
+            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none"
           >
             <option value="EUR">EUR</option>
             <option value="MAD">MAD</option>
@@ -916,14 +916,14 @@ export function ZakaatCalculator() {
       <div
         className={`mt-4 flex items-center gap-2 rounded-xl p-3 text-sm font-semibold ${
           aboveNisab
-            ? "bg-[#eead59]/10 text-[#0d3f38]"
-            : "bg-[#0d3f38]/5 text-[#0d3f38]/70"
+            ? "bg-[#f59e0b]/10 text-[#0f1f3d]"
+            : "bg-[#0f1f3d]/5 text-[#0f1f3d]/70"
         }`}
       >
         {aboveNisab ? (
-          <Check size={18} className="text-[#eead59]" />
+          <Check size={18} className="text-[#f59e0b]" />
         ) : (
-          <X size={18} className="text-[#0d3f38]/70" />
+          <X size={18} className="text-[#0f1f3d]/70" />
         )}
         {aboveNisab
           ? `Au-dessus du nisab (${fmt(nisabMAD)} MAD)`
@@ -931,22 +931,22 @@ export function ZakaatCalculator() {
       </div>
 
       {/* Result */}
-      <div className="mt-3 rounded-xl bg-gradient-to-br from-[#eead59] to-[#eead59]/90 p-5 text-center">
-        <p className="text-xs uppercase tracking-wide text-[#0d3f38]/70">
+      <div className="mt-3 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f59e0b]/90 p-5 text-center">
+        <p className="text-xs uppercase tracking-wide text-[#0f1f3d]/70">
           Zakat à payer (2.5%)
         </p>
-        <p className="mt-1 text-3xl font-black text-[#0d3f38]">
+        <p className="mt-1 text-3xl font-black text-[#0f1f3d]">
           {fmt(Math.round(zakaat * 100) / 100)}
         </p>
-        <p className="text-sm font-bold text-[#0d3f38]/70">MAD</p>
+        <p className="text-sm font-bold text-[#0f1f3d]/70">MAD</p>
         {currency === "EUR" && amount > 0 && (
-          <p className="mt-2 text-xs text-[#0d3f38]/70">
+          <p className="mt-2 text-xs text-[#0f1f3d]/70">
             ≈ {fmt(Math.round((zakaat / EUR_TO_MAD) * 100) / 100)} EUR
           </p>
         )}
       </div>
 
-      <p className="mt-3 text-xs text-[#0d3f38]/70">
+      <p className="mt-3 text-xs text-[#0f1f3d]/70">
         Le nisab correspond à l'équivalent de 85g d'or (≈ {fmt(nisabMAD)} MAD).
         La zakat est obligatoire si votre capital dépasse ce seuil pendant une
         année lunaire.
@@ -1031,73 +1031,73 @@ export function TimeZoneSIM() {
   }, []);
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
-        <Clock className="text-[#0d3f38]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Fuseau horaire & SIM</h2>
+        <Clock className="text-[#0f1f3d]" size={22} />
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Fuseau horaire & SIM</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Comparez les horaires et les cartes SIM marocaines
       </p>
 
       {/* Time zones */}
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-[#0d3f38]/10 bg-white p-4 text-center">
+        <div className="rounded-xl border border-[#0f1f3d]/10 bg-white p-4 text-center">
           <p className="text-2xl">🇫🇷</p>
-          <p className="mt-1 text-xs font-semibold text-[#0d3f38]/70">
+          <p className="mt-1 text-xs font-semibold text-[#0f1f3d]/70">
             France (UTC+1)
           </p>
-          <p className="mt-1 text-xl font-black text-[#0d3f38]">{frTime}</p>
+          <p className="mt-1 text-xl font-black text-[#0f1f3d]">{frTime}</p>
         </div>
-        <div className="rounded-xl border border-[#0d3f38]/10 bg-white p-4 text-center">
+        <div className="rounded-xl border border-[#0f1f3d]/10 bg-white p-4 text-center">
           <p className="text-2xl">🇲🇦</p>
-          <p className="mt-1 text-xs font-semibold text-[#0d3f38]/70">
+          <p className="mt-1 text-xs font-semibold text-[#0f1f3d]/70">
             Maroc (UTC+1)
           </p>
-          <p className="mt-1 text-xl font-black text-[#0d3f38]">{maTime}</p>
+          <p className="mt-1 text-xl font-black text-[#0f1f3d]">{maTime}</p>
         </div>
       </div>
 
       {/* SIM cards */}
-      <h3 className="mt-5 text-sm font-bold text-[#0d3f38]">
+      <h3 className="mt-5 text-sm font-bold text-[#0f1f3d]">
         Cartes SIM locales
       </h3>
       <div className="mt-2 space-y-2">
         {SIM_CARDS.map((sim) => (
           <div
             key={sim.name}
-            className="rounded-xl border border-[#0d3f38]/10 bg-white p-3 transition-all duration-200 hover:border-[#eead59] hover:shadow-sm"
+            className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b] hover:shadow-sm"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xl">{sim.emoji}</span>
-                <span className="text-sm font-bold text-[#0d3f38]">
+                <span className="text-sm font-bold text-[#0f1f3d]">
                   {sim.name}
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-lg font-black text-[#0d3f38]">
+                <span className="text-lg font-black text-[#0f1f3d]">
                   {sim.price}
                 </span>
-                <span className="ml-1 text-xs text-[#0d3f38]/70">
+                <span className="ml-1 text-xs text-[#0f1f3d]/70">
                   {sim.priceEur}
                 </span>
               </div>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
-              <span className="rounded-lg bg-[#0d3f38]/5 px-2 py-1 text-xs font-semibold text-[#0d3f38]">
+              <span className="rounded-lg bg-[#0f1f3d]/5 px-2 py-1 text-xs font-semibold text-[#0f1f3d]">
                 📶 {sim.data}
               </span>
-              <span className="rounded-lg bg-[#0d3f38]/5 px-2 py-1 text-xs font-semibold text-[#0d3f38]">
+              <span className="rounded-lg bg-[#0f1f3d]/5 px-2 py-1 text-xs font-semibold text-[#0f1f3d]">
                 📞 {sim.voice}
               </span>
-              <span className="rounded-lg bg-[#0d3f38]/5 px-2 py-1 text-xs font-semibold text-[#0d3f38]">
+              <span className="rounded-lg bg-[#0f1f3d]/5 px-2 py-1 text-xs font-semibold text-[#0f1f3d]">
                 ⏳ {sim.valid}
               </span>
             </div>
             <div className="mt-2 flex gap-3 text-xs">
               <div className="flex-1">
-                <p className="text-[#0d3f38]/70">Avantages:</p>
+                <p className="text-[#0f1f3d]/70">Avantages:</p>
                 {sim.pros.map((p) => (
                   <p key={p} className="flex items-center gap-1 text-emerald-700">
                     <Check size={12} /> {p}
@@ -1105,7 +1105,7 @@ export function TimeZoneSIM() {
                 ))}
               </div>
               <div className="flex-1">
-                <p className="text-[#0d3f38]/70">Inconvénients:</p>
+                <p className="text-[#0f1f3d]/70">Inconvénients:</p>
                 {sim.cons.map((c) => (
                   <p key={c} className="flex items-center gap-1 text-red-700">
                     <X size={12} /> {c}
@@ -1192,12 +1192,12 @@ export function FuelPriceComparator() {
   const savingsPct = ((savings / franceTotal) * 100).toFixed(0);
 
   return (
-    <section className={`${cardBase} ${creamBg} border-[#0d3f38]/10`}>
+    <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
-        <Fuel className="text-[#0d3f38]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0d3f38]">Prix du carburant</h2>
+        <Fuel className="text-[#0f1f3d]" size={22} />
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Prix du carburant</h2>
       </div>
-      <p className="mt-1 text-sm text-[#0d3f38]/70">
+      <p className="mt-1 text-sm text-[#0f1f3d]/70">
         Comparaison FR / ES / MA — prix approximatifs 2026
       </p>
 
@@ -1206,20 +1206,20 @@ export function FuelPriceComparator() {
         {FUEL_DATA.map((country) => (
           <div
             key={country.country}
-            className="rounded-xl border border-[#0d3f38]/10 bg-white p-3 transition-all duration-200 hover:border-[#eead59]"
+            className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b]"
           >
             <div className="flex items-center gap-2">
               <span className="text-2xl">{country.flag}</span>
-              <h3 className="text-sm font-bold text-[#0d3f38]">{country.country}</h3>
+              <h3 className="text-sm font-bold text-[#0f1f3d]">{country.country}</h3>
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
               {country.fuels.map((fuel) => (
                 <div
                   key={fuel.name}
-                  className="rounded-lg bg-[#0d3f38]/5 p-2 text-center"
+                  className="rounded-lg bg-[#0f1f3d]/5 p-2 text-center"
                 >
-                  <p className="text-xs text-[#0d3f38]/70">{fuel.name}</p>
-                  <p className="text-base font-black text-[#0d3f38]">
+                  <p className="text-xs text-[#0f1f3d]/70">{fuel.name}</p>
+                  <p className="text-base font-black text-[#0f1f3d]">
                     {fuel.price}
                     <span className="text-xs"> {fuel.unit}</span>
                   </p>
@@ -1231,32 +1231,32 @@ export function FuelPriceComparator() {
       </div>
 
       {/* Savings calculator */}
-      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0d3f38] to-[#0d3f38]/90 p-4 text-center text-[#f8f7f2]">
-        <p className="text-xs uppercase tracking-wide text-[#eead59]">
+      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0f1f3d] to-[#0f1f3d]/90 p-4 text-center text-[#f8fafc]">
+        <p className="text-xs uppercase tracking-wide text-[#f59e0b]">
           Économie réservoir plein (50L Diesel)
         </p>
         <div className="mt-2 flex items-center justify-center gap-4">
           <div>
-            <p className="text-xs text-[#f8f7f2]/60">🇫🇷 France</p>
+            <p className="text-xs text-[#f8fafc]/60">🇫🇷 France</p>
             <p className="text-lg font-bold">{franceTotal.toFixed(2)}€</p>
           </div>
-          <span className="text-2xl text-[#eead59]">→</span>
+          <span className="text-2xl text-[#f59e0b]">→</span>
           <div>
-            <p className="text-xs text-[#f8f7f2]/60">🇲🇦 Maroc</p>
+            <p className="text-xs text-[#f8fafc]/60">🇲🇦 Maroc</p>
             <p className="text-lg font-bold">{moroccoTotal.toFixed(2)}€</p>
           </div>
         </div>
-        <div className="mt-3 rounded-lg bg-[#eead59] p-3">
-          <p className="text-2xl font-black text-[#0d3f38]">
+        <div className="mt-3 rounded-lg bg-[#f59e0b] p-3">
+          <p className="text-2xl font-black text-[#0f1f3d]">
             Économie: {savings.toFixed(2)}€
           </p>
-          <p className="text-sm font-bold text-[#0d3f38]/70">
+          <p className="text-sm font-bold text-[#0f1f3d]/70">
             Soit {savingsPct}% moins cher au Maroc!
           </p>
         </div>
       </div>
 
-      <p className="mt-3 text-xs text-[#0d3f38]/70">
+      <p className="mt-3 text-xs text-[#0f1f3d]/70">
         Prix indicatifs 2026 — susceptibles de varier. Le carburant marocain
         reste subventionné par l'État.
       </p>

@@ -403,11 +403,12 @@ export default function HadakAI() {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const [isOffline, setIsOffline] = useState(false);
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isRtl = lang === 'ar' || lang === 'da';
+  const isRtl = lang === 'ar';
 
   /* Auto-scroll to bottom on new messages / typing */
   useEffect(() => {
@@ -452,7 +453,7 @@ export default function HadakAI() {
     const recognitionInstance = new SpeechRecognitionConstructor();
     recognitionInstance.continuous = false;
     recognitionInstance.interimResults = false;
-    recognitionInstance.lang = lang === 'ar' ? 'ar-SA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
+    recognitionInstance.lang = lang === 'ar' ? 'ar-SA' : lang === 'da' ? 'ar-MA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
 
     recognitionInstance.onstart = () => {
       setIsListening(true);
@@ -488,6 +489,23 @@ export default function HadakAI() {
       setInput('');
       recognition.start();
     }
+  };
+
+  const speakMessage = (content: string, idx: number) => {
+    if (!('speechSynthesis' in window)) return;
+    if (speakingIdx === idx) {
+      window.speechSynthesis.cancel();
+      setSpeakingIdx(null);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(content);
+    utterance.lang = lang === 'ar' ? 'ar-SA' : lang === 'da' ? 'ar-MA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
+    utterance.rate = 0.95;
+    utterance.onstart = () => setSpeakingIdx(idx);
+    utterance.onend = () => setSpeakingIdx(null);
+    utterance.onerror = () => setSpeakingIdx(null);
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleSend = async (text?: string) => {
@@ -575,11 +593,11 @@ export default function HadakAI() {
         className="group fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full shadow-2xl"
         style={{
           background: open
-            ? 'linear-gradient(135deg, #0d3f38 0%, #0a2e28 100%)'
-            : 'linear-gradient(135deg, #eead59 0%, #d49934 100%)',
+            ? 'linear-gradient(135deg, #0f1f3d 0%, #080f28 100%)'
+            : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
           boxShadow: open
-            ? '0 8px 32px rgba(13, 63, 56, 0.4)'
-            : '0 8px 32px rgba(238, 173, 89, 0.45)',
+            ? '0 8px 32px rgba(15, 31, 61, 0.4)'
+            : '0 8px 32px rgba(245, 158, 11, 0.45)',
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -593,13 +611,13 @@ export default function HadakAI() {
           <>
             <motion.span
               className="absolute inset-0 rounded-full"
-              style={{ backgroundColor: 'rgba(238, 173, 89, 0.35)' }}
+              style={{ backgroundColor: 'rgba(245, 158, 11, 0.35)' }}
               animate={{ scale: [1, 1.7, 1.7], opacity: [0.6, 0, 0] }}
               transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
             />
             <motion.span
               className="absolute inset-0 rounded-full"
-              style={{ backgroundColor: 'rgba(238, 173, 89, 0.35)' }}
+              style={{ backgroundColor: 'rgba(245, 158, 11, 0.35)' }}
               animate={{ scale: [1, 1.7, 1.7], opacity: [0.6, 0, 0] }}
               transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: 1.2 }}
             />
@@ -613,9 +631,9 @@ export default function HadakAI() {
           className="flex items-center justify-center"
         >
           {open ? (
-            <X className="h-7 w-7 text-[#eead59]" />
+            <X className="h-7 w-7 text-[#f59e0b]" />
           ) : (
-            <MessageCircle className="h-7 w-7 text-[#0d3f38] transition-transform duration-200 group-hover:rotate-12" />
+            <MessageCircle className="h-7 w-7 text-[#0f1f3d] transition-transform duration-200 group-hover:rotate-12" />
           )}
         </motion.span>
       </motion.button>
@@ -629,8 +647,8 @@ export default function HadakAI() {
           className="fixed bottom-24 right-6 z-50 flex h-[min(560px,calc(100vh-7rem))] w-[calc(100vw-3rem)] max-w-[400px] flex-col overflow-hidden rounded-3xl shadow-2xl"
           style={{
             direction: isRtl ? 'rtl' : 'ltr',
-            background: 'linear-gradient(180deg, #0d3f38 0%, #0a2e28 100%)',
-            border: '1px solid rgba(238, 173, 89, 0.2)',
+            background: 'linear-gradient(180deg, #0f1f3d 0%, #080f28 100%)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
           }}
           initial={{ opacity: 0, y: 24, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -641,28 +659,28 @@ export default function HadakAI() {
           <div
             className="relative flex items-center gap-3 px-4 py-4"
             style={{
-              background: 'linear-gradient(135deg, rgba(238, 173, 89, 0.12) 0%, transparent 100%)',
-              borderBottom: '1px solid rgba(238, 173, 89, 0.15)',
+              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, transparent 100%)',
+              borderBottom: '1px solid rgba(245, 158, 11, 0.15)',
             }}
           >
             {/* Avatar */}
             <div
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
               style={{
-                background: 'linear-gradient(135deg, #eead59 0%, #d49934 100%)',
-                boxShadow: '0 4px 12px rgba(238, 173, 89, 0.3)',
+                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
               }}
             >
-              <Sparkles className="h-5 w-5 text-[#0d3f38]" />
+              <Sparkles className="h-5 w-5 text-[#0f1f3d]" />
             </div>
 
             {/* Name + status */}
             <div className="flex-1 min-w-0">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 Hadak
-                <span className="text-xs font-normal text-[#eead59]">AI</span>
+                <span className="text-xs font-normal text-[#f59e0b]">AI</span>
                 {isOffline && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[#eead59]/20 px-2 py-0.5 text-[10px] font-bold text-[#eead59]">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#f59e0b]/20 px-2 py-0.5 text-[10px] font-bold text-[#f59e0b]">
                     ⚡ Mode limité
                   </span>
                 )}
@@ -694,8 +712,8 @@ export default function HadakAI() {
                 <motion.div
                   className="absolute end-0 mt-2 w-40 overflow-hidden rounded-xl shadow-xl"
                   style={{
-                    background: '#0a2e28',
-                    border: '1px solid rgba(238, 173, 89, 0.2)',
+                    background: '#080f28',
+                    border: '1px solid rgba(245, 158, 11, 0.2)',
                   }}
                   initial={{ opacity: 0, y: -6, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -711,7 +729,7 @@ export default function HadakAI() {
                         setLangOpen(false);
                       }}
                       className={`flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
-                        l === lang ? 'bg-[#eead59]/15 text-[#eead59]' : 'text-white/80 hover:bg-white/5'
+                        l === lang ? 'bg-[#f59e0b]/15 text-[#f59e0b]' : 'text-white/80 hover:bg-white/5'
                       }`}
                     >
                       <span className="text-base">{LANG_FLAG[l]}</span>
@@ -728,7 +746,7 @@ export default function HadakAI() {
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto px-4 py-4 space-y-3"
-            style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(238,173,89,0.3) transparent' }}
+            style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(245,158,11,0.3) transparent' }}
           >
             {messages.map((msg, i) => {
               const Icon = msg.topic ? TOPIC_ICON[msg.topic] : null;
@@ -743,31 +761,43 @@ export default function HadakAI() {
                   {msg.role === 'assistant' && (
                     <div
                       className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full mt-0.5 me-2"
-                      style={{ background: 'rgba(238, 173, 89, 0.15)' }}
+                      style={{ background: 'rgba(245, 158, 11, 0.15)' }}
                     >
                       {Icon ? (
-                        <Icon className="h-3.5 w-3.5 text-[#eead59]" />
+                        <Icon className="h-3.5 w-3.5 text-[#f59e0b]" />
                       ) : (
-                        <Sparkles className="h-3.5 w-3.5 text-[#eead59]" />
+                        <Sparkles className="h-3.5 w-3.5 text-[#f59e0b]" />
                       )}
                     </div>
                   )}
-                  <div
-                    className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'text-[#0d3f38] font-medium'
-                        : 'text-white/95'
-                    }`}
-                    style={{
-                      background:
+                  <div className="flex flex-col gap-1">
+                    <div
+                      className={`max-w-full rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                         msg.role === 'user'
-                          ? 'linear-gradient(135deg, #eead59 0%, #d49934 100%)'
-                          : 'rgba(255, 255, 255, 0.08)',
-                      borderTopRightRadius: msg.role === 'user' ? '6px' : undefined,
-                      borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
-                    }}
-                  >
-                    {msg.content}
+                          ? 'text-[#0f1f3d] font-medium'
+                          : 'text-white/95'
+                      }`}
+                      style={{
+                        background:
+                          msg.role === 'user'
+                            ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                            : 'rgba(255, 255, 255, 0.08)',
+                        borderTopRightRadius: msg.role === 'user' ? '6px' : undefined,
+                        borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
+                      }}
+                    >
+                      {msg.content}
+                    </div>
+                    {msg.role === 'assistant' && (
+                      <button
+                        onClick={() => speakMessage(msg.content, i)}
+                        className="self-start ms-1 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] text-white/40 hover:text-[#f59e0b] transition-colors"
+                        aria-label={speakingIdx === i ? 'Arrêter' : 'Écouter'}
+                      >
+                        <Volume2 className={`h-3 w-3 ${speakingIdx === i ? 'text-[#f59e0b]' : ''}`} />
+                        {speakingIdx === i ? 'Stop' : 'Écouter'}
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               );
@@ -785,9 +815,9 @@ export default function HadakAI() {
               >
                 <div
                   className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full mt-0.5 me-2"
-                  style={{ background: 'rgba(238, 173, 89, 0.15)' }}
+                  style={{ background: 'rgba(245, 158, 11, 0.15)' }}
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-[#eead59]" />
+                  <Sparkles className="h-3.5 w-3.5 text-[#f59e0b]" />
                 </div>
                 <div
                   className="flex items-center gap-1.5 rounded-2xl px-5 py-3.5"
@@ -797,15 +827,15 @@ export default function HadakAI() {
                   }}
                 >
                   <span
-                    className="h-2 w-2 rounded-full bg-[#eead59]"
+                    className="h-2 w-2 rounded-full bg-[#f59e0b]"
                     style={{ animation: 'hadak-typing 1.2s infinite ease-in-out' }}
                   />
                   <span
-                    className="h-2 w-2 rounded-full bg-[#eead59]"
+                    className="h-2 w-2 rounded-full bg-[#f59e0b]"
                     style={{ animation: 'hadak-typing 1.2s infinite ease-in-out', animationDelay: '0.2s' }}
                   />
                   <span
-                    className="h-2 w-2 rounded-full bg-[#eead59]"
+                    className="h-2 w-2 rounded-full bg-[#f59e0b]"
                     style={{ animation: 'hadak-typing 1.2s infinite ease-in-out', animationDelay: '0.4s' }}
                   />
                 </div>
@@ -833,9 +863,9 @@ export default function HadakAI() {
                     onClick={() => handleSend(label)}
                     className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
                     style={{
-                      background: 'rgba(238, 173, 89, 0.1)',
-                      border: '1px solid rgba(238, 173, 89, 0.25)',
-                      color: '#eead59',
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      border: '1px solid rgba(245, 158, 11, 0.25)',
+                      color: '#f59e0b',
                     }}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -855,7 +885,7 @@ export default function HadakAI() {
           {/* ---- Input area ---- */}
           <div
             className="p-3"
-            style={{ borderTop: '1px solid rgba(238, 173, 89, 0.12)' }}
+            style={{ borderTop: '1px solid rgba(245, 158, 11, 0.12)' }}
           >
             <div className="flex items-center gap-2">
               <input
@@ -883,7 +913,7 @@ export default function HadakAI() {
                 className="flex-1 rounded-full px-4 py-2.5 text-sm text-white placeholder-white/40 transition-colors focus:outline-none"
                 style={{
                   background: 'rgba(255, 255, 255, 0.06)',
-                  border: '1px solid rgba(238, 173, 89, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.15)',
                 }}
                 disabled={isTyping}
               />
@@ -910,12 +940,12 @@ export default function HadakAI() {
                 disabled={!input.trim() || isTyping}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
                 style={{
-                  background: 'linear-gradient(135deg, #eead59 0%, #d49934 100%)',
-                  boxShadow: '0 4px 12px rgba(238, 173, 89, 0.3)',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
                 }}
                 aria-label="Send message"
               >
-                <Send className="h-4 w-4 text-[#0d3f38]" />
+                <Send className="h-4 w-4 text-[#0f1f3d]" />
               </button>
             </div>
           </div>
@@ -945,11 +975,11 @@ export default function HadakAI() {
           background: transparent;
         }
         .overflow-y-auto::-webkit-scrollbar-thumb {
-          background: rgba(238, 173, 89, 0.3);
+          background: rgba(245, 158, 11, 0.3);
           border-radius: 2px;
         }
         .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: rgba(238, 173, 89, 0.5);
+          background: rgba(245, 158, 11, 0.5);
         }
       `}</style>
     </>

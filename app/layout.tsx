@@ -69,8 +69,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#0d3f38' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a2e28' },
+    { media: '(prefers-color-scheme: light)', color: '#0f1f3d' },
+    { media: '(prefers-color-scheme: dark)', color: '#080f28' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -112,7 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="apple-touch-icon" href="/icon-192.svg" />
-        <meta name="theme-color" content="#0d3f38" />
+        <meta name="theme-color" content="#0f1f3d" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

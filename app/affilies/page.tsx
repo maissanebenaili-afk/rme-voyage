@@ -150,12 +150,12 @@ const statusConfig = {
 
 export default function AffiliatesPage() {
   return (
-    <main className="min-h-screen bg-[#f8f7f2] text-[#173a36]">
+    <main className="min-h-screen bg-[#f8fafc] text-[#0f1f3d]">
       {/* Nav */}
-      <nav className="bg-[#0d3f38] px-5 py-4">
+      <nav className="bg-[#0f1f3d] px-5 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-base font-black text-white">
-            <span className="grid h-9 w-9 place-items-center rounded-2xl bg-[#e6a44e] text-sm text-[#103d37]">R</span>
+            <span className="grid h-9 w-9 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d]">R</span>
             RME <span className="font-medium text-[#f5cd93]">Voyage</span>
           </Link>
           <Link href="/" className="text-sm text-white/70 hover:text-white">← Retour</Link>
@@ -164,7 +164,7 @@ export default function AffiliatesPage() {
 
       <div className="mx-auto max-w-4xl px-5 py-16 sm:px-8">
         <div className="mb-12">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#0d3f38]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-[#0d3f38]">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[#0f1f3d]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-widest text-[#0f1f3d]">
             Guide interne
           </span>
           <h1 className="mt-4 text-4xl font-display font-semibold tracking-tight">
@@ -189,9 +189,9 @@ export default function AffiliatesPage() {
             { label: 'Si 3 clients B2B/an', value: '~€1 470–5 970/an', note: 'Récurrent, zéro support' },
           ].map(({ label, value, note }) => (
             <div key={label} className="premium-card rounded-xl p-5">
-              <Banknote size={20} className="text-[#0d6255]" />
+              <Banknote size={20} className="text-[#0369a1]" />
               <p className="mt-3 text-sm text-[#5a716c]">{label}</p>
-              <p className="mt-1 text-xl font-black text-[#173a36]">{value}</p>
+              <p className="mt-1 text-xl font-black text-[#0f1f3d]">{value}</p>
               <p className="mt-1 text-xs text-[#5a716c]">{note}</p>
             </div>
           ))}
@@ -215,30 +215,30 @@ export default function AffiliatesPage() {
                     href={prog.signupUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-lg bg-[#0d3f38] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#173a36]"
+                    className="flex items-center gap-2 rounded-lg bg-[#0f1f3d] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#0f1f3d]"
                   >
                     S'inscrire <ExternalLink size={14} />
                   </a>
                 </div>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-lg bg-[#f8f7f2] p-3">
+                  <div className="rounded-lg bg-[#f8fafc] p-3">
                     <p className="text-xs text-[#5a716c]">Commission</p>
                     <p className="mt-0.5 text-sm font-bold">{prog.commission}</p>
                   </div>
-                  <div className="rounded-lg bg-[#f8f7f2] p-3">
+                  <div className="rounded-lg bg-[#f8fafc] p-3">
                     <p className="text-xs text-[#5a716c]">Paiement</p>
                     <p className="mt-0.5 text-sm font-bold">{prog.payout}</p>
                   </div>
-                  <div className="rounded-lg bg-[#f8f7f2] p-3">
+                  <div className="rounded-lg bg-[#f8fafc] p-3">
                     <p className="text-xs text-[#5a716c]">Délai</p>
                     <p className="mt-0.5 text-sm font-bold">{prog.delay}</p>
                   </div>
                 </div>
 
                 <div className="mt-4 rounded-lg border border-[#e6ede9] bg-white p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#0d6255]">Variable Vercel à remplir</p>
-                  <code className="mt-1 block font-mono text-sm text-[#173a36]">{prog.envKey}</code>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#0369a1]">Variable Vercel à remplir</p>
+                  <code className="mt-1 block font-mono text-sm text-[#0f1f3d]">{prog.envKey}</code>
                   <p className="mt-1 text-xs text-[#5a716c]">Base du lien deep : <span className="font-mono">{prog.deepLinkBase}</span></p>
                 </div>
 
@@ -247,7 +247,7 @@ export default function AffiliatesPage() {
                   <ol className="space-y-1.5">
                     {prog.steps.map((step, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
-                        <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#0d3f38] text-xs font-bold text-white">{i + 1}</span>
+                        <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#0f1f3d] text-xs font-bold text-white">{i + 1}</span>
                         <span className="text-[#5a716c]">{step}</span>
                       </li>
                     ))}
@@ -266,7 +266,7 @@ export default function AffiliatesPage() {
         </div>
 
         {/* Summary */}
-        <div className="mt-12 rounded-2xl bg-[#0d3f38] p-8 text-white">
+        <div className="mt-12 rounded-2xl bg-[#0f1f3d] p-8 text-white">
           <h2 className="text-2xl font-display font-semibold">Ordre d'action recommandé</h2>
           <ol className="mt-5 space-y-3">
             {[
@@ -277,7 +277,7 @@ export default function AffiliatesPage() {
               'Western Union + FRS (complémentaires)',
             ].map((step, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#e6a44e] text-sm font-black text-[#103d37]">{i + 1}</span>
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#f59e0b] text-sm font-black text-[#0f1f3d]">{i + 1}</span>
                 <span className="text-white/85 text-sm">{step}</span>
               </li>
             ))}
@@ -289,7 +289,7 @@ export default function AffiliatesPage() {
         </div>
       </div>
 
-      <footer className="bg-[#0a2e28] py-8 text-center text-sm text-white/40">
+      <footer className="bg-[#080f28] py-8 text-center text-sm text-white/40">
         © 2026 RME Voyage — Nova Presta · <Link href="/" className="hover:text-white/70">Retour à l'accueil</Link>
       </footer>
     </main>

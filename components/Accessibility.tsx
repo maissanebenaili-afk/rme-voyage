@@ -150,17 +150,17 @@ export default function Accessibility() {
       }
 
       /* Focus visible mode (renforcé)
-         Un simple contour doré (#eead59) ne respecte pas 3:1 de contraste sur
-         les fonds clairs du site (creme #f8f7f2 / blanc) — mesuré ~1.8:1,
+         Un simple contour doré (#f59e0b) ne respecte pas 3:1 de contraste sur
+         les fonds clairs du site (creme #f8fafc / blanc) — mesuré ~1.8:1,
          insuffisant pour un indicateur de focus (WCAG 2.4.11). On combine donc
          un contour doré ET un anneau sombre (box-shadow) : ensemble, l'un des
          deux reste toujours visible à 3:1+ quel que soit le fond (clair ou
          foncé) derrière l'élément ciblé. */
       .rme-focus-visible *:focus,
       .rme-focus-visible *:focus-visible {
-        outline: 3px solid #0a2e28 !important;
+        outline: 3px solid #080f28 !important;
         outline-offset: 2px !important;
-        box-shadow: 0 0 0 5px #eead59 !important;
+        box-shadow: 0 0 0 5px #f59e0b !important;
         border-radius: 4px !important;
       }
       .rme-focus-visible *:focus:not(:focus-visible) {
@@ -175,8 +175,8 @@ export default function Accessibility() {
         left: 0;
         z-index: 10000;
         padding: 12px 24px;
-        background: #eead59;
-        color: #0d3f38;
+        background: #f59e0b;
+        color: #0f1f3d;
         font-weight: 700;
         font-size: 14px;
         border-radius: 0 0 12px 0;
@@ -335,8 +335,8 @@ export default function Accessibility() {
         onClick={() => setOpen((prev) => !prev)}
         className="fixed bottom-4 left-4 z-[9998] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-95"
         style={{
-          background: 'linear-gradient(135deg, #0d3f38, #0a2e28)',
-          border: '2px solid #eead59',
+          background: 'linear-gradient(135deg, #0f1f3d, #080f28)',
+          border: '2px solid #f59e0b',
         }}
         aria-label={
           open ? "Fermer les options d'accessibilité" : "Ouvrir les options d'accessibilité"
@@ -345,11 +345,11 @@ export default function Accessibility() {
         aria-haspopup="dialog"
       >
         {open ? (
-          <X size={24} className="text-[#eead59]" strokeWidth={2.5} />
+          <X size={24} className="text-[#f59e0b]" strokeWidth={2.5} />
         ) : (
-          <Eye size={24} className="text-[#eead59]" strokeWidth={2.5} />
+          <Eye size={24} className="text-[#f59e0b]" strokeWidth={2.5} />
         )}
-        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#0d3f38] bg-[#eead59] px-2 py-0.5 rounded-full whitespace-nowrap">
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#0f1f3d] bg-[#f59e0b] px-2 py-0.5 rounded-full whitespace-nowrap">
           Vue+
         </span>
       </button>
@@ -363,8 +363,8 @@ export default function Accessibility() {
           aria-label="Options d'accessibilité"
           className="fixed bottom-20 left-4 z-[9998] w-[calc(100vw-2rem)] sm:w-80 rounded-2xl shadow-2xl overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #0d3f38 0%, #0a2e28 100%)',
-            border: '1px solid rgba(238, 173, 89, 0.2)',
+            background: 'linear-gradient(135deg, #0f1f3d 0%, #080f28 100%)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
             animation: 'rmeA11ySlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
           }}
         >
@@ -381,8 +381,8 @@ export default function Accessibility() {
 
           {/* Header */}
           <div className="flex items-center gap-2 p-4 border-b border-white/10">
-            <AccessibilityIcon size={18} className="text-[#eead59]" strokeWidth={2.5} />
-            <h3 className="font-bold text-[#f8f7f2] text-sm flex-1">
+            <AccessibilityIcon size={18} className="text-[#f59e0b]" strokeWidth={2.5} />
+            <h3 className="font-bold text-[#f8fafc] text-sm flex-1">
               Accessibilité
             </h3>
             <button
@@ -390,7 +390,7 @@ export default function Accessibility() {
                 setOpen(false);
                 buttonRef.current?.focus();
               }}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-[#f8f7f2]/50 hover:text-[#f8f7f2] hover:bg-white/10 transition-colors"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[#f8fafc]/50 hover:text-[#f8fafc] hover:bg-white/10 transition-colors"
               aria-label="Fermer le panneau d'accessibilité"
             >
               <X size={16} strokeWidth={2.5} />
@@ -402,8 +402,8 @@ export default function Accessibility() {
             {/* Text Size */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Type size={15} className="text-[#eead59]" strokeWidth={2.5} />
-                <label className="text-xs font-bold text-[#f8f7f2] uppercase tracking-wide">
+                <Type size={15} className="text-[#f59e0b]" strokeWidth={2.5} />
+                <label className="text-xs font-bold text-[#f8fafc] uppercase tracking-wide">
                   Taille du texte
                 </label>
               </div>
@@ -425,13 +425,13 @@ export default function Accessibility() {
                       fontSize: option.size,
                       background:
                         settings.textSize === option.value
-                          ? 'linear-gradient(135deg, #eead59, #d4a04a)'
+                          ? 'linear-gradient(135deg, #f59e0b, #d4a04a)'
                           : 'rgba(255,255,255,0.05)',
                       color:
-                        settings.textSize === option.value ? '#0d3f38' : '#f8f7f2',
+                        settings.textSize === option.value ? '#0f1f3d' : '#f8fafc',
                       border: `1px solid ${
                         settings.textSize === option.value
-                          ? '#eead59'
+                          ? '#f59e0b'
                           : 'rgba(255,255,255,0.1)'
                       }`,
                     }}
@@ -447,11 +447,11 @@ export default function Accessibility() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 {settings.highContrast ? (
-                  <Sun size={16} className="text-[#eead59]" strokeWidth={2.5} />
+                  <Sun size={16} className="text-[#f59e0b]" strokeWidth={2.5} />
                 ) : (
-                  <Moon size={16} className="text-[#f8f7f2]/60" strokeWidth={2.5} />
+                  <Moon size={16} className="text-[#f8fafc]/60" strokeWidth={2.5} />
                 )}
-                <span className="text-sm font-semibold text-[#f8f7f2]">
+                <span className="text-sm font-semibold text-[#f8fafc]">
                   Contraste élevé
                 </span>
               </div>
@@ -463,7 +463,7 @@ export default function Accessibility() {
                 className="relative w-12 h-7 rounded-full transition-colors flex-shrink-0"
                 style={{
                   background: settings.highContrast
-                    ? '#eead59'
+                    ? '#f59e0b'
                     : 'rgba(255,255,255,0.15)',
                 }}
               >
@@ -481,8 +481,8 @@ export default function Accessibility() {
             {/* Focus Visible Toggle */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <Eye size={16} className={settings.focusVisible ? 'text-[#eead59]' : 'text-[#f8f7f2]/60'} strokeWidth={2.5} />
-                <span className="text-sm font-semibold text-[#f8f7f2]">
+                <Eye size={16} className={settings.focusVisible ? 'text-[#f59e0b]' : 'text-[#f8fafc]/60'} strokeWidth={2.5} />
+                <span className="text-sm font-semibold text-[#f8fafc]">
                   Focus visible
                 </span>
               </div>
@@ -494,7 +494,7 @@ export default function Accessibility() {
                 className="relative w-12 h-7 rounded-full transition-colors flex-shrink-0"
                 style={{
                   background: settings.focusVisible
-                    ? '#eead59'
+                    ? '#f59e0b'
                     : 'rgba(255,255,255,0.15)',
                 }}
               >
@@ -519,8 +519,8 @@ export default function Accessibility() {
                 disabled={isReading}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
-                  background: 'linear-gradient(135deg, #eead59, #d4a04a)',
-                  color: '#0d3f38',
+                  background: 'linear-gradient(135deg, #f59e0b, #d4a04a)',
+                  color: '#0f1f3d',
                 }}
                 aria-label="Lire le contenu de la page à voix haute"
               >
@@ -533,9 +533,9 @@ export default function Accessibility() {
                   onClick={handleStopReading}
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                   style={{
-                    background: 'rgba(238, 173, 89, 0.15)',
-                    color: '#eead59',
-                    border: '1px solid rgba(238, 173, 89, 0.3)',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    color: '#f59e0b',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
                   }}
                   aria-label="Arrêter la lecture de la page"
                 >
