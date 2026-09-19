@@ -212,14 +212,14 @@ export async function getExchangeRate(
 ): Promise<ExchangeRate> {
   try {
     const url = new URL('https://api.exchangerate-api.com/v4/latest/' + encodeURIComponent(from));
-    const response = await fetch(url.toString());
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error('Exchange rate API error');
     }
 
-    const data = await response.json();
-    const rate = data.rates[to] || 1;
+    const data = (await response.json()) as { rates?: Record<string, number> };
+    const rate = data.rates?.[to] ?? 1;
 
     return {
       from,

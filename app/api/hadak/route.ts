@@ -43,7 +43,10 @@ Sé cálido, amable y práctico. Ayuda con: rutas, horas de oración, ferries, p
 Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
     };
 
-    const systemPrompt = systemPrompts[lang] || systemPrompts.da;
+    if (!Object.prototype.hasOwnProperty.call(systemPrompts, lang)) {
+      return NextResponse.json({ error: 'Invalid language' }, { status: 400 });
+    }
+    const systemPrompt = systemPrompts[lang];
 
     // Call OpenAI Chat Completions API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
