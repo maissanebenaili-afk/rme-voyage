@@ -1,6 +1,15 @@
 # SAFAR Platform Development Guide
 
-This document provides guidance for developers working on the SAFAR (Smart Assistant for African & Mediterranean Routes) platform.
+This document provides guidance for developers working on the **SAFAR (Smart Assistant for African & Mediterranean Routes)** platform - a panafricana AI travel assistant serving diaspora communities across Africa, Europe, and beyond.
+
+## Platform Vision
+
+SAFAR enables diaspora communities to travel confidently between Africa and Europe by providing:
+- **15 languages** covering major African diaspora communities
+- **Services across 13 African countries** (West, East, Central, and North Africa)
+- **Intelligent multi-agent architecture** for specialized travel advice
+- **Regional knowledge integration** for accurate, localized information
+- **Freemium model** supporting free tier and premium subscribers
 
 ## Table of Contents
 
@@ -226,9 +235,25 @@ npm test -- --watch
 
 ---
 
+## Supported Regions & Languages
+
+### Languages (15 total)
+- **European**: French, English, Spanish
+- **North Africa**: Darija (Moroccan), Modern Standard Arabic
+- **West Africa**: Wolof (Senegal), Pulaar/Fula (Guinea/Mali), Bambara (Mali), Yoruba (Nigeria), Igbo (Nigeria), Hausa (Nigeria)
+- **East Africa**: Swahili (Kenya/Tanzania)
+- **Central Africa**: Lingala (DRC), Kinyarwanda (Rwanda), Malagasy (Madagascar)
+
+### Supported Countries (13 total)
+- **West Africa**: Senegal, Guinea, Mali, Nigeria
+- **East Africa**: Kenya, Tanzania
+- **Central Africa**: Democratic Republic of Congo (DRC)
+- **North Africa**: Morocco
+- **Diaspora Hubs**: France, United Kingdom, Spain, Belgium, United States
+
 ## Sub-Agents
 
-Each sub-agent handles specific travel planning aspects:
+Each sub-agent handles specific travel planning aspects with panafricana coverage:
 
 ### NavigatorAgent
 
@@ -237,17 +262,25 @@ Each sub-agent handles specific travel planning aspects:
 **Triggers:** route, direction, ferry, transport, distance, comment aller
 
 **Capabilities:**
-- Route calculation (OSRM/Google Maps)
-- Ferry schedules and pricing
-- Transport mode comparison
-- Distance estimation
+- **Pan-African routing**: 25+ documented routes across Africa-Europe network
+- **Multi-modal transport**: flights, ferries, buses, trains, road travel
+- **Regional operators**: Knows major airlines, ferry companies, bus services by region
+- **Intra-African diaspora routes**: Direct connections between African diaspora hubs
+- **Transport cost estimates**: Region-specific pricing for each transport mode
+
+**Supported Routes:**
+- Europe-Africa: Paris/London/Brussels to major African cities
+- West African: Dakar-Conakry-Bamako-Lagos network
+- East African: Nairobi-Dar es Salaam-Mombasa routes
+- Central African: Kinshasa and DRC internal routes
+- Intra-Diaspora: Direct connections between diaspora communities
 
 **Example:**
 
 ```typescript
 const navigator = new NavigatorAgent(config);
-const response = await navigator.processQuery('Paris to Marrakech?');
-// Returns: routing info with transport options
+const response = await navigator.processQuery('Routes from Dakar to Lagos?');
+// Returns: flight, bus, and ferry options with operators and costs
 ```
 
 ### LocalizerAgent
@@ -257,18 +290,25 @@ const response = await navigator.processQuery('Paris to Marrakech?');
 **Triggers:** prayer, weather, halal, mosque, pharmacy, SIM, restaurant
 
 **Capabilities:**
-- Prayer times (Aladhan API)
-- Weather forecasting
-- Halal restaurants/butchers
-- Pharmacy locations
-- SIM card providers
+- **Country-specific services**: Pharmacy chains, SIM providers by region
+- **Halal services**: Verified halal restaurants in each country
+- **Prayer times**: Integration ready for Aladhan API
+- **Weather forecasting**: Regional weather patterns
+- **Mobile networks**: Local telecom operators with coverage info
+- **Health services**: Pharmacy chains and hospital information
+
+**Regional Services:**
+- Each country has verified local SIM providers (Maroc Telecom, Vodacom, Airtel, etc.)
+- Pharmacy chains specific to each region
+- Halal restaurant networks in major cities
+- Mosque locations in diaspora communities
 
 **Example:**
 
 ```typescript
 const localizer = new LocalizerAgent(config);
-const response = await localizer.processQuery('Prayer times in Fez?');
-// Returns: Fajr, Dhuhr, Asr, Maghrib, Isha times
+const response = await localizer.processQuery('SIM cards in Dakar?');
+// Returns: Sonatel, Maroc Telecom, Expresso with coverage details
 ```
 
 ### CommunityAgent
@@ -298,17 +338,25 @@ const response = await community.processQuery('Tips for Casablanca?');
 **Triggers:** cost, budget, price, how much, combien, exchange
 
 **Capabilities:**
-- Trip budget calculation
-- Cost estimation by category
-- Exchange rate conversion
-- Money-saving recommendations
+- **Regional cost estimates**: Accurate daily budgets for 8+ African countries
+- **African currencies**: Support for XOF, GNF, KES, TZS, CDF, NGN, MAD and more
+- **Dynamic budgeting**: Costs adjust based on destination country
+- **Multi-directional exchange**: Convert between any supported currency pair
+- **Category breakdowns**: Accommodation, food, transport, activities, contingency
+
+**Supported Currencies:**
+- West Africa: CFA Franc (XOF), Guinean Franc (GNF), Nigerian Naira (NGN)
+- East Africa: Kenyan Shilling (KES), Tanzanian Shilling (TZS)
+- Central Africa: Congolese Franc (CDF)
+- North Africa: Moroccan Dirham (MAD)
+- Europe: EUR, GBP, USD
 
 **Example:**
 
 ```typescript
 const budget = new BudgetAgent(config);
-const response = await budget.processQuery('7-day trip budget?');
-// Returns: Breakdown by accommodation, food, transport, etc.
+const response = await budget.processQuery('7-day trip budget for Lagos?');
+// Returns: Country-specific budget with Nigerian pricing in NGN/USD
 ```
 
 ### EmergencyAgent
@@ -318,17 +366,23 @@ const response = await budget.processQuery('7-day trip budget?');
 **Triggers:** emergency, help, police, hospital, accident, urgence
 
 **Capabilities:**
-- Emergency contact numbers
-- Embassy information
-- Urgent assistance routing
-- Crisis situation handling
+- **Country-specific emergency numbers**: Police, ambulance, fire by region
+- **Embassy routing**: Direct contacts for diaspora embassies
+- **Crisis levels**: Critical (accident), High (theft/injury), Medium (medical)
+- **Multilingual alerts**: Critical information in all 15 supported languages
+- **Travel documentation**: Lost passport recovery procedures
+
+**Emergency Numbers by Country:**
+- Each country has verified police, ambulance, and fire services
+- Regional embassy contacts for diaspora nationalities
+- Medical facility information for each region
 
 **Example:**
 
 ```typescript
 const emergency = new EmergencyAgent(config);
-const response = await emergency.processQuery('Lost my passport!');
-// Returns: Embassy contact, emergency services, recovery steps
+const response = await emergency.processQuery('Emergency in Lagos!');
+// Returns: Nigeria police (112), ambulance (112), embassy contacts, incident log
 ```
 
 ---
