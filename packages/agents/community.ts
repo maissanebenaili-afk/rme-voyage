@@ -61,7 +61,7 @@ export class CommunityAgent {
         .limit(3);
 
       if (error) {
-        console.error('[CommunityAgent] Supabase error:', error);
+        console.error('[CommunityAgent] Database error');
         return this.getMockTips(location);
       }
 
@@ -73,7 +73,7 @@ export class CommunityAgent {
         })) || this.getMockTips(location)
       );
     } catch (error) {
-      console.error('[CommunityAgent] Error fetching tips:', error);
+      console.error('[CommunityAgent] Failed to fetch tips');
       return this.getMockTips(location);
     }
   }

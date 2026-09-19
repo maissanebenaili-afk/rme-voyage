@@ -100,7 +100,7 @@ export async function GET(req: NextRequest) {
 
       const { data, error } = await query;
       if (error) {
-        console.error('[Tips API] Supabase GET Error:', error);
+        console.error('[Tips API] Database GET error');
         return NextResponse.json({ error: 'Failed to fetch tips' }, { status: 500 });
       }
       tips = data || [];
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
       sort,
     });
   } catch (error) {
-    console.error('[Tips API] Error:', error);
+    console.error('[Tips API] GET error');
     return NextResponse.json(
       { error: 'Failed to fetch tips' },
       { status: 500 }
@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
     if (isSupabaseConfigured() && supabase) {
       const { data, error } = await supabase.from('community_tips').insert([newTip]).select();
       if (error) {
-        console.error('[Tips API] Supabase POST Error:', error);
+        console.error('[Tips API] Database POST error');
         return NextResponse.json({ error: 'Failed to create tip' }, { status: 500 });
       }
       createdTip = data?.[0] || newTip;
@@ -186,7 +186,7 @@ export async function POST(req: NextRequest) {
       data: createdTip,
     });
   } catch (error) {
-    console.error('[Tips API] Error:', error);
+    console.error('[Tips API] POST error');
     return NextResponse.json(
       { error: 'Failed to create tip' },
       { status: 500 }

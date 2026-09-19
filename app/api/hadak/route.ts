@@ -95,7 +95,7 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
         );
       }
 
-      console.error('[hadak] Upstream error:', response.status, response.statusText);
+      console.error('[hadak] Upstream error: status', response.status);
       return NextResponse.json(
         {
           error: 'Service temporarily unavailable',
@@ -105,9 +105,22 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
       );
     }
 
-    const data = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
+    let data: { choices?: Array<{ message?: { content?: string } }> };
+    try {
+      data = (await response.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+      };
+    } catch {
+      console.error('[hadak] Failed to parse upstream response');
+      return NextResponse.json(
+        {
+          error: 'Service temporarily unavailable',
+          fallback: true,
+        },
+        { status: 502 }
+      );
+    }
+
     const assistantMessage =
       data.choices?.[0]?.message?.content
         ? data.choices[0].message.content
@@ -118,7 +131,7 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
       fallback: false,
     });
   } catch (error) {
-    console.error('[hadak] Error:', error);
+    console.error('[hadak] Request processing failed');
     return NextResponse.json(
       {
         error: 'Internal server error',

@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       }
       const { data, error } = await query;
       if (error) {
-        console.error('[Trips API] Supabase GET Error:', error);
+        console.error('[Trips API] Database GET error');
         return NextResponse.json({ error: 'Failed to fetch trips' }, { status: 500 });
       }
       filteredTrips = data || [];
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
       userId,
     });
   } catch (error) {
-    console.error('[Trips API] GET Error:', error);
+    console.error('[Trips API] GET error');
     return NextResponse.json(
       { error: 'Failed to fetch trips' },
       { status: 500 }
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
     if (isSupabaseConfigured() && supabase) {
       const { data, error } = await supabase.from('trips').insert([newTrip]).select();
       if (error) {
-        console.error('[Trips API] Supabase POST Error:', error);
+        console.error('[Trips API] Database POST error');
         return NextResponse.json({ error: 'Failed to create trip' }, { status: 500 });
       }
       createdTrip = data?.[0] || newTrip;
@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
       data: createdTrip,
     });
   } catch (error) {
-    console.error('[Trips API] POST Error:', error);
+    console.error('[Trips API] POST error');
     return NextResponse.json(
       { error: 'Failed to create trip' },
       { status: 500 }
@@ -171,7 +171,7 @@ export async function PUT(req: NextRequest) {
         .select();
 
       if (error) {
-        console.error('[Trips API] Supabase PUT Error:', error);
+        console.error('[Trips API] Database PUT error');
         return NextResponse.json({ error: 'Failed to update trip' }, { status: 500 });
       }
 
@@ -211,7 +211,7 @@ export async function PUT(req: NextRequest) {
       data: updatedTrip,
     });
   } catch (error) {
-    console.error('[Trips API] PUT Error:', error);
+    console.error('[Trips API] PUT error');
     return NextResponse.json(
       { error: 'Failed to update trip' },
       { status: 500 }
@@ -240,7 +240,7 @@ export async function DELETE(req: NextRequest) {
         .eq('user_id', userId);
 
       if (error) {
-        console.error('[Trips API] Supabase DELETE Error:', error);
+        console.error('[Trips API] Database DELETE error');
         return NextResponse.json({ error: 'Failed to delete trip' }, { status: 500 });
       }
     } else {
@@ -259,7 +259,7 @@ export async function DELETE(req: NextRequest) {
       message: 'Trip deleted successfully',
     });
   } catch (error) {
-    console.error('[Trips API] DELETE Error:', error);
+    console.error('[Trips API] DELETE error');
     return NextResponse.json(
       { error: 'Failed to delete trip' },
       { status: 500 }
