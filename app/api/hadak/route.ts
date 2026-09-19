@@ -8,14 +8,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const apiKey = process.env.OPENAI_API_KEY
       || Object.entries(process.env)
-          .find(([k]) => /^ANTHROPIC.API.(KEY|CL[EÉeéÉ])$/i.test(k))?.[1]
-      || Object.values(process.env)
-          .find(v => v?.startsWith('sk-ant-'));
+          .find(([k]) => /^OPENAI.API.KEY$/i.test(k))?.[1];
 
     if (!apiKey) {
-      // No key — component falls back to local keyword KB automatically
       return NextResponse.json({ response: '', fallback: true }, { status: 503 });
     }
 
@@ -44,18 +41,19 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
 
     const systemPrompt = systemPrompts[lang] ?? systemPrompts.fr;
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'gpt-4o-mini',
         max_tokens: 512,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: message }],
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: message },
+        ],
       }),
     });
 
@@ -64,7 +62,7 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
         error?: { type?: string; message?: string };
       } | null;
 
-      console.error('[hadak] Anthropic error:', {
+      console.error('[hadak] OpenAI error:', {
         status: res.status,
         type: error?.error?.type,
         message: error?.error?.message,
@@ -73,10 +71,10 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
     }
 
     const data = (await res.json()) as {
-      content?: Array<{ type: string; text: string }>;
+      choices?: Array<{ message?: { content?: string } }>;
     };
 
-    const text = data.content?.find((b) => b.type === 'text')?.text ?? '';
+    const text = data.choices?.[0]?.message?.content ?? '';
 
     return NextResponse.json({ response: text, fallback: false });
   } catch (err) {
