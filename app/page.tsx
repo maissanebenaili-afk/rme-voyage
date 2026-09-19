@@ -35,6 +35,7 @@ import HadakAI from '@/components/HadakAI';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
 import SmartPacking from '@/components/SmartPacking';
 import JuryPack from '@/components/JuryPack';
+import NewsletterSection from '@/components/NewsletterSection';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -102,6 +103,7 @@ export default function Home() {
             <LanguageSwitcher />
             <Link href="/guide" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Le guide</Link>
             <Link href="/decouvrir" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Découvrir</Link>
+            <Link href="/pro" className="hidden text-sm font-bold text-[#f5cd93] hover:text-white sm:inline">Pro ↗</Link>
             <a href="#planifier" className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-extrabold text-[#0d3f38] transition hover:bg-[#f5cd93] sm:px-4 sm:text-sm">Planifier</a>
           </div>
         </nav>
@@ -359,6 +361,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Newsletter Section */}
+      <NewsletterSection />
 
       {/* Jury Pack Section */}
       <JuryPack />

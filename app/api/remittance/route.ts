@@ -8,6 +8,8 @@ const PROVIDERS = [
     fee: 3.89,
     time: '1-2j',
     affiliateEnvKey: 'WISE_AFFILIATE_URL',
+    deepLinkFn: (amount: number) =>
+      `https://wise.com/gb/send-money/?sourceCurrency=EUR&targetCurrency=MAD&sourceAmount=${amount}`,
   },
   {
     id: 'worldremit',
@@ -16,6 +18,8 @@ const PROVIDERS = [
     fee: 2.49,
     time: '24h',
     affiliateEnvKey: 'WORLDREMIT_AFFILIATE_URL',
+    deepLinkFn: (amount: number) =>
+      `https://www.worldremit.com/en/moneytransfer?selectedSendingCountryCode=FR&selectedReceivingCountryCode=MA&selectedSendingCurrencyCode=EUR&selectedReceivingCurrencyCode=MAD&amount=${amount}`,
   },
   {
     id: 'remitly',
@@ -24,6 +28,8 @@ const PROVIDERS = [
     fee: 3.99,
     time: '1-3j',
     affiliateEnvKey: 'REMITLY_AFFILIATE_URL',
+    deepLinkFn: (amount: number) =>
+      `https://www.remitly.com/fr/fr/maroc?sendAmount=${amount}&sendCurrency=EUR`,
   },
   {
     id: 'western-union',
@@ -32,6 +38,8 @@ const PROVIDERS = [
     fee: 1.99,
     time: 'Instant',
     affiliateEnvKey: 'WESTERN_UNION_AFFILIATE_URL',
+    deepLinkFn: (amount: number) =>
+      `https://www.westernunion.com/fr/fr/send-money/app/start?toCountry=MA&fromCurrency=EUR&fromAmount=${amount}`,
   },
   {
     id: 'moneygram',
@@ -40,6 +48,8 @@ const PROVIDERS = [
     fee: 1.99,
     time: 'Instant',
     affiliateEnvKey: 'MONEYGRAM_AFFILIATE_URL',
+    deepLinkFn: (amount: number) =>
+      `https://www.moneygram.com/mgo/fr/fr/envoyer-de-l-argent/?currency=EUR&amount=${amount}&receiveCountry=MA`,
   },
 ] as const;
 
@@ -75,6 +85,9 @@ export async function GET(request: NextRequest) {
   const results = PROVIDERS.map((p) => {
     const netSent = amount - p.fee;
     const received = netSent > 0 ? netSent * midRate * (1 - p.spread) : 0;
+    const affiliateBase = process.env[p.affiliateEnvKey];
+    // Prefer affiliate URL; fall back to pre-filled deep link (better UX + conversion)
+    const affiliateUrl = affiliateBase ?? p.deepLinkFn(amount);
     return {
       id: p.id,
       name: p.name,
@@ -82,7 +95,7 @@ export async function GET(request: NextRequest) {
       appliedRate: parseFloat((midRate * (1 - p.spread)).toFixed(4)),
       received: parseFloat(received.toFixed(2)),
       time: p.time,
-      affiliateUrl: process.env[p.affiliateEnvKey] || null,
+      affiliateUrl,
     };
   }).sort((a, b) => b.received - a.received);
 
