@@ -17,6 +17,9 @@ import {
   Star,
   Users,
   Globe,
+  TrendingUp,
+  Banknote,
+  Building2,
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
 import CostCalculator from '@/components/CostCalculator';
@@ -40,10 +43,34 @@ const benefits = [
 ];
 
 const stats = [
-  { value: '5M+', label: 'Marocains à l\'étranger', icon: Users },
-  { value: '19.8M', label: 'Touristes au Maroc (2025)', icon: Globe },
-  { value: '2 100', label: 'km Paris → Tanger', icon: RouteIcon },
-  { value: '4.9★', label: 'Objectif qualité', icon: Star },
+  { value: '5M+', label: 'MRE en Europe', icon: Users },
+  { value: '€4,8Md', label: 'Envoyés/an Europe → Maroc', icon: Banknote },
+  { value: '19,8M', label: 'Touristes au Maroc (2025)', icon: Globe },
+  { value: '15+', label: 'Outils intégrés', icon: TrendingUp },
+];
+
+const revenueStreams = [
+  {
+    icon: Banknote,
+    tag: 'Flux n°1',
+    title: 'Affiliation Transferts',
+    desc: 'Commission sur chaque clic généré vers Wise, WorldRemit, Western Union. Marché de €4,8Md/an EUR→MAD.',
+    metric: 'CPA €2–8 / transfert',
+  },
+  {
+    icon: Ship,
+    tag: 'Flux n°2',
+    title: 'Affiliation Ferry & Vol',
+    desc: 'Commission sur les réservations ferry (GNV, FRS, Baleàlia) et vols low-cost via nos partenaires.',
+    metric: 'CPA €5–25 / réservation',
+  },
+  {
+    icon: Building2,
+    tag: 'Flux n°3',
+    title: 'SaaS B2B',
+    desc: 'Widget white-label pour agences de voyage MRE, associations diaspora et consulats. Abonnement annuel.',
+    metric: '€490–1 990/an par client',
+  },
 ];
 
 const features = [
@@ -82,28 +109,28 @@ export default function Home() {
         {/* Hero content */}
         <div className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-12 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:pb-28 lg:pt-20">
           <div className="animate-fade-up">
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[.16em] text-[#f5cd93]">
-              <Sparkles size={14} /> Europe · Maroc · Diaspora
+            <p className="inline-flex items-center gap-2 rounded-full border border-[#e6a44e]/30 bg-[#e6a44e]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[.16em] text-[#f5cd93]">
+              <TrendingUp size={14} /> MRE · Transferts · Mobilité
             </p>
             <h1 className="mt-6 max-w-3xl text-5xl font-display font-semibold leading-[.96] tracking-tight sm:text-7xl">
-              Le voyage commence <span className="gradient-text-gold">bien avant le départ.</span>
+              La plateforme des <span className="gradient-text-gold">5 millions de MRE.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-white/75">
-              RME Voyage réunit itinéraire, budget, prières, Qibla et services dans une expérience claire,
-              pensée pour les familles qui voyagent entre l'Europe, le Maroc et au-delà.
+              RME Voyage agrège itinéraire, transfert d'argent, prières et services pour la diaspora marocaine.
+              Un marché de <strong className="text-[#f5cd93] font-bold">€4,8 milliards</strong> envoyés chaque année — monétisé par affiliation.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3.5 font-extrabold text-[#103d37] shadow-lg shadow-black/20 transition hover:bg-[#f5cd93]">
-                Préparer mon voyage <ArrowRight size={18} />
+              <a href="#modele" className="inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3.5 font-extrabold text-[#103d37] shadow-lg shadow-black/20 transition hover:bg-[#f5cd93]">
+                Voir le modèle <ArrowRight size={18} />
               </a>
-              <Link href="/decouvrir" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
-                Découvrir le service
-              </Link>
+              <a href="#planifier" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
+                Tester l'app
+              </a>
             </div>
             <div className="mt-10 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold text-white/70">
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Gratuit à utiliser</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Liens partenaires signalés</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Prières & Qibla inclus</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Déjà en production</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> 3 flux de revenus</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Taux de change live</span>
             </div>
           </div>
 
@@ -182,6 +209,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Remittance Section — hero product, investor highlight */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">Produit phare</p>
+            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">
+              Comparer les transferts EUR → MAD.
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-[#5a716c]">
+              5 millions de MRE envoient <strong>€4,8 milliards par an</strong> vers le Maroc.
+              RME Voyage compare les frais en temps réel et renvoie vers Wise, WorldRemit ou Western Union — avec commission à chaque clic.
+            </p>
+          </div>
+          <RemittanceComparator />
+        </div>
+      </section>
+
       {/* Spiritual & Services Section */}
       <section className="bg-[#f8f7f2] py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
@@ -189,7 +233,7 @@ export default function Home() {
             <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">En route</p>
             <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">Les repères qui comptent.</h2>
             <p className="mt-4 text-lg leading-8 text-[#5a716c]">
-              Prières, Qibla, services et conseils pratiques pour un voyage serein.
+              Prières, Qibla, actualités Maroc et services pratiques pour un voyage serein.
             </p>
           </div>
           <div className="space-y-6">
@@ -198,9 +242,8 @@ export default function Home() {
               <QiblaCompass />
             </div>
             <CurrencyConverter />
-            <RemittanceComparator />
-            <ServicesMap />
             <NewsFeed />
+            <ServicesMap />
             <TravelChecklist />
           </div>
         </div>
@@ -227,18 +270,44 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Business Model Section */}
+      <section id="modele" className="bg-[#f8f7f2] py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <div className="mb-12 text-center">
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">Modèle économique</p>
+            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">3 flux de revenus scalables.</h2>
+            <p className="mt-4 mx-auto max-w-2xl text-lg leading-8 text-[#5a716c]">
+              Chaque usage génère une opportunité de commission. L'audience MRE est captive, fidèle et à haute intention d'achat.
+            </p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {revenueStreams.map(({ icon: Icon, tag, title, desc, metric }) => (
+              <article key={title} className="premium-card rounded-2xl p-7">
+                <span className="inline-flex items-center rounded-full bg-[#e9f1ed] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#0d6255]">{tag}</span>
+                <div className="mt-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#0d3f38] text-[#f5cd93]">
+                  <Icon size={24} />
+                </div>
+                <h3 className="mt-4 text-xl font-extrabold text-[#173a36]">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#5a716c]">{desc}</p>
+                <p className="mt-4 border-t border-[#e6ede9] pt-4 text-sm font-extrabold text-[#0d6255]">{metric}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="bg-[#0d3f38] py-20">
         <div className="mx-auto max-w-4xl px-5 text-center sm:px-8">
           <h2 className="text-4xl font-display font-semibold tracking-tight text-white sm:text-5xl">
-            Prêt à organiser votre voyage ?
+            Partez du bon pied. Préparez maintenant.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-white/70">
-            Accédez à RME Voyage et commencez votre préparation dès maintenant. Gratuit.
+            RME Voyage est gratuit pour les utilisateurs. Les revenus sont générés par affiliation et B2B.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3.5 font-extrabold text-[#103d37] transition hover:bg-[#f5cd93]">
-              Commencer gratuitement <ArrowRight size={18} />
+              Tester l'application <ArrowRight size={18} />
             </a>
             <Link href="/guide" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
               Voir le guide
@@ -318,17 +387,18 @@ export default function Home() {
             <div>
               <h3 className="font-bold text-white">Fonctionnalités</h3>
               <ul className="mt-3 space-y-2 text-sm">
+                <li>Comparateur Transferts EUR→MAD</li>
                 <li>Recherche de trajet</li>
                 <li>Calculateur de budget</li>
                 <li>Horaires de prière</li>
                 <li>Direction Qibla</li>
+                <li>Flux d'actualités Maroc</li>
                 <li>Météo Maroc</li>
                 <li>Phrasebook Darija</li>
                 <li>Calculateur Douane</li>
                 <li>SOS Ambassades</li>
                 <li>Calendrier Marocain</li>
                 <li>Calculateur Zakat</li>
-                <li>Prix Carburant</li>
                 <li>Smart Packing IA</li>
                 <li>Assistant Hadak IA</li>
               </ul>

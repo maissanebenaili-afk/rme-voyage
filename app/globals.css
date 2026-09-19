@@ -164,6 +164,18 @@ input:focus {
   animation: shimmer 1.5s infinite;
 }
 
+/* Premium card — investor-grade surface */
+.premium-card {
+  background: #ffffff;
+  border: 1px solid rgba(13, 63, 56, 0.08);
+  box-shadow: 0 2px 12px -2px rgba(13, 63, 56, 0.06), 0 8px 32px -8px rgba(13, 63, 56, 0.10);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+.premium-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 24px -4px rgba(13, 63, 56, 0.12), 0 16px 48px -12px rgba(13, 63, 56, 0.14);
+}
+
 /* Leaflet map styles */
 .leaflet-container {
   border-radius: 1rem;
