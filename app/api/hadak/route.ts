@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
 
-    const apiKey = process.env.CLE_API_OPENAI || process.env.OPENAI_API_KEY;
+    const apiKey = process.env.CLÉ_API_OPENAI || process.env.OPENAI_API_KEY;
 
     // No API key configured — fall back gracefully to keyword-based responses
     if (!apiKey) {
