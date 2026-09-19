@@ -48,9 +48,12 @@ export async function getPrayerTimes(
     const coords = cityCoords[city] || (lat && lon ? { lat, lon } : cityCoords.Casablanca);
     const today = new Date().toISOString().split('T')[0];
 
-    const response = await fetch(
-      `https://api.aladhan.com/v1/timings/${today}?latitude=${coords.lat}&longitude=${coords.lon}&method=5`
-    );
+    const url = new URL('https://api.aladhan.com/v1/timings/' + today);
+    url.searchParams.set('latitude', coords.lat.toString());
+    url.searchParams.set('longitude', coords.lon.toString());
+    url.searchParams.set('method', '5');
+
+    const response = await fetch(url.toString());
 
     if (!response.ok) {
       throw new Error('Aladhan API error');
@@ -134,9 +137,13 @@ export async function getWeather(
 
     const coords = cityCoords[city] || (lat && lon ? { lat, lon } : cityCoords.Casablanca);
 
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${apiKey}&units=metric`
-    );
+    const url = new URL('https://api.openweathermap.org/data/2.5/weather');
+    url.searchParams.set('lat', coords.lat.toString());
+    url.searchParams.set('lon', coords.lon.toString());
+    url.searchParams.set('appid', apiKey);
+    url.searchParams.set('units', 'metric');
+
+    const response = await fetch(url.toString());
 
     if (!response.ok) {
       throw new Error('OpenWeatherMap API error');
@@ -204,9 +211,8 @@ export async function getExchangeRate(
   to: string
 ): Promise<ExchangeRate> {
   try {
-    const response = await fetch(
-      `https://api.exchangerate-api.com/v4/latest/${from}`
-    );
+    const url = new URL('https://api.exchangerate-api.com/v4/latest/' + encodeURIComponent(from));
+    const response = await fetch(url.toString());
 
     if (!response.ok) {
       throw new Error('Exchange rate API error');
