@@ -73,8 +73,6 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-
       // Handle rate limits
       if (response.status === 429) {
         return NextResponse.json(
@@ -97,7 +95,7 @@ Mantén las respuestas concisas y relevantes para la planificación de viajes.`,
         );
       }
 
-      console.error('[hadak] Upstream error:', errorData);
+      console.error('[hadak] Upstream error:', response.status, response.statusText);
       return NextResponse.json(
         {
           error: 'Service temporarily unavailable',

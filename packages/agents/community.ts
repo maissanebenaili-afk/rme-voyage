@@ -12,10 +12,10 @@ export class CommunityAgent {
     const { userId, lang } = this.config;
 
     // Extract location from message
-    const locationMatch = message.match(/(?:à|in|a)\s+([a-zA-Z]+)/i);
-    const location = locationMatch ? locationMatch[1] : null;
+    const locationMatch = message.match(/(?:à|in|a)\s+([a-zA-Z\s\-']+)/i);
+    const location = locationMatch ? locationMatch[1].trim().slice(0, 100) : null;
 
-    if (!location) {
+    if (!location || !/^[a-zA-Z\s\-']+$/.test(location)) {
       return {
         text: this.getDefaultMessage(lang),
         agent: 'COMMUNITY',
