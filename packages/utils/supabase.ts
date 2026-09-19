@@ -13,7 +13,7 @@ export const supabase = supabaseUrl && supabaseAnonKey
         persistSession: false,
       },
     })
-  : (null as any);
+  : null;
 
 // Type definitions for database tables
 export interface User {
@@ -69,8 +69,8 @@ export function isSupabaseConfigured(): boolean {
 }
 
 // Helper function to get authenticated user ID from request headers
-export function getUserIdFromHeaders(req: any): string | null {
-  const authHeader = req.headers.get('authorization');
+export function getUserIdFromHeaders(req: { headers?: { get?: (key: string) => string | null } }): string | null {
+  const authHeader = req.headers?.get?.('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }

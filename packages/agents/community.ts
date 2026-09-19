@@ -50,6 +50,9 @@ export class CommunityAgent {
     location: string
   ): Promise<Array<{ user: string; tip: string; rating: number }>> {
     try {
+      if (!supabase) {
+        return this.getMockTips(location);
+      }
       const { data, error } = await supabase
         .from('community_tips')
         .select('content, rating, user_id')

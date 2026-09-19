@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
     let filteredTrips: any[] = [];
 
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && supabase) {
       let query = supabase.from('trips').select('*').eq('user_id', userId);
       if (status) {
         query = query.eq('status', status);
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
 
     let createdTrip = newTrip;
 
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && supabase) {
       const { data, error } = await supabase.from('trips').insert([newTrip]).select();
       if (error) {
         console.error('[Trips API] Supabase POST Error:', error);
@@ -162,7 +162,7 @@ export async function PUT(req: NextRequest) {
 
     let updatedTrip: any = null;
 
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && supabase) {
       const { data, error } = await supabase
         .from('trips')
         .update(updateData)
@@ -232,7 +232,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && supabase) {
       const { error } = await supabase
         .from('trips')
         .delete()

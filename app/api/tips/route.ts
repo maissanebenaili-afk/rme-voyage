@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
 
     let tips: any[] = [];
 
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && supabase) {
       let query = supabase.from('community_tips').select('*');
 
       if (location) {
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
 
     let createdTip = newTip;
 
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && supabase) {
       const { data, error } = await supabase.from('community_tips').insert([newTip]).select();
       if (error) {
         console.error('[Tips API] Supabase POST Error:', error);
