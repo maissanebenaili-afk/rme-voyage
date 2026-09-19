@@ -27,7 +27,7 @@ describe("Homepage branding", () => {
 
     // Hero subtext describing the value proposition.
     expect(
-      screen.getByText(/itinéraire, transfert d'argent, prières et services/i),
+      screen.getByText(/itinéraire, transfert d'argent, prières, Qibla et services/i),
     ).toBeTruthy();
 
     // Legacy product name must not resurface.
