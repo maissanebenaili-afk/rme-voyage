@@ -51,8 +51,8 @@ export async function runImprovementCycle(opts: LoopOptions): Promise<LoopResult
   for (const source of opts.sources) {
     try {
       facts.push(...(await source.fetch()));
-    } catch (err) {
-      notes.push(`Data source "${source.name}" failed: ${(err as Error).message}`);
+    } catch {
+      notes.push(`Data source failed`);
     }
   }
 

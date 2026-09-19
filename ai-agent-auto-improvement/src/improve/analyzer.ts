@@ -93,8 +93,8 @@ export async function findCoverageGaps(
         entry,
         reason: `Coverage gap for test case "${testCase.id}" (score ${result.score.toFixed(2)})`,
       });
-    } catch (err) {
-      notes.push(`Proposer failed for "${testCase.id}": ${(err as Error).message}`);
+    } catch {
+      notes.push(`Proposer failed for "${testCase.id}"`);
     }
   }
 
