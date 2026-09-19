@@ -34,8 +34,40 @@ export async function getPrayerTimes(
   lon?: number
 ): Promise<PrayerTimes> {
   try {
-    // TODO: Integrate with Aladhan API
-    // For now, return mock data based on city
+    const cityCoords: Record<string, { lat: number; lon: number }> = {
+      Casablanca: { lat: 33.5731, lon: -7.5898 },
+      Marrakech: { lat: 31.6295, lon: -8.0081 },
+      Tangier: { lat: 35.7595, lon: -5.8336 },
+      Fes: { lat: 34.0331, lon: -5.0033 },
+      Dakar: { lat: 14.6928, lon: -17.0469 },
+      Lagos: { lat: 6.5244, lon: 3.3792 },
+      Nairobi: { lat: -1.2865, lon: 36.8172 },
+      Cairo: { lat: 30.0444, lon: 31.2357 },
+    };
+
+    const coords = cityCoords[city] || (lat && lon ? { lat, lon } : cityCoords.Casablanca);
+    const today = new Date().toISOString().split('T')[0];
+
+    const response = await fetch(
+      `https://api.aladhan.com/v1/timings/${today}?latitude=${coords.lat}&longitude=${coords.lon}&method=5`
+    );
+
+    if (!response.ok) {
+      throw new Error('Aladhan API error');
+    }
+
+    const data = await response.json();
+    const timings = data.data.timings;
+
+    return {
+      Fajr: timings.Fajr.split(' ')[0],
+      Dhuhr: timings.Dhuhr.split(' ')[0],
+      Asr: timings.Asr.split(' ')[0],
+      Maghrib: timings.Maghrib.split(' ')[0],
+      Isha: timings.Isha.split(' ')[0],
+    };
+  } catch (error) {
+    console.error('[getPrayerTimes] Error:', error);
     const mockTimes: Record<string, PrayerTimes> = {
       Casablanca: {
         Fajr: '05:15',
@@ -68,16 +100,6 @@ export async function getPrayerTimes(
     };
 
     return mockTimes[city] || mockTimes.Casablanca;
-  } catch (error) {
-    console.error('[getPrayerTimes] Error:', error);
-    // Return default times on error
-    return {
-      Fajr: '05:15',
-      Dhuhr: '12:45',
-      Asr: '16:00',
-      Maghrib: '18:30',
-      Isha: '20:00',
-    };
   }
 }
 
@@ -91,7 +113,46 @@ export async function getWeather(
   lon?: number
 ): Promise<WeatherData> {
   try {
-    // TODO: Integrate with OpenWeatherMap or similar
+    const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('OpenWeatherMap API key not configured');
+    }
+
+    const cityCoords: Record<string, { lat: number; lon: number }> = {
+      Casablanca: { lat: 33.5731, lon: -7.5898 },
+      Marrakech: { lat: 31.6295, lon: -8.0081 },
+      Tangier: { lat: 35.7595, lon: -5.8336 },
+      Fes: { lat: 34.0331, lon: -5.0033 },
+      Dakar: { lat: 14.6928, lon: -17.0469 },
+      Lagos: { lat: 6.5244, lon: 3.3792 },
+      Nairobi: { lat: -1.2865, lon: 36.8172 },
+      Cairo: { lat: 30.0444, lon: 31.2357 },
+      Paris: { lat: 48.8566, lon: 2.3522 },
+      London: { lat: 51.5074, lon: -0.1278 },
+    };
+
+    const coords = cityCoords[city] || (lat && lon ? { lat, lon } : cityCoords.Casablanca);
+
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${apiKey}&units=metric`
+    );
+
+    if (!response.ok) {
+      throw new Error('OpenWeatherMap API error');
+    }
+
+    const data = await response.json();
+
+    return {
+      temp: Math.round(data.main.temp),
+      condition: data.weather[0].main,
+      humidity: data.main.humidity,
+      windSpeed: Math.round(data.wind.speed),
+      description: data.weather[0].description,
+    };
+  } catch (error) {
+    console.error('[getWeather] Error:', error);
     const mockWeather: Record<string, WeatherData> = {
       Casablanca: {
         temp: 22,
@@ -131,15 +192,6 @@ export async function getWeather(
     };
 
     return mockWeather[city] || mockWeather.Casablanca;
-  } catch (error) {
-    console.error('[getWeather] Error:', error);
-    return {
-      temp: 20,
-      condition: 'Unknown',
-      humidity: 60,
-      windSpeed: 10,
-      description: 'Weather data unavailable',
-    };
   }
 }
 
@@ -152,15 +204,16 @@ export async function getExchangeRate(
   to: string
 ): Promise<ExchangeRate> {
   try {
-    // TODO: Integrate with real exchange rate API (OANDA, XE, etc.)
-    const rates: Record<string, Record<string, number>> = {
-      EUR: { USD: 1.08, MAD: 10.5, GBP: 0.83 },
-      USD: { EUR: 0.92, MAD: 9.8, GBP: 0.77 },
-      GBP: { EUR: 1.2, USD: 1.3, MAD: 12.3 },
-      MAD: { EUR: 0.095, USD: 0.1, GBP: 0.081 },
-    };
+    const response = await fetch(
+      `https://api.exchangerate-api.com/v4/latest/${from}`
+    );
 
-    const rate = rates[from]?.[to] || 1;
+    if (!response.ok) {
+      throw new Error('Exchange rate API error');
+    }
+
+    const data = await response.json();
+    const rate = data.rates[to] || 1;
 
     return {
       from,
@@ -170,10 +223,23 @@ export async function getExchangeRate(
     };
   } catch (error) {
     console.error('[getExchangeRate] Error:', error);
+    const rates: Record<string, Record<string, number>> = {
+      EUR: { USD: 1.08, MAD: 10.5, GBP: 0.83, XOF: 655.96, NGN: 1650.0, KES: 134.5, TZS: 2830.0 },
+      USD: { EUR: 0.92, MAD: 9.8, GBP: 0.77, XOF: 607.26, NGN: 1530.0, KES: 124.6, TZS: 2620.0 },
+      GBP: { EUR: 1.2, USD: 1.3, MAD: 12.3, XOF: 789.21, NGN: 1980.0, KES: 161.0, TZS: 3406.0 },
+      MAD: { EUR: 0.095, USD: 0.1, GBP: 0.081, XOF: 64.17, NGN: 150.0, KES: 12.7, TZS: 273.0 },
+      XOF: { EUR: 0.00153, USD: 0.00165, GBP: 0.00127, MAD: 0.0156, NGN: 2.34, KES: 0.204, TZS: 4.28 },
+      NGN: { EUR: 0.00061, USD: 0.00065, GBP: 0.00051, MAD: 0.00654, XOF: 0.427, KES: 0.081, TZS: 1.69 },
+      KES: { EUR: 0.0074, USD: 0.008, GBP: 0.0062, MAD: 0.0787, XOF: 4.9, NGN: 12.35, TZS: 21.0 },
+      TZS: { EUR: 0.00035, USD: 0.00038, GBP: 0.0003, MAD: 0.00366, XOF: 0.233, NGN: 0.591, KES: 0.0476 },
+    };
+
+    const rate = rates[from]?.[to] || 1;
+
     return {
       from,
       to,
-      rate: 1,
+      rate,
       timestamp: new Date().toISOString(),
     };
   }
