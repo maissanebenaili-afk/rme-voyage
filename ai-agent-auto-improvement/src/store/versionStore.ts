@@ -23,6 +23,12 @@ function historyFile(): string {
   return path.join(getDataDir(), 'history.json');
 }
 
+function validateId(id: string): void {
+  if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
+    throw new Error('Invalid version ID');
+  }
+}
+
 async function ensureDirs(): Promise<void> {
   await fs.mkdir(versionsDir(), { recursive: true });
 }
@@ -33,11 +39,13 @@ export async function saveVersion(version: AgentVersion): Promise<void> {
 }
 
 export async function loadVersion(id: string): Promise<AgentVersion> {
+  validateId(id);
   const raw = await fs.readFile(path.join(versionsDir(), `${id}.json`), 'utf-8');
   return JSON.parse(raw) as AgentVersion;
 }
 
 export async function setHead(id: string): Promise<void> {
+  validateId(id);
   await ensureDirs();
   await fs.writeFile(headFile(), JSON.stringify({ id }, null, 2));
 }
