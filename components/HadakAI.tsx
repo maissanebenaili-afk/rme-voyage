@@ -339,13 +339,15 @@ const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'do
 /* ------------------------------------------------------------------ */
 
 function findTopic(query: string): TopicKey | null {
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
   let best: { topic: TopicKey; score: number } | null = null;
   for (const [key, data] of Object.entries(KNOWLEDGE) as [TopicKey, Topic][]) {
+    // Skip greeting unless the query is purely a greeting (no extra words after)
+    if (key === 'greeting' && q.split(/\s+/).length > 3) continue;
     let score = 0;
     for (const kw of data.keywords) {
       if (q.includes(kw.toLowerCase())) {
-        score += kw.length; // longer keyword = more specific
+        score += kw.length;
       }
     }
     if (score > 0 && (!best || score > best.score)) {
