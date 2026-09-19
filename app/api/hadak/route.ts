@@ -56,7 +56,15 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
     });
 
     if (!res.ok) {
-      console.error('[hadak] Anthropic error:', res.status);
+      const error = (await res.json().catch(() => null)) as {
+        error?: { type?: string; message?: string };
+      } | null;
+
+      console.error('[hadak] Anthropic error:', {
+        status: res.status,
+        type: error?.error?.type,
+        message: error?.error?.message,
+      });
       return NextResponse.json({ response: '', fallback: true }, { status: 503 });
     }
 
