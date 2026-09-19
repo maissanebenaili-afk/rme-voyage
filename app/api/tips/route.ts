@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
       createdTip = data?.[0] || newTip;
     } else {
       createdTip = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: crypto.randomUUID(),
         user: `User_${userId.slice(0, 8)}`,
         tip: content,
         category,

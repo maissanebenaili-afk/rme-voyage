@@ -37,12 +37,13 @@ export async function GET() {
         'Cache-Control': 'public, max-age=60, s-maxage=60',
       },
     });
-  } catch (error) {
+  } catch {
+    console.error('[Health API] Error');
     return NextResponse.json(
       {
         status: 'error',
         timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Health check failed',
       },
       { status: 500 }
     );

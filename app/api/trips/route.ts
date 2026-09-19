@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
       }
       createdTrip = data?.[0] || newTrip;
     } else {
-      const tripId = Math.random().toString(36).substr(2, 9);
+      const tripId = crypto.randomUUID();
       createdTrip = {
         id: tripId,
         user_id: userId,
