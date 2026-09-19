@@ -1,222 +1,213 @@
-/**
- * SAFAR - Main Conversational Agent Orchestrator
- * 
- * Responsibilities:
- * - Listen to user input (text/voice)
- * - Extract intent & context
- * - Route to specialized sub-agents
- * - Aggregate & format responses
- * - Handle multi-turn conversations
- */
-
-import type { Message } from '../types/chat';
-
-export interface AgentConfig {
-  userId: string;
-  lang: 'da' | 'fr' | 'en' | 'ar' | 'es';
-  conversationHistory: Message[];
-  timezone?: string;
-  currentLocation?: { lat: number; lon: number };
-}
-
-export interface AgentResponse {
-  text: string;
-  agent: string;
-  confidence: number;
-  metadata?: Record<string, any>;
-  followups?: string[];
-}
+import { AgentConfig, AgentResponse, Intent, ConversationMessage } from '../types/agent';
+import { NavigatorAgent } from './navigator';
+import { LocalizerAgent } from './localizer';
+import { CommunityAgent } from './community';
+import { BudgetAgent } from './budget';
+import { EmergencyAgent } from './emergency';
 
 class SafarAgent {
   private config: AgentConfig;
-  private subAgents: Map<string, Function> = new Map();
+  private navigator: NavigatorAgent;
+  private localizer: LocalizerAgent;
+  private community: CommunityAgent;
+  private budget: BudgetAgent;
+  private emergency: EmergencyAgent;
 
   constructor(config: AgentConfig) {
     this.config = config;
-    this.registerSubAgents();
+    this.navigator = new NavigatorAgent(config);
+    this.localizer = new LocalizerAgent(config);
+    this.community = new CommunityAgent(config);
+    this.budget = new BudgetAgent(config);
+    this.emergency = new EmergencyAgent(config);
   }
 
-  private registerSubAgents() {
-    // Register specialized sub-agents
-    this.subAgents.set('navigator', this.delegateToNavigator);
-    this.subAgents.set('localizer', this.delegateToLocalizer);
-    this.subAgents.set('community', this.delegateToCommunity);
-    this.subAgents.set('budget', this.delegateToBudget);
-    this.subAgents.set('emergency', this.delegateToEmergency);
-  }
-
-  /**
-   * Main entry point - process user message
-   */
   async processMessage(userMessage: string): Promise<AgentResponse> {
     // 1. Extract intent & context
-    const { intent, entities, confidence } = await this.extractIntent(userMessage);
+    const intentData = this.extractIntent(userMessage);
+    const agentType = this.selectAgent(intentData.type);
 
     // 2. Route to appropriate sub-agent
-    const agentKey = this.selectAgent(intent);
-    const agentFn = this.subAgents.get(agentKey);
+    let response: AgentResponse;
 
-    if (!agentFn) {
+    try {
+      switch (agentType) {
+        case 'navigate':
+          response = await this.navigator.processQuery(userMessage);
+          break;
+        case 'localize':
+          response = await this.localizer.processQuery(userMessage);
+          break;
+        case 'community':
+          response = await this.community.processQuery(userMessage);
+          break;
+        case 'budget':
+          response = await this.budget.processQuery(userMessage);
+          break;
+        case 'emergency':
+          response = await this.emergency.processQuery(userMessage);
+          break;
+        default:
+          return this.fallbackResponse(userMessage);
+      }
+
+      // 3. Update conversation history
+      this.updateHistory({
+        role: 'user',
+        content: userMessage,
+        timestamp: new Date().toISOString(),
+      });
+
+      this.updateHistory({
+        role: 'assistant',
+        content: response.text,
+        timestamp: new Date().toISOString(),
+        agent: response.agent,
+      });
+
+      return response;
+    } catch (error) {
+      console.error(`[SafarAgent] Error routing to ${agentType}:`, error);
       return this.fallbackResponse(userMessage);
     }
-
-    // 3. Get response from sub-agent
-    const response = await agentFn.call(this, {
-      message: userMessage,
-      intent,
-      entities,
-      lang: this.config.lang,
-      history: this.config.conversationHistory,
-    });
-
-    // 4. Format & return
-    return {
-      text: response.text,
-      agent: agentKey,
-      confidence,
-      metadata: response.metadata,
-      followups: response.followups,
-    };
   }
 
-  /**
-   * Extract intent from natural language
-   */
-  private async extractIntent(message: string): Promise<any> {
+  private extractIntent(message: string): Intent {
     const lowerMsg = message.toLowerCase();
 
-    // Simple intent detection (can be enhanced with ML)
-    const intents = {
-      navigation: ['route', 'direction', 'map', 'distance', 'tariq', 'path', 'comment aller'],
-      prayer: ['prayer', 'prière', 'salat', 'prayer time', 'wakt'],
-      ferry: ['ferry', 'ferry ticket', 'bateau', 'port', 'crossing'],
-      budget: ['budget', 'cost', 'price', 'how much', 'combien'],
-      emergency: ['emergency', 'help', 'police', 'hospital', 'urgence'],
-      greeting: ['hello', 'hi', 'salam', 'bonjour', 'salut'],
-      community: ['recommend', 'tips', 'advice', 'other travelers', 'avis'],
+    // Intent detection with keyword matching
+    const intentKeywords = {
+      navigate: [
+        'route',
+        'direction',
+        'map',
+        'distance',
+        'tariq',
+        'path',
+        'ferry',
+        'bateau',
+        'how to get',
+        'comment aller',
+      ],
+      localize: [
+        'prayer',
+        'prière',
+        'salat',
+        'weather',
+        'météo',
+        'restaurant',
+        'halal',
+        'mosque',
+        'pharmacie',
+        'pharmacy',
+      ],
+      community: [
+        'recommend',
+        'tips',
+        'advice',
+        'travelers',
+        'avis',
+        'conseil',
+        'other people',
+      ],
+      budget: ['budget', 'cost', 'price', 'how much', 'combien', 'exchange', 'currency'],
+      emergency: [
+        'emergency',
+        'help',
+        'police',
+        'hospital',
+        'urgence',
+        'accident',
+        'ambulance',
+      ],
     };
 
-    let detectedIntent = 'general';
+    let detectedIntent: Intent['type'] = 'unknown';
     let maxMatches = 0;
 
-    for (const [intent, keywords] of Object.entries(intents)) {
-      const matches = keywords.filter(kw => lowerMsg.includes(kw)).length;
+    for (const [intent, keywords] of Object.entries(intentKeywords)) {
+      const matches = keywords.filter((kw) => lowerMsg.includes(kw)).length;
       if (matches > maxMatches) {
-        detectedIntent = intent;
+        detectedIntent = intent as Intent['type'];
         maxMatches = matches;
       }
     }
 
+    const confidence = Math.min(maxMatches / 2, 0.95);
+
     return {
-      intent: detectedIntent,
-      confidence: Math.min(maxMatches / 2, 0.95),
+      type: detectedIntent || 'general',
+      confidence,
       entities: this.extractEntities(message),
     };
   }
 
-  /**
-   * Extract relevant entities (place names, numbers, etc.)
-   */
-  private extractEntities(message: string): Record<string, any> {
-    const entities: Record<string, any> = {};
+  private extractEntities(message: string): any[] {
+    const entities: any[] = [];
 
-    // Extract cities/locations (basic)
-    const cities = ['marrakech', 'casablanca', 'fes', 'tangier', 'rabat', 'agadir', 'taza'];
+    // Extract cities/locations
+    const cities = [
+      'marrakech',
+      'casablanca',
+      'fes',
+      'tangier',
+      'rabat',
+      'agadir',
+      'taza',
+      'paris',
+      'london',
+      'madrid',
+      'barcelona',
+    ];
     for (const city of cities) {
       if (message.toLowerCase().includes(city)) {
-        entities.location = city;
+        entities.push({ type: 'location', value: city });
       }
     }
 
-    // Extract dates/numbers
+    // Extract numbers (amounts, durations)
     const numbers = message.match(/\d+/g);
     if (numbers) {
-      entities.numbers = numbers.map(Number);
+      numbers.forEach((num) => {
+        entities.push({ type: 'number', value: num });
+      });
     }
 
     return entities;
   }
 
-  /**
-   * Select best agent for intent
-   */
-  private selectAgent(intent: string): string {
-    const mapping: Record<string, string> = {
-      navigation: 'navigator',
-      prayer: 'localizer',
-      ferry: 'navigator',
+  private selectAgent(intentType: Intent['type']): string {
+    const mapping: Record<Intent['type'], string> = {
+      navigate: 'navigate',
+      localize: 'localize',
+      community: 'community',
       budget: 'budget',
       emergency: 'emergency',
-      greeting: 'community',
-      community: 'community',
+      general: 'community',
+      unknown: 'community',
     };
-    return mapping[intent] || 'community';
+    return mapping[intentType] || 'community';
   }
 
-  /**
-   * Sub-agent delegators
-   */
-
-  private async delegateToNavigator(params: any) {
-    // TODO: Integrate with Google Maps / OSRM
-    return {
-      text: `🗺️ Navigateur: Je peux t'aider avec les routes, distances, et itinéraires entre ${params.entities.location || 'tes destinations'}`,
-      metadata: { type: 'navigation' },
-      followups: ['Quelle distance?', 'Mode de transport?'],
-    };
-  }
-
-  private async delegateToLocalizer(params: any) {
-    // TODO: Integrate prayer times API, weather API
-    return {
-      text: `📍 Localizer: Informations pratiques pour le Maroc et l'Afrique du Nord`,
-      metadata: { type: 'localizer' },
-      followups: ['Horaires prière?', 'Météo?'],
-    };
-  }
-
-  private async delegateToCommunity(params: any) {
-    // TODO: Query community tips from DB
-    return {
-      text: `👥 Communauté: Découvre les conseils d'autres voyageurs`,
-      metadata: { type: 'community' },
-      followups: ['Bons restaurants?', 'Hôtels recommandés?'],
-    };
-  }
-
-  private async delegateToBudget(params: any) {
-    // TODO: Calculate trip budget
-    return {
-      text: `💰 Budget: Je peux calculer les coûts de ton voyage`,
-      metadata: { type: 'budget' },
-      followups: ['Carburant?', 'Ferry?', 'Hébergement?'],
-    };
-  }
-
-  private async delegateToEmergency(params: any) {
-    // TODO: Emergency routing
-    return {
-      text: `🆘 Urgence: Numéros importants: Police 19, SAMU 15, Ambassade...`,
-      metadata: { type: 'emergency', urgent: true },
-      followups: [],
-    };
-  }
-
-  /**
-   * Fallback response
-   */
   private fallbackResponse(message: string): AgentResponse {
+    const responses: Record<string, string> = {
+      da: `Salam! Je n'ai pas bien compris. Je peux t'aider avec: routes, prière, weather, budget, urgences, conseils...`,
+      fr: `Je n'ai pas bien compris. Tu peux reformuler? Je peux t'aider avec: routes, prière, météo, budget, urgences, conseils communauté...`,
+      en: `I didn't understand well. Can you rephrase? I can help with: routes, prayer times, weather, budget, emergencies, community tips...`,
+      ar: `لم أفهم جيدًا. هل يمكنك إعادة الصياغة؟ يمكنني المساعدة في: الطرق، أوقات الصلاة، الطقس، الميزانية، حالات الطوارئ، نصائح المجتمع...`,
+      es: `No entendí bien. ¿Puedes reformular? Puedo ayudarte con: rutas, horarios de oración, clima, presupuesto, emergencias, consejos comunitarios...`,
+    };
+
     return {
-      text: `Je n'ai pas bien compris. Tu peux reformuler? Je peux t'aider avec: routes, prière, ferry, budget, urgences, conseils communauté...`,
-      agent: 'safar',
-      confidence: 0.3,
+      text: responses[this.config.lang] || responses.en,
+      agent: 'SAFAR',
+      confidence: 0.2,
+      metadata: { queryType: 'unknown' },
+      followups: ['Ask your question differently', 'Get help with specific topic'],
     };
   }
 
-  /**
-   * Update conversation context
-   */
-  updateHistory(message: Message) {
+  private updateHistory(message: ConversationMessage) {
     this.config.conversationHistory.push(message);
     // Keep only last 10 messages for context
     if (this.config.conversationHistory.length > 10) {

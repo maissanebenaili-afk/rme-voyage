@@ -22,6 +22,9 @@ import {
   Users,
   Star,
   Package,
+  Mic,
+  MicOff,
+  Volume2,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -375,6 +378,8 @@ export default function HadakAI() {
   const [isTyping, setIsTyping] = useState(false);
   const [lastTopic, setLastTopic] = useState<TopicKey | null>(null);
   const [langOpen, setLangOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -415,6 +420,52 @@ export default function HadakAI() {
     document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);
   }, [langOpen]);
+
+  /* Initialize Web Speech API */
+  useEffect(() => {
+    const SpeechRecognition = window.webkitSpeechRecognition || (window as any).SpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognitionInstance = new SpeechRecognition();
+    recognitionInstance.continuous = false;
+    recognitionInstance.interimResults = false;
+    recognitionInstance.lang = lang === 'ar' ? 'ar-SA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
+
+    recognitionInstance.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognitionInstance.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionInstance.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      if (transcript.trim()) {
+        setInput(transcript.trim());
+      }
+    };
+
+    setRecognition(recognitionInstance);
+
+    return () => {
+      recognitionInstance.abort();
+    };
+  }, [lang]);
+
+  const handleVoiceInput = () => {
+    if (!recognition) return;
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      setInput('');
+      recognition.start();
+    }
+  };
 
   const handleSend = async (text?: string) => {
     const content = (text ?? input).trim();
@@ -796,6 +847,24 @@ export default function HadakAI() {
                 }}
                 disabled={isTyping}
               />
+              <button
+                onClick={handleVoiceInput}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
+                style={{
+                  background: isListening
+                    ? 'linear-gradient(135deg, #ff6b6b 0%, #ee5a3f 100%)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                  boxShadow: isListening ? '0 4px 12px rgba(255, 107, 107, 0.4)' : 'none',
+                }}
+                aria-label="Voice input"
+                title={isListening ? 'Stop listening' : 'Start voice input'}
+              >
+                {isListening ? (
+                  <MicOff className="h-4 w-4 text-white animate-pulse" />
+                ) : (
+                  <Mic className="h-4 w-4 text-white/60" />
+                )}
+              </button>
               <button
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isTyping}
