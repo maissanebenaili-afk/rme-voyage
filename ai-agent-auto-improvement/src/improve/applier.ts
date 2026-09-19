@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type { AgentVersion, Patch } from '../types.js';
 
 /** Applies patches to a deep-cloned copy of a version, producing a new candidate version. */
@@ -24,7 +25,7 @@ export function applyPatches(version: AgentVersion, patches: Patch[]): AgentVers
 
   return {
     ...version,
-    id: `v-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: `v-${Date.now()}-${randomUUID()}`,
     parentId: version.id,
     createdAt: new Date().toISOString(),
     knowledge,
