@@ -27,7 +27,7 @@ export default function ServicesMapView({ center, results }: ServicesMapViewProp
     <div className="h-72 overflow-hidden rounded-xl" aria-label="Carte des services trouvés">
       <MapContainer center={[center.lat, center.lon]} zoom={11} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
-        <Marker position={[center.lat, center.lon]} icon={markerIcon("#0d6255")}>
+        <Marker position={[center.lat, center.lon]} icon={markerIcon("#0369a1")}>
           <Popup>Point de recherche</Popup>
         </Marker>
         {results.map((point) => (

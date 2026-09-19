@@ -23,44 +23,44 @@ const config: Config = {
           800: "#6f3420",
           900: "#552a1c",
         },
-        // Bleu zellige (deep Moroccan tile blue)
+        // Zellige — midnight navy (2025 modern palette)
         zellige: {
-          50: "#eef6f6",
-          100: "#d7ebe9",
-          200: "#a9d4d0",
-          300: "#73b8b2",
-          400: "#3f8f89",
-          500: "#0d6255", // existing emerald-teal used across app
-          600: "#0a4d44",
-          700: "#0d3f38", // existing hero/dark surface
-          800: "#0a2e28", // existing footer dark
-          900: "#071f1a",
+          50: "#f0f9ff",
+          100: "#bae6fd",
+          200: "#7dd3fc",
+          300: "#38bdf8",
+          400: "#0284c7",
+          500: "#0369a1", // focus / mid blue
+          600: "#1e3a5f",
+          700: "#0f1f3d", // hero/dark surface
+          800: "#080f28", // footer dark
+          900: "#050b1a",
         },
-        // Safran gold (accent)
+        // Safran — electric amber (vibrant 2025 accent)
         safran: {
-          50: "#fdf7ea",
-          100: "#faecc9",
-          200: "#f5d891",
-          300: "#f2b963", // existing gradient gold
-          400: "#eead59", // existing brand gold
-          500: "#e6a44e", // existing CTA gold
-          600: "#d49934",
-          700: "#b07a1f",
-          800: "#875c18",
-          900: "#5c3e11",
+          50: "#fffbeb",
+          100: "#fef3c7",
+          200: "#fde68a",
+          300: "#fcd34d", // light gold
+          400: "#fbbf24", // brand gold
+          500: "#f59e0b", // CTA gold
+          600: "#d97706",
+          700: "#b45309",
+          800: "#92400e",
+          900: "#78350f",
         },
-        // Sable / crème neutrals
+        // Sable / neutrals — clean cool slate
         sable: {
-          50: "#fffdf8",  // existing card cream
-          100: "#f8f7f2", // existing app background
-          200: "#f0ede5",
-          300: "#e6e2d8",
-          400: "#ded5c5",
-          500: "#c7bba3",
-          600: "#a8987a",
-          700: "#7a6d54",
-          800: "#544a38",
-          900: "#332c20",
+          50: "#f0f9ff",
+          100: "#f8fafc", // app background
+          200: "#f1f5f9",
+          300: "#e2e8f0",
+          400: "#cbd5e1",
+          500: "#94a3b8",
+          600: "#64748b",
+          700: "#475569",
+          800: "#334155",
+          900: "#1e293b",
         },
       },
       fontFamily: {
@@ -87,13 +87,13 @@ const config: Config = {
         "4xl": "2.25rem",
       },
       boxShadow: {
-        warm: "0 12px 32px -8px rgba(13, 63, 56, 0.18)",
-        "warm-lg": "0 24px 60px -12px rgba(13, 63, 56, 0.28)",
-        gold: "0 8px 24px -4px rgba(238, 173, 89, 0.35)",
+        warm: "0 12px 32px -8px rgba(15, 31, 61, 0.18)",
+        "warm-lg": "0 24px 60px -12px rgba(15, 31, 61, 0.28)",
+        gold: "0 8px 24px -4px rgba(245, 158, 11, 0.35)",
       },
       backgroundImage: {
         "zellige-grid":
-          "linear-gradient(rgba(238,173,89,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(238,173,89,0.06) 1px, transparent 1px)",
+          "linear-gradient(rgba(245,158,11,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(245,158,11,0.06) 1px, transparent 1px)",
       },
       keyframes: {
         marquee: {

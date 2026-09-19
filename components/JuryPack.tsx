@@ -56,11 +56,11 @@ function FinderPattern({ x, y, cell }: { x: number; y: number; cell: number }) {
   return (
     <g transform={`translate(${x * cell}, ${y * cell})`}>
       {/* Outer 7x7 */}
-      <rect width={cell * 7} height={cell * 7} fill="#0d3f38" rx={cell * 0.5} />
+      <rect width={cell * 7} height={cell * 7} fill="#0f1f3d" rx={cell * 0.5} />
       {/* Inner 5x5 white */}
       <rect x={cell} y={cell} width={cell * 5} height={cell * 5} fill="#fffdf8" rx={cell * 0.3} />
       {/* Center 3x3 */}
-      <rect x={cell * 2} y={cell * 2} width={cell * 3} height={cell * 3} fill="#0d3f38" rx={cell * 0.2} />
+      <rect x={cell * 2} y={cell * 2} width={cell * 3} height={cell * 3} fill="#0f1f3d" rx={cell * 0.2} />
     </g>
   );
 }
@@ -91,7 +91,7 @@ function QrCodeSvg({ url, size = 200 }: { url: string; size?: number }) {
               y={y * cell + cell * 0.1}
               width={cell * 0.8}
               height={cell * 0.8}
-              fill="#0d3f38"
+              fill="#0f1f3d"
               rx={cell * 0.15}
             />
           ) : null
@@ -144,36 +144,36 @@ export default function JuryPack() {
   return (
     <section
       className="relative isolate overflow-hidden py-16 sm:py-24"
-      style={{ background: 'linear-gradient(160deg, #0d3f38 0%, #0a2e29 100%)' }}
+      style={{ background: 'linear-gradient(160deg, #0f1f3d 0%, #0a2e29 100%)' }}
       id="jury"
     >
       {/* Decorative glows */}
-      <div className="absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#eead59]/15 blur-3xl" />
+      <div className="absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#f59e0b]/15 blur-3xl" />
       <div className="absolute -bottom-36 left-1/4 -z-10 h-72 w-72 rounded-full bg-[#4cc3ac]/10 blur-3xl" />
 
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
         {/* Title */}
         <div className="mb-12 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#eead59]/15 px-4 py-1.5">
-            <Award className="h-4 w-4 text-[#eead59]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-[#eead59]">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#f59e0b]/15 px-4 py-1.5">
+            <Award className="h-4 w-4 text-[#f59e0b]" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[#f59e0b]">
               Défi Étatique
             </span>
           </div>
           <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl">
             Présentation Jury
           </h2>
-          <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-transparent via-[#eead59] to-transparent" />
+          <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-transparent via-[#f59e0b] to-transparent" />
         </div>
 
         {/* Pitch */}
-        <div className="mb-12 rounded-3xl border border-[#eead59]/15 bg-white/5 p-8 text-center sm:p-12">
+        <div className="mb-12 rounded-3xl border border-[#f59e0b]/15 bg-white/5 p-8 text-center sm:p-12">
           <p className="text-lg font-medium leading-relaxed text-white/90 sm:text-xl">
             RME Voyage est la première plateforme d'assistance voyage pour les Marocains
             de l'étranger, combinant un assistant IA en Darija, des outils de voyage
             intelligents et une accessibilité totale — le tout en une seule PWA installable.
           </p>
-          <p className="mt-4 text-sm text-[#eead59]">
+          <p className="mt-4 text-sm text-[#f59e0b]">
             De Paris à Tanger, 2100 km de sérénité.
           </p>
         </div>
@@ -181,8 +181,8 @@ export default function JuryPack() {
         {/* Main grid: QR + Metrics */}
         <div className="mb-12 grid gap-8 lg:grid-cols-2">
           {/* QR Code card */}
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-[#eead59]/15 bg-white/5 p-8">
-            <div className="mb-4 flex items-center gap-2 text-[#eead59]">
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-[#f59e0b]/15 bg-white/5 p-8">
+            <div className="mb-4 flex items-center gap-2 text-[#f59e0b]">
               <QrCode className="h-5 w-5" />
               <span className="text-sm font-bold uppercase tracking-wide">
                 Scannez pour l'app
@@ -194,7 +194,7 @@ export default function JuryPack() {
             <p className="mt-4 text-xs text-white/50">{appUrl}</p>
             <button
               onClick={() => setShowQr((v) => !v)}
-              className="mt-3 text-xs font-medium text-[#eead59]/70 transition hover:text-[#eead59]"
+              className="mt-3 text-xs font-medium text-[#f59e0b]/70 transition hover:text-[#f59e0b]"
             >
               {showQr ? 'Masquer le code' : 'Agrandir le QR'}
             </button>
@@ -206,9 +206,9 @@ export default function JuryPack() {
           </div>
 
           {/* Metrics grid */}
-          <div className="rounded-3xl border border-[#eead59]/15 bg-white/5 p-8">
+          <div className="rounded-3xl border border-[#f59e0b]/15 bg-white/5 p-8">
             <div className="mb-6 flex items-center gap-2">
-              <Zap className="h-5 w-5 text-[#eead59]" />
+              <Zap className="h-5 w-5 text-[#f59e0b]" />
               <h3 className="font-display text-lg font-semibold text-white">Chiffres clés</h3>
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -223,8 +223,8 @@ export default function JuryPack() {
                     viewport={{ once: true, amount: 0, margin: '0px 0px 200px 0px' }}
                     transition={{ duration: 0.35, delay: idx * 0.06, ease: 'easeOut' }}
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eead59]/15">
-                      <Icon className="h-5 w-5 text-[#eead59]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f59e0b]/15">
+                      <Icon className="h-5 w-5 text-[#f59e0b]" />
                     </div>
                     <span className="font-display text-2xl font-semibold tabular-nums text-white">{m.value}</span>
                     <span className="text-xs font-medium text-white/60">{m.label}</span>
@@ -236,9 +236,9 @@ export default function JuryPack() {
         </div>
 
         {/* Innovation highlights */}
-        <div className="mb-12 rounded-3xl border border-[#eead59]/15 bg-white/5 p-8">
+        <div className="mb-12 rounded-3xl border border-[#f59e0b]/15 bg-white/5 p-8">
           <div className="mb-6 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-[#eead59]" />
+            <Sparkles className="h-5 w-5 text-[#f59e0b]" />
             <h3 className="font-display text-lg font-semibold text-white">Points d'innovation</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -251,7 +251,7 @@ export default function JuryPack() {
                 viewport={{ once: true, amount: 0, margin: '0px 0px 200px 0px' }}
                 transition={{ duration: 0.3, delay: i * 0.04, ease: 'easeOut' }}
               >
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#eead59]" />
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#f59e0b]" />
                 <span className="text-sm text-white/80">{item}</span>
               </motion.div>
             ))}
@@ -266,9 +266,9 @@ export default function JuryPack() {
             rel="noopener noreferrer"
             className="group flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-extrabold transition-all hover:scale-105 active:scale-95 sm:w-auto"
             style={{
-              background: 'linear-gradient(135deg, #eead59 0%, #d49934 100%)',
-              color: '#0d3f38',
-              boxShadow: '0 6px 20px rgba(238, 173, 89, 0.3)',
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              color: '#0f1f3d',
+              boxShadow: '0 6px 20px rgba(245, 158, 11, 0.3)',
             }}
           >
             <Globe className="h-5 w-5" />
@@ -279,9 +279,9 @@ export default function JuryPack() {
             href={marketingUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex w-full items-center justify-center gap-2 rounded-full border border-[#eead59]/30 bg-white/5 px-8 py-4 text-sm font-bold text-white transition-all hover:bg-white/10 hover:scale-105 active:scale-95 sm:w-auto"
+            className="group flex w-full items-center justify-center gap-2 rounded-full border border-[#f59e0b]/30 bg-white/5 px-8 py-4 text-sm font-bold text-white transition-all hover:bg-white/10 hover:scale-105 active:scale-95 sm:w-auto"
           >
-            <Sparkles className="h-5 w-5 text-[#eead59]" />
+            <Sparkles className="h-5 w-5 text-[#f59e0b]" />
             Site marketing
             <ExternalLink className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </a>
@@ -292,7 +292,7 @@ export default function JuryPack() {
 
         {/* Footer */}
         <div className="mt-12 flex items-center justify-center gap-2 text-xs text-white/40">
-          <Heart className="h-3.5 w-3.5 text-[#eead59]/50" />
+          <Heart className="h-3.5 w-3.5 text-[#f59e0b]/50" />
           <span>RME Voyage — Défi Étatique 2026</span>
         </div>
       </div>

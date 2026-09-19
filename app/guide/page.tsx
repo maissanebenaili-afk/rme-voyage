@@ -34,24 +34,24 @@ export const metadata = {
 
 export default function GuidePage() {
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fffdf8] text-[#173a36]">
-      <header className="border-b border-white/10 bg-[#0d3f38] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fffdf8] text-[#0f1f3d]">
+      <header className="border-b border-white/10 bg-[#0f1f3d] text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
           <Link href="/" className="flex items-center gap-2 text-lg font-black tracking-tight">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#e6a44e] text-sm text-[#103d37]">R</span>
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#f59e0b] text-sm text-[#0f1f3d]">R</span>
             RME <span className="font-medium text-[#f5cd93]">Voyage</span>
           </Link>
           <Link
             href="/telecharger"
-            className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#0d3f38] transition hover:bg-[#f5cd93]"
+            className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#0f1f3d] transition hover:bg-[#f5cd93]"
           >
             Utiliser l&apos;app
           </Link>
         </div>
       </header>
 
-      <section className="relative isolate overflow-hidden bg-[#0d3f38] px-5 pb-24 pt-14 text-white sm:px-8 sm:pt-20">
-        <div className="pointer-events-none absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#eead59]/15 blur-3xl" />
+      <section className="relative isolate overflow-hidden bg-[#0f1f3d] px-5 pb-24 pt-14 text-white sm:px-8 sm:pt-20">
+        <div className="pointer-events-none absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#f59e0b]/15 blur-3xl" />
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
           <div className="animate-fade-up">
             <p className="text-sm font-extrabold uppercase tracking-[.18em] text-[#f5cd93]">
@@ -67,7 +67,7 @@ export default function GuidePage() {
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 href="/telecharger"
-                className="inline-flex items-center gap-2 rounded-full bg-[#eead59] px-6 py-3 font-extrabold text-[#0d3f38] shadow-gold transition hover:bg-[#f5cd93]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3 font-extrabold text-[#0f1f3d] shadow-gold transition hover:bg-[#f5cd93]"
               >
                 <Download size={18} /> Ouvrir l&apos;application
               </Link>
@@ -92,7 +92,7 @@ export default function GuidePage() {
                 'Comparez les options puis réservez chez le partenaire',
               ].map((item, index) => (
                 <li className="flex gap-4" key={item}>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eead59] font-black text-[#0d3f38]">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f59e0b] font-black text-[#0f1f3d]">
                     {index + 1}
                   </span>
                   <span className="pt-1 font-medium text-white/85">{item}</span>
@@ -116,7 +116,7 @@ export default function GuidePage() {
               className="card-hover rounded-3xl border border-[#dce3dc] bg-white p-7 shadow-sm"
               key={title}
             >
-              <Icon size={30} className="text-[#0d6255]" />
+              <Icon size={30} className="text-[#0369a1]" />
               <h3 className="mt-5 text-2xl font-black">{title}</h3>
               <p className="mt-3 leading-7 text-[#5a716c]">{text}</p>
             </article>
@@ -128,7 +128,7 @@ export default function GuidePage() {
         <div className="mx-auto max-w-6xl rounded-[2rem] bg-white p-7 shadow-lg sm:p-12">
           <div className="grid gap-10 lg:grid-cols-[1fr_.8fr] lg:items-center">
             <div>
-              <p className="text-sm font-extrabold uppercase tracking-[.18em] text-[#0d6255]">
+              <p className="text-sm font-extrabold uppercase tracking-[.18em] text-[#0369a1]">
                 Comparateur utile
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight">
@@ -140,13 +140,13 @@ export default function GuidePage() {
               </p>
               <Link
                 href="/"
-                className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0d6255] px-6 py-3 font-bold text-white transition hover:bg-[#0a4d44]"
+                className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0369a1] px-6 py-3 font-bold text-white transition hover:bg-[#0a4d44]"
               >
                 <BadgeEuro size={18} /> Calculer mon trajet <ArrowRight size={18} />
               </Link>
             </div>
             <div className="rounded-3xl bg-[#fdf3ee] p-7">
-              <ShieldCheck className="text-[#0d6255]" size={34} />
+              <ShieldCheck className="text-[#0369a1]" size={34} />
               <h3 className="mt-5 text-xl font-black">Monétisation transparente</h3>
               <p className="mt-3 text-sm leading-6 text-[#5a716c]">
                 RME Voyage peut recevoir une commission lorsqu’une réservation est réalisée auprès
@@ -158,7 +158,7 @@ export default function GuidePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
-        <div className="grid gap-10 rounded-[2rem] bg-[#0a2e28] p-8 text-white sm:p-12 lg:grid-cols-2">
+        <div className="grid gap-10 rounded-[2rem] bg-[#080f28] p-8 text-white sm:p-12 lg:grid-cols-2">
           <div>
             <p className="text-sm font-extrabold uppercase tracking-[.18em] text-[#f5cd93]">
               Infos & actualités
@@ -172,7 +172,7 @@ export default function GuidePage() {
             </p>
           </div>
           <div className="rounded-3xl border border-white/10 bg-white/5 p-7">
-            <BellRing className="text-[#eead59]" size={30} />
+            <BellRing className="text-[#f59e0b]" size={30} />
             <h3 className="mt-5 text-xl font-black">Aucune actualité inventée</h3>
             <p className="mt-3 text-sm leading-6 text-white/70">
               Les sujets politiques ou d’actualité ne seront affichés qu’avec une source, une date
@@ -184,7 +184,7 @@ export default function GuidePage() {
       </section>
 
       <section className="px-5 pb-20 sm:px-8">
-        <div className="mx-auto max-w-5xl rounded-[2rem] bg-[#eead59] px-7 py-14 text-center text-[#0d3f38] shadow-gold sm:px-12">
+        <div className="mx-auto max-w-5xl rounded-[2rem] bg-[#f59e0b] px-7 py-14 text-center text-[#0f1f3d] shadow-gold sm:px-12">
           <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">
             Votre prochain trajet commence ici.
           </h2>
@@ -193,7 +193,7 @@ export default function GuidePage() {
           </p>
           <Link
             href="/telecharger"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0d3f38] px-7 py-3 font-bold text-white transition hover:bg-[#0a2e28]"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-7 py-3 font-bold text-white transition hover:bg-[#080f28]"
           >
             Commencer gratuitement <ArrowRight size={18} />
           </Link>

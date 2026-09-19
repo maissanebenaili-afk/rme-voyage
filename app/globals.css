@@ -23,8 +23,8 @@ html {
 body {
   margin: 0;
   font-family: var(--font-gensans), var(--font-jakarta), var(--font-inter), sans-serif;
-  background: #f8f7f2;
-  color: #173a36;
+  background: #f8fafc;
+  color: #1e293b;
   min-height: 100dvh;
 }
 
@@ -40,8 +40,8 @@ h1, h2, h3, h4 {
 }
 
 ::selection {
-  background: #eead59;
-  color: #0a2e28;
+  background: #f59e0b;
+  color: #0f172a;
 }
 
 input, button, textarea, select {
@@ -49,21 +49,21 @@ input, button, textarea, select {
 }
 
 input {
-  background: #fffdf8;
-  border-color: #ded5c5;
+  background: #fafafa;
+  border-color: #cbd5e1;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 input:focus {
-  border-color: #0d6255;
-  box-shadow: 0 0 0 3px rgba(13, 98, 85, 0.12);
+  border-color: #0369a1;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.15);
   outline: none;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #f0ede5; }
-::-webkit-scrollbar-thumb { background: #0d6255; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #0a4d44; }
+::-webkit-scrollbar-track { background: #e2e8f0; }
+::-webkit-scrollbar-thumb { background: #0369a1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #1e3a5f; }
 
 /* Animations */
 @keyframes fadeUp {
@@ -92,9 +92,9 @@ input:focus {
 }
 
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(227, 164, 78, 0.4); }
-  70% { box-shadow: 0 0 0 12px rgba(227, 164, 78, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(227, 164, 78, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+  70% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
 }
 
 .animate-fade-up { animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
@@ -114,7 +114,7 @@ input:focus {
 /* Zellige decorative pattern (subtle geometric motif for hero/section backgrounds) */
 .pattern-zellige {
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(238, 173, 89, 0.18) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, rgba(245, 158, 11, 0.18) 1px, transparent 0);
   background-size: 22px 22px;
 }
 
@@ -127,22 +127,22 @@ input:focus {
 }
 
 .glass-dark {
-  background: rgba(13, 63, 56, 0.08);
+  background: rgba(15, 31, 61, 0.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(13, 63, 56, 0.12);
+  border: 1px solid rgba(15, 31, 61, 0.12);
 }
 
 /* Gradient text */
 .gradient-text-gold {
-  background: linear-gradient(135deg, #f2b963 0%, #e6a44e 50%, #d9824b 100%);
+  background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-emerald {
-  background: linear-gradient(135deg, #4cc3ac 0%, #0d6255 100%);
+  background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -154,12 +154,12 @@ input:focus {
 }
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px -8px rgba(13, 63, 56, 0.15);
+  box-shadow: 0 12px 32px -8px rgba(15, 31, 61, 0.15);
 }
 
 /* Shimmer loading */
 .shimmer {
-  background: linear-gradient(90deg, #f0ede5 25%, #e8e4dc 50%, #f0ede5 75%);
+  background: linear-gradient(90deg, #e2e8f0 25%, #d4dde8 50%, #e2e8f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -167,13 +167,13 @@ input:focus {
 /* Premium card — investor-grade surface */
 .premium-card {
   background: #ffffff;
-  border: 1px solid rgba(13, 63, 56, 0.08);
-  box-shadow: 0 2px 12px -2px rgba(13, 63, 56, 0.06), 0 8px 32px -8px rgba(13, 63, 56, 0.10);
+  border: 1px solid rgba(15, 31, 61, 0.08);
+  box-shadow: 0 2px 12px -2px rgba(15, 31, 61, 0.06), 0 8px 32px -8px rgba(15, 31, 61, 0.10);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 .premium-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 24px -4px rgba(13, 63, 56, 0.12), 0 16px 48px -12px rgba(13, 63, 56, 0.14);
+  box-shadow: 0 4px 24px -4px rgba(15, 31, 61, 0.12), 0 16px 48px -12px rgba(15, 31, 61, 0.14);
 }
 
 /* Leaflet map styles */
@@ -235,8 +235,8 @@ input:focus {
 }
 
 /* Focus visible (stronger a11y outline) */
-:focus-visible { outline: 3px solid #e6a44e; outline-offset: 3px; }
+:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
 
-.skip-link { position: fixed; left: 1rem; top: -5rem; z-index: 100; background: #fff; color: #0d3f38; padding: .75rem 1rem; font-weight: 700; }
+.skip-link { position: fixed; left: 1rem; top: -5rem; z-index: 100; background: #fff; color: #0f1f3d; padding: .75rem 1rem; font-weight: 700; }
 .skip-link:focus { top: 1rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

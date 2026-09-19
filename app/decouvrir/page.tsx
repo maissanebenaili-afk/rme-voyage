@@ -31,15 +31,15 @@ export const metadata = {
 
 export default function DiscoverPage() {
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#0d3f38] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#0f1f3d] text-white">
       {/* Background decorations, consistent with homepage hero */}
       <div className="relative isolate">
-        <div className="pointer-events-none absolute -right-24 -top-24 -z-10 h-96 w-96 rounded-full bg-[#eead59]/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 -top-24 -z-10 h-96 w-96 rounded-full bg-[#f59e0b]/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-36 left-1/4 -z-10 h-72 w-72 rounded-full bg-[#4cc3ac]/15 blur-3xl" />
 
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
           <Link href="/" className="flex items-center gap-2 text-lg font-black tracking-tight">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#e6a44e] text-sm text-[#103d37]">R</span>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d]">R</span>
             RME <span className="font-medium text-[#f5cd93]">Voyage</span>
           </Link>
           <Link
@@ -65,7 +65,7 @@ export default function DiscoverPage() {
             <div className="mt-9 flex flex-wrap gap-4">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3.5 font-extrabold text-[#103d37] shadow-gold transition hover:bg-[#f5cd93]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] shadow-gold transition hover:bg-[#f5cd93]"
               >
                 Préparer mon voyage <ArrowRight size={18} />
               </Link>
@@ -79,7 +79,7 @@ export default function DiscoverPage() {
           </div>
 
           <div className="relative animate-scale-in delay-200">
-            <div className="absolute inset-0 -rotate-2 rounded-[2rem] bg-[#e6a44e]/90" />
+            <div className="absolute inset-0 -rotate-2 rounded-[2rem] bg-[#f59e0b]/90" />
             <div className="relative rounded-[2rem] border border-white/10 bg-[#153f39] p-7 shadow-2xl sm:p-9">
               <p className="text-sm font-bold text-[#f5cd93]">Un seul point de départ</p>
               <div className="mt-5 space-y-4 sm:mt-7 sm:space-y-5">
@@ -103,7 +103,7 @@ export default function DiscoverPage() {
         </section>
       </div>
 
-      <section id="fonctionnalites" className="bg-[#fffdf8] py-20 text-[#173a36]">
+      <section id="fonctionnalites" className="bg-[#fffdf8] py-20 text-[#0f1f3d]">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <p className="text-sm font-extrabold uppercase tracking-[.18em] text-[#a84f2b]">
             Pensé pour votre trajet
@@ -114,7 +114,7 @@ export default function DiscoverPage() {
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {features.map(({ icon: Icon, title, text }) => (
               <article key={title} className="card-hover rounded-3xl border border-[#dce3dc] bg-white p-7">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#e9f1ed] text-[#0d6255]">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#e9f1ed] text-[#0369a1]">
                   <Icon size={24} />
                 </span>
                 <h3 className="mt-5 text-xl font-extrabold">{title}</h3>
@@ -126,7 +126,7 @@ export default function DiscoverPage() {
       </section>
 
       <section className="bg-[#fffdf8] px-5 py-20 sm:px-8">
-        <div className="mx-auto max-w-4xl rounded-[2rem] bg-[#0d3f38] px-7 py-14 text-center text-white shadow-warm-lg sm:px-12">
+        <div className="mx-auto max-w-4xl rounded-[2rem] bg-[#0f1f3d] px-7 py-14 text-center text-white shadow-warm-lg sm:px-12">
           <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">
             Prêt à organiser votre voyage ?
           </h2>
@@ -135,14 +135,14 @@ export default function DiscoverPage() {
           </p>
           <Link
             href="/"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3 font-bold text-[#103d37] transition hover:bg-[#f5cd93]"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3 font-bold text-[#0f1f3d] transition hover:bg-[#f5cd93]"
           >
             Ouvrir l&apos;application <ArrowRight size={18} />
           </Link>
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-[#0a2e28] px-5 py-8 text-center text-sm text-white/60">
+      <footer className="border-t border-white/10 bg-[#080f28] px-5 py-8 text-center text-sm text-white/60">
         RME Voyage — Informations indicatives. Vérifiez les conditions des transporteurs avant le
         départ.
       </footer>

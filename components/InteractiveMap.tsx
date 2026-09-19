@@ -83,8 +83,8 @@ export default function InteractiveMap({
           <div className="mt-4 h-80 overflow-hidden rounded-xl" aria-label="Carte de l’itinéraire calculé">
             <MapContainer center={routeGeometry[0]} zoom={6} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap contributors' />
-              <Polyline positions={routeGeometry} color="#0d6255" weight={4} opacity={0.8} />
-              <Marker position={routeGeometry[0]} icon={markerIcon("#0d6255")} />
+              <Polyline positions={routeGeometry} color="#0369a1" weight={4} opacity={0.8} />
+              <Marker position={routeGeometry[0]} icon={markerIcon("#0369a1")} />
               <Marker position={routeGeometry[routeGeometry.length - 1]} icon={markerIcon("#d9824b")} />
             </MapContainer>
           </div>

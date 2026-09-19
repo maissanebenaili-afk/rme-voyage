@@ -59,33 +59,33 @@ const features = [
 
 export default function Home() {
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8f7f2] text-[#173a36]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b]">
       {/* Hero Section */}
-      <section className="relative isolate overflow-hidden bg-[#0d3f38] text-white">
+      <section className="relative isolate overflow-hidden bg-[#0f1f3d] text-white">
         {/* Background decorations */}
-        <div className="absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#eead59]/20 blur-3xl" />
-        <div className="absolute -bottom-36 left-1/4 -z-10 h-72 w-72 rounded-full bg-[#4cc3ac]/15 blur-3xl" />
+        <div className="absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#f59e0b]/20 blur-3xl" />
+        <div className="absolute -bottom-36 left-1/4 -z-10 h-72 w-72 rounded-full bg-[#38bdf8]/15 blur-3xl" />
         <div className="absolute right-1/4 top-1/3 -z-10 h-64 w-64 rounded-full bg-[#d9824b]/10 blur-3xl" />
 
         {/* Navigation */}
         <nav className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-5 sm:px-8 sm:py-6">
           <Link href="/" className="flex shrink-0 items-center gap-2 text-base font-black tracking-tight sm:text-lg">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-[#e6a44e] text-sm text-[#103d37] sm:h-10 sm:w-10">R</span>
-            <span className="whitespace-nowrap">RME <span className="font-medium text-[#f5cd93]">Voyage</span></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d] sm:h-10 sm:w-10">R</span>
+            <span className="whitespace-nowrap">RME <span className="font-medium text-[#fde68a]">Voyage</span></span>
           </Link>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             <LanguageSwitcher />
             <Link href="/guide" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Le guide</Link>
             <Link href="/decouvrir" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Découvrir</Link>
-            <Link href="/pro" className="hidden text-sm font-bold text-[#f5cd93] hover:text-white sm:inline">Pro ↗</Link>
-            <a href="#planifier" className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-extrabold text-[#0d3f38] transition hover:bg-[#f5cd93] sm:px-4 sm:text-sm">Planifier</a>
+            <Link href="/pro" className="hidden text-sm font-bold text-[#fde68a] hover:text-white sm:inline">Pro ↗</Link>
+            <a href="#planifier" className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a] sm:px-4 sm:text-sm">Planifier</a>
           </div>
         </nav>
 
         {/* Hero content */}
         <div className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-12 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:pb-28 lg:pt-20">
           <div className="animate-fade-up">
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#e6a44e]/30 bg-[#e6a44e]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[.16em] text-[#f5cd93]">
+            <p className="inline-flex items-center gap-2 rounded-full border border-[#f59e0b]/30 bg-[#f59e0b]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[.16em] text-[#fde68a]">
               <TrendingUp size={14} /> MRE · Transferts · Mobilité
             </p>
             <h1 className="mt-6 max-w-3xl text-5xl font-display font-semibold leading-[.96] tracking-tight sm:text-7xl">
@@ -95,7 +95,7 @@ export default function Home() {
               Itinéraire, transfert d'argent, prières, Qibla et services — tout ce qu'il faut pour voyager sereinement entre l'Europe et le Maroc.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3.5 font-extrabold text-[#103d37] shadow-lg shadow-black/20 transition hover:bg-[#f5cd93]">
+              <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] shadow-lg shadow-black/20 transition hover:bg-[#fde68a]">
                 Planifier mon voyage <ArrowRight size={18} />
               </a>
               <a href="#transfert" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
@@ -103,25 +103,25 @@ export default function Home() {
               </a>
             </div>
             <div className="mt-10 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold text-white/70">
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Gratuit, sans inscription</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> 15+ outils intégrés</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#f2b963]" /> Taux de change live</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Gratuit, sans inscription</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> 15+ outils intégrés</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Taux de change live</span>
             </div>
           </div>
 
           {/* Hero card */}
           <div className="relative mx-auto w-full max-w-md animate-scale-in delay-300">
-            <div className="absolute inset-0 rotate-3 rounded-[2.25rem] bg-[#e6a44e]" />
-            <div className="relative rounded-[2.25rem] border border-white/10 bg-[#153f39] p-7 shadow-2xl sm:p-9">
-              <p className="text-sm font-bold text-[#f5cd93]">Votre carnet de voyage</p>
+            <div className="absolute inset-0 rotate-3 rounded-[2.25rem] bg-[#f59e0b]" />
+            <div className="relative rounded-[2.25rem] border border-white/10 bg-[#152848] p-7 shadow-2xl sm:p-9">
+              <p className="text-sm font-bold text-[#fde68a]">Votre carnet de voyage</p>
               <h2 className="mt-3 text-3xl font-display font-semibold leading-tight">Un parcours simple. Des décisions plus sereines.</h2>
               <div className="mt-8 space-y-3">
                 <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#f5cd93] font-black text-[#103d37]">1</span>
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#fde68a] font-black text-[#0f1f3d]">1</span>
                   <div><p className="text-xs text-white/60">Avant le départ</p><p className="font-bold">Itinéraire et budget</p></div>
                 </div>
                 <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#73c8b4] font-black text-[#103d37]">2</span>
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#60a5fa] font-black text-[#0f1f3d]">2</span>
                   <div><p className="text-xs text-white/60">Sur la route</p><p className="font-bold">Prières, Qibla et services</p></div>
                 </div>
                 <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
@@ -153,16 +153,16 @@ export default function Home() {
       </section>
 
       {/* Benefits Section */}
-      <section className="border-b border-[#dce3dc] bg-white py-8">
+      <section className="border-b border-[#e2e8f0] bg-white py-8">
         <div className="mx-auto grid max-w-6xl gap-6 px-5 sm:grid-cols-3 sm:px-8">
           {benefits.map(({ icon: Icon, title, text }) => (
             <article key={title} className="flex gap-4 card-hover">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#e9f1ed] text-[#0d6255]">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#e0f2fe] text-[#0369a1]">
                 <Icon size={21} />
               </span>
               <div>
                 <h2 className="font-extrabold">{title}</h2>
-                <p className="mt-1 text-sm leading-6 text-[#5a716c]">{text}</p>
+                <p className="mt-1 text-sm leading-6 text-[#475569]">{text}</p>
               </div>
             </article>
           ))}
@@ -172,9 +172,9 @@ export default function Home() {
       {/* Planning Section */}
       <section id="planifier" className="mx-auto max-w-5xl px-5 py-20 sm:px-8">
         <div className="mb-10 max-w-2xl animate-fade-up">
-          <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">Préparez sereinement</p>
+          <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Préparez sereinement</p>
           <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">L'essentiel, au bon moment.</h2>
-          <p className="mt-4 text-lg leading-8 text-[#5a716c]">
+          <p className="mt-4 text-lg leading-8 text-[#475569]">
             Commencez par votre trajet, puis ajustez votre budget avant de comparer vos options.
           </p>
         </div>
@@ -188,11 +188,11 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">Produit phare</p>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Produit phare</p>
             <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">
               Comparer les transferts EUR → MAD.
             </h2>
-            <p className="mt-4 text-lg leading-8 text-[#5a716c]">
+            <p className="mt-4 text-lg leading-8 text-[#475569]">
               5 millions de MRE envoient <strong>€4,8 milliards par an</strong> vers le Maroc.
               RME Voyage compare les frais en temps réel et renvoie vers Wise, WorldRemit ou Western Union — avec commission à chaque clic.
             </p>
@@ -202,12 +202,12 @@ export default function Home() {
       </section>
 
       {/* Spiritual & Services Section */}
-      <section className="bg-[#f8f7f2] py-20">
+      <section className="bg-[#f8fafc] py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">En route</p>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">En route</p>
             <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">Les repères qui comptent.</h2>
-            <p className="mt-4 text-lg leading-8 text-[#5a716c]">
+            <p className="mt-4 text-lg leading-8 text-[#475569]">
               Prières, Qibla, actualités Maroc et services pratiques pour un voyage serein.
             </p>
           </div>
@@ -228,17 +228,17 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="mb-12 text-center">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#a84f2b]">Tout-en-un</p>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Tout-en-un</p>
             <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">Un seul outil. Tout votre voyage.</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(({ icon: Icon, title, text }) => (
-              <article key={title} className="rounded-2xl border border-[#dce3dc] p-6 card-hover">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#e9f1ed] text-[#0d6255]">
+              <article key={title} className="rounded-2xl border border-[#e2e8f0] p-6 card-hover">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#e0f2fe] text-[#0369a1]">
                   <Icon size={24} />
                 </div>
                 <h3 className="mt-4 text-lg font-extrabold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#5a716c]">{text}</p>
+                <p className="mt-2 text-sm leading-6 text-[#475569]">{text}</p>
               </article>
             ))}
           </div>
@@ -246,7 +246,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[#0d3f38] py-20">
+      <section className="bg-[#0f1f3d] py-20">
         <div className="mx-auto max-w-4xl px-5 text-center sm:px-8">
           <h2 className="text-4xl font-display font-semibold tracking-tight text-white sm:text-5xl">
             Partez du bon pied. Préparez maintenant.
@@ -255,7 +255,7 @@ export default function Home() {
             Gratuit, sans inscription. Tous les outils essentiels pour voyager entre l'Europe et le Maroc.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#e6a44e] px-6 py-3.5 font-extrabold text-[#103d37] transition hover:bg-[#f5cd93]">
+            <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a]">
               Tester l'application <ArrowRight size={18} />
             </a>
             <Link href="/guide" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
@@ -266,14 +266,14 @@ export default function Home() {
       </section>
 
       {/* Widgets Suite Section */}
-      <section className="py-16 bg-gradient-to-b from-[#f8f7f2] to-[#e8e6df]">
+      <section className="py-16 bg-gradient-to-b from-[#f8fafc] to-[#e2e8f0]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#8f5b08]">Suite d'outils</p>
-            <h2 className="mt-3 font-[family-name:var(--font-jakarta)] text-3xl font-extrabold tracking-tight text-[#173a36] sm:text-4xl">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#b45309]">Suite d'outils</p>
+            <h2 className="mt-3 font-[family-name:var(--font-jakarta)] text-3xl font-extrabold tracking-tight text-[#0f1f3d] sm:text-4xl">
               15+ widgets intelligents dans une seule app
             </h2>
-            <p className="mt-4 text-lg leading-8 text-[#5a716c]">
+            <p className="mt-4 text-lg leading-8 text-[#475569]">
               Hadak ne parle pas seulement — il agit. Chaque widget résout un problème réel de voyage entre l'Europe et le Maroc.
             </p>
           </div>
@@ -313,12 +313,12 @@ export default function Home() {
       <NewsletterSection />
 
       {/* Footer */}
-      <footer className="bg-[#0a2e28] px-5 py-12 text-white/65">
+      <footer className="bg-[#080f28] px-5 py-12 text-white/65">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
               <div className="flex items-center gap-2 text-lg font-black text-white">
-                <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#e6a44e] text-sm text-[#103d37]">R</span>
+                <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d]">R</span>
                 RME Voyage
               </div>
               <p className="mt-3 text-sm">Votre compagnon de route entre l'Europe, le Maroc et les communautés du monde.</p>

@@ -49,9 +49,9 @@ interface CategoryMeta {
 
 // ---------- Theme ----------
 const THEME = {
-  darkGreen: '#0d3f38',
-  gold: '#eead59',
-  cream: '#f8f7f2',
+  darkGreen: '#0f1f3d',
+  gold: '#f59e0b',
+  cream: '#f8fafc',
 };
 
 // ---------- Constants ----------
@@ -369,7 +369,7 @@ export default function SmartPacking() {
         background: THEME.cream,
         borderRadius: 24,
         overflow: 'hidden',
-        boxShadow: '0 20px 60px rgba(13, 63, 56, 0.12)',
+        boxShadow: '0 20px 60px rgba(15, 31, 61, 0.12)',
         border: `1px solid ${THEME.darkGreen}22`,
       }}
     >
@@ -401,7 +401,7 @@ export default function SmartPacking() {
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
-              boxShadow: '0 4px 16px rgba(238, 173, 89, 0.35)',
+              boxShadow: '0 4px 16px rgba(245, 158, 11, 0.35)',
             }}
           >
             <Luggage size={26} color={THEME.darkGreen} strokeWidth={2.2} />
@@ -682,7 +682,7 @@ export default function SmartPacking() {
                 transition: 'all 0.2s',
                 boxShadow: generating
                   ? 'none'
-                  : '0 8px 24px rgba(238, 173, 89, 0.4)',
+                  : '0 8px 24px rgba(245, 158, 11, 0.4)',
                 width: '100%',
               }}
             >

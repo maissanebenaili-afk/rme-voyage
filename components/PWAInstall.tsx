@@ -100,24 +100,24 @@ export default function PWAInstall() {
               to { opacity: 1; }
             }
           `}</style>
-          <div className="flex items-start gap-3 rounded-2xl p-4 shadow-2xl border border-[#eead59]/30"
+          <div className="flex items-start gap-3 rounded-2xl p-4 shadow-2xl border border-[#f59e0b]/30"
             style={{
-              background: 'linear-gradient(135deg, #0d3f38 0%, #0a2e28 100%)',
+              background: 'linear-gradient(135deg, #0f1f3d 0%, #080f28 100%)',
             }}
           >
             {/* Icon */}
             <div className="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #eead59, #d4a04a)' }}
+              style={{ background: 'linear-gradient(135deg, #f59e0b, #d4a04a)' }}
             >
-              <Download size={22} className="text-[#0d3f38]" strokeWidth={2.5} />
+              <Download size={22} className="text-[#0f1f3d]" strokeWidth={2.5} />
             </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-[#f8f7f2] text-base leading-tight">
+              <h3 className="font-bold text-[#f8fafc] text-base leading-tight">
                 Installer l'application
               </h3>
-              <p className="text-xs text-[#f8f7f2]/70 mt-0.5 leading-relaxed">
+              <p className="text-xs text-[#f8fafc]/70 mt-0.5 leading-relaxed">
                 Accédez à RME Voyage hors ligne, plus rapide qu'un navigateur.
               </p>
 
@@ -127,8 +127,8 @@ export default function PWAInstall() {
                   onClick={isIOS ? () => setShowIOSInstructions(true) : handleInstall}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-sm transition-all hover:scale-105 active:scale-95"
                   style={{
-                    background: 'linear-gradient(135deg, #eead59, #d4a04a)',
-                    color: '#0d3f38',
+                    background: 'linear-gradient(135deg, #f59e0b, #d4a04a)',
+                    color: '#0f1f3d',
                   }}
                   aria-label="Installer l'application RME Voyage"
                 >
@@ -137,7 +137,7 @@ export default function PWAInstall() {
                 </button>
                 <button
                   onClick={handleDismiss}
-                  className="px-3 py-2 rounded-lg font-medium text-sm text-[#f8f7f2]/60 hover:text-[#f8f7f2] hover:bg-white/5 transition-colors"
+                  className="px-3 py-2 rounded-lg font-medium text-sm text-[#f8fafc]/60 hover:text-[#f8fafc] hover:bg-white/5 transition-colors"
                   aria-label="Fermer la bannière d'installation"
                 >
                   Plus tard
@@ -148,7 +148,7 @@ export default function PWAInstall() {
             {/* Close button */}
             <button
               onClick={handleDismiss}
-              className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-[#f8f7f2]/40 hover:text-[#f8f7f2] hover:bg-white/10 transition-colors"
+              className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-[#f8fafc]/40 hover:text-[#f8fafc] hover:bg-white/10 transition-colors"
               aria-label="Fermer"
             >
               <X size={16} strokeWidth={2.5} />
@@ -173,18 +173,18 @@ export default function PWAInstall() {
           <div
             className="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
             style={{
-              background: 'linear-gradient(135deg, #0d3f38 0%, #0a2e28 100%)',
+              background: 'linear-gradient(135deg, #0f1f3d 0%, #080f28 100%)',
               animation: 'rmeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             }}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/10">
-              <h3 className="font-bold text-[#f8f7f2] text-lg">
+              <h3 className="font-bold text-[#f8fafc] text-lg">
                 Installer sur iPhone
               </h3>
               <button
                 onClick={handleDismiss}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#f8f7f2]/50 hover:text-[#f8f7f2] hover:bg-white/10 transition-colors"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#f8fafc]/50 hover:text-[#f8fafc] hover:bg-white/10 transition-colors"
                 aria-label="Fermer les instructions"
               >
                 <X size={18} strokeWidth={2.5} />
@@ -195,15 +195,15 @@ export default function PWAInstall() {
             <div className="p-5 space-y-4">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(238, 173, 89, 0.15)' }}
+                  style={{ background: 'rgba(245, 158, 11, 0.15)' }}
                 >
-                  <Share size={16} className="text-[#eead59]" strokeWidth={2.5} />
+                  <Share size={16} className="text-[#f59e0b]" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#f8f7f2]">
+                  <p className="text-sm font-semibold text-[#f8fafc]">
                     1. Appuyez sur le bouton Partager
                   </p>
-                  <p className="text-xs text-[#f8f7f2]/60 mt-0.5">
+                  <p className="text-xs text-[#f8fafc]/60 mt-0.5">
                     L'icône carrée avec la flèche vers le haut, en bas de l'écran.
                   </p>
                 </div>
@@ -211,15 +211,15 @@ export default function PWAInstall() {
 
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(238, 173, 89, 0.15)' }}
+                  style={{ background: 'rgba(245, 158, 11, 0.15)' }}
                 >
-                  <Plus size={16} className="text-[#eead59]" strokeWidth={2.5} />
+                  <Plus size={16} className="text-[#f59e0b]" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#f8f7f2]">
+                  <p className="text-sm font-semibold text-[#f8fafc]">
                     2. Sélectionnez « Sur l'écran d'accueil »
                   </p>
-                  <p className="text-xs text-[#f8f7f2]/60 mt-0.5">
+                  <p className="text-xs text-[#f8fafc]/60 mt-0.5">
                     Faites défiler et choisissez cette option.
                   </p>
                 </div>
@@ -227,15 +227,15 @@ export default function PWAInstall() {
 
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: 'rgba(238, 173, 89, 0.15)' }}
+                  style={{ background: 'rgba(245, 158, 11, 0.15)' }}
                 >
-                  <Download size={16} className="text-[#eead59]" strokeWidth={2.5} />
+                  <Download size={16} className="text-[#f59e0b]" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#f8f7f2]">
+                  <p className="text-sm font-semibold text-[#f8fafc]">
                     3. Appuyez sur « Ajouter »
                   </p>
-                  <p className="text-xs text-[#f8f7f2]/60 mt-0.5">
+                  <p className="text-xs text-[#f8fafc]/60 mt-0.5">
                     L'application apparaît sur votre écran d'accueil.
                   </p>
                 </div>
@@ -248,8 +248,8 @@ export default function PWAInstall() {
                 onClick={handleDismiss}
                 className="w-full py-3 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
-                  background: 'linear-gradient(135deg, #eead59, #d4a04a)',
-                  color: '#0d3f38',
+                  background: 'linear-gradient(135deg, #f59e0b, #d4a04a)',
+                  color: '#0f1f3d',
                 }}
                 aria-label="J'ai compris, fermer"
               >
