@@ -57,7 +57,7 @@ export class BudgetAgent {
     lang: string
   ): Promise<AgentResponse> {
     // Extract budget components from message
-    const daysMatch = message.match(/(\d+)\s*(?:days?|jours?|d[ií]as)/i);
+    const daysMatch = message.match(/(\d{1,4})\s{0,10}(?:days?|jours?|d[ií]as)/i);
     const days = daysMatch ? parseInt(daysMatch[1]) : 7;
 
     // Regional cost estimates (USD per day)

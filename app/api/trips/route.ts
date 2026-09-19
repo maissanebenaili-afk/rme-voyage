@@ -4,7 +4,7 @@ import { supabase, isSupabaseConfigured, type Trip } from '../../../packages/uti
 export const runtime = 'edge';
 
 // Mock trips data (fallback when Supabase is not configured)
-const mockTrips: Record<string, any[]> = {};
+const mockTrips = Object.create(null) as Record<string, any[]>;
 
 export async function GET(req: NextRequest) {
   try {
