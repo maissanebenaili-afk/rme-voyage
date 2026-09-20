@@ -128,15 +128,24 @@ async function getLiveRates(): Promise<ExchangeRates> {
 }
 
 // ── Detect city mention ───────────────────────────────────────────────────
+// Short keys that collide with everyday words (Darija "safi" = ok/done, FR "sale" = dirty).
+// These require an explicit location/weather signal nearby.
+const AMBIGUOUS_CITIES = new Set(['safi', 'sale']);
+const LOCATION_CONTEXT_RE = /\b(a |de |dans |en |pres de |au |vers |meteo|temps|chaud|froid|pluie|soleil|temperature|priere|salat)\b/;
+
 function detectCity(msg: string): string | null {
   const lower = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const hasLocationContext = LOCATION_CONTEXT_RE.test(lower);
   const normalized: Record<string, string> = {};
   for (const k of Object.keys(MOROCCO_CITIES)) {
     const nk = k.normalize('NFD').replace(/[̀-ͯ]/g, '');
     normalized[nk] = k;
   }
   for (const [nk, orig] of Object.entries(normalized)) {
-    if (lower.includes(nk)) return orig;
+    if (new RegExp(`\\b${nk}\\b`).test(lower)) {
+      if (AMBIGUOUS_CITIES.has(nk) && !hasLocationContext) continue;
+      return orig;
+    }
   }
   return null;
 }
