@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) {
       // No key — component falls back to local keyword KB automatically
-      return NextResponse.json({ response: '', fallback: true }, { status: 503 });
+      return NextResponse.json({ response: '', fallback: true });
     }
 
     const systemPrompts: Record<string, string> = {
@@ -69,7 +69,7 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
         type: error?.error?.type,
         message: error?.error?.message,
       });
-      return NextResponse.json({ response: '', fallback: true }, { status: 503 });
+      return NextResponse.json({ response: '', fallback: true });
     }
 
     const data = (await res.json()) as {
@@ -81,6 +81,6 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
     return NextResponse.json({ response: text, fallback: false });
   } catch (err) {
     console.error('[hadak] error:', err);
-    return NextResponse.json({ response: '', fallback: true }, { status: 503 });
+    return NextResponse.json({ response: '', fallback: true });
   }
 }

@@ -288,7 +288,9 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
     followups: ['documents', 'weather', 'family'],
   },
   time: {
-    keywords: ['heure', 'time', 'hora', 'وقت', 'quelle heure', 'what time', 'horaire', 'clock', 'maintenant', 'now', 'ahora', 'horas', 'l\'heure', 'wa9t', 'وقت'],
+    // Only direct clock questions should use this topic. Schedule questions
+    // (for a ferry, prayer, etc.) must remain in their travel topic.
+    keywords: ['quelle heure est-il', 'what time is it', 'qué hora es', 'شحال فالساعة', 'ch7al f sa3a', 'wa9t daba'],
     answers: {
       da: 'L\'wa9t f l\'Maghrib: UTC+1 (ma kaytaghayrch). F l\'Maghrib daba, 7seb +1h men Greenwich (London). L\'wa9t f bladan okhra bhal New York, Paris... Hadak ma ka3refhash bla mode IA — check l\'phone dyalek!',
       fr: 'Le Maroc est en UTC+1 toute l\'année (pas de changement d\'heure). Pour l\'heure dans d\'autres villes (New York, Paris, Dubai...), consulte l\'horloge mondiale de ton téléphone.',
@@ -347,7 +349,7 @@ const TOPIC_LABELS: Record<TopicKey, Record<Lang, string>> = {
   time: { da: 'L\'wa9t?', fr: 'Heure ?', en: 'Time?', ar: 'الوقت؟', es: '¿Hora?' },
 };
 
-const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'documents', 'ramadan'];
+const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'ferry', 'cost', 'documents', 'sim', 'ramadan'];
 
 /* ------------------------------------------------------------------ */
 /*  Answer finder                                                      */
@@ -355,8 +357,16 @@ const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'do
 
 function findTopic(query: string): TopicKey | null {
   const q = query.toLowerCase().trim();
+
+  // Do not let generic words such as "heure", "horaire" or "time" turn a
+  // travel question into a clock answer. The time topic is for direct asks only.
+  if (/^(quelle heure est-il|what time is it|qué hora es|شحال فالساعة|ch7al f sa3a|wa9t daba)[?! .]*$/i.test(q)) {
+    return 'time';
+  }
+
   let best: { topic: TopicKey; score: number } | null = null;
   for (const [key, data] of Object.entries(KNOWLEDGE) as [TopicKey, Topic][]) {
+    if (key === 'time') continue;
     // Skip greeting unless the query is purely a greeting (no extra words after)
     if (key === 'greeting' && q.split(/\s+/).length > 3) continue;
     let score = 0;
