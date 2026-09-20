@@ -165,8 +165,111 @@ function getMoroccoDate(): string {
   });
 }
 
+// ── TheSportsDB football helper (free, key "3" public) ────────────────────
+type SportsDBTeam  = { idTeam: string; strTeam: string };
+type SportsDBEvent = { strHomeTeam: string; intHomeScore: string; strAwayTeam: string; intAwayScore: string; dateEvent: string };
+
+async function handleFootball(msg: string, lang: string): Promise<string> {
+  const msgLower = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+  // Teams whose names we recognize in the message
+  const TEAM_QUERIES = ['wydad', 'raja', 'ittihad tanger', 'difaa hassani', 'renaissance berkane', 'fus rabat',
+    'moghreb tetouan', 'mouloudia oujda', 'man city', 'real madrid', 'barcelona', 'psg'];
+  const mentioned = TEAM_QUERIES.filter(t => msgLower.includes(t.split(' ')[0]));
+
+  // --- Form data for mentioned teams ---
+  let formData = '';
+  for (const teamQuery of mentioned.slice(0, 2)) {
+    try {
+      const s = await fetch(
+        `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamQuery)}`,
+        { next: { revalidate: 86400 } }
+      ).then(r => r.json()).catch(() => null) as { teams?: SportsDBTeam[] } | null;
+      const team = s?.teams?.[0];
+      if (!team?.idTeam) continue;
+      const ev = await fetch(
+        `https://www.thesportsdb.com/api/v1/json/3/eventslast.php?id=${team.idTeam}`,
+        { next: { revalidate: 3600 } }
+      ).then(r => r.json()).catch(() => null) as { results?: SportsDBEvent[] } | null;
+      const last5 = ev?.results?.slice(0, 5) ?? [];
+      if (last5.length === 0) continue;
+      const form = last5.map(e => {
+        const home = e.strHomeTeam.toLowerCase().includes(teamQuery.split(' ')[0]);
+        const gf = parseInt(home ? e.intHomeScore : e.intAwayScore);
+        const ga = parseInt(home ? e.intAwayScore : e.intHomeScore);
+        return isNaN(gf) ? '?' : gf > ga ? 'W' : gf < ga ? 'L' : 'D';
+      }).join('');
+      const last = last5[0];
+      formData += `${team.strTeam} (forme: ${form}): dernier match ${last.strHomeTeam} ${last.intHomeScore}-${last.intAwayScore} ${last.strAwayTeam}\n`;
+    } catch { /* ignore */ }
+  }
+
+  // --- Upcoming Botola Pro fixtures ---
+  let nextMatchesText = '';
+  try {
+    const leagues = await fetch(
+      'https://www.thesportsdb.com/api/v1/json/3/search_all_leagues.php?c=Morocco&s=Soccer',
+      { next: { revalidate: 86400 } }
+    ).then(r => r.json()).catch(() => null) as { countrys?: Array<{ idLeague: string; strLeague: string }> } | null;
+    const botola = leagues?.countrys?.find(l => l.strLeague.toLowerCase().includes('botola'));
+    if (botola?.idLeague) {
+      const fx = await fetch(
+        `https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=${botola.idLeague}`,
+        { next: { revalidate: 3600 } }
+      ).then(r => r.json()).catch(() => null) as { events?: SportsDBEvent[] } | null;
+      const next3 = fx?.events?.slice(0, 3) ?? [];
+      if (next3.length > 0) {
+        nextMatchesText = next3.map(e => `• ${e.strHomeTeam} vs ${e.strAwayTeam} (${e.dateEvent})`).join('\n');
+      }
+    }
+  } catch { /* ignore */ }
+
+  // --- Try Claude for prediction ---
+  const anthropicKey = process.env.ANTHROPIC_API_KEY ||
+    Object.entries(process.env).find(([k]) => /^ANTHROPIC.API.(KEY|CL[EÉeé])/i.test(k))?.[1] ||
+    Object.values(process.env).find(v => v?.startsWith('sk-ant-'));
+  if (anthropicKey && (formData || mentioned.length > 0)) {
+    try {
+      const langLabel = lang === 'da' ? 'darija marocaine' : lang === 'ar' ? 'arabe' : lang === 'es' ? 'espagnol' : lang === 'en' ? 'anglais' : 'français';
+      const context = [
+        nextMatchesText ? `Prochains matchs Botola Pro:\n${nextMatchesText}` : '',
+        formData ? `Forme récente:\n${formData}` : '',
+      ].filter(Boolean).join('\n\n');
+      const userContent = context ? `Données:\n${context}\n\nQuestion: ${msg}` : msg;
+      const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001', max_tokens: 350,
+          system: `Tu es un expert passionné de football marocain (Botola Pro, équipe nationale Lions de l'Atlas, CAF). Tu analyses les données de forme et donnes des pronostics argumentés. Réponds en ${langLabel}, 3-4 phrases maximum, direct et précis.`,
+          messages: [{ role: 'user', content: userContent }],
+        }),
+      });
+      if (apiRes.ok) {
+        const data = await apiRes.json() as AnthropicResponse;
+        const text = data.content?.find(b => b.type === 'text')?.text;
+        if (text) return text;
+      }
+    } catch { /* fall through */ }
+  }
+
+  // --- Static fallback ---
+  if (nextMatchesText) {
+    if (lang === 'da') return `⚽ **Kora dial Maghrib**\n\nMatchat jaya f Botola Pro:\n${nextMatchesText}`;
+    if (lang === 'ar') return `⚽ **كرة القدم المغربية**\n\nالمباريات القادمة في البطولة:\n${nextMatchesText}`;
+    if (lang === 'es') return `⚽ **Fútbol marroquí**\n\nPróximos partidos Botola Pro:\n${nextMatchesText}`;
+    if (lang === 'en') return `⚽ **Moroccan Football**\n\nUpcoming Botola Pro fixtures:\n${nextMatchesText}`;
+    return `⚽ **Football marocain**\n\nProchains matchs Botola Pro :\n${nextMatchesText}`;
+  }
+  if (lang === 'da') return `⚽ Kora dial Maghrib: Botola Pro, Lions de l'Atlas, CAF. Kteb ism l-feriq bach n3tik pronostic (ex: "wydad ou raja ghayrbeh?").`;
+  if (lang === 'ar') return `⚽ كرة القدم المغربية: البطولة الاحترافية، أسود الأطلس، دوري أبطال إفريقيا. اذكر اسم الفريق للحصول على تحليل (مثال: "من سيفوز: الوداد أم الرجاء؟").`;
+  if (lang === 'es') return `⚽ Fútbol marroquí: Botola Pro, Leones del Atlas, CAF. Menciona el equipo para obtener un pronóstico (ej: "¿Wydad o Raja ganará?").`;
+  if (lang === 'en') return `⚽ Moroccan football: Botola Pro, Atlas Lions, CAF CL. Mention the team for a prediction (e.g. "Wydad vs Raja who wins?").`;
+  return `⚽ **Football marocain** : Botola Pro, Lions de l'Atlas, CAF Champions League. Mentionne l'équipe pour un pronostic (ex : "Wydad ou Raja ce soir ?").`;
+}
+
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'generic';
+type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'generic';
 
 function detectIntent(msg: string): Intent {
   const m = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -190,6 +293,8 @@ function detectIntent(msg: string): Intent {
   if (/\b(ramadan|iftar|shor|suhoor|jeune|jeûne|coupure|ftour)\b/.test(m)) return 'ramadan';
   // Fuel
   if (/\b(carburant|essence|gasoil|diesel|fuel|station.service|litre|petrole|estacion|benzina)\b/.test(m)) return 'fuel';
+  // Football
+  if (/\b(foot|football|kora|lkora|ballon|wydad|raja|ittihad|difaa|renaissance|fus|botola|botola pro|caf|can|lions de l.atlas|lions atlas|equipe nationale|pronostic|qui va gagner|gagner ce soir|match.*ce soir|men 3ndo lhaq|ghayrbe7|man city|real madrid|barcelona|psg|premier league|champions league|ligue 1|liga)\b/.test(m)) return 'football';
   return 'generic';
 }
 
@@ -328,6 +433,8 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
     return `**Ramadan au Maroc** : iftar ≈ 19h30-20h en été, 17h30-18h en hiver. Suhour ≈ 4-5h. Les commerces ferment plus tôt. Ambiance unique — beaucoup de MRE rentrent exprès pendant cette période.`;
   }
 
+  if (intent === 'football') return handleFootball(msg, lang);
+
   return null;
 }
 
@@ -415,11 +522,11 @@ export async function POST(req: NextRequest) {
 function buildOfflineFallback(lang: string, message: string): string {
   const q = message.trim().length > 0 ? `"${message.slice(0, 60)}${message.length > 60 ? '…' : ''}"` : '';
   const topics: Record<string, string> = {
-    da: `Ma qdersh njaweb 3la ${q || 'had s-so2al'} bla connexion l-LLM daba.\n\nWalayenni nqder njawbek 3la had l-mawadi3 men gher internet:\n• 🌤️ **T-ta9s** — "chno kayna meteo f Marrakech"\n• 🕌 **Salawat** — "wa9t salat f Taza"\n• 💶 **Sarfa** — "sh7al kaytswwa l-euro b dirham"\n• ⏰ **L-wa9t** — "sh7al l-wa9t f Maghrib"\n• 🚢 **Ferry** — horaires w compagnies\n• 📄 **Watha2i9** — passeport, visa, CIN\n• 📱 **SIM** — forfaits Maroc Telecom, Orange, Inwi\n• ⛽ **Carburant** — prix mazout w essence`,
-    fr: `Je ne peux pas répondre à ${q || 'cette question'} sans connexion LLM pour l'instant.\n\nMais je réponds instantanément à ces sujets sans internet :\n• 🌤️ **Météo** — "quel temps à Agadir ?"\n• 🕌 **Prières** — "horaires de prière à Fès"\n• 💶 **Change** — "combien vaut 100€ en dirhams ?"\n• ⏰ **Heure Maroc** — "quelle heure au Maroc ?"\n• 🚢 **Ferry** — horaires et compagnies\n• 📄 **Documents** — passeport, visa, CIN\n• 📱 **SIM** — forfaits opérateurs marocains\n• ⛽ **Carburant** — prix à la pompe`,
-    en: `I can't answer ${q || 'that question'} without an LLM connection right now.\n\nBut I answer these instantly with no internet needed:\n• 🌤️ **Weather** — "what's the weather in Rabat?"\n• 🕌 **Prayers** — "prayer times in Casablanca"\n• 💶 **Exchange** — "how much is 100€ in dirhams?"\n• ⏰ **Morocco time** — "what time is it in Morocco?"\n• 🚢 **Ferry** — schedules and companies\n• 📄 **Documents** — passport, visa, ID card\n• 📱 **SIM** — Moroccan carrier plans\n• ⛽ **Fuel** — pump prices`,
-    ar: `لا أستطيع الإجابة على ${q || 'هذا السؤال'} بدون اتصال LLM الآن.\n\nلكن أجيب فوراً على هذه المواضيع بدون انترنت:\n• 🌤️ **الطقس** — "كيف الطقس في مراكش؟"\n• 🕌 **أوقات الصلاة** — "مواعيد الصلاة في فاس"\n• 💶 **الصرف** — "كم يساوي 100 يورو بالدرهم؟"\n• ⏰ **توقيت المغرب** — "كم الساعة في المغرب؟"\n• 🚢 **العبارة** — المواعيد والشركات\n• 📄 **الوثائق** — جواز السفر، التأشيرة، البطاقة الوطنية\n• 📱 **الشريحة** — باقات المشغلين المغاربة\n• ⛽ **الوقود** — أسعار المحطات`,
-    es: `No puedo responder a ${q || 'esa pregunta'} sin conexión LLM ahora mismo.\n\nPero respondo al instante sobre estos temas sin internet:\n• 🌤️ **Tiempo** — "¿qué tiempo hace en Agadir?"\n• 🕌 **Oraciones** — "horarios de oración en Fez"\n• 💶 **Cambio** — "¿cuánto vale 100€ en dírhams?"\n• ⏰ **Hora Marruecos** — "¿qué hora es en Marruecos?"\n• 🚢 **Ferry** — horarios y compañías\n• 📄 **Documentos** — pasaporte, visado, DNI\n• 📱 **SIM** — tarifas operadoras marroquíes\n• ⛽ **Combustible** — precios en gasolineras`,
+    da: `Ma qdersh njaweb 3la ${q || 'had s-so2al'} bla connexion l-LLM daba.\n\nWalayenni nqder njawbek 3la had l-mawadi3 men gher internet:\n• 🌤️ **T-ta9s** — "chno kayna meteo f Marrakech"\n• 🕌 **Salawat** — "wa9t salat f Taza"\n• 💶 **Sarfa** — "sh7al kaytswwa l-euro b dirham"\n• ⏰ **L-wa9t** — "sh7al l-wa9t f Maghrib"\n• 🚢 **Ferry** — horaires w compagnies\n• 📄 **Watha2i9** — passeport, visa, CIN\n• 📱 **SIM** — forfaits Maroc Telecom, Orange, Inwi\n• ⛽ **Carburant** — prix mazout w essence\n• ⚽ **Kora** — pronostics Botola, Lions de l'Atlas`,
+    fr: `Je ne peux pas répondre à ${q || 'cette question'} sans connexion LLM pour l'instant.\n\nMais je réponds instantanément à ces sujets sans internet :\n• 🌤️ **Météo** — "quel temps à Agadir ?"\n• 🕌 **Prières** — "horaires de prière à Fès"\n• 💶 **Change** — "combien vaut 100€ en dirhams ?"\n• ⏰ **Heure Maroc** — "quelle heure au Maroc ?"\n• 🚢 **Ferry** — horaires et compagnies\n• 📄 **Documents** — passeport, visa, CIN\n• 📱 **SIM** — forfaits opérateurs marocains\n• ⛽ **Carburant** — prix à la pompe\n• ⚽ **Football** — pronostics Botola, Lions de l'Atlas`,
+    en: `I can't answer ${q || 'that question'} without an LLM connection right now.\n\nBut I answer these instantly with no internet needed:\n• 🌤️ **Weather** — "what's the weather in Rabat?"\n• 🕌 **Prayers** — "prayer times in Casablanca"\n• 💶 **Exchange** — "how much is 100€ in dirhams?"\n• ⏰ **Morocco time** — "what time is it in Morocco?"\n• 🚢 **Ferry** — schedules and companies\n• 📄 **Documents** — passport, visa, ID card\n• 📱 **SIM** — Moroccan carrier plans\n• ⛽ **Fuel** — pump prices\n• ⚽ **Football** — Botola predictions, Atlas Lions`,
+    ar: `لا أستطيع الإجابة على ${q || 'هذا السؤال'} بدون اتصال LLM الآن.\n\nلكن أجيب فوراً على هذه المواضيع بدون انترنت:\n• 🌤️ **الطقس** — "كيف الطقس في مراكش؟"\n• 🕌 **أوقات الصلاة** — "مواعيد الصلاة في فاس"\n• 💶 **الصرف** — "كم يساوي 100 يورو بالدرهم؟"\n• ⏰ **توقيت المغرب** — "كم الساعة في المغرب؟"\n• 🚢 **العبارة** — المواعيد والشركات\n• 📄 **الوثائق** — جواز السفر، التأشيرة، البطاقة الوطنية\n• 📱 **الشريحة** — باقات المشغلين المغاربة\n• ⛽ **الوقود** — أسعار المحطات\n• ⚽ **كرة القدم** — توقعات البطولة، أسود الأطلس`,
+    es: `No puedo responder a ${q || 'esa pregunta'} sin conexión LLM ahora mismo.\n\nPero respondo al instante sobre estos temas sin internet:\n• 🌤️ **Tiempo** — "¿qué tiempo hace en Agadir?"\n• 🕌 **Oraciones** — "horarios de oración en Fez"\n• 💶 **Cambio** — "¿cuánto vale 100€ en dírhams?"\n• ⏰ **Hora Marruecos** — "¿qué hora es en Marruecos?"\n• 🚢 **Ferry** — horarios y compañías\n• 📄 **Documentos** — pasaporte, visado, DNI\n• 📱 **SIM** — tarifas operadoras marroquíes\n• ⛽ **Combustible** — precios en gasolineras\n• ⚽ **Fútbol** — pronósticos Botola, Leones del Atlas`,
   };
   return topics[lang] ?? topics.fr;
 }
