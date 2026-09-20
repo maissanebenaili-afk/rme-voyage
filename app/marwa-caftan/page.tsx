@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -278,10 +279,17 @@ function CaftanCard({ c }: { c: Caftan }) {
     <div
       className={`group relative rounded-3xl border overflow-hidden transition hover:-translate-y-1 hover:shadow-xl border-[#e2d5c0]`}
     >
-      {/* Color swatch */}
-      <div className={`relative h-48 bg-gradient-to-br ${c.gradient} flex items-end p-4`}>
+      <div className="relative h-48 bg-[#6b1a2e]">
+        <Image
+          src={INSPIRATION_IMAGES.caftan.src}
+          alt={`Photo d’inspiration de tenue de cérémonie — ne représente pas le caftan ${c.name}`}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover"
+        />
         <button
           onClick={() => setLiked((v) => !v)}
+          aria-label={liked ? `Retirer Caftan ${c.name} des favoris` : `Ajouter Caftan ${c.name} aux favoris`}
           className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition hover:bg-white/40"
         >
           <Heart size={14} fill={liked ? 'white' : 'none'} />
