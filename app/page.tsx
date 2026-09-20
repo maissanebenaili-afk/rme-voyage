@@ -397,6 +397,7 @@ export default function Home() {
                 <li>Calculateur Zakat</li>
                 <li>Smart Packing IA</li>
                 <li>Assistant Hadak IA</li>
+                <li>Pronos Faical Arrayah ⚽</li>
               </ul>
             </div>
             <div>
