@@ -1,19 +1,90 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+type OpenAICompatibleResponse = {
+  choices?: Array<{ message?: { content?: string } }>;
+};
+
+type AnthropicResponse = {
+  content?: Array<{ type?: string; text?: string }>;
+};
+
+function findEnvKey(pattern: RegExp): string | undefined {
+  return Object.entries(process.env).find(([k]) => pattern.test(k))?.[1];
+}
+
+function findEnvValue(prefix: string): string | undefined {
+  return Object.values(process.env).find(v => v?.startsWith(prefix));
+}
+
+async function callOpenAICompatible(
+  baseUrl: string,
+  model: string,
+  apiKey: string,
+  systemPrompt: string,
+  message: string,
+  providerName: string
+): Promise<string | null> {
+  try {
+    const res = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model,
+        max_tokens: 512,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: message },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      const err = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
+      console.error(`[hadak] ${providerName} error ${res.status}:`, err?.error?.message);
+      return null;
+    }
+    const data = (await res.json()) as OpenAICompatibleResponse;
+    return data.choices?.[0]?.message?.content ?? null;
+  } catch (e) {
+    console.error(`[hadak] ${providerName} fetch failed:`, e);
+    return null;
+  }
+}
+
+async function callAnthropic(apiKey: string, systemPrompt: string, message: string): Promise<string | null> {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 512,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: message }],
+      }),
+    });
+    if (!res.ok) {
+      const err = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
+      console.error('[hadak] Anthropic error', res.status, err?.error?.message);
+      return null;
+    }
+    const data = (await res.json()) as AnthropicResponse;
+    return data.content?.find(b => b.type === 'text')?.text ?? null;
+  } catch (e) {
+    console.error('[hadak] Anthropic fetch failed:', e);
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { message, lang = 'da' } = await req.json();
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
-    }
-
-    const apiKey = process.env.OPENAI_API_KEY
-      || Object.entries(process.env)
-          .find(([k]) => /^OPENAI.API.KEY$/i.test(k))?.[1];
-
-    if (!apiKey) {
-      return NextResponse.json({ response: '', fallback: true }, { status: 503 });
     }
 
     const systemPrompts: Record<string, string> = {
@@ -41,42 +112,46 @@ Para la hora local: Marruecos está en UTC+1 (WET, sin cambio horario). Si no sa
 
     const systemPrompt = systemPrompts[lang] ?? systemPrompts.fr;
 
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 512,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: message },
-        ],
-      }),
-    });
-
-    if (!res.ok) {
-      const error = (await res.json().catch(() => null)) as {
-        error?: { type?: string; message?: string };
-      } | null;
-
-      console.error('[hadak] OpenAI error:', {
-        status: res.status,
-        type: error?.error?.type,
-        message: error?.error?.message,
-      });
-      return NextResponse.json({ response: '', fallback: true }, { status: 503 });
+    // 1. Groq — free tier, no credit card, OpenAI-compatible
+    const groqKey = process.env.GROQ_API_KEY || findEnvKey(/^GROQ.API.KEY$/i) || findEnvValue('gsk_');
+    if (groqKey) {
+      const text = await callOpenAICompatible(
+        'https://api.groq.com/openai/v1',
+        'llama-3.1-8b-instant',
+        groqKey,
+        systemPrompt,
+        message,
+        'Groq'
+      );
+      if (text) return NextResponse.json({ response: text, fallback: false });
     }
 
-    const data = (await res.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
+    // 2. OpenAI
+    const openaiKey = process.env.OPENAI_API_KEY || findEnvKey(/^OPENAI.API.KEY$/i);
+    if (openaiKey) {
+      const text = await callOpenAICompatible(
+        'https://api.openai.com/v1',
+        'gpt-4o-mini',
+        openaiKey,
+        systemPrompt,
+        message,
+        'OpenAI'
+      );
+      if (text) return NextResponse.json({ response: text, fallback: false });
+    }
 
-    const text = data.choices?.[0]?.message?.content ?? '';
+    // 3. Anthropic
+    const anthropicKey =
+      process.env.ANTHROPIC_API_KEY ||
+      findEnvKey(/^ANTHROPIC.API.(KEY|CL[EÉeé])/i) ||
+      findEnvValue('sk-ant-');
+    if (anthropicKey) {
+      const text = await callAnthropic(anthropicKey, systemPrompt, message);
+      if (text) return NextResponse.json({ response: text, fallback: false });
+    }
 
-    return NextResponse.json({ response: text, fallback: false });
+    console.error('[hadak] no provider succeeded');
+    return NextResponse.json({ response: '', fallback: true }, { status: 503 });
   } catch (err) {
     console.error('[hadak] error:', err);
     return NextResponse.json({ response: '', fallback: true }, { status: 503 });
