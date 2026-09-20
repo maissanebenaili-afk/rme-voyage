@@ -10,6 +10,7 @@ jest.mock("@/components/NewsFeed", () => function NewsFeedMock() { return <div>N
 jest.mock("@/components/RemittanceComparator", () => function RemittanceComparatorMock() { return <div>RemittanceComparator</div>; });
 jest.mock("@/components/NewsletterSection", () => function NewsletterSectionMock() { return <div>NewsletterSection</div>; });
 jest.mock("@/components/DailyWidget", () => function DailyWidgetMock() { return <div>DailyWidget</div>; });
+jest.mock("@/components/FaicalWidget", () => function FaicalWidgetMock() { return <div>FaicalWidget</div>; });
 
 describe("Homepage branding", () => {
   it("shows RME Voyage positioning and promise", () => {

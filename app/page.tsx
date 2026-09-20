@@ -35,6 +35,7 @@ import DailyWidget from '@/components/DailyWidget';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
 import SmartPacking from '@/components/SmartPacking';
 import NewsletterSection from '@/components/NewsletterSection';
+import FaicalWidget from '@/components/FaicalWidget';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -346,6 +347,11 @@ export default function Home() {
           {/* Smart Packing */}
           <div className="mt-6">
             <SmartPacking />
+          </div>
+
+          {/* Faical Football Picks */}
+          <div className="mt-6">
+            <FaicalWidget />
           </div>
         </div>
       </section>
