@@ -1,15 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Phone, Globe, MapPin, Star, ExternalLink, Bike, MessageCircle } from 'lucide-react';
-import { MARWA_PHONE, MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
+import Link from 'next/link';
+import { Phone, Globe, MapPin, Star, ExternalLink, Bike, ArrowRight } from 'lucide-react';
+import { MARWA_PHONE } from '@/lib/partners';
 
 type Business = {
   name: string;
   desc: string;
   location: string;
   phone?: string;
-  whatsapp?: string;
+  /** Page dédiée sur le site, pour les partenaires qui en ont une. */
+  page?: string;
   web?: string;
   featured?: boolean;
   stars?: number;
@@ -23,7 +25,7 @@ const SERVICES: Record<string, Business[]> = {
       desc: 'Traiteur franco-marocain · Mariages, fiançailles, baptêmes. Menus authentiques Maroc & fusion.',
       location: 'Île-de-France & déplacements',
       phone: MARWA_PHONE,
-      whatsapp: whatsappLink(MARWA_WHATSAPP, 'Bonjour, je souhaite un devis traiteur Afarah Nassim'),
+      page: '/afarah-nassim',
       featured: true,
       stars: 5,
       tag: 'Partenaire Officiel',
@@ -136,11 +138,11 @@ function BusinessCard({ b }: { b: Business }) {
             <Phone size={11} /> Appeler
           </a>
         )}
-        {b.whatsapp && (
-          <a href={b.whatsapp} target="_blank" rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#25d366] py-2 text-xs font-bold text-white transition hover:bg-[#1da851]">
-            <MessageCircle size={11} /> WhatsApp
-          </a>
+        {b.page && (
+          <Link href={b.page}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#c9903a] py-2 text-xs font-bold text-white transition hover:bg-[#a8741e]">
+            Voir la page <ArrowRight size={11} />
+          </Link>
         )}
         {b.web && b.web !== '#' && (
           <a href={b.web} target="_blank" rel="noopener noreferrer"

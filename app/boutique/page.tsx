@@ -71,14 +71,31 @@ export default function BoutiquePage() {
               Louez une pièce d&apos;exception pour un mariage ou une soirée, livrée chez vous en 48 h.
             </p>
           </Reveal>
-          <Reveal className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start" delay={90}>
+          <Reveal className="mt-8 max-w-2xl" delay={90}>
             <MarwaCaftanWidget />
-            <MouniaWidget />
           </Reveal>
         </div>
       </section>
 
-      <div id="bienetre" className="scroll-mt-6" />
+      <section id="bienetre" className="scroll-mt-6 bg-[#f7f6f2] py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <Reveal>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#40634f]">
+              Bien-être
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#2f3a33] sm:text-4xl">
+              Souffler, avant et après la route.
+            </h2>
+            <p className="mt-3 max-w-2xl text-[#5d6a60]">
+              Un accompagnement énergétique pour traverser les périodes de fatigue, de stress ou
+              de transition — en cabinet comme à distance.
+            </p>
+          </Reveal>
+          <Reveal className="mt-8 max-w-2xl" delay={90}>
+            <MouniaWidget />
+          </Reveal>
+        </div>
+      </section>
 
       <section id="colis" className="scroll-mt-6 bg-[#f8fafc] py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
