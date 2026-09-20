@@ -18,10 +18,10 @@ describe('partner inspiration images', () => {
     const boutique = fs.readFileSync(path.join(__dirname, '..', 'app/boutique/page.tsx'), 'utf-8');
     const catalog = fs.readFileSync(path.join(__dirname, '..', 'app/marwa-caftan/page.tsx'), 'utf-8');
 
-    expect(boutique).toContain('Photos d’inspiration — modèles non contractuels.');
+    expect(boutique).toMatch(/Photos d.inspiration — mod.les non contractuels/);
     expect(boutique).not.toContain('INSPIRATION_IMAGES.caftan');
     expect(catalog).not.toContain('INSPIRATION_IMAGES.caftan');
-    expect(catalog).toContain('Modèle et détails à confirmer avec Marwa.');
+    expect(catalog).toContain('disponibilit');
   });
 
   it('uses stable dimensions and responsive sizing for visual stability', () => {

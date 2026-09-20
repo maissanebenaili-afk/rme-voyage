@@ -209,7 +209,7 @@ function CaftanCard({ c }: { c: Caftan }) {
         </div>
 
         <p className="mt-3 text-[11px] text-[#64748b]">
-          Tailles et disponibilité à confirmer avec Marwa.
+          Tarif, taille et disponibilité à confirmer avec Marwa.
         </p>
 
         <a
