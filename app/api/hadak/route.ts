@@ -93,6 +93,40 @@ async function getWeather(cityKey: string): Promise<OpenMeteoResponse | null> {
   }
 }
 
+// ── AlAdhan prayer times (free, no key) ───────────────────────────────────
+type PrayerTimes = { Fajr: string; Dhuhr: string; Asr: string; Maghrib: string; Isha: string } | null;
+async function getPrayerTimes(cityKey: string): Promise<PrayerTimes> {
+  const city = MOROCCO_CITIES[cityKey];
+  if (!city) return null;
+  try {
+    const cityName = city.fr.replace('è', 'e').replace('é', 'e');
+    const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(cityName)}&country=Morocco&method=12`;
+    const res = await fetch(url, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const data = await res.json() as { data?: { timings?: Record<string, string> } };
+    const t = data?.data?.timings;
+    if (!t) return null;
+    return { Fajr: t.Fajr, Dhuhr: t.Dhuhr, Asr: t.Asr, Maghrib: t.Maghrib, Isha: t.Isha };
+  } catch {
+    return null;
+  }
+}
+
+// ── Live exchange rates (open.er-api.com, free, no key) ───────────────────
+type ExchangeRates = { MAD: number; GBP: number; CHF: number; USD: number } | null;
+async function getLiveRates(): Promise<ExchangeRates> {
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/EUR', { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const data = await res.json() as { rates?: Record<string, number> };
+    const r = data?.rates;
+    if (!r) return null;
+    return { MAD: r.MAD ?? 10.9, GBP: r.GBP ?? 0.86, CHF: r.CHF ?? 0.94, USD: r.USD ?? 1.15 };
+  } catch {
+    return null;
+  }
+}
+
 // ── Detect city mention ───────────────────────────────────────────────────
 function detectCity(msg: string): string | null {
   const lower = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -123,19 +157,28 @@ function getMoroccoDate(): string {
 }
 
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'halal' | 'sim' | 'prayer' | 'ramadan' | 'fuel' | 'generic';
+type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'generic';
 
 function detectIntent(msg: string): Intent {
-  const m = msg.toLowerCase();
-  if (/temps|météo|meteo|weather|t-ta9s|ta9s|chaud|froid|pluie|soleil|temperature|température/.test(m)) return 'weather';
-  if (/heure|time|wa9t|وقت|hta mata|quand|now|maintenant/.test(m)) return 'time';
-  if (/ferry|bateau|traversée|traversee|boat|algeciras|tanger med|nador|tarifa|barcelona|genova|grimaldi/.test(m)) return 'ferry';
-  if (/document|passeport|cin|carte|visa|laissez|permis|papier|watha2i9|وثائق/.test(m)) return 'docs';
-  if (/euro|dirham|mad|change|taux|monnaie|argent|flouus|sarfa|صرف|currency|exchange/.test(m)) return 'currency';
-  if (/halal|porc|alcool|mosque|mosquée|mosquee|salat|prayer|صلاة|salawat/.test(m)) return 'prayer';
-  if (/sim|carte sim|forfait|internet|data|orange|maroc telecom|inwi|téléphone|telephone/.test(m)) return 'sim';
-  if (/ramadan|iftar|shor|suhoor|jeûne|jeune/.test(m)) return 'ramadan';
-  if (/carburant|essence|gasoil|diesel|fuel|station|litre/.test(m)) return 'fuel';
+  const m = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  // Weather — broad pattern: temps, meteo, chaud, froid, pluie, soleil, nuageux, brouillard, vent
+  if (/\b(temps|meteo|weather|ta9s|chaud|froid|pluie|soleil|nuage|brouillard|vent|temperature|il fait|fait-il|t-il chaud|t-il froid|climat)\b/.test(m)) return 'weather';
+  // Time
+  if (/\b(heure|time|wa9t|وقت|maintenant|en ce moment|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
+  // Prayer
+  if (/\b(priere|salat|prayer|salawat|fajr|dhuhr|asr|maghrib|isha|صلاة|موعد الصلاة|adhan|azan|imsakiyya|horaire.*(priere|salat)|quando.*(priere|salat))\b/.test(m)) return 'prayer';
+  // Ferry
+  if (/\b(ferry|bateau|traversee|boat|algeciras|tanger med|tarifa|barcelona|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
+  // Documents
+  if (/\b(document|passeport|passport|cin|visa|permis|papier|watha2iq|carte.*(nationale|identite)|laissez.passer|required.*enter|rentrer|entrer)\b/.test(m)) return 'docs';
+  // Currency
+  if (/\b(euro|dirham|mad|change|taux|monnaie|argent|flouus|sarfa|صرف|currency|exchange|combien.*vaut|vaut.*(euro|dirham)|livres?|franc|usd|gbp|chf)\b/.test(m)) return 'currency';
+  // SIM
+  if (/\b(sim|forfait|internet|data|4g|5g|orange|inwi|maroc.telecom|telephone|mobile|roaming|reseau)\b/.test(m)) return 'sim';
+  // Ramadan
+  if (/\b(ramadan|iftar|shor|suhoor|jeune|jeûne|coupure|ftour)\b/.test(m)) return 'ramadan';
+  // Fuel
+  if (/\b(carburant|essence|gasoil|diesel|fuel|station.service|litre|petrole|estacion|benzina)\b/.test(m)) return 'fuel';
   return 'generic';
 }
 
@@ -183,17 +226,31 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
   }
 
   if (intent === 'currency') {
-    if (lang === 'da') return `Sarfa daba: 1 EUR ≈ 11 MAD, 1 GBP ≈ 13 MAD, 1 CHF ≈ 12 MAD (ta9riban). 3andak ATM f kull mdina. Cartes bancaires maqboulin f l-hwanut l-kbar. Mabadilsh flus f ssiyahin, sir l-banque.`;
-    if (lang === 'ar') return `الصرف تقريباً: 1 يورو ≈ 11 درهم، 1 جنيه ≈ 13 درهم. الصراف الآلي متاح في كل مدينة. البطاقات البنكية مقبولة في المحلات الكبيرة. تجنب الصرافين غير الرسميين.`;
-    if (lang === 'es') return `Cambio aprox: 1 EUR ≈ 11 MAD, 1 GBP ≈ 13 MAD. Hay cajeros en todas las ciudades. Las tarjetas bancarias se aceptan en establecimientos grandes. Cambia en bancos, no en la calle.`;
-    return `**Taux de change** (approximatifs) : 1 EUR ≈ 11 MAD, 1 GBP ≈ 13 MAD, 1 CHF ≈ 12 MAD. Les DAB sont partout. Cartes acceptées dans les grandes enseignes. Évitez les changeurs informels.`;
+    const rates = await getLiveRates();
+    const mad = rates ? rates.MAD.toFixed(2) : '10.90';
+    const gbpMad = rates ? (rates.MAD / rates.GBP).toFixed(2) : '12.70';
+    const chfMad = rates ? (rates.MAD / rates.CHF).toFixed(2) : '11.55';
+    const src = rates ? '' : ' (approximatifs)';
+    if (lang === 'da') return `Sarfa daba${src}: 1 EUR = ${mad} MAD, 1 GBP ≈ ${gbpMad} MAD, 1 CHF ≈ ${chfMad} MAD. ATM f kull mdina. Cartes bancaires maqboulin f l-hwanut l-kbar. Mabadilsh flus f ssiyahin.`;
+    if (lang === 'ar') return `الصرف الآن${src}: 1 يورو = ${mad} درهم، 1 جنيه ≈ ${gbpMad} درهم، 1 فرنك سويسري ≈ ${chfMad} درهم. الصراف الآلي في كل مدينة. تجنب الصرافين غير الرسميين.`;
+    if (lang === 'es') return `Cambio actual${src}: 1 EUR = ${mad} MAD, 1 GBP ≈ ${gbpMad} MAD, 1 CHF ≈ ${chfMad} MAD. Cajeros en todas las ciudades. Cambia en bancos, no en la calle.`;
+    return `**Taux de change${src}** : 1 EUR = **${mad} MAD**, 1 GBP ≈ ${gbpMad} MAD, 1 CHF ≈ ${chfMad} MAD. DAB partout. Cartes acceptées dans les grandes enseignes. Évitez les changeurs informels.`;
   }
 
   if (intent === 'prayer') {
-    if (lang === 'da') return `F l-Maghrib, akul chi dyali halal (khla 7anazir w khamr). Jama3a f kull mdina. L7alal certification mawjouda f lbiyarrat. Ramadan: l-iftaar 9addan 7:30-8pm f saif.`;
-    if (lang === 'ar') return `في المغرب كل اللحم حلال تقريباً (بدون لحم خنزير وكحول). مساجد في كل حي. أوقات الصلاة تتبع التوقيت الرسمي. استخدم تطبيق Athan أو Muslim Pro للمواقيت الدقيقة.`;
-    if (lang === 'es') return `En Marruecos toda la carne es halal (sin cerdo ni alcohol). Mezquitas en todos los barrios. Para horarios exactos de oración usa la app Athan o Muslim Pro.`;
-    return `Au Maroc, toute la viande est halal (sans porc ni alcool). Mosquées dans chaque quartier. Pour les horaires de prière exacts, utilisez l'application **Athan** ou **Muslim Pro**.`;
+    const prayerCity = cityKey ?? 'casablanca';
+    const city = MOROCCO_CITIES[prayerCity];
+    const cityName = lang === 'ar' ? city.ar : lang === 'da' ? city.da : city.fr;
+    const pt = await getPrayerTimes(prayerCity);
+    if (pt) {
+      if (lang === 'da') return `Salawat f ${cityName} lyoum: Fajr ${pt.Fajr} • Dhuhr ${pt.Dhuhr} • Asr ${pt.Asr} • Maghrib ${pt.Maghrib} • Isha ${pt.Isha}`;
+      if (lang === 'ar') return `أوقات الصلاة في ${cityName} اليوم: الفجر ${pt.Fajr} • الظهر ${pt.Dhuhr} • العصر ${pt.Asr} • المغرب ${pt.Maghrib} • العشاء ${pt.Isha}`;
+      if (lang === 'es') return `Horarios de oración en ${cityName} hoy: Fajr ${pt.Fajr} • Dhuhr ${pt.Dhuhr} • Asr ${pt.Asr} • Maghrib ${pt.Maghrib} • Isha ${pt.Isha}`;
+      return `**Horaires de prière à ${cityName} aujourd'hui** : Fajr ${pt.Fajr} · Dhuhr ${pt.Dhuhr} · Asr ${pt.Asr} · Maghrib ${pt.Maghrib} · Isha ${pt.Isha}`;
+    }
+    if (lang === 'da') return `Salawat: Fajr ≈ 5h, Dhuhr ≈ 13h, Asr ≈ 16h30, Maghrib ≈ 18h30, Isha ≈ 20h (ta9riban, kaytghayar b l-fasl). Sta3mal app Athan wla Muslim Pro l-mawaqit l-da9i9a.`;
+    if (lang === 'ar') return `أوقات الصلاة تتفاوت حسب المدينة والفصل. استخدم تطبيق Athan أو Muslim Pro للمواقيت الدقيقة. في المغرب، كل المساجد على التوقيت الرسمي.`;
+    return `Les horaires varient selon la ville et la saison. Utilisez **Athan** ou **Muslim Pro** pour les horaires précis. Toutes les mosquées du Maroc suivent l'horaire officiel du ministère des Habous.`;
   }
 
   if (intent === 'sim') {
