@@ -31,6 +31,7 @@ import CurrencyConverter from '@/components/CurrencyConverter';
 import RemittanceComparator from '@/components/RemittanceComparator';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import HadakAI from '@/components/HadakAI';
+import DailyWidget from '@/components/DailyWidget';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
 import SmartPacking from '@/components/SmartPacking';
 import NewsletterSection from '@/components/NewsletterSection';
@@ -151,6 +152,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Daily Widget — hijri date, Ramadan countdown, personalized weather */}
+      <DailyWidget />
 
       {/* Benefits Section */}
       <section className="border-b border-[#e2e8f0] bg-white py-8">

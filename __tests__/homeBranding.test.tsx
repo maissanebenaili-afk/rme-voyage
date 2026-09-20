@@ -9,6 +9,7 @@ jest.mock("@/components/ServicesMap", () => function ServicesMapMock() { return 
 jest.mock("@/components/NewsFeed", () => function NewsFeedMock() { return <div>NewsFeed</div>; });
 jest.mock("@/components/RemittanceComparator", () => function RemittanceComparatorMock() { return <div>RemittanceComparator</div>; });
 jest.mock("@/components/NewsletterSection", () => function NewsletterSectionMock() { return <div>NewsletterSection</div>; });
+jest.mock("@/components/DailyWidget", () => function DailyWidgetMock() { return <div>DailyWidget</div>; });
 
 describe("Homepage branding", () => {
   it("shows RME Voyage positioning and promise", () => {
