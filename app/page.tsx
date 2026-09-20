@@ -462,7 +462,8 @@ export default function Home() {
                 <li><Link href="/marwa-caftan" className="hover:text-white">Marwa Caftan — Location & Vente 👗</Link></li>
                 <li>Traiteurs · Mobilité · Garages</li>
                 <li>Colis &amp; Groupage Maroc 📦</li>
-                <li>Belisamae — Bien-être 🌿</li>
+                <li><Link href="/belisamae" className="hover:text-white">Belisamae — Bien-être 🌿</Link></li>
+                <li><Link href="/afarah-nassim" className="hover:text-white">Afarah Nassim — Traiteur 🍽️</Link></li>
               </ul>
             </div>
             <div>

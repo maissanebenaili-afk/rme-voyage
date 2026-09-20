@@ -1,5 +1,5 @@
-import { CalendarCheck, Phone, ExternalLink, Sparkles } from 'lucide-react';
-import { BELISAMAE_PHONE, BELISAMAE_URL } from '@/lib/partners';
+import Link from 'next/link';
+import { CalendarCheck, ArrowRight, Sparkles } from 'lucide-react';
 
 const ACCOMPAGNEMENTS = [
   { label: 'Bioénergie', desc: 'Libérer les tensions et les blocages' },
@@ -50,22 +50,12 @@ export default function MouniaWidget() {
         ))}
       </ul>
 
-      <div className="relative mt-5 flex flex-col gap-2.5 sm:flex-row">
-        <a
-          href={BELISAMAE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#40634f] py-3.5 text-sm font-bold text-white transition hover:bg-[#33513f]"
-        >
-          <CalendarCheck size={15} /> Prendre rendez-vous <ExternalLink size={11} />
-        </a>
-        <a
-          href={`tel:${BELISAMAE_PHONE}`}
-          className="flex items-center justify-center gap-1.5 rounded-full border border-[#cfd6ca] px-5 py-3.5 text-sm font-bold text-[#40634f] transition hover:bg-white"
-        >
-          <Phone size={13} /> Appeler
-        </a>
-      </div>
+      <Link
+        href="/belisamae"
+        className="relative mt-5 flex items-center justify-center gap-2 rounded-full bg-[#40634f] py-3.5 text-sm font-bold text-white transition hover:bg-[#33513f]"
+      >
+        <CalendarCheck size={15} /> Découvrir &amp; prendre rendez-vous <ArrowRight size={14} />
+      </Link>
     </div>
   );
 }
