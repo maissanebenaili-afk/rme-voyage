@@ -5,7 +5,7 @@ export function whatsappLink(phone: string, message: string) {
 }
 
 // Belisamae — Mounia, énergéticienne (Reiki, géobiologie).
-export const BELISAMAE_URL = 'https://www.belisamae.fr';
+export const BELISAMAE_URL = 'https://belisamae.fr';
 export const BELISAMAE_PHONE = '+33686628361';
 
 // Recherche Amazon.fr par titre + auteur : fonctionne sans ASIN.
