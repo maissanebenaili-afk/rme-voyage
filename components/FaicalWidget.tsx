@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Trophy, TrendingUp, Zap, ExternalLink } from 'lucide-react';
+import { Trophy, Zap } from 'lucide-react';
 
 type FormEntry = { w: number; d: number; l: number; last5: string };
 
@@ -17,53 +17,41 @@ type FaicalPick = {
   awayForm: FormEntry;
 };
 
-const AFFILIATE_URL = 'https://www.inamax.com/'; // placeholder — swap for real affiliate link
-
 const LABELS = {
   fr: {
-    title: 'Les pronos de Faical Arrayah',
+    title: 'Les pronos de Faical',
     sub: 'Votre expert foot Botola Pro',
-    cta: '🎰 Parier malin avec Faical Arrayah →',
     noData: 'Prochains matchs bientôt disponibles.',
     form: 'Forme',
     vs: 'vs',
-    sponsored: 'Sponsorisé',
   },
   da: {
-    title: 'Pronosticat dyal Faical Arrayah',
+    title: 'Pronosticat dyal Faical',
     sub: 'Khabir dyalek f Botola Pro',
-    cta: '🎰 Dir l\'bet m3a Faical Arrayah →',
     noData: 'Matchat jaya bzzf.',
     form: 'Forma',
     vs: 'vs',
-    sponsored: 'Sponsorisa',
   },
   ar: {
-    title: 'تنبؤات فيصل الريّاح',
+    title: 'توقعات فايكال',
     sub: 'خبيرك في البطولة المغربية',
-    cta: '🎰 راهن بذكاء مع فيصل الريّاح ←',
     noData: 'المباريات القادمة ستظهر قريباً.',
     form: 'الشكل',
     vs: 'ضد',
-    sponsored: 'برعاية',
   },
   es: {
-    title: 'Los pronos de Faical Arrayah',
+    title: 'Los pronósticos de Faical',
     sub: 'Tu experto Botola Pro',
-    cta: '🎰 Apuesta con Faical Arrayah →',
     noData: 'Próximos partidos disponibles pronto.',
     form: 'Forma',
     vs: 'vs',
-    sponsored: 'Patrocinado',
   },
   en: {
-    title: "Faical Arrayah's Picks",
+    title: "Faical's Picks",
     sub: 'Your Botola Pro tipster',
-    cta: '🎰 Bet smart with Faical Arrayah →',
     noData: 'Upcoming fixtures coming soon.',
     form: 'Form',
     vs: 'vs',
-    sponsored: 'Sponsored',
   },
 };
 
@@ -87,7 +75,11 @@ function FormPips({ form }: { form: FormEntry }) {
         <span
           key={i}
           className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-black ${
-            c === 'W' ? 'bg-emerald-500 text-white' : c === 'D' ? 'bg-amber-400 text-black' : 'bg-red-500 text-white'
+            c === 'W'
+              ? 'bg-emerald-500 text-white'
+              : c === 'D'
+                ? 'bg-amber-400 text-black'
+                : 'bg-red-500 text-white'
           }`}
         >
           {c}
@@ -97,8 +89,22 @@ function FormPips({ form }: { form: FormEntry }) {
   );
 }
 
-function MatchCard({ pick, lang, labels }: { pick: FaicalPick; lang: Lang; labels: typeof LABELS.fr }) {
-  const date = pick.date ? new Date(pick.date).toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+function MatchCard({
+  pick,
+  lang,
+  labels,
+}: {
+  pick: FaicalPick;
+  lang: Lang;
+  labels: typeof LABELS.fr;
+}) {
+  const date = pick.date
+    ? new Date(pick.date).toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'fr-FR', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+      })
+    : '';
 
   return (
     <div className="rounded-2xl bg-white/5 border border-white/10 p-4 flex flex-col gap-3">
@@ -119,8 +125,13 @@ function MatchCard({ pick, lang, labels }: { pick: FaicalPick; lang: Lang; label
 
       {/* Date + league badge */}
       <div className="flex items-center justify-center gap-2">
-        <span className="rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/20 px-2 py-0.5 text-[10px] font-bold text-[#f59e0b]">{pick.league}</span>
-        <p className="text-[11px] text-white/50">{date}{pick.time ? ` · ${pick.time}` : ''}</p>
+        <span className="rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/20 px-2 py-0.5 text-[10px] font-bold text-[#f59e0b]">
+          {pick.league}
+        </span>
+        <p className="text-[11px] text-white/50">
+          {date}
+          {pick.time ? ` · ${pick.time}` : ''}
+        </p>
       </div>
 
       {/* Faical's prediction */}
@@ -128,7 +139,9 @@ function MatchCard({ pick, lang, labels }: { pick: FaicalPick; lang: Lang; label
         <div className="rounded-xl bg-[#f59e0b]/15 border border-[#f59e0b]/30 p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Zap size={12} className="text-[#f59e0b]" />
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#fde68a]">Faical Arrayah dit</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#fde68a]">
+              Faical dit
+            </span>
           </div>
           <p className="text-sm text-white leading-5">{pick.prediction}</p>
         </div>
@@ -156,9 +169,18 @@ export default function FaicalWidget() {
     let cancelled = false;
     fetch('/api/faical')
       .then((r) => r.json())
-      .then((d) => { if (!cancelled) { setPicks(d.picks ?? []); setLoading(false); } })
-      .catch(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .then((d) => {
+        if (!cancelled) {
+          setPicks(d.picks ?? []);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -179,7 +201,7 @@ export default function FaicalWidget() {
           </div>
         </div>
         <span className="rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/40">
-          {labels.sponsored}
+          Analyses
         </span>
       </div>
 
@@ -197,27 +219,13 @@ export default function FaicalWidget() {
           <p className="text-sm text-white/50 text-center py-6">{labels.noData}</p>
         )}
 
-        {!loading && picks.map((pick) => (
-          <MatchCard key={pick.id} pick={pick} lang={lang} labels={labels} />
-        ))}
+        {!loading &&
+          picks.map((pick) => <MatchCard key={pick.id} pick={pick} lang={lang} labels={labels} />)}
       </div>
 
-      {/* Affiliate CTA */}
-      <div className="relative mt-5">
-        <a
-          href={AFFILIATE_URL}
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#f59e0b] to-[#f97316] px-4 py-3.5 text-sm font-extrabold text-[#0f1f3d] shadow-lg shadow-[#f59e0b]/20 transition hover:brightness-110 active:scale-[.98]"
-        >
-          <TrendingUp size={16} />
-          {labels.cta}
-          <ExternalLink size={13} className="opacity-60" />
-        </a>
-        <p className="mt-2 text-center text-[10px] text-white/25">
-          Pari responsable · 18+ · Lien affilié
-        </p>
-      </div>
+      <p className="relative mt-5 text-center text-[11px] text-white/40">
+        Analyses de matchs à titre informatif. Aucun lien de pari ou partenariat n’est affiché.
+      </p>
     </section>
   );
 }

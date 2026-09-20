@@ -38,14 +38,14 @@ export default function BoutiquePage() {
               <span className="text-[#f59e0b]">de la France au Maroc.</span>
             </h1>
             <p className="mt-5 text-lg leading-8 text-white/65">
-              Des artisans, des thérapeutes et des transporteurs choisis un par un. Caftans,
-              bien-être, traiteurs, colis et mobilité — tout ce dont une famille MRE a besoin,
-              au même endroit.
+              Des espaces pour découvrir des professionnels et prendre contact. Caftans, bien-être,
+              traiteurs, colis et mobilité — les informations de chaque fiche sont confirmées avec
+              le professionnel concerné.
             </p>
           </div>
 
           <nav aria-label="Rubriques" className="relative mt-8 flex flex-wrap gap-2.5">
-            {RUBRIQUES.map(r => (
+            {RUBRIQUES.map((r) => (
               <a
                 key={r.href}
                 href={r.href}
@@ -68,7 +68,8 @@ export default function BoutiquePage() {
               Le caftan, sans l&apos;acheter.
             </h2>
             <p className="mt-3 max-w-2xl text-[#475569]">
-              Louez une pièce d&apos;exception pour un mariage ou une soirée, livrée chez vous en 48 h.
+              Explorez des styles pour un mariage ou une soirée, puis demandez les modalités
+              directement au partenaire.
             </p>
           </Reveal>
           <Reveal className="mt-8 max-w-2xl" delay={90}>
@@ -87,8 +88,8 @@ export default function BoutiquePage() {
               Souffler, avant et après la route.
             </h2>
             <p className="mt-3 max-w-2xl text-[#5d6a60]">
-              Un accompagnement énergétique pour traverser les périodes de fatigue, de stress ou
-              de transition — en cabinet comme à distance.
+              Un accompagnement énergétique pour traverser les périodes de fatigue, de stress ou de
+              transition — en cabinet comme à distance.
             </p>
           </Reveal>
           <Reveal className="mt-8 max-w-2xl" delay={90}>
@@ -107,8 +108,8 @@ export default function BoutiquePage() {
               Envoyez au bled sans prendre la route.
             </h2>
             <p className="mt-3 max-w-2xl text-[#475569]">
-              Cartons, électroménager, mobilier : comparez les groupeurs qui partent chaque semaine
-              vers le Maroc et demandez un devis en un appel.
+              Cartons, électroménager, mobilier : découvrez les options prévues pour l&apos;envoi
+              vers le Maroc et demandez les conditions au professionnel concerné.
             </p>
           </Reveal>
           <Reveal className="mt-8" delay={90}>
@@ -127,7 +128,8 @@ export default function BoutiquePage() {
               Traiteurs, mobilité, garages.
             </h2>
             <p className="mt-3 max-w-2xl text-[#475569]">
-              Un carnet d&apos;adresses vérifiées, de l&apos;Île-de-France jusqu&apos;à Agadir.
+              Des catégories de services pour découvrir les profils publiés et contacter les
+              professionnels disponibles.
             </p>
           </Reveal>
           <Reveal className="mt-8" delay={90}>
@@ -145,7 +147,7 @@ export default function BoutiquePage() {
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-white/65">
             Caftans, traiteur, transport, garage, bien-être : rejoignez l&apos;annuaire et touchez
-            une communauté de 5 millions de Marocains d&apos;Europe.
+            des voyageurs et familles MRE à la recherche de services adaptés.
           </p>
           <a
             href="mailto:pro@rme-voyage.com?subject=Rejoindre%20la%20Boutique%20RME%20Voyage"
