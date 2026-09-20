@@ -644,7 +644,7 @@ export default function HadakAI() {
       <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed bottom-24 right-6 z-50 flex h-[min(560px,calc(100vh-7rem))] w-[calc(100vw-3rem)] max-w-[400px] flex-col overflow-hidden rounded-3xl shadow-2xl"
+          className="fixed bottom-24 right-6 z-50 flex h-[min(620px,calc(100vh-7rem))] w-[calc(100vw-3rem)] max-w-[420px] flex-col overflow-hidden rounded-3xl shadow-2xl"
           style={{
             direction: isRtl ? 'rtl' : 'ltr',
             background: 'linear-gradient(180deg, #0f1f3d 0%, #080f28 100%)',
@@ -676,9 +676,9 @@ export default function HadakAI() {
 
             {/* Name + status */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-lg font-extrabold text-white flex items-center gap-2 tracking-tight">
                 Hadak
-                <span className="text-xs font-normal text-[#f59e0b]">AI</span>
+                <span className="text-sm font-semibold text-[#f59e0b]">AI</span>
                 {isOffline && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-[#f59e0b]/20 px-2 py-0.5 text-[10px] font-bold text-[#f59e0b]">
                     ⚡ Mode limité
@@ -772,10 +772,10 @@ export default function HadakAI() {
                   )}
                   <div className="flex flex-col gap-1">
                     <div
-                      className={`max-w-full rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                      className={`max-w-full rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
                         msg.role === 'user'
-                          ? 'text-[#0f1f3d] font-medium'
-                          : 'text-white/95'
+                          ? 'text-[#0f1f3d] font-semibold'
+                          : 'text-white font-medium'
                       }`}
                       style={{
                         background:
@@ -861,11 +861,11 @@ export default function HadakAI() {
                   <motion.button
                     key={topic}
                     onClick={() => handleSend(label)}
-                    className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
+                    className="flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold"
                     style={{
-                      background: 'rgba(245, 158, 11, 0.1)',
-                      border: '1px solid rgba(245, 158, 11, 0.25)',
-                      color: '#f59e0b',
+                      background: 'rgba(245, 158, 11, 0.15)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                      color: '#fbbf24',
                     }}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -910,7 +910,7 @@ export default function HadakAI() {
                     ? 'Pregúntame algo...'
                     : 'Ask me anything...'
                 }
-                className="flex-1 rounded-full px-4 py-2.5 text-sm text-white placeholder-white/40 transition-colors focus:outline-none"
+                className="flex-1 rounded-full px-4 py-2.5 text-[15px] text-white placeholder-white/50 transition-colors focus:outline-none"
                 style={{
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid rgba(245, 158, 11, 0.15)',
