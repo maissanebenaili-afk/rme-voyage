@@ -162,6 +162,11 @@ historiques ne constituent pas une preuve de publication actuelle.
 
 Date : 2026-09-11 (v1.3.0 — CI GitHub Actions, rate limiting, durcissement CORS/CSP)
 
+## Page Pro rendue honnête (2026-09-20, branche `vercel-agent/honest-pro-page`)
+
+- Les tarifs, SLA, TVA, support, analytics et widgets annoncés sans preuve ont été retirés de `/pro`. La page indique maintenant que l’offre est en préparation et ne constitue pas une offre commerciale.
+- Régression couverte par `__tests__/proPage.test.ts`.
+
 ## Source de vérité
 Le dépôt GitHub est la source de vérité technique. Les modifications doivent :
 - Partir de ce dépôt
