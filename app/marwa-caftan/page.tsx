@@ -220,7 +220,7 @@ export default function MarwaCaftan() {
   );
 
   return (
-    <main className="min-h-screen bg-[#fdf8f2]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fdf8f2]">
       {agent && <AgentChat onClose={() => setAgent(false)} />}
 
       {/* Hero */}

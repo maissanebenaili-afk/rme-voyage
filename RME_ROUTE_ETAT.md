@@ -162,6 +162,11 @@ historiques ne constituent pas une preuve de publication actuelle.
 
 Date : 2026-09-11 (v1.3.0 — CI GitHub Actions, rate limiting, durcissement CORS/CSP)
 
+## Cibles du skip-link complétées (2026-09-20, branche `vercel-agent/fix-skip-link-targets`)
+
+- Les pages `/pro`, `/affilies` et `/marwa-caftan` exposent désormais `<main id="main-content" tabIndex={-1}>`, cible du skip-link global.
+- Régression couverte par `__tests__/mainContentTargets.test.ts`.
+
 ## Source de vérité
 Le dépôt GitHub est la source de vérité technique. Les modifications doivent :
 - Partir de ce dépôt

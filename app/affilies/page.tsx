@@ -150,7 +150,7 @@ const statusConfig = {
 
 export default function AffiliatesPage() {
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-[#0f1f3d]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#f8fafc] text-[#0f1f3d]">
       {/* Nav */}
       <nav className="bg-[#0f1f3d] px-5 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
