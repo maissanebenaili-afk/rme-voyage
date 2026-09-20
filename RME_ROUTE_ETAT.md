@@ -162,6 +162,12 @@ historiques ne constituent pas une preuve de publication actuelle.
 
 Date : 2026-09-11 (v1.3.0 — CI GitHub Actions, rate limiting, durcissement CORS/CSP)
 
+## Endpoints communauté et voyages désactivés (2026-09-20, branche `vercel-agent/disable-unsecured-community-apis`)
+
+- `/api/trips` et `/api/tips` retournent désormais `410 Gone`. Ils acceptaient auparavant un `userId` contrôlé par le client et `tips` pouvait retourner des recommandations d’exemple non vérifiées.
+- Réactivation conditionnelle : authentification serveur, identité dérivée d’une session vérifiée, politiques RLS testées, validation d’entrée, persistance durable et modération pour les contenus communautaires.
+- Aucun voyage ni contenu communautaire n’est lu, écrit ou supprimé par ce changement.
+
 ## Source de vérité
 Le dépôt GitHub est la source de vérité technique. Les modifications doivent :
 - Partir de ce dépôt
