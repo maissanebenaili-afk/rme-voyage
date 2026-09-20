@@ -166,10 +166,12 @@ function getMoroccoDate(): string {
 }
 
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'generic';
+type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'generic';
 
 function detectIntent(msg: string): Intent {
   const m = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  // Trip planning — "prépare-moi un voyage à X", "safari l X", "je veux aller à X"
+  if (/\b(prepare|preparer|planifie|organise|voyage.*\ba\b|safari.*\bl\b|veux.*aller|want.*go|quiero.*ir|trip.*to|bghit.*nmshi|bghit.*nsafr)\b/.test(m)) return 'trip';
   // Weather — broad pattern: temps, meteo, chaud, froid, pluie, soleil, nuageux, brouillard, vent
   if (/\b(temps|meteo|weather|ta9s|chaud|froid|pluie|soleil|nuage|brouillard|vent|temperature|il fait|fait-il|t-il chaud|t-il froid|climat)\b/.test(m)) return 'weather';
   // Time
@@ -274,6 +276,50 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
     if (lang === 'ar') return `أسعار الوقود في المغرب: بنزين ≈ 14-15 درهم/لتر، غازوال ≈ 11-12 درهم/لتر. محطات Shell, Afriquia, Total في كل مكان. في المناطق النائية، ابل بالتعبئة قبل المغادرة.`;
     if (lang === 'es') return `Combustible en Marruecos: gasolina ≈ 14-15 MAD/l, gasóleo ≈ 11-12 MAD/l. Gasolineras Shell, Afriquia, Total por todo el país. En zonas remotas, llena el depósito antes de salir.`;
     return `**Carburant au Maroc** : essence ≈ 14-15 MAD/l, gasoil ≈ 11-12 MAD/l. Stations Shell, Afriquia, Total partout. En zone rurale, faites le plein avant de partir — les stations peuvent être espacées.`;
+  }
+
+  if (intent === 'trip') {
+    const key = cityKey ?? 'casablanca';
+    const city = MOROCCO_CITIES[key];
+    const cityName = lang === 'ar' ? city.ar : lang === 'da' ? city.da : city.fr;
+    const [weather, pt, rates] = await Promise.all([getWeather(key), getPrayerTimes(key), getLiveRates()]);
+    const temp = weather?.current ? `${Math.round(weather.current.temperature_2m ?? 0)}°C, ${describeWeather(weather.current.weather_code ?? 0, lang)}` : null;
+    const mad = rates ? rates.MAD.toFixed(2) : '10.90';
+
+    if (lang === 'da') {
+      const lines = [`🗺️ **Voyage l-${cityName}**`];
+      if (temp) lines.push(`🌤️ T-ta9s: ${temp}`);
+      if (pt) lines.push(`🕌 Salawat: Fajr ${pt.Fajr} · Dhuhr ${pt.Dhuhr} · Maghrib ${pt.Maghrib}`);
+      lines.push(`💶 Sarfa: 1 EUR = ${mad} MAD`);
+      lines.push(`📄 Documents: CIN + passeport + assurance voiture`);
+      lines.push(`⛴️ Ferry: Algeciras → Tanger Med (1h30)`);
+      return lines.join('\n');
+    }
+    if (lang === 'ar') {
+      const lines = [`🗺️ **رحلة إلى ${cityName}**`];
+      if (temp) lines.push(`🌤️ الطقس: ${temp}`);
+      if (pt) lines.push(`🕌 الصلاة: الفجر ${pt.Fajr} · الظهر ${pt.Dhuhr} · المغرب ${pt.Maghrib}`);
+      lines.push(`💶 الصرف: 1 يورو = ${mad} درهم`);
+      lines.push(`📄 الوثائق: البطاقة الوطنية + الجواز + تأمين السيارة`);
+      lines.push(`⛴️ العبارة: الجزيرة الخضراء → طنجة المتوسط (1س30)`);
+      return lines.join('\n');
+    }
+    if (lang === 'es') {
+      const lines = [`🗺️ **Viaje a ${cityName}**`];
+      if (temp) lines.push(`🌤️ Tiempo: ${temp}`);
+      if (pt) lines.push(`🕌 Oración: Fajr ${pt.Fajr} · Dhuhr ${pt.Dhuhr} · Maghrib ${pt.Maghrib}`);
+      lines.push(`💶 Cambio: 1 EUR = ${mad} MAD`);
+      lines.push(`📄 Documentos: DNI + pasaporte + seguro del coche`);
+      lines.push(`⛴️ Ferry: Algeciras → Tánger Med (1h30)`);
+      return lines.join('\n');
+    }
+    const lines = [`🗺️ **Voyage à ${cityName}**`];
+    if (temp) lines.push(`🌤️ Météo : ${temp}`);
+    if (pt) lines.push(`🕌 Prières : Fajr ${pt.Fajr} · Dhuhr ${pt.Dhuhr} · Maghrib ${pt.Maghrib}`);
+    lines.push(`💶 Change : 1 EUR = ${mad} MAD`);
+    lines.push(`📄 Documents : CIN + passeport + assurance véhicule`);
+    lines.push(`⛴️ Ferry : Algeciras → Tanger Med (1h30)`);
+    return lines.join('\n');
   }
 
   if (intent === 'ramadan') {
