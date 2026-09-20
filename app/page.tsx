@@ -197,6 +197,7 @@ export default function Home() {
                 { label: '🕌 Prières à Marrakech', msg: 'Horaires de prière à Marrakech' },
                 { label: '💶 Taux dirham', msg: 'Combien vaut 100 euros en dirhams ?' },
                 { label: '⛴️ Ferry Algeciras', msg: 'Ferry Algeciras Tanger' },
+                { label: '⚽ Wydad ce soir ?', msg: 'Qui va gagner le match Wydad ce soir ?' },
               ].map(({ label, msg }) => (
                 <button
                   key={msg}

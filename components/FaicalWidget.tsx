@@ -117,8 +117,11 @@ function MatchCard({ pick, lang, labels }: { pick: FaicalPick; lang: Lang; label
         </div>
       </div>
 
-      {/* Date */}
-      <p className="text-[11px] text-white/50 text-center">{date}{pick.time ? ` · ${pick.time}` : ''}</p>
+      {/* Date + league badge */}
+      <div className="flex items-center justify-center gap-2">
+        <span className="rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/20 px-2 py-0.5 text-[10px] font-bold text-[#f59e0b]">{pick.league}</span>
+        <p className="text-[11px] text-white/50">{date}{pick.time ? ` · ${pick.time}` : ''}</p>
+      </div>
 
       {/* Faical's prediction */}
       {pick.prediction ? (
