@@ -1,0 +1,143 @@
+import Link from 'next/link';
+import { ArrowLeft, Sparkles } from 'lucide-react';
+import MarwaCaftanWidget from '@/components/MarwaCaftanWidget';
+import MouniaWidget from '@/components/MouniaWidget';
+import ServicesProWidget from '@/components/ServicesProWidget';
+import ColisWidget from '@/components/ColisWidget';
+import BookBanner from '@/components/BookBanner';
+import Reveal from '@/components/Reveal';
+
+const RUBRIQUES = [
+  { href: '#caftan', label: '👗 Caftans' },
+  { href: '#bienetre', label: '🌿 Bien-être' },
+  { href: '#colis', label: '📦 Colis' },
+  { href: '#services', label: '🔧 Services' },
+];
+
+export default function BoutiquePage() {
+  return (
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#f8fafc]">
+      <header className="relative overflow-hidden bg-[#0f1f3d] px-5 pb-16 pt-6 text-white sm:px-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#c9903a]/20 blur-3xl" />
+
+        <div className="mx-auto max-w-6xl">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-white/60 transition hover:text-white"
+          >
+            <ArrowLeft size={14} /> Retour à l&apos;accueil
+          </Link>
+
+          <div className="relative mt-10 max-w-2xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#c9903a]/40 bg-[#c9903a]/15 px-3 py-1.5 text-[11px] font-black uppercase tracking-[.16em] text-[#fde68a]">
+              <Sparkles size={11} /> La Boutique
+            </span>
+            <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
+              Nos partenaires,
+              <br />
+              <span className="text-[#f59e0b]">de la France au Maroc.</span>
+            </h1>
+            <p className="mt-5 text-lg leading-8 text-white/65">
+              Des artisans, des thérapeutes et des transporteurs choisis un par un. Caftans,
+              bien-être, traiteurs, colis et mobilité — tout ce dont une famille MRE a besoin,
+              au même endroit.
+            </p>
+          </div>
+
+          <nav aria-label="Rubriques" className="relative mt-8 flex flex-wrap gap-2.5">
+            {RUBRIQUES.map(r => (
+              <a
+                key={r.href}
+                href={r.href}
+                className="rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-bold text-white/80 transition hover:border-[#c9903a]/50 hover:bg-[#c9903a]/15 hover:text-white"
+              >
+                {r.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      <section id="caftan" className="scroll-mt-6 bg-white py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <Reveal>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
+              Mode &amp; cérémonie
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#0f1f3d] sm:text-4xl">
+              Le caftan, sans l&apos;acheter.
+            </h2>
+            <p className="mt-3 max-w-2xl text-[#475569]">
+              Louez une pièce d&apos;exception pour un mariage ou une soirée, livrée chez vous en 48 h.
+            </p>
+          </Reveal>
+          <Reveal className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start" delay={90}>
+            <MarwaCaftanWidget />
+            <MouniaWidget />
+          </Reveal>
+        </div>
+      </section>
+
+      <div id="bienetre" className="scroll-mt-6" />
+
+      <section id="colis" className="scroll-mt-6 bg-[#f8fafc] py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <Reveal>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
+              Nouveau
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#0f1f3d] sm:text-4xl">
+              Envoyez au bled sans prendre la route.
+            </h2>
+            <p className="mt-3 max-w-2xl text-[#475569]">
+              Cartons, électroménager, mobilier : comparez les groupeurs qui partent chaque semaine
+              vers le Maroc et demandez un devis en un appel.
+            </p>
+          </Reveal>
+          <Reveal className="mt-8" delay={90}>
+            <ColisWidget />
+          </Reveal>
+        </div>
+      </section>
+
+      <section id="services" className="scroll-mt-6 bg-white py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <Reveal>
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
+              Sur la route
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#0f1f3d] sm:text-4xl">
+              Traiteurs, mobilité, garages.
+            </h2>
+            <p className="mt-3 max-w-2xl text-[#475569]">
+              Un carnet d&apos;adresses vérifiées, de l&apos;Île-de-France jusqu&apos;à Agadir.
+            </p>
+          </Reveal>
+          <Reveal className="mt-8" delay={90}>
+            <ServicesProWidget />
+          </Reveal>
+        </div>
+      </section>
+
+      <BookBanner />
+
+      <section className="bg-[#0f1f3d] py-16">
+        <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
+          <h2 className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            Vous êtes professionnel ?
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-white/65">
+            Caftans, traiteur, transport, garage, bien-être : rejoignez l&apos;annuaire et touchez
+            une communauté de 5 millions de Marocains d&apos;Europe.
+          </p>
+          <a
+            href="mailto:pro@rme-voyage.com?subject=Rejoindre%20la%20Boutique%20RME%20Voyage"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a]"
+          >
+            Rejoindre l&apos;annuaire
+          </a>
+        </div>
+      </section>
+    </main>
+  );
+}

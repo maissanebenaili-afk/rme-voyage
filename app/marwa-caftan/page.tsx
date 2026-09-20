@@ -6,6 +6,7 @@ import {
   Sparkles, ShoppingBag, Package, Shield, Truck, MessageCircle,
   Star, ChevronRight, ArrowLeft, Heart, Tag, Calendar,
 } from 'lucide-react';
+import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
 
 type Caftan = {
   id: string;
@@ -121,7 +122,7 @@ function AgentChat({ onClose }: { onClose: () => void }) {
                       <p className="font-bold text-white text-sm">Caftan {c.name}</p>
                       <p className="text-xs text-white/60">{c.style} · {c.prixLocation}€/sem</p>
                     </div>
-                    <a href={`https://wa.me/33600000000?text=Bonjour Marwa, je suis intéressée par le Caftan ${c.name}`}
+                    <a href={whatsappLink(MARWA_WHATSAPP, `Bonjour Marwa, je suis intéressée par le Caftan ${c.name}`)}
                       target="_blank" rel="noopener noreferrer"
                       className="shrink-0 rounded-full bg-[#25d366] px-3 py-1.5 text-[11px] font-black text-white">
                       Réserver
@@ -143,7 +144,10 @@ function AgentChat({ onClose }: { onClose: () => void }) {
 
 function CaftanCard({ c, mode }: { c: Caftan; mode: Mode }) {
   const [liked, setLiked] = useState(false);
-  const whatsapp = `https://wa.me/33600000000?text=Bonjour Marwa, je suis intéressée par le Caftan ${c.name} (${mode === 'location' ? 'location' : 'achat'})`;
+  const whatsapp = whatsappLink(
+    MARWA_WHATSAPP,
+    `Bonjour Marwa, je suis intéressée par le Caftan ${c.name} (${mode === 'location' ? 'location' : 'achat'})`,
+  );
   const prix = mode === 'location' ? c.prixLocation : c.prixVente;
   const label = mode === 'location' ? '/sem' : '';
 

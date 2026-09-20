@@ -14,6 +14,8 @@ jest.mock("@/components/FaicalWidget", () => function FaicalWidgetMock() { retur
 jest.mock("@/components/TVWidget", () => function TVWidgetMock() { return <div>TVWidget</div>; });
 jest.mock("@/components/MarwaCaftanWidget", () => function MarwaCaftanWidgetMock() { return <div>MarwaCaftanWidget</div>; });
 jest.mock("@/components/ServicesProWidget", () => function ServicesProWidgetMock() { return <div>ServicesProWidget</div>; });
+jest.mock("@/components/MouniaWidget", () => function MouniaWidgetMock() { return <div>MouniaWidget</div>; });
+jest.mock("@/components/ColisWidget", () => function ColisWidgetMock() { return <div>ColisWidget</div>; });
 
 describe("Homepage branding", () => {
   it("shows RME Voyage positioning and promise", () => {
