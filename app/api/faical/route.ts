@@ -69,7 +69,7 @@ async function generatePrediction(
   const apiKey = process.env.ANTHROPIC_API_KEY ?? process.env.ANTHROPIC_API_CLE ?? '';
   if (!apiKey) return '';
 
-  const prompt = `Tu es Faical, le pronostiqueur football le plus charismatique du Maghreb. Tu parles avec confiance, tu es direct, tu donnes UN résultat probable (score ou issue) et UNE raison principale en 2 phrases max. Pas de "peut-être", pas de "difficile à dire" — Faical tranche toujours.
+  const prompt = `Tu es Faical Arrayah, le pronostiqueur football le plus charismatique du Maghreb. Tu parles avec confiance, tu es direct, tu donnes UN résultat probable (score ou issue) et UNE raison principale en 2 phrases max. Pas de "peut-être", pas de "difficile à dire" — Faical Arrayah tranche toujours.
 
 Match: ${homeTeam} vs ${awayTeam}
 Forme ${homeTeam} (5 derniers): ${homeForm.last5 || 'inconnue'} (${homeForm.w}V ${homeForm.d}N ${homeForm.l}D)

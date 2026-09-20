@@ -21,45 +21,45 @@ const AFFILIATE_URL = 'https://www.inamax.com/'; // placeholder — swap for rea
 
 const LABELS = {
   fr: {
-    title: 'Les pronos de Faical',
+    title: 'Les pronos de Faical Arrayah',
     sub: 'Votre expert foot Botola Pro',
-    cta: '🎰 Parier malin avec Faical →',
+    cta: '🎰 Parier malin avec Faical Arrayah →',
     noData: 'Prochains matchs bientôt disponibles.',
     form: 'Forme',
     vs: 'vs',
     sponsored: 'Sponsorisé',
   },
   da: {
-    title: 'Pronosticat dyali Faical',
+    title: 'Pronosticat dyal Faical Arrayah',
     sub: 'Khabir dyalek f Botola Pro',
-    cta: '🎰 Dir l\'bet m3a Faical →',
+    cta: '🎰 Dir l\'bet m3a Faical Arrayah →',
     noData: 'Matchat jaya bzzf.',
     form: 'Forma',
     vs: 'vs',
     sponsored: 'Sponsorisa',
   },
   ar: {
-    title: 'تنبؤات فيصل',
+    title: 'تنبؤات فيصل الريّاح',
     sub: 'خبيرك في البطولة المغربية',
-    cta: '🎰 راهن بذكاء مع فيصل ←',
+    cta: '🎰 راهن بذكاء مع فيصل الريّاح ←',
     noData: 'المباريات القادمة ستظهر قريباً.',
     form: 'الشكل',
     vs: 'ضد',
     sponsored: 'برعاية',
   },
   es: {
-    title: 'Los pronos de Faical',
+    title: 'Los pronos de Faical Arrayah',
     sub: 'Tu experto Botola Pro',
-    cta: '🎰 Apuesta con Faical →',
+    cta: '🎰 Apuesta con Faical Arrayah →',
     noData: 'Próximos partidos disponibles pronto.',
     form: 'Forma',
     vs: 'vs',
     sponsored: 'Patrocinado',
   },
   en: {
-    title: "Faical's Picks",
+    title: "Faical Arrayah's Picks",
     sub: 'Your Botola Pro tipster',
-    cta: '🎰 Bet smart with Faical →',
+    cta: '🎰 Bet smart with Faical Arrayah →',
     noData: 'Upcoming fixtures coming soon.',
     form: 'Form',
     vs: 'vs',
@@ -125,7 +125,7 @@ function MatchCard({ pick, lang, labels }: { pick: FaicalPick; lang: Lang; label
         <div className="rounded-xl bg-[#f59e0b]/15 border border-[#f59e0b]/30 p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Zap size={12} className="text-[#f59e0b]" />
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#fde68a]">Faical dit</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#fde68a]">Faical Arrayah dit</span>
           </div>
           <p className="text-sm text-white leading-5">{pick.prediction}</p>
         </div>
