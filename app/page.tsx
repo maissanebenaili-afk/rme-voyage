@@ -36,6 +36,7 @@ import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts,
 import SmartPacking from '@/components/SmartPacking';
 import NewsletterSection from '@/components/NewsletterSection';
 import FaicalWidget from '@/components/FaicalWidget';
+import TVWidget from '@/components/TVWidget';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -354,6 +355,11 @@ export default function Home() {
           <div className="mt-6">
             <FaicalWidget />
           </div>
+
+          {/* TV Gratuite */}
+          <div className="mt-6">
+            <TVWidget />
+          </div>
         </div>
       </section>
 
@@ -399,6 +405,7 @@ export default function Home() {
                 <li>Smart Packing IA</li>
                 <li>Assistant Hadak IA</li>
                 <li>Pronos Faical Arrayah ⚽</li>
+                <li>TV Gratuite — 20+ chaînes</li>
               </ul>
             </div>
             <div>
