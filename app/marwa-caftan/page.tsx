@@ -150,7 +150,7 @@ function CaftanCard({ c }: { c: Caftan }) {
   );
 
   return (
-    <div className={`group relative rounded-3xl border overflow-hidden transition hover:-translate-y-1 hover:shadow-xl ${!c.dispo ? 'opacity-60' : 'border-[#e2d5c0]'}`}>
+    <div className={`group relative rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${!c.dispo ? 'opacity-60' : 'border-[#e2d5c0]'}`}>
       {/* Visuel du modèle */}
       <div className="relative h-72 overflow-hidden bg-[#f4ece0]">
         <CaftanVisual caftan={c} view="face" variant="card" />
@@ -169,7 +169,7 @@ function CaftanCard({ c }: { c: Caftan }) {
 
         <button onClick={() => setLiked(v => !v)}
           aria-label={liked ? `Retirer ${c.name} des favoris` : `Ajouter ${c.name} aux favoris`}
-          className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45">
+          className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full bg-black/25 text-white backdrop-blur-sm transition-all duration-200 hover:bg-black/50 hover:scale-110">
           <Heart size={14} fill={liked ? 'white' : 'none'} />
         </button>
 
@@ -198,10 +198,11 @@ function CaftanCard({ c }: { c: Caftan }) {
         </div>
 
         <div className="mt-2 flex flex-wrap gap-1">
-          {c.occasion.map((o) => (
+          {c.occasion.map((o, idx) => (
             <span
               key={o}
-              className="rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-semibold text-[#b45309]"
+              className="rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-semibold text-[#b45309] transition-all duration-200 hover:bg-[#fde68a] hover:scale-105 animate-in fade-in duration-300"
+              style={{ transitionDelay: `${idx * 50}ms` }}
             >
               {o}
             </span>
@@ -216,9 +217,9 @@ function CaftanCard({ c }: { c: Caftan }) {
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#c9903a] py-2.5 text-sm font-extrabold text-white transition hover:bg-[#a8741e]"
+          className="group mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#c9903a] py-2.5 text-sm font-extrabold text-white shadow-lg shadow-[#c9903a]/20 transition-all duration-300 hover:bg-[#a8741e] hover:shadow-xl hover:shadow-[#c9903a]/30 hover:scale-105"
         >
-          <MessageCircle size={14} />
+          <MessageCircle size={14} className="transition-transform group-hover:scale-110" />
           Demander des informations
         </a>
       </div>
@@ -267,9 +268,9 @@ export default function MarwaCaftan() {
             </div>
             <button
               onClick={() => setAgent(true)}
-              className="flex shrink-0 items-center gap-2 rounded-2xl bg-[#c9903a] px-5 py-3.5 font-extrabold text-[#0f1f3d] shadow-lg transition hover:bg-[#fde68a]"
+              className="group flex shrink-0 items-center gap-2 rounded-2xl bg-[#c9903a] px-5 py-3.5 font-extrabold text-[#0f1f3d] shadow-lg shadow-[#c9903a]/40 transition-all duration-300 hover:bg-[#fde68a] hover:shadow-xl hover:shadow-[#c9903a]/50 hover:scale-105"
             >
-              <Sparkles size={16} />
+              <Sparkles size={16} className="transition-transform group-hover:scale-110" />
               Me faire conseiller
             </button>
           </div>
@@ -334,11 +335,12 @@ export default function MarwaCaftan() {
         <div className="mb-6">
           <p className="mb-3 text-sm font-bold text-[#0f1f3d]">Filtrer par occasion</p>
           <div className="flex flex-wrap gap-2">
-            {OCCASIONS.map((o) => (
+            {OCCASIONS.map((o, idx) => (
               <button
                 key={o}
                 onClick={() => setFilter(o)}
-                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${filter === o ? 'bg-[#c9903a] text-white' : 'border border-[#e2d5c0] bg-white text-[#64748b] hover:border-[#c9903a]/50'}`}
+                className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-300 animate-in fade-in slide-in-from-left-4 ${filter === o ? 'bg-[#c9903a] text-white shadow-lg shadow-[#c9903a]/30' : 'border border-[#e2d5c0] bg-white text-[#64748b] hover:border-[#c9903a]/50 hover:shadow-sm'}`}
+                style={{ transitionDelay: `${idx * 50}ms` }}
               >
                 {o}
               </button>
