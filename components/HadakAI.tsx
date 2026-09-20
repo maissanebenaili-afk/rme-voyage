@@ -26,6 +26,7 @@ import {
   Mic,
   MicOff,
   Volume2,
+  Trophy,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -63,7 +64,8 @@ type TopicKey =
   | 'family'
   | 'ramadan'
   | 'packing'
-  | 'time';
+  | 'time'
+  | 'football';
 
 /* ------------------------------------------------------------------ */
 /*  Knowledge base                                                     */
@@ -90,6 +92,7 @@ const TOPIC_ICON: Record<TopicKey, typeof Plane> = {
   ramadan: Star,
   packing: Package,
   time: Clock,
+  football: Trophy,
 };
 
 interface Topic {
@@ -298,6 +301,17 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
     },
     followups: ['prayer', 'route', 'weather'],
   },
+  football: {
+    keywords: ['football', 'foot', 'kora', 'lkora', 'wydad', 'raja', 'ittihad', 'difaa', 'botola', 'caf', 'can', 'lions de l\'atlas', 'lions atlas', 'pronostic', 'qui va gagner', 'match', 'ballon', 'ghayrbe7', 'men 3ndo lhaq', 'premier league', 'champions league'],
+    answers: {
+      da: 'Ana Hadak w nf7em f kora dyal Maghrib! Sowlni 3la ay match: "wydad ou raja men 3ndo lhaq?" w ghad n3tik pronostic m3a l-forma dial l-feriq. Botola Pro, Lions de l\'Atlas, CAF — kul haja.',
+      fr: 'Je suis Hadak et je suis le foot marocain ! Pose-moi une question : "Wydad ou Raja ce soir ?" et je te donne un pronostic avec les données de forme. Botola Pro, Lions de l\'Atlas, CAF Champions League — je couvre tout.',
+      en: 'I\'m Hadak and I follow Moroccan football! Ask me: "Wydad or Raja tonight?" and I\'ll give you a prediction with form data. Botola Pro, Atlas Lions, CAF Champions League — I cover it all.',
+      ar: 'أنا حدّاك وأتابع كرة القدم المغربية! اسألني: "من سيفوز: الوداد أم الرجاء؟" وسأعطيك تحليلاً مع بيانات الشكل. البطولة الاحترافية، أسود الأطلس، دوري أبطال إفريقيا — كل شيء.',
+      es: 'Soy Hadak y sigo el fútbol marroquí. Pregúntame: "¿Wydad o Raja esta noche?" y te doy un pronóstico con datos de forma. Botola Pro, Leones del Atlas, CAF Champions League — lo cubro todo.',
+    },
+    followups: ['route', 'cost', 'weather'],
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -345,9 +359,10 @@ const TOPIC_LABELS: Record<TopicKey, Record<Lang, string>> = {
   ramadan: { da: 'Ramdan?', fr: 'Ramadan ?', en: 'Ramadan?', ar: 'رمضان؟', es: '¿Ramadán?' },
   packing: { da: 'Packing?', fr: 'Bagage ?', en: 'Packing?', ar: 'الحقائب؟', es: '¿Equipaje?' },
   time: { da: 'L\'wa9t?', fr: 'Heure ?', en: 'Time?', ar: 'الوقت؟', es: '¿Hora?' },
+  football: { da: 'Kora?', fr: 'Football ?', en: 'Football?', ar: 'كرة القدم؟', es: '¿Fútbol?' },
 };
 
-const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'documents', 'ramadan'];
+const DEFAULT_SUGGESTIONS: TopicKey[] = ['route', 'prayer', 'ferry', 'cost', 'documents', 'football'];
 
 /* ------------------------------------------------------------------ */
 /*  Answer finder                                                      */
