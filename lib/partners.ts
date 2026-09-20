@@ -1,4 +1,6 @@
+// Marwa Caftan et le traiteur Afarah Nassim sont la même entité : même contact.
 export const MARWA_WHATSAPP = '33782722869';
+export const MARWA_PHONE = '+33782722869';
 
 export function whatsappLink(phone: string, message: string) {
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
