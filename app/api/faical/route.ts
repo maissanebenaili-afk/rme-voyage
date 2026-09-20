@@ -2,15 +2,20 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = 21600; // 6 hours
 
-type SportsDBEvent = {
+type SportsDBLastEvent = {
+  idHomeTeam: string;
+  idAwayTeam: string;
+  intHomeScore?: string;
+  intAwayScore?: string;
+};
+
+type SportsDBFixture = {
   idEvent: string;
   strHomeTeam: string;
   strAwayTeam: string;
-  intHomeScore?: string;
-  intAwayScore?: string;
   dateEvent: string;
-  strTime: string;
-  strLeague: string;
+  strTime?: string;
+  strLeague?: string;
 };
 
 type SportsDBTeam = { idTeam: string; strTeam: string };
@@ -38,21 +43,17 @@ async function getTeamForm(teamId: string): Promise<FormEntry> {
       { next: { revalidate: 3600 } }
     );
     const data = await res.json();
-    const events: SportsDBEvent[] = data?.results ?? [];
+    const events: SportsDBLastEvent[] = data?.results ?? [];
     const last5 = events.slice(0, 5);
-    const form = last5.map((e) => {
-      const home = parseInt(e.strHomeTeam === '' ? '0' : '0');
-      void home;
-      return { home: e.strHomeTeam, away: e.strAwayTeam, hs: parseInt(e.intHomeScore ?? '0'), as: parseInt(e.intAwayScore ?? '0'), id: teamId };
-    });
     let w = 0, d = 0, l = 0;
     const letters: string[] = [];
-    for (const m of form) {
-      const myScore = m.id === teamId ? m.hs : m.as;
-      const oppScore = m.id === teamId ? m.as : m.hs;
-      if (myScore > oppScore) { w++; letters.push('W'); }
+    for (const e of last5) {
+      const isHome = e.idHomeTeam === teamId;
+      const myScore  = parseInt(isHome ? (e.intHomeScore ?? '0') : (e.intAwayScore ?? '0'));
+      const oppScore = parseInt(isHome ? (e.intAwayScore ?? '0') : (e.intHomeScore ?? '0'));
+      if (myScore > oppScore)       { w++; letters.push('W'); }
       else if (myScore === oppScore) { d++; letters.push('D'); }
-      else { l++; letters.push('L'); }
+      else                           { l++; letters.push('L'); }
     }
     return { w, d, l, last5: letters.join('') };
   } catch {
@@ -112,13 +113,12 @@ export type FaicalPick = {
 
 export async function GET() {
   try {
-    // Fetch upcoming Botola Pro fixtures (league 1159)
     const fixtRes = await fetch(
       'https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=1159',
       { next: { revalidate: 21600 } }
     );
     const fixtData = await fixtRes.json();
-    const events: SportsDBEvent[] = fixtData?.events ?? [];
+    const events: SportsDBFixture[] = fixtData?.events ?? [];
     const top3 = events.slice(0, 3);
 
     if (top3.length === 0) {

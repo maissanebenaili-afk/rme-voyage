@@ -36,6 +36,9 @@ import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts,
 import SmartPacking from '@/components/SmartPacking';
 import NewsletterSection from '@/components/NewsletterSection';
 import FaicalWidget from '@/components/FaicalWidget';
+import TVWidget from '@/components/TVWidget';
+import MarwaCaftanWidget from '@/components/MarwaCaftanWidget';
+import ServicesProWidget from '@/components/ServicesProWidget';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -197,6 +200,7 @@ export default function Home() {
                 { label: '🕌 Prières à Marrakech', msg: 'Horaires de prière à Marrakech' },
                 { label: '💶 Taux dirham', msg: 'Combien vaut 100 euros en dirhams ?' },
                 { label: '⛴️ Ferry Algeciras', msg: 'Ferry Algeciras Tanger' },
+                { label: '⚽ Wydad ce soir ?', msg: 'Qui va gagner le match Wydad ce soir ?' },
               ].map(({ label, msg }) => (
                 <button
                   key={msg}
@@ -353,6 +357,31 @@ export default function Home() {
           <div className="mt-6">
             <FaicalWidget />
           </div>
+
+          {/* TV Gratuite */}
+          <div className="mt-6">
+            <TVWidget />
+          </div>
+        </div>
+      </section>
+
+      {/* Boutiques & Services Section */}
+      <section className="py-16 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#b45309]">Boutiques & Services</p>
+            <h2 className="mt-3 font-[family-name:var(--font-jakarta)] text-3xl font-extrabold tracking-tight text-[#0f1f3d] sm:text-4xl">
+              Le Maroc jusqu'à votre porte
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-[#475569]">
+              Caftans, traiteurs, mobilité et garages — des partenaires vérifiés de la France jusqu'au Maroc.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-2 lg:items-start">
+            <MarwaCaftanWidget />
+            <ServicesProWidget />
+          </div>
         </div>
       </section>
 
@@ -398,6 +427,9 @@ export default function Home() {
                 <li>Smart Packing IA</li>
                 <li>Assistant Hadak IA</li>
                 <li>Pronos Faical Arrayah ⚽</li>
+                <li>TV Gratuite — 20+ chaînes</li>
+                <li><Link href="/marwa-caftan" className="hover:text-white">Marwa Caftan — Location & Vente 👗</Link></li>
+                <li>Traiteurs · Mobilité · Garages</li>
               </ul>
             </div>
             <div>
