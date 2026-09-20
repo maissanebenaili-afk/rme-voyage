@@ -75,10 +75,17 @@ export default function BoutiquePage() {
             </p>
           </Reveal>
           <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
-            <InspirationImage
-              image={INSPIRATION_IMAGES.caftan}
-              caption="Photos d’inspiration — modèles non contractuels."
-            />
+            <div className="rounded-3xl border border-[#e2d5c0] bg-[#f7f1e7] p-6 text-[#0f1f3d]">
+              <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
+                Marwa Caftan
+              </p>
+              <p className="mt-3 text-sm leading-6 text-[#64748b]">
+                Les styles, modèles et disponibilités sont présentés à titre indicatif et confirmés directement avec le partenaire.
+              </p>
+              <p className="mt-4 text-xs font-semibold text-[#8a6a3c]">
+                Photos d’inspiration — modèles non contractuels.
+              </p>
+            </div>
             <Reveal delay={90}>
               <MarwaCaftanWidget />
             </Reveal>

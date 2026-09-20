@@ -14,12 +14,14 @@ describe('partner inspiration images', () => {
     expect(INSPIRATION_IMAGES.delivery.licenseUrl).toBe('https://creativecommons.org/publicdomain/zero/1.0/');
   });
 
-  it('keeps caftan images explicitly non-contractual', () => {
-    for (const file of ['app/boutique/page.tsx', 'app/marwa-caftan/page.tsx']) {
-      const source = fs.readFileSync(path.join(__dirname, '..', file), 'utf-8');
-      expect(source).toContain('Photos d’inspiration — modèles non contractuels.');
-      expect(source).toContain('INSPIRATION_IMAGES.caftan');
-    }
+  it('does not associate a generic inspiration image with named caftan styles', () => {
+    const boutique = fs.readFileSync(path.join(__dirname, '..', 'app/boutique/page.tsx'), 'utf-8');
+    const catalog = fs.readFileSync(path.join(__dirname, '..', 'app/marwa-caftan/page.tsx'), 'utf-8');
+
+    expect(boutique).toContain('Photos d’inspiration — modèles non contractuels.');
+    expect(boutique).not.toContain('INSPIRATION_IMAGES.caftan');
+    expect(catalog).not.toContain('INSPIRATION_IMAGES.caftan');
+    expect(catalog).toContain('Modèle et détails à confirmer avec Marwa.');
   });
 
   it('uses stable dimensions and responsive sizing for visual stability', () => {

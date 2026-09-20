@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -18,8 +17,6 @@ import {
   Calendar,
 } from 'lucide-react';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
-import InspirationImage from '@/components/InspirationImage';
-import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
 
 type Caftan = {
   id: string;
@@ -279,20 +276,19 @@ function CaftanCard({ c }: { c: Caftan }) {
     <div
       className={`group relative rounded-3xl border overflow-hidden transition hover:-translate-y-1 hover:shadow-xl border-[#e2d5c0]`}
     >
-      <div className="relative h-48 bg-[#6b1a2e]">
-        <Image
-          src={INSPIRATION_IMAGES.caftan.src}
-          alt={`Photo d’inspiration de tenue de cérémonie — ne représente pas le caftan ${c.name}`}
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover"
-        />
+      <div className="relative border-b border-[#e2d5c0] bg-[#f7f1e7] px-4 py-3">
+        <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#8a6a3c]">
+          Style de présentation
+        </p>
+        <p className="mt-1 text-xs leading-5 text-[#64748b]">
+          Modèle et détails à confirmer avec Marwa.
+        </p>
         <button
           onClick={() => setLiked((v) => !v)}
           aria-label={liked ? `Retirer Caftan ${c.name} des favoris` : `Ajouter Caftan ${c.name} aux favoris`}
-          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition hover:bg-white/40"
+          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full border border-[#e2d5c0] bg-white text-[#8a6a3c] transition hover:border-[#c9903a]"
         >
-          <Heart size={14} fill={liked ? 'white' : 'none'} />
+          <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
         </button>
       </div>
 
@@ -437,13 +433,6 @@ export default function MarwaCaftan() {
             ))}
           </div>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-5 pt-10 sm:px-8">
-        <InspirationImage
-          image={INSPIRATION_IMAGES.caftan}
-          caption="Photos d’inspiration — modèles non contractuels. Elles ne représentent pas le catalogue officiel Marwa Caftan."
-        />
       </section>
 
       {/* Catalog */}
