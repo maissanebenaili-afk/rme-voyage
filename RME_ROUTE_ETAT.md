@@ -175,6 +175,12 @@ Date : 2026-09-11 (v1.3.0 — CI GitHub Actions, rate limiting, durcissement COR
 - Les promesses de livraison, annuaire vérifié, audience et départs de colis non confirmées ont été retirées de la page Boutique ; les parcours de découverte et de contact restent disponibles.
 - Aucune photo tierce n’est ajoutée sans URL source et licence vérifiable. Les visuels actuels des pages partenaires sont des illustrations CSS internes.
 
+## Visuels d’inspiration documentés (2026-09-20, branche `vercel-agent/boutique-faical-honesty`)
+
+- Boutique, Marwa Caftan et Afarah Nassim utilisent maintenant des visuels d’ambiance externes avec crédit et lien de licence visibles. Les caftans sont explicitement indiqués « Photos d’inspiration — modèles non contractuels ».
+- Sources : Unsplash License (`https://unsplash.com/license`) pour les photos d’ambiance et Wikimedia Commons `Delivery_truck.svg` sous CC0 (`https://creativecommons.org/publicdomain/zero/1.0/`) pour les colis.
+- Les images ont des dimensions fixes et `sizes` responsive via `next/image`, afin de limiter le layout shift.
+
 ## Source de vérité
 Le dépôt GitHub est la source de vérité technique. Les modifications doivent :
 - Partir de ce dépôt

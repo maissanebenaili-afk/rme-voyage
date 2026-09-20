@@ -17,6 +17,8 @@ import {
   Calendar,
 } from 'lucide-react';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
+import InspirationImage from '@/components/InspirationImage';
+import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
 
 type Caftan = {
   id: string;
@@ -427,6 +429,13 @@ export default function MarwaCaftan() {
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 pt-10 sm:px-8">
+        <InspirationImage
+          image={INSPIRATION_IMAGES.caftan}
+          caption="Photos d’inspiration — modèles non contractuels. Elles ne représentent pas le catalogue officiel Marwa Caftan."
+        />
       </section>
 
       {/* Catalog */}

@@ -6,6 +6,8 @@ import ServicesProWidget from '@/components/ServicesProWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
+import InspirationImage from '@/components/InspirationImage';
+import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
 
 const RUBRIQUES = [
   { href: '#caftan', label: '👗 Caftans' },
@@ -72,9 +74,15 @@ export default function BoutiquePage() {
               directement au partenaire.
             </p>
           </Reveal>
-          <Reveal className="mt-8 max-w-2xl" delay={90}>
-            <MarwaCaftanWidget />
-          </Reveal>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+            <InspirationImage
+              image={INSPIRATION_IMAGES.caftan}
+              caption="Photos d’inspiration — modèles non contractuels."
+            />
+            <Reveal delay={90}>
+              <MarwaCaftanWidget />
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -92,9 +100,15 @@ export default function BoutiquePage() {
               transition — en cabinet comme à distance.
             </p>
           </Reveal>
-          <Reveal className="mt-8 max-w-2xl" delay={90}>
-            <MouniaWidget />
-          </Reveal>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+            <InspirationImage
+              image={INSPIRATION_IMAGES.wellness}
+              caption="Photo d’ambiance — elle ne représente pas une prestation Belisamae."
+            />
+            <Reveal delay={90}>
+              <MouniaWidget />
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -112,9 +126,15 @@ export default function BoutiquePage() {
               vers le Maroc et demandez les conditions au professionnel concerné.
             </p>
           </Reveal>
-          <Reveal className="mt-8" delay={90}>
-            <ColisWidget />
-          </Reveal>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+            <InspirationImage
+              image={INSPIRATION_IMAGES.delivery}
+              caption="Illustration d’ambiance — elle ne représente pas un transporteur partenaire."
+            />
+            <Reveal delay={90}>
+              <ColisWidget />
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -132,9 +152,15 @@ export default function BoutiquePage() {
               professionnels disponibles.
             </p>
           </Reveal>
-          <Reveal className="mt-8" delay={90}>
-            <ServicesProWidget />
-          </Reveal>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+            <InspirationImage
+              image={INSPIRATION_IMAGES.services}
+              caption="Photo d’ambiance — elle ne représente pas un professionnel référencé."
+            />
+            <Reveal delay={90}>
+              <ServicesProWidget />
+            </Reveal>
+          </div>
         </div>
       </section>
 

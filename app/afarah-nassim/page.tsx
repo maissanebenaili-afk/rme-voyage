@@ -14,6 +14,8 @@ import {
   Utensils,
 } from 'lucide-react';
 import { MARWA_PHONE, MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
+import InspirationImage from '@/components/InspirationImage';
+import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
 
 type Formule = {
   id: string;
@@ -245,6 +247,12 @@ export default function AfarahNassimPage() {
 
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <div className="mb-10 max-w-xl">
+            <InspirationImage
+              image={INSPIRATION_IMAGES.catering}
+              caption="Photo culinaire d’ambiance — elle ne représente pas un menu ou une prestation Afarah Nassim."
+            />
+          </div>
           <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
             Nos formules
           </p>
