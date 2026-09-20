@@ -22,7 +22,7 @@ export interface Property {
   contact_whatsapp: string;
 }
 
-export const IDOUR_WHATSAPP = '+212 6XX XXX XXXX'; // Will be configured
+export const IDOUR_WHATSAPP = '33769200297'; // HiDOUR Immobilier — WhatsApp
 
 export const PROPERTIES: Property[] = [
   {
