@@ -7,41 +7,9 @@ import {
   Star, ChevronRight, ArrowLeft, Heart, Tag, Calendar,
 } from 'lucide-react';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
-
-type Caftan = {
-  id: string;
-  name: string;
-  style: string;
-  color: string;
-  gradient: string;
-  prixLocation: number;
-  prixVente: number;
-  caution: number;
-  tailles: string[];
-  occasion: string[];
-  stars: number;
-  avis: number;
-  dispo: boolean;
-};
-
-const CAFTANS: Caftan[] = [
-  { id: 'c1',  name: 'Zahia',        style: 'Broderie dorée',        color: '#6b1a2e', gradient: 'from-[#6b1a2e] to-[#a0344a]', prixLocation: 150, prixVente: 850,  caution: 200, tailles: ['S','M','L'],    occasion: ['Mariage','Fiançailles'],  stars: 5, avis: 12, dispo: true  },
-  { id: 'c2',  name: 'Nour',         style: 'Perles & soie',         color: '#e8dcc8', gradient: 'from-[#bfa882] to-[#e8dcc8]', prixLocation: 200, prixVente: 1200, caution: 300, tailles: ['XS','S','M'],  occasion: ['Mariage'],                stars: 5, avis: 8,  dispo: true  },
-  { id: 'c3',  name: 'Malika',       style: 'Velours vert émeraude', color: '#1a5c3a', gradient: 'from-[#1a5c3a] to-[#2d9d62]', prixLocation: 180, prixVente: 950,  caution: 250, tailles: ['M','L','XL'],  occasion: ['Mariage','Soirée'],       stars: 5, avis: 15, dispo: true  },
-  { id: 'c4',  name: 'Amira',        style: 'Rose poudré brodé',     color: '#d4829a', gradient: 'from-[#c4607a] to-[#e8a8ba]', prixLocation: 130, prixVente: 720,  caution: 180, tailles: ['XS','S','M','L'], occasion: ['Fiançailles','Baptême'], stars: 4, avis: 6,  dispo: true  },
-  { id: 'c5',  name: 'Yasmine',      style: 'Doré palace',           color: '#c9903a', gradient: 'from-[#8a5c10] to-[#c9903a]', prixLocation: 220, prixVente: 1500, caution: 350, tailles: ['S','M'],       occasion: ['Mariage'],                stars: 5, avis: 20, dispo: false },
-  { id: 'c6',  name: 'Fatima Zahra', style: 'Bleu roi & argent',     color: '#1e3a8a', gradient: 'from-[#1e3a8a] to-[#3b82f6]', prixLocation: 120, prixVente: 650,  caution: 160, tailles: ['S','M','L','XL'], occasion: ['Soirée','Mariage'],      stars: 4, avis: 9,  dispo: true  },
-  { id: 'c7',  name: 'Siham',        style: 'Noir & broderie argent',color: '#1a1a2e', gradient: 'from-[#1a1a2e] to-[#4a4a6a]', prixLocation: 160, prixVente: 900,  caution: 220, tailles: ['XS','S','M'],  occasion: ['Soirée','Gala'],          stars: 5, avis: 11, dispo: true  },
-  { id: 'c8',  name: 'Houda',        style: 'Turquoise & or',        color: '#0d6e6e', gradient: 'from-[#0d6e6e] to-[#2ab5b5]', prixLocation: 140, prixVente: 780,  caution: 200, tailles: ['M','L'],       occasion: ['Baptême','Fiançailles'],  stars: 4, avis: 7,  dispo: true  },
-  { id: 'c9',  name: 'Karima',       style: 'Prune & dentelle',      color: '#5b1e6e', gradient: 'from-[#5b1e6e] to-[#9c4dc4]', prixLocation: 170, prixVente: 920,  caution: 230, tailles: ['S','M','L'],   occasion: ['Mariage','Soirée'],       stars: 5, avis: 14, dispo: true  },
-  { id: 'c10', name: 'Zainab',       style: 'Ivoire & corail',       color: '#c97a5a', gradient: 'from-[#c97a5a] to-[#e8b898]', prixLocation: 135, prixVente: 750,  caution: 180, tailles: ['XS','S','M','L'], occasion: ['Fiançailles','Baptême'], stars: 4, avis: 5,  dispo: true  },
-  { id: 'c11', name: 'Samira',       style: 'Rouge grenat luxe',     color: '#7c1d1d', gradient: 'from-[#7c1d1d] to-[#c44040]', prixLocation: 195, prixVente: 1100, caution: 270, tailles: ['S','M'],       occasion: ['Mariage'],                stars: 5, avis: 18, dispo: true  },
-  { id: 'c12', name: 'Layla',        style: 'Lavande & cristaux',    color: '#7c6b9e', gradient: 'from-[#4a3a7e] to-[#9e8ec4]', prixLocation: 145, prixVente: 800,  caution: 200, tailles: ['XS','S','M'],  occasion: ['Soirée','Fiançailles'],   stars: 4, avis: 10, dispo: true  },
-];
-
-const OCCASIONS = ['Toutes', 'Mariage', 'Fiançailles', 'Soirée', 'Baptême', 'Gala'];
-
-type Mode = 'location' | 'vente';
+import { CAFTANS, OCCASIONS, CONDITIONS, type Caftan, type Mode } from '@/lib/caftans';
+import CaftanVisual, { isIllustration } from '@/components/caftan/CaftanVisual';
+import CaftanMarketplace from '@/components/caftan/CaftanMarketplace';
 
 type AgentStep = 'occasion' | 'budget' | 'taille' | 'result';
 
@@ -117,7 +85,9 @@ function AgentChat({ onClose }: { onClose: () => void }) {
               <div className="space-y-2">
                 {recommend.map(c => (
                   <div key={c.id} className="flex items-center gap-3 rounded-2xl bg-white/5 border border-white/10 p-3">
-                    <div className={`h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br ${c.gradient}`} />
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl">
+                      <CaftanVisual caftan={c} view="face" variant="thumb" />
+                    </div>
                     <div className="min-w-0">
                       <p className="font-bold text-white text-sm">Caftan {c.name}</p>
                       <p className="text-xs text-white/60">{c.style} · {c.prixLocation}€/sem</p>
@@ -153,20 +123,38 @@ function CaftanCard({ c, mode }: { c: Caftan; mode: Mode }) {
 
   return (
     <div className={`group relative rounded-3xl border overflow-hidden transition hover:-translate-y-1 hover:shadow-xl ${!c.dispo ? 'opacity-60' : 'border-[#e2d5c0]'}`}>
-      {/* Color swatch */}
-      <div className={`relative h-48 bg-gradient-to-br ${c.gradient} flex items-end p-4`}>
+      {/* Visuel du modèle */}
+      <div className="relative h-72 overflow-hidden bg-[#f4ece0]">
+        <CaftanVisual caftan={c} view="face" variant="card" />
+
+        <Link
+          href={`/marwa-caftan/${c.id}`}
+          aria-label={`Voir le caftan ${c.name}`}
+          className="absolute inset-0"
+        />
+
         {!c.dispo && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40">
             <span className="rounded-full bg-black/60 px-4 py-2 text-xs font-black text-white">Indisponible</span>
           </div>
         )}
+
         <button onClick={() => setLiked(v => !v)}
-          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition hover:bg-white/40">
+          aria-label={liked ? `Retirer ${c.name} des favoris` : `Ajouter ${c.name} aux favoris`}
+          className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45">
           <Heart size={14} fill={liked ? 'white' : 'none'} />
         </button>
-        {c.stars === 5 && (
-          <span className="rounded-full bg-[#c9903a] px-2.5 py-1 text-[10px] font-black text-[#0f1f3d]">⭐ Coup de cœur</span>
-        )}
+
+        <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-1.5">
+          {c.stars === 5 && (
+            <span className="rounded-full bg-[#c9903a] px-2.5 py-1 text-[10px] font-black text-[#0f1f3d]">⭐ Coup de cœur</span>
+          )}
+          {isIllustration(c) && (
+            <span className="rounded-full bg-black/45 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white/85 backdrop-blur-sm">
+              Illustration
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Info */}
@@ -332,15 +320,18 @@ export default function MarwaCaftan() {
             <div>
               <h2 className="font-black text-white mb-2">Caution & paiement sécurisés</h2>
               <ul className="space-y-1 text-sm text-white/70">
-                <li className="flex items-center gap-2"><ChevronRight size={14} className="text-[#c9903a]" /> Caution versée par virement au moment de la réservation</li>
-                <li className="flex items-center gap-2"><ChevronRight size={14} className="text-[#c9903a]" /> Restituée sous 48h après retour du caftan en bon état</li>
-                <li className="flex items-center gap-2"><ChevronRight size={14} className="text-[#c9903a]" /> Livraison Colissimo suivi · Frais de port 12€ aller–retour</li>
-                <li className="flex items-center gap-2"><ChevronRight size={14} className="text-[#c9903a]" /> Retouches incluses si commande 10j à l'avance</li>
+                {CONDITIONS.map(cond => (
+                  <li key={cond} className="flex items-center gap-2">
+                    <ChevronRight size={14} className="shrink-0 text-[#c9903a]" /> {cond}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
       </section>
+
+      <CaftanMarketplace />
 
       {/* Footer strip */}
       <div className="bg-[#0f1f3d] px-5 py-6 text-center text-xs text-white/40">
