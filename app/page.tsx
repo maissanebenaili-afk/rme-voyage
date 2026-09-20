@@ -457,7 +457,7 @@ export default function Home() {
                 <li>Calculateur Zakat</li>
                 <li>Smart Packing IA</li>
                 <li>Assistant Hadak IA</li>
-                <li>Pronos Faical Arrayah ⚽</li>
+                <li>Pronos de Faical ⚽</li>
                 <li>TV Gratuite — 20+ chaînes</li>
                 <li><Link href="/marwa-caftan" className="hover:text-white">Marwa Caftan — Location & Vente 👗</Link></li>
                 <li>Traiteurs · Mobilité · Garages</li>

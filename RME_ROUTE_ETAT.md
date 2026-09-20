@@ -162,6 +162,25 @@ historiques ne constituent pas une preuve de publication actuelle.
 
 Date : 2026-09-11 (v1.3.0 — CI GitHub Actions, rate limiting, durcissement CORS/CSP)
 
+## Catalogues partenaires fiabilisés (2026-09-20, branche `vercel-agent/honest-partner-catalogs`)
+
+- Marwa Caftan et Afarah Nassim conservent leurs parcours de contact direct (WhatsApp/téléphone) et leurs catégories, mais affichent désormais les tarifs, disponibilités, conditions et devis comme à confirmer avec le partenaire.
+- Les visuels actuels de Marwa sont des gradients CSS générés dans le code, sans image tierce à licencier. Les futures photos officielles doivent être ajoutées avec leur source et leur autorisation.
+- L’annuaire Services Pro ne conserve qu’Afarah Nassim comme profil à confirmer ; les autres entrées non vérifiées deviennent des emplacements neutres ou des états indisponibles.
+- Régression couverte par `__tests__/partnerCatalogs.test.ts`.
+
+## Faical et Boutique — libellés vérifiés (2026-09-20, branche `vercel-agent/boutique-faical-honesty`)
+
+- Le nom affiché et les textes de génération des pronostics utilisent uniquement « Faical ». Le lien de pari placeholder a été retiré : aucun lien affilié ni partenariat de pari n’est affiché.
+- Les promesses de livraison, annuaire vérifié, audience et départs de colis non confirmées ont été retirées de la page Boutique ; les parcours de découverte et de contact restent disponibles.
+- Aucune photo tierce n’est ajoutée sans URL source et licence vérifiable. Les visuels actuels des pages partenaires sont des illustrations CSS internes.
+
+## Visuels d’inspiration documentés (2026-09-20, branche `vercel-agent/boutique-faical-honesty`)
+
+- Boutique, Marwa Caftan et Afarah Nassim utilisent maintenant des visuels d’ambiance externes avec crédit et lien de licence visibles. Les caftans sont explicitement indiqués « Photos d’inspiration — modèles non contractuels ».
+- Sources : Unsplash License (`https://unsplash.com/license`) pour les photos d’ambiance et Wikimedia Commons `Delivery_truck.svg` sous CC0 (`https://creativecommons.org/publicdomain/zero/1.0/`) pour les colis.
+- Les images ont des dimensions fixes et `sizes` responsive via `next/image`, afin de limiter le layout shift.
+
 ## Source de vérité
 Le dépôt GitHub est la source de vérité technique. Les modifications doivent :
 - Partir de ce dépôt

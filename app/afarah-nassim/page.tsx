@@ -3,9 +3,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  ArrowLeft, ChefHat, Phone, MessageCircle, MapPin, Users, Star, Check, Utensils,
+  ArrowLeft,
+  ChefHat,
+  Phone,
+  MessageCircle,
+  MapPin,
+  Users,
+  Star,
+  Check,
+  Utensils,
 } from 'lucide-react';
 import { MARWA_PHONE, MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
+import InspirationImage from '@/components/InspirationImage';
+import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
 
 type Formule = {
   id: string;
@@ -13,8 +23,6 @@ type Formule = {
   occasion: string;
   desc: string;
   plats: string[];
-  parPersonne: number;
-  minConvives: number;
   gradient: string;
   populaire?: boolean;
 };
@@ -22,12 +30,17 @@ type Formule = {
 const FORMULES: Formule[] = [
   {
     id: 'mariage',
-    nom: 'Grand Mariage',
+    nom: 'Mariage',
     occasion: 'Mariage',
-    desc: 'Le service complet d\'un mariage marocain : entrées, pastilla, tajines, méchoui et pâtisseries.',
-    plats: ['Assortiment de salades marocaines', 'Pastilla au poulet et aux amandes', 'Méchoui ou tajine au choix', 'Couscous royal', 'Cornes de gazelle & briouates', 'Thé à la menthe à volonté'],
-    parPersonne: 42,
-    minConvives: 80,
+    desc: "Le service complet d'un mariage marocain : entrées, pastilla, tajines, méchoui et pâtisseries.",
+    plats: [
+      'Assortiment de salades marocaines',
+      'Pastilla au poulet et aux amandes',
+      'Méchoui ou tajine au choix',
+      'Couscous royal',
+      'Cornes de gazelle & briouates',
+      'Thé à la menthe à volonté',
+    ],
     gradient: 'from-[#7a1f2e] to-[#b8455a]',
     populaire: true,
   },
@@ -36,9 +49,13 @@ const FORMULES: Formule[] = [
     nom: 'Fiançailles',
     occasion: 'Fiançailles',
     desc: 'Une table élégante et généreuse pour la demande et la cérémonie du henné.',
-    plats: ['Salades et mezzés', 'Pastilla au poisson', 'Tajine de volaille aux olives', 'Assortiment de pâtisseries', 'Thé et jus frais'],
-    parPersonne: 32,
-    minConvives: 40,
+    plats: [
+      'Salades et mezzés',
+      'Pastilla au poisson',
+      'Tajine de volaille aux olives',
+      'Assortiment de pâtisseries',
+      'Thé et jus frais',
+    ],
     gradient: 'from-[#8a6a1f] to-[#d4af5a]',
   },
   {
@@ -46,9 +63,13 @@ const FORMULES: Formule[] = [
     nom: 'Baptême & Aqiqa',
     occasion: 'Baptême',
     desc: 'Formule familiale et chaleureuse, pensée pour les grandes tablées du dimanche.',
-    plats: ['Rfissa traditionnelle', 'Tajine de veau aux pruneaux', 'Salades variées', 'Sellou et pâtisseries', 'Thé à la menthe'],
-    parPersonne: 26,
-    minConvives: 30,
+    plats: [
+      'Rfissa traditionnelle',
+      'Tajine de veau aux pruneaux',
+      'Salades variées',
+      'Sellou et pâtisseries',
+      'Thé à la menthe',
+    ],
     gradient: 'from-[#1f5c4a] to-[#3d9d7e]',
   },
   {
@@ -56,9 +77,13 @@ const FORMULES: Formule[] = [
     nom: 'Réception & Entreprise',
     occasion: 'Réception',
     desc: 'Buffet froid et chaud, cocktail dînatoire ou plateaux repas pour vos événements.',
-    plats: ['Cocktail dînatoire fusion', 'Mini-pastillas et briouates', 'Plateaux mezzés', 'Buffet sucré', 'Service et vaisselle en option'],
-    parPersonne: 24,
-    minConvives: 20,
+    plats: [
+      'Cocktail dînatoire fusion',
+      'Mini-pastillas et briouates',
+      'Plateaux mezzés',
+      'Buffet sucré',
+      'Service et vaisselle en option',
+    ],
     gradient: 'from-[#2b3a67] to-[#5a74b8]',
   },
 ];
@@ -66,19 +91,27 @@ const FORMULES: Formule[] = [
 const ENGAGEMENTS = [
   { titre: 'Viande halal certifiée', desc: 'Fournisseurs de confiance, traçabilité complète.' },
   { titre: 'Cuisine faite maison', desc: 'Tout est préparé le jour même, rien de surgelé.' },
-  { titre: 'Déplacements France entière', desc: 'Basé en Île-de-France, nous nous déplaçons partout.' },
-  { titre: 'Devis gratuit sous 24 h', desc: 'Un échange, un menu sur mesure, un prix clair.' },
+  {
+    titre: 'Déplacements France entière',
+    desc: 'Basé en Île-de-France, nous nous déplaçons partout.',
+  },
+  {
+    titre: 'Demande de devis',
+    desc: 'Un échange permet de confirmer le menu, le prix et les conditions.',
+  },
 ];
 
 function FormuleCard({ f }: { f: Formule }) {
   const [ouvert, setOuvert] = useState(false);
   const devis = whatsappLink(
     MARWA_WHATSAPP,
-    `Bonjour, je souhaite un devis traiteur Afarah Nassim — formule ${f.nom}`,
+    `Bonjour, je souhaite un devis traiteur Afarah Nassim — formule ${f.nom}`
   );
 
   return (
-    <div className={`overflow-hidden rounded-3xl border bg-white transition hover:shadow-xl ${f.populaire ? 'border-[#c9903a]/60 shadow-lg shadow-[#c9903a]/10' : 'border-[#e7e0d4]'}`}>
+    <div
+      className={`overflow-hidden rounded-3xl border bg-white transition hover:shadow-xl ${f.populaire ? 'border-[#c9903a]/60 shadow-lg shadow-[#c9903a]/10' : 'border-[#e7e0d4]'}`}
+    >
       <div className={`relative h-32 bg-gradient-to-br ${f.gradient} p-5`}>
         {f.populaire && (
           <span className="absolute right-4 top-4 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-[#7a1f2e]">
@@ -88,22 +121,20 @@ function FormuleCard({ f }: { f: Formule }) {
         <span className="rounded-full bg-black/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/90">
           {f.occasion}
         </span>
-        <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">{f.nom}</h3>
+        <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-white">
+          {f.nom}
+        </h3>
       </div>
 
       <div className="p-5">
         <p className="text-sm leading-6 text-[#5c5348]">{f.desc}</p>
 
-        <div className="mt-4 flex items-end gap-2">
-          <span className="font-display text-3xl font-semibold text-[#3a2f24]">{f.parPersonne} €</span>
-          <span className="pb-1 text-xs font-semibold text-[#8a7d6d]">/ personne</span>
-        </div>
-        <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#8a7d6d]">
-          <Users size={11} /> À partir de {f.minConvives} convives
+        <p className="mt-4 flex items-center gap-1.5 text-sm font-bold text-[#8a7d6d]">
+          <Users size={14} /> Tarif et nombre de convives à confirmer sur devis
         </p>
 
         <button
-          onClick={() => setOuvert(v => !v)}
+          onClick={() => setOuvert((v) => !v)}
           aria-expanded={ouvert}
           className="mt-4 w-full rounded-xl border border-[#e7e0d4] py-2 text-xs font-bold text-[#3a2f24] transition hover:border-[#c9903a]/50"
         >
@@ -112,7 +143,7 @@ function FormuleCard({ f }: { f: Formule }) {
 
         {ouvert && (
           <ul className="mt-3 space-y-1.5">
-            {f.plats.map(p => (
+            {f.plats.map((p) => (
               <li key={p} className="flex items-start gap-2 text-xs text-[#5c5348]">
                 <Utensils size={11} className="mt-0.5 shrink-0 text-[#c9903a]" />
                 {p}
@@ -137,7 +168,7 @@ function FormuleCard({ f }: { f: Formule }) {
 export default function AfarahNassimPage() {
   const contactGeneral = whatsappLink(
     MARWA_WHATSAPP,
-    'Bonjour Afarah Nassim, je souhaite des informations pour un événement',
+    'Bonjour Afarah Nassim, je souhaite des informations pour un événement'
   );
 
   return (
@@ -173,7 +204,7 @@ export default function AfarahNassimPage() {
                     ))}
                   </div>
                   <p className="mt-0.5 text-[10px] font-black uppercase tracking-[.18em] text-[#fde68a]">
-                    Partenaire officiel
+                    Profil partenaire à confirmer
                   </p>
                 </div>
               </div>
@@ -216,7 +247,15 @@ export default function AfarahNassimPage() {
 
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Nos formules</p>
+          <div className="mb-10 max-w-xl">
+            <InspirationImage
+              image={INSPIRATION_IMAGES.catering}
+              caption="Photo culinaire d’ambiance — elle ne représente pas un menu ou une prestation Afarah Nassim."
+            />
+          </div>
+          <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
+            Nos formules
+          </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#3a2f24] sm:text-4xl">
             Un menu pour chaque occasion.
           </h2>
@@ -226,7 +265,7 @@ export default function AfarahNassimPage() {
           </p>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {FORMULES.map(f => (
+            {FORMULES.map((f) => (
               <FormuleCard key={f.id} f={f} />
             ))}
           </div>
@@ -239,7 +278,7 @@ export default function AfarahNassimPage() {
             Nos engagements.
           </h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {ENGAGEMENTS.map(e => (
+            {ENGAGEMENTS.map((e) => (
               <div key={e.titre} className="rounded-2xl border border-[#e7e0d4] p-5">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#fdf3e0]">
                   <Check size={18} className="text-[#c9903a]" />
@@ -259,7 +298,7 @@ export default function AfarahNassimPage() {
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-white/65">
             Dites-nous la date, le nombre de convives et l&apos;occasion — vous recevez un menu et
-            un prix clair sous 24 heures.
+            les disponibilités, le menu et les conditions directement avec le partenaire.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a

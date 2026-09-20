@@ -87,7 +87,7 @@ export default function PWAInstall() {
       {/* Main Install Banner */}
       {showBanner && !showIOSInstructions && (
         <div
-          className="fixed bottom-4 left-4 right-4 z-[9999] sm:left-auto sm:right-4 sm:max-w-sm"
+          className="fixed left-4 right-4 top-[max(1rem,env(safe-area-inset-top))] z-[9999] sm:bottom-4 sm:left-auto sm:right-4 sm:top-auto sm:max-w-sm"
           style={{ animation: 'rmeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
         >
           <style>{`

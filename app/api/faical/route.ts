@@ -45,15 +45,24 @@ async function getTeamForm(teamId: string): Promise<FormEntry> {
     const data = await res.json();
     const events: SportsDBLastEvent[] = data?.results ?? [];
     const last5 = events.slice(0, 5);
-    let w = 0, d = 0, l = 0;
+    let w = 0,
+      d = 0,
+      l = 0;
     const letters: string[] = [];
     for (const e of last5) {
       const isHome = e.idHomeTeam === teamId;
-      const myScore  = parseInt(isHome ? (e.intHomeScore ?? '0') : (e.intAwayScore ?? '0'));
+      const myScore = parseInt(isHome ? (e.intHomeScore ?? '0') : (e.intAwayScore ?? '0'));
       const oppScore = parseInt(isHome ? (e.intAwayScore ?? '0') : (e.intHomeScore ?? '0'));
-      if (myScore > oppScore)       { w++; letters.push('W'); }
-      else if (myScore === oppScore) { d++; letters.push('D'); }
-      else                           { l++; letters.push('L'); }
+      if (myScore > oppScore) {
+        w++;
+        letters.push('W');
+      } else if (myScore === oppScore) {
+        d++;
+        letters.push('D');
+      } else {
+        l++;
+        letters.push('L');
+      }
     }
     return { w, d, l, last5: letters.join('') };
   } catch {
@@ -70,7 +79,7 @@ async function generatePrediction(
   const apiKey = process.env.ANTHROPIC_API_KEY ?? process.env.ANTHROPIC_API_CLE ?? '';
   if (!apiKey) return '';
 
-  const prompt = `Tu es Faical Arrayah, le pronostiqueur football le plus charismatique du Maghreb. Tu parles avec confiance, tu es direct, tu donnes UN résultat probable (score ou issue) et UNE raison principale en 2 phrases max. Pas de "peut-être", pas de "difficile à dire" — Faical Arrayah tranche toujours.
+  const prompt = `Tu es Faical, le pronostiqueur football le plus charismatique du Maghreb. Tu parles avec confiance, tu es direct, tu donnes UN résultat probable (score ou issue) et UNE raison principale en 2 phrases max. Pas de "peut-être", pas de "difficile à dire" — Faical tranche toujours.
 
 Match: ${homeTeam} vs ${awayTeam}
 Forme ${homeTeam} (5 derniers): ${homeForm.last5 || 'inconnue'} (${homeForm.w}V ${homeForm.d}N ${homeForm.l}D)
@@ -135,7 +144,12 @@ export async function GET() {
           homeId ? getTeamForm(homeId) : Promise.resolve({ w: 0, d: 0, l: 0, last5: '' }),
           awayId ? getTeamForm(awayId) : Promise.resolve({ w: 0, d: 0, l: 0, last5: '' }),
         ]);
-        const prediction = await generatePrediction(evt.strHomeTeam, evt.strAwayTeam, homeForm, awayForm);
+        const prediction = await generatePrediction(
+          evt.strHomeTeam,
+          evt.strAwayTeam,
+          homeForm,
+          awayForm
+        );
         return {
           id: evt.idEvent,
           homeTeam: evt.strHomeTeam,
