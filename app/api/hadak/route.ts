@@ -369,10 +369,23 @@ export async function POST(req: NextRequest) {
       if (text) return NextResponse.json({ response: text, fallback: false, source: 'anthropic' });
     }
 
-    console.error('[hadak] no provider succeeded');
-    return NextResponse.json({ response: '', fallback: true }, { status: 503 });
+    // No LLM available — return a helpful offline guide instead of an empty response
+    return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true });
   } catch (err) {
     console.error('[hadak] error:', err);
-    return NextResponse.json({ response: '', fallback: true }, { status: 503 });
+    return NextResponse.json({ response: buildOfflineFallback('fr', ''), fallback: true });
   }
+}
+
+// ── Offline fallback — shown when no LLM is reachable ─────────────────────
+function buildOfflineFallback(lang: string, message: string): string {
+  const q = message.trim().length > 0 ? `"${message.slice(0, 60)}${message.length > 60 ? '…' : ''}"` : '';
+  const topics: Record<string, string> = {
+    da: `Ma qdersh njaweb 3la ${q || 'had s-so2al'} bla connexion l-LLM daba.\n\nWalayenni nqder njawbek 3la had l-mawadi3 men gher internet:\n• 🌤️ **T-ta9s** — "chno kayna meteo f Marrakech"\n• 🕌 **Salawat** — "wa9t salat f Taza"\n• 💶 **Sarfa** — "sh7al kaytswwa l-euro b dirham"\n• ⏰ **L-wa9t** — "sh7al l-wa9t f Maghrib"\n• 🚢 **Ferry** — horaires w compagnies\n• 📄 **Watha2i9** — passeport, visa, CIN\n• 📱 **SIM** — forfaits Maroc Telecom, Orange, Inwi\n• ⛽ **Carburant** — prix mazout w essence`,
+    fr: `Je ne peux pas répondre à ${q || 'cette question'} sans connexion LLM pour l'instant.\n\nMais je réponds instantanément à ces sujets sans internet :\n• 🌤️ **Météo** — "quel temps à Agadir ?"\n• 🕌 **Prières** — "horaires de prière à Fès"\n• 💶 **Change** — "combien vaut 100€ en dirhams ?"\n• ⏰ **Heure Maroc** — "quelle heure au Maroc ?"\n• 🚢 **Ferry** — horaires et compagnies\n• 📄 **Documents** — passeport, visa, CIN\n• 📱 **SIM** — forfaits opérateurs marocains\n• ⛽ **Carburant** — prix à la pompe`,
+    en: `I can't answer ${q || 'that question'} without an LLM connection right now.\n\nBut I answer these instantly with no internet needed:\n• 🌤️ **Weather** — "what's the weather in Rabat?"\n• 🕌 **Prayers** — "prayer times in Casablanca"\n• 💶 **Exchange** — "how much is 100€ in dirhams?"\n• ⏰ **Morocco time** — "what time is it in Morocco?"\n• 🚢 **Ferry** — schedules and companies\n• 📄 **Documents** — passport, visa, ID card\n• 📱 **SIM** — Moroccan carrier plans\n• ⛽ **Fuel** — pump prices`,
+    ar: `لا أستطيع الإجابة على ${q || 'هذا السؤال'} بدون اتصال LLM الآن.\n\nلكن أجيب فوراً على هذه المواضيع بدون انترنت:\n• 🌤️ **الطقس** — "كيف الطقس في مراكش؟"\n• 🕌 **أوقات الصلاة** — "مواعيد الصلاة في فاس"\n• 💶 **الصرف** — "كم يساوي 100 يورو بالدرهم؟"\n• ⏰ **توقيت المغرب** — "كم الساعة في المغرب؟"\n• 🚢 **العبارة** — المواعيد والشركات\n• 📄 **الوثائق** — جواز السفر، التأشيرة، البطاقة الوطنية\n• 📱 **الشريحة** — باقات المشغلين المغاربة\n• ⛽ **الوقود** — أسعار المحطات`,
+    es: `No puedo responder a ${q || 'esa pregunta'} sin conexión LLM ahora mismo.\n\nPero respondo al instante sobre estos temas sin internet:\n• 🌤️ **Tiempo** — "¿qué tiempo hace en Agadir?"\n• 🕌 **Oraciones** — "horarios de oración en Fez"\n• 💶 **Cambio** — "¿cuánto vale 100€ en dírhams?"\n• ⏰ **Hora Marruecos** — "¿qué hora es en Marruecos?"\n• 🚢 **Ferry** — horarios y compañías\n• 📄 **Documentos** — pasaporte, visado, DNI\n• 📱 **SIM** — tarifas operadoras marroquíes\n• ⛽ **Combustible** — precios en gasolineras`,
+  };
+  return topics[lang] ?? topics.fr;
 }
