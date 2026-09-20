@@ -128,6 +128,17 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Enforce authentication for trips API
+  if (pathname.startsWith('/api/trips')) {
+    const userId = request.headers.get('x-user-id');
+    if (!userId || userId.length < 10) {
+      return NextResponse.json(
+        { error: 'Unauthorized: X-User-ID header required (min 10 chars)' },
+        { status: 401 }
+      );
+    }
+  }
+
   const isRateLimitedRoute = RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isAiRateLimitedRoute = AI_RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isApiRoute = pathname.startsWith('/api/');

@@ -8,16 +8,10 @@ const mockTrips = Object.create(null) as Record<string, any[]>;
 
 export async function GET(req: NextRequest) {
   try {
+    // Extract userId from middleware-validated X-User-ID header
+    const userId = req.headers.get('x-user-id');
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
     const status = searchParams.get('status'); // planning, ongoing, completed
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
-    }
 
     let filteredTrips: any[] = [];
 
@@ -33,7 +27,7 @@ export async function GET(req: NextRequest) {
       }
       filteredTrips = data || [];
     } else {
-      const userTrips = mockTrips[userId] || [];
+      const userTrips = mockTrips[userId!] || [];
       filteredTrips = status ? userTrips.filter((trip) => trip.status === status) : userTrips;
     }
 
@@ -56,8 +50,10 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
+    // Extract userId from middleware-validated X-User-ID header
+    const userId = req.headers.get('x-user-id');
+
     // Explicitly extract only expected fields to prevent prototype pollution
-    const userId = body.userId as string;
     const origin = body.origin as string;
     const destination = body.destination as string;
     const startDate = body.startDate as string;
@@ -66,9 +62,9 @@ export async function POST(req: NextRequest) {
     const currency = (body.currency as string) || 'USD';
 
     // Validate required fields
-    if (!userId || !origin || !destination || !startDate || !endDate) {
+    if (!origin || !destination || !startDate || !endDate) {
       return NextResponse.json(
-        { error: 'Missing required fields: userId, origin, destination, startDate, endDate' },
+        { error: 'Missing required fields: origin, destination, startDate, endDate' },
         { status: 400 }
       );
     }
@@ -85,7 +81,7 @@ export async function POST(req: NextRequest) {
     }
 
     const newTrip = {
-      user_id: userId,
+      user_id: userId!,
       origin,
       destination,
       start_date: startDate,
@@ -108,7 +104,7 @@ export async function POST(req: NextRequest) {
       const tripId = crypto.randomUUID();
       createdTrip = {
         id: tripId,
-        user_id: userId,
+        user_id: userId!,
         origin,
         destination,
         start_date: startDate,
@@ -119,10 +115,10 @@ export async function POST(req: NextRequest) {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       } as any;
-      if (!mockTrips[userId]) {
-        mockTrips[userId] = [];
+      if (!mockTrips[userId!]) {
+        mockTrips[userId!] = [];
       }
-      mockTrips[userId].push(createdTrip);
+      mockTrips[userId!].push(createdTrip);
     }
 
     return NextResponse.json({
@@ -143,15 +139,17 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
 
+    // Extract userId from middleware-validated X-User-ID header
+    const userId = req.headers.get('x-user-id');
+
     // Explicitly extract only expected fields to prevent prototype pollution
     const tripId = body.tripId as string;
-    const userId = body.userId as string;
     const status = body.status as string | undefined;
     const budgetUsd = body.budgetUsd as number | undefined;
 
-    if (!tripId || !userId) {
+    if (!tripId) {
       return NextResponse.json(
-        { error: 'Trip ID and User ID are required' },
+        { error: 'Trip ID is required' },
         { status: 400 }
       );
     }
@@ -167,7 +165,7 @@ export async function PUT(req: NextRequest) {
         .from('trips')
         .update(updateData)
         .eq('id', tripId)
-        .eq('user_id', userId)
+        .eq('user_id', userId!)
         .select();
 
       if (error) {
@@ -181,7 +179,7 @@ export async function PUT(req: NextRequest) {
 
       updatedTrip = data[0];
     } else {
-      const userTrips = mockTrips[userId] || [];
+      const userTrips = mockTrips[userId!] || [];
       const tripIndex = userTrips.findIndex((t) => t.id === tripId);
 
       if (tripIndex === -1) {
@@ -221,13 +219,14 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    // Extract userId from middleware-validated X-User-ID header
+    const userId = req.headers.get('x-user-id');
     const { searchParams } = new URL(req.url);
     const tripId = searchParams.get('tripId');
-    const userId = searchParams.get('userId');
 
-    if (!tripId || !userId) {
+    if (!tripId) {
       return NextResponse.json(
-        { error: 'Trip ID and User ID are required' },
+        { error: 'Trip ID is required' },
         { status: 400 }
       );
     }
@@ -237,14 +236,14 @@ export async function DELETE(req: NextRequest) {
         .from('trips')
         .delete()
         .eq('id', tripId)
-        .eq('user_id', userId);
+        .eq('user_id', userId!);
 
       if (error) {
         console.error('[Trips API] Database DELETE error');
         return NextResponse.json({ error: 'Failed to delete trip' }, { status: 500 });
       }
     } else {
-      const userTrips = mockTrips[userId] || [];
+      const userTrips = mockTrips[userId!] || [];
       const tripIndex = userTrips.findIndex((t) => t.id === tripId);
 
       if (tripIndex === -1) {
