@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CAFTANS } from '@/lib/caftans';
 import CaftanGallery from '@/components/caftan/CaftanGallery';
 import CaftanBooking from '@/components/caftan/CaftanBooking';
@@ -7,7 +7,7 @@ import CaftanMarketplace from '@/components/caftan/CaftanMarketplace';
 const zahia = CAFTANS[0];
 
 describe('galerie du modèle', () => {
-  it('change de vue quand on clique une vignette', () => {
+  it('change de vue quand on clique une vignette', async () => {
     render(<CaftanGallery caftan={zahia} />);
 
     const face = screen.getByRole('tab', { name: 'Face' });
@@ -15,8 +15,10 @@ describe('galerie du modèle', () => {
     expect(face.getAttribute('aria-selected')).toBe('true');
 
     fireEvent.click(dos);
-    expect(dos.getAttribute('aria-selected')).toBe('true');
-    expect(face.getAttribute('aria-selected')).toBe('false');
+    await waitFor(() => {
+      expect(dos.getAttribute('aria-selected')).toBe('true');
+      expect(face.getAttribute('aria-selected')).toBe('false');
+    }, { timeout: 500 });
   });
 });
 
