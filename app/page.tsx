@@ -169,6 +169,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Hadak AI Section */}
+      <section className="bg-[#0f1f3d] py-12">
+        <div className="mx-auto max-w-4xl px-5 sm:px-8">
+          <div className="flex flex-col items-center text-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#f59e0b]">
+                <Sparkles size={22} className="text-[#0f1f3d]" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-extrabold text-white tracking-tight">Hadak AI</p>
+                <p className="text-xs text-[#fde68a] font-semibold">Ton assistant voyage MRE</p>
+              </div>
+            </div>
+            <p className="text-white/70 text-base max-w-lg">
+              Dis-lui où tu veux aller — il prépare tout : météo, prières, change, ferry, documents.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5 mt-1">
+              {[
+                { label: '🗺️ Prépare-moi un voyage à Taza', msg: 'Prépare-moi un voyage à Taza' },
+                { label: '🌤️ Météo à Agadir', msg: 'Météo à Agadir' },
+                { label: '🕌 Prières à Marrakech', msg: 'Horaires de prière à Marrakech' },
+                { label: '💶 Taux dirham', msg: 'Combien vaut 100 euros en dirhams ?' },
+                { label: '⛴️ Ferry Algeciras', msg: 'Ferry Algeciras Tanger' },
+              ].map(({ label, msg }) => (
+                <button
+                  key={msg}
+                  onClick={() => window.dispatchEvent(new CustomEvent('hadak:open-with-message', { detail: msg }))}
+                  className="rounded-full border border-[#f59e0b]/40 bg-[#f59e0b]/10 px-4 py-2 text-sm font-semibold text-[#fde68a] transition hover:bg-[#f59e0b]/20 hover:border-[#f59e0b]/70"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Planning Section */}
       <section id="planifier" className="mx-auto max-w-5xl px-5 py-20 sm:px-8">
         <div className="mb-10 max-w-2xl animate-fade-up">
