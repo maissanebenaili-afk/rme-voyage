@@ -26,11 +26,11 @@
 ## 🎯 Claude's Responsibilities
 
 ### Phase 1: App Store Preparation (This Week)
-- [ ] Configure Capacitor for iOS/Android builds
-- [ ] Create Privacy Policy + Terms of Service (store requirement)
+- [x] Configure Capacitor for iOS/Android builds
+- [x] Create Privacy Policy + Terms of Service (store requirement)
 - [ ] Generate App Store listing assets (screenshots, descriptions)
 - [ ] Generate Play Store listing assets
-- [ ] Implement Supabase Auth (required for App Store)
+- [x] Implement Supabase Auth (required for App Store)
 - [ ] Remove Vercel analytics, add mobile analytics
 
 ### Phase 2: Monetization Setup (Next 2 Weeks)
