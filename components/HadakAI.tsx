@@ -432,18 +432,6 @@ export default function HadakAI() {
     }
   }, [open]);
 
-  /* Listen for hadak:open-with-message from the page */
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const text = (e as CustomEvent<string>).detail;
-      setOpen(true);
-      setTimeout(() => handleSend(text), 350);
-    };
-    window.addEventListener('hadak:open-with-message', handler);
-    return () => window.removeEventListener('hadak:open-with-message', handler);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   /* Close language dropdown on outside click */
   useEffect(() => {
     if (!langOpen) return;
@@ -584,6 +572,18 @@ export default function HadakAI() {
       setIsTyping(false);
     }
   };
+
+  /* Listen for hadak:open-with-message from the page (placed after handleSend declaration) */
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const text = (e as CustomEvent<string>).detail;
+      setOpen(true);
+      setTimeout(() => handleSend(text), 350);
+    };
+    window.addEventListener('hadak:open-with-message', handler);
+    return () => window.removeEventListener('hadak:open-with-message', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* Quick suggestions based on context */
   const getSuggestions = (): TopicKey[] => {
