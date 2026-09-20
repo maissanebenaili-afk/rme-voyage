@@ -162,6 +162,14 @@ historiques ne constituent pas une preuve de publication actuelle.
 
 Date : 2026-09-11 (v1.3.0 — CI GitHub Actions, rate limiting, durcissement CORS/CSP)
 
+## Alignement de la documentation d’architecture (2026-09-20, branche `vercel-agent/align-architecture-docs`)
+
+- `ARCHITECTURE.md` a été réécrit à partir du code réel : Next.js App Router, React, TypeScript, Tailwind, Route Handlers, PWA, Capacitor et Vercel.
+- Les anciens éléments non démontrés (Astro, Zustand, Redis, S3/R2, Sentry/PostHog, offre premium et prix) ne sont plus présentés comme implémentés.
+- Supabase, Hadak, liens d’affiliation et données tierces sont documentés comme optionnels ou dépendants de leur configuration effective.
+- Aucun changement de production, de secret, de fournisseur externe ou de tarification n’est inclus dans cette mise à jour documentaire.
+- Vérifié localement : `npm run lint`, `npm run typecheck` et `npm run test` (104 tests) passent. `npm run build` a été tenté mais le sandbox ne peut pas joindre Google Fonts pour `next/font`; ce résultat ne permet pas d’affirmer le build validé dans cet environnement.
+
 ## Source de vérité
 Le dépôt GitHub est la source de vérité technique. Les modifications doivent :
 - Partir de ce dépôt
