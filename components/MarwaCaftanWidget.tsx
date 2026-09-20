@@ -3,11 +3,10 @@
 import Link from 'next/link';
 import { Sparkles, ArrowRight, Star } from 'lucide-react';
 
-const PREVIEWS = [
-  { name: 'Zahia',  gradient: 'from-[#6b1a2e] to-[#a0344a]', prix: 150 },
-  { name: 'Nour',   gradient: 'from-[#bfa882] to-[#e8dcc8]', prix: 200 },
-  { name: 'Malika', gradient: 'from-[#1a5c3a] to-[#2d9d62]', prix: 180 },
-];
+import { CAFTANS } from '@/lib/caftans';
+import CaftanVisual from '@/components/caftan/CaftanVisual';
+
+const PREVIEWS = CAFTANS.slice(0, 3);
 
 export default function MarwaCaftanWidget() {
   return (
@@ -47,10 +46,12 @@ export default function MarwaCaftanWidget() {
       {/* Preview swatches */}
       <div className="relative flex gap-2.5 mb-5">
         {PREVIEWS.map(p => (
-          <div key={p.name} className="flex-1">
-            <div className={`h-20 rounded-2xl bg-gradient-to-br ${p.gradient}`} />
+          <div key={p.id} className="flex-1">
+            <div className="h-24 overflow-hidden rounded-2xl">
+              <CaftanVisual caftan={p} view="face" variant="thumb" />
+            </div>
             <p className="mt-1.5 text-center text-[11px] font-bold text-white/70">{p.name}</p>
-            <p className="text-center text-[11px] text-[#c9903a] font-black">{p.prix}€/sem</p>
+            <p className="text-center text-[11px] text-[#c9903a] font-black">{p.prixLocation}€/sem</p>
           </div>
         ))}
       </div>

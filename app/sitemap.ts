@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { siteUrl } from '@/lib/siteUrl';
+import { CAFTANS } from '@/lib/caftans';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = siteUrl;
@@ -54,5 +55,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    ...CAFTANS.map(c => ({
+      url: `${baseUrl}/marwa-caftan/${c.id}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
   ];
 }
