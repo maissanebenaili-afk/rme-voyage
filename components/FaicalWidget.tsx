@@ -144,7 +144,12 @@ function MatchCard({ pick, lang, labels }: { pick: FaicalPick; lang: Lang; label
 export default function FaicalWidget() {
   const [picks, setPicks] = useState<FaicalPick[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lang] = useState<Lang>(() => (typeof window !== 'undefined' ? detectLang() : 'fr'));
+  // Détecté après hydratation : lire navigator au premier rendu casse le SSR.
+  const [lang, setLang] = useState<Lang>('fr');
+
+  useEffect(() => {
+    setLang(detectLang());
+  }, []);
   const labels = LABELS[lang];
 
   useEffect(() => {
