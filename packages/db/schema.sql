@@ -109,6 +109,9 @@ CREATE POLICY "Users can create trips" ON trips
 CREATE POLICY "Users can update own trips" ON trips
   FOR UPDATE USING (auth.uid() = user_id);
 
+CREATE POLICY "Users can delete own trips" ON trips
+  FOR DELETE USING (auth.uid() = user_id);
+
 -- Community tips: Everyone can read, users can create their own
 CREATE POLICY "Anyone can read tips" ON community_tips
   FOR SELECT USING (true);
@@ -118,6 +121,9 @@ CREATE POLICY "Users can create tips" ON community_tips
 
 CREATE POLICY "Users can update own tips" ON community_tips
   FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own tips" ON community_tips
+  FOR DELETE USING (auth.uid() = user_id);
 
 -- Conversation logs: Users can only read/write their own
 CREATE POLICY "Users can read own logs" ON conversation_logs
