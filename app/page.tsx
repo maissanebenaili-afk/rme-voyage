@@ -39,6 +39,10 @@ import FaicalWidget from '@/components/FaicalWidget';
 import TVWidget from '@/components/TVWidget';
 import MarwaCaftanWidget from '@/components/MarwaCaftanWidget';
 import ServicesProWidget from '@/components/ServicesProWidget';
+import MouniaWidget from '@/components/MouniaWidget';
+import ColisWidget from '@/components/ColisWidget';
+import BookBanner from '@/components/BookBanner';
+import Reveal from '@/components/Reveal';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -83,6 +87,13 @@ export default function Home() {
             <Link href="/guide" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Le guide</Link>
             <Link href="/decouvrir" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Découvrir</Link>
             <Link href="/pro" className="hidden text-sm font-bold text-[#fde68a] hover:text-white sm:inline">Pro ↗</Link>
+            <Link
+              href="/boutique"
+              className="group flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#c9903a]/50 bg-gradient-to-r from-[#c9903a]/25 to-[#f59e0b]/15 px-3 py-2 text-xs font-extrabold text-[#fde68a] transition hover:border-[#f59e0b] hover:from-[#f59e0b] hover:to-[#fbbf24] hover:text-[#0f1f3d] sm:px-4 sm:text-sm"
+            >
+              <Sparkles size={13} className="transition group-hover:rotate-12" />
+              Boutique
+            </Link>
             <a href="#planifier" className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a] sm:px-4 sm:text-sm">Planifier</a>
           </div>
         </nav>
@@ -378,12 +389,31 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-2 lg:items-start">
+          <Reveal className="mt-12 grid gap-6 lg:grid-cols-2 lg:items-start">
             <MarwaCaftanWidget />
+            <MouniaWidget />
+          </Reveal>
+
+          <Reveal className="mt-6" delay={80}>
+            <ColisWidget />
+          </Reveal>
+
+          <Reveal className="mt-6" delay={80}>
             <ServicesProWidget />
+          </Reveal>
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/boutique"
+              className="inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-7 py-3.5 font-extrabold text-white transition hover:bg-[#1e3a5f]"
+            >
+              Voir toute la Boutique <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>
+
+      <BookBanner />
 
       {/* Newsletter Section */}
       <NewsletterSection />
@@ -405,6 +435,7 @@ export default function Home() {
                 <li><Link href="/" className="hover:text-white">Accueil</Link></li>
                 <li><Link href="/guide" className="hover:text-white">Guide</Link></li>
                 <li><Link href="/decouvrir" className="hover:text-white">Découvrir</Link></li>
+                <li><Link href="/boutique" className="hover:text-white">Boutique ✨</Link></li>
                 <li><Link href="/telecharger" className="hover:text-white">Télécharger</Link></li>
                 <li><a href="/rss.xml" className="hover:text-white">Flux RSS</a></li>
               </ul>
@@ -430,6 +461,8 @@ export default function Home() {
                 <li>TV Gratuite — 20+ chaînes</li>
                 <li><Link href="/marwa-caftan" className="hover:text-white">Marwa Caftan — Location & Vente 👗</Link></li>
                 <li>Traiteurs · Mobilité · Garages</li>
+                <li>Colis &amp; Groupage Maroc 📦</li>
+                <li>Belisamae — Bien-être 🌿</li>
               </ul>
             </div>
             <div>
