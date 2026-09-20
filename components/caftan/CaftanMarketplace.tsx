@@ -38,7 +38,7 @@ export default function CaftanMarketplace() {
     prenom ? `Prénom : ${prenom}` : null,
   ].filter(Boolean).join('\n');
 
-  const field = 'w-full rounded-xl border border-[#e2d5c0] bg-white px-3 py-2.5 text-sm text-[#0f1f3d] outline-none transition focus:border-[#c9903a] focus:ring-2 focus:ring-[#c9903a]/20';
+  const field = 'w-full rounded-xl border border-[#e2d5c0] bg-white px-3 py-2.5 text-sm text-[#0f1f3d] outline-none transition-all duration-200 focus:border-[#c9903a] focus:ring-2 focus:ring-[#c9903a]/30 focus:shadow-md focus:shadow-[#c9903a]/10 hover:border-[#c9903a]/40';
   const label = 'block text-xs font-bold uppercase tracking-wide text-[#64748b]';
 
   return (
@@ -54,9 +54,10 @@ export default function CaftanMarketplace() {
         </p>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-3">
-          {ETAPES.map(({ icon: Icon, t, d }) => (
-            <div key={t} className="rounded-2xl border border-[#e2d5c0] bg-[#fdf8f2] p-5">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#fef3c7]">
+          {ETAPES.map(({ icon: Icon, t, d }, idx) => (
+            <div key={t} className="group animate-in fade-in slide-in-from-bottom-4 rounded-2xl border border-[#e2d5c0] bg-[#fdf8f2] p-5 transition-all duration-300 hover:border-[#c9903a]/60 hover:shadow-lg hover:shadow-[#c9903a]/10"
+              style={{ transitionDelay: `${idx * 100}ms` }}>
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#fef3c7] transition-transform group-hover:scale-110">
                 <Icon size={18} className="text-[#c9903a]" />
               </div>
               <h3 className="mt-3 text-sm font-black text-[#0f1f3d]">{t}</h3>
@@ -122,15 +123,15 @@ export default function CaftanMarketplace() {
                 href={whatsappLink(MARWA_WHATSAPP, message)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-white transition hover:bg-[#1da851]"
+                className="group mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105"
               >
-                <MessageCircle size={16} /> Envoyer mon annonce à Marwa
+                <MessageCircle size={16} className="transition-transform group-hover:scale-110" /> Envoyer mon annonce à Marwa
               </a>
             ) : (
               <button
                 type="button"
                 disabled
-                className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-[#e2e8f0] py-3.5 text-sm font-extrabold text-[#94a3b8]"
+                className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-[#e2e8f0] py-3.5 text-sm font-extrabold text-[#94a3b8] transition-opacity duration-200"
               >
                 <MessageCircle size={16} /> Remplissez modèle, taille, état et ville
               </button>
