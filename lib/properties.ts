@@ -156,7 +156,7 @@ export const FURNISH_OPTIONS = ['Meublé', 'Non-meublé'];
 export const MODES = ['Location', 'Vente', 'Location meublée'];
 
 export const IDOUR_INFO = {
-  name: 'Idour Immobilier',
+  name: 'Aziz HiDOUR Immobilier',
   description: 'Constructeur et promoteur immobilier à Taza. Développement de résidences modernes et traditionnelles.',
   phone: IDOUR_WHATSAPP,
 };

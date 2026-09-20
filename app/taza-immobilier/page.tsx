@@ -144,9 +144,9 @@ export default function TazaImmobilier() {
                   <Building2 size={28} className="text-[#0f1f3d]" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-black text-white tracking-tight">Idour Immobilier</h1>
+                  <h1 className="text-3xl font-black text-white tracking-tight">Aziz HiDOUR</h1>
                   <p className="text-[#c9903a] font-semibold text-sm">
-                    Propriétés à Taza · Location & Vente
+                    Immobilier Taza · Location & Vente
                   </p>
                 </div>
               </div>
@@ -245,9 +245,9 @@ export default function TazaImmobilier() {
               <Building2 size={20} className="text-[#0f1f3d]" />
             </div>
             <div>
-              <h2 className="font-black text-white mb-2">À propos d'Idour Immobilier</h2>
+              <h2 className="font-black text-white mb-2">À propos d'Aziz HiDOUR</h2>
               <p className="text-sm text-white/70 leading-6">
-                Aziz Immobilier Idour est un constructeur et promoteur immobilier basé à Taza, spécialisé dans le développement de résidences modernes et la restauration de propriétés traditionnelles. Nous proposons des solutions de location et de vente pour répondre à tous les besoins.
+                Aziz HiDOUR est un constructeur et promoteur immobilier basé à Taza, spécialisé dans le développement de résidences modernes et la restauration de propriétés traditionnelles. Nous proposons des solutions de location et de vente pour répondre à tous les besoins.
               </p>
               <ul className="mt-4 space-y-1 text-sm text-white/70">
                 <li className="flex items-center gap-2">
@@ -267,7 +267,7 @@ export default function TazaImmobilier() {
 
       {/* Footer strip */}
       <div className="bg-[#0f1f3d] px-5 py-6 text-center text-xs text-white/40">
-        Idour Immobilier — Taza · Immobilier{' '}
+        Aziz HiDOUR — Taza · Immobilier{' '}
         <Link href="/" className="text-[#c9903a] hover:underline">
           RME Voyage
         </Link>{' '}
