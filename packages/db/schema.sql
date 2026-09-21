@@ -135,3 +135,63 @@ CREATE POLICY "Users can create logs" ON conversation_logs
 -- Agent interactions: Only for logging, users can read their own
 CREATE POLICY "Users can read own interactions" ON agent_interactions
   FOR SELECT USING (auth.uid() = user_id);
+
+-- Stripe customers (for payment processing)
+CREATE TABLE IF NOT EXISTS stripe_customers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  stripe_customer_id TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Premium subscriptions
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  stripe_subscription_id TEXT UNIQUE NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'active',
+  tier VARCHAR(20) NOT NULL DEFAULT 'premium',
+  current_period_start TIMESTAMP NOT NULL,
+  current_period_end TIMESTAMP NOT NULL,
+  cancel_at_period_end BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Saved favorites (caftans & properties)
+CREATE TABLE IF NOT EXISTS favorites (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  item_type VARCHAR(20) NOT NULL,
+  item_id VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, item_type, item_id)
+);
+
+-- Indexes for subscriptions
+CREATE INDEX idx_stripe_customers_user ON stripe_customers(user_id);
+CREATE INDEX idx_stripe_customers_stripe_id ON stripe_customers(stripe_customer_id);
+CREATE INDEX idx_subscriptions_user ON subscriptions(user_id);
+CREATE INDEX idx_subscriptions_status ON subscriptions(status);
+CREATE INDEX idx_favorites_user ON favorites(user_id);
+
+-- RLS for subscriptions
+ALTER TABLE stripe_customers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own stripe customer" ON stripe_customers
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can read own subscriptions" ON subscriptions
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can read own favorites" ON favorites
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create favorites" ON favorites
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own favorites" ON favorites
+  FOR DELETE USING (auth.uid() = user_id);
