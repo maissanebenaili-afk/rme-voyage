@@ -44,6 +44,8 @@ import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
 import AiraloWidget from '@/components/affiliate/AiraloWidget';
+import DirectFerriesWidget from '@/components/affiliate/DirectFerriesWidget';
+import OmioWidget from '@/components/affiliate/OmioWidget';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -342,6 +344,26 @@ export default function Home() {
             <div>
               <WeatherMorocco />
             </div>
+          </div>
+
+          {/* Direct Ferries - Ferry Booking Widget */}
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+            <DirectFerriesWidget
+              origin="Espagne"
+              destination="Maroc"
+              source="home-featured"
+            />
+            <div />
+          </div>
+
+          {/* Omio - Multimodal Transport Widget */}
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+            <OmioWidget
+              origin="Paris"
+              destination="Maroc"
+              source="home-featured"
+            />
+            <div />
           </div>
 
           {/* Weather + Calendar */}
