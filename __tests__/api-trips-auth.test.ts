@@ -27,15 +27,24 @@ describe('Trips API — Authentication', () => {
     return new NextRequest(url, { ...init, headers });
   }
 
-  it('GET without X-User-ID header should extract null userId', async () => {
+  it('GET without X-User-ID header returns 401 Unauthorized', async () => {
     const req = createMockRequest('GET', 'http://localhost:3000/api/trips');
 
     const response = await GET(req);
-    // Route handler will receive null userId from header; it should handle gracefully
+    expect(response.status).toBe(401);
     const body = await response.json();
-    // Since middleware enforces auth, route handler might have different behavior
-    // but we test that the header extraction works
-    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(body.error).toBe('Unauthorized');
+  });
+
+  it('GET with invalid X-User-ID (too short) returns 401 Unauthorized', async () => {
+    const req = createMockRequest('GET', 'http://localhost:3000/api/trips', {
+      headers: { 'x-user-id': 'short' },
+    });
+
+    const response = await GET(req);
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
   });
 
   it('GET with valid X-User-ID header extracts userId correctly', async () => {
@@ -49,6 +58,22 @@ describe('Trips API — Authentication', () => {
     expect(body.success).toBe(true);
     expect(body.userId).toBe('test-user-uuid-1234567890');
     expect(Array.isArray(body.data)).toBe(true);
+  });
+
+  it('POST without X-User-ID returns 401 Unauthorized', async () => {
+    const req = createMockRequest('POST', 'http://localhost:3000/api/trips', {
+      body: {
+        origin: 'Tokyo',
+        destination: 'Bangkok',
+        startDate: '2024-07-01',
+        endDate: '2024-07-15',
+      },
+    });
+
+    const response = await POST(req);
+    expect(response.status).toBe(401);
+    const body = await response.json();
+    expect(body.error).toBe('Unauthorized');
   });
 
   it('POST with valid X-User-ID creates trip with authenticated userId', async () => {

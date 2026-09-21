@@ -10,6 +10,12 @@ export async function GET(req: NextRequest) {
   try {
     // Extract userId from middleware-validated X-User-ID header
     const userId = req.headers.get('x-user-id');
+
+    // Validate authentication
+    if (!userId || userId.length < 10) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status'); // planning, ongoing, completed
 
@@ -27,7 +33,7 @@ export async function GET(req: NextRequest) {
       }
       filteredTrips = data || [];
     } else {
-      const userTrips = mockTrips[userId!] || [];
+      const userTrips = mockTrips[userId] || [];
       filteredTrips = status ? userTrips.filter((trip) => trip.status === status) : userTrips;
     }
 
@@ -52,6 +58,11 @@ export async function POST(req: NextRequest) {
 
     // Extract userId from middleware-validated X-User-ID header
     const userId = req.headers.get('x-user-id');
+
+    // Validate authentication
+    if (!userId || userId.length < 10) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     // Explicitly extract only expected fields to prevent prototype pollution
     const origin = body.origin as string;
@@ -142,6 +153,11 @@ export async function PUT(req: NextRequest) {
     // Extract userId from middleware-validated X-User-ID header
     const userId = req.headers.get('x-user-id');
 
+    // Validate authentication
+    if (!userId || userId.length < 10) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Explicitly extract only expected fields to prevent prototype pollution
     const tripId = body.tripId as string;
     const status = body.status as string | undefined;
@@ -221,6 +237,12 @@ export async function DELETE(req: NextRequest) {
   try {
     // Extract userId from middleware-validated X-User-ID header
     const userId = req.headers.get('x-user-id');
+
+    // Validate authentication
+    if (!userId || userId.length < 10) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const tripId = searchParams.get('tripId');
 
