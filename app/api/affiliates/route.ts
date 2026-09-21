@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildFerryAffiliateUrl, buildFlightAffiliateUrl } from "@/lib/affiliate";
+import { buildFerryAffiliateUrl, buildFlightAffiliateUrl, buildAiraloAffiliateUrl } from "@/lib/affiliate";
 
-type AffiliateType = "flight" | "ferry";
+type AffiliateType = "flight" | "ferry" | "esim";
 
 function getAffiliateType(value: string | null): AffiliateType | null {
-  if (value === "flight" || value === "ferry") {
+  if (value === "flight" || value === "ferry" || value === "esim") {
     return value;
   }
 
@@ -27,14 +27,21 @@ export function GET(request: NextRequest) {
   const destination = getRequiredParam(searchParams, "destination");
   const date = searchParams.get("date")?.trim() || undefined;
 
-  if (!type || !origin || !destination) {
+  if (!type) {
+    return NextResponse.json({ error: "Invalid affiliate request." }, { status: 400 });
+  }
+
+  // eSIM (Airalo) doesn't require origin/destination validation
+  if (type !== "esim" && (!origin || !destination)) {
     return NextResponse.json({ error: "Invalid affiliate request." }, { status: 400 });
   }
 
   const affiliateUrl =
     type === "flight"
-      ? buildFlightAffiliateUrl({ origin, destination, date })
-      : buildFerryAffiliateUrl({ origin, destination, date });
+      ? buildFlightAffiliateUrl({ origin: origin!, destination: destination!, date })
+      : type === "ferry"
+      ? buildFerryAffiliateUrl({ origin: origin!, destination: destination!, date })
+      : buildAiraloAffiliateUrl({ origin: origin || "", destination: destination || "", date });
 
   return NextResponse.json({
     configured: Boolean(affiliateUrl),

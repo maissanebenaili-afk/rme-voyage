@@ -195,3 +195,55 @@ CREATE POLICY "Users can create favorites" ON favorites
 
 CREATE POLICY "Users can delete own favorites" ON favorites
   FOR DELETE USING (auth.uid() = user_id);
+
+-- Affiliate tracking tables
+CREATE TABLE IF NOT EXISTS affiliate_clicks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  program VARCHAR(50) NOT NULL,
+  source VARCHAR(100),
+  destination VARCHAR(100),
+  metadata JSONB DEFAULT '{}',
+  ip_hash VARCHAR(64),
+  user_agent_hash VARCHAR(64),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS affiliate_conversions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  click_id UUID REFERENCES affiliate_clicks(id) ON DELETE SET NULL,
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  program VARCHAR(50) NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  amount DECIMAL(10, 2),
+  currency VARCHAR(3) DEFAULT 'EUR',
+  commission_rate DECIMAL(5, 2),
+  commission_earned DECIMAL(10, 2),
+  conversion_url TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for affiliate tracking
+CREATE INDEX idx_affiliate_clicks_program ON affiliate_clicks(program);
+CREATE INDEX idx_affiliate_clicks_user ON affiliate_clicks(user_id);
+CREATE INDEX idx_affiliate_clicks_created ON affiliate_clicks(created_at DESC);
+CREATE INDEX idx_affiliate_conversions_user ON affiliate_conversions(user_id);
+CREATE INDEX idx_affiliate_conversions_status ON affiliate_conversions(status);
+CREATE INDEX idx_affiliate_conversions_program ON affiliate_conversions(program);
+
+-- RLS for affiliate tables
+ALTER TABLE affiliate_clicks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE affiliate_conversions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own affiliate clicks" ON affiliate_clicks
+  FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
+
+CREATE POLICY "Users can create affiliate clicks" ON affiliate_clicks
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Users can read own conversions" ON affiliate_conversions
+  FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
+
+CREATE POLICY "Conversions can be created by system" ON affiliate_conversions
+  FOR INSERT WITH CHECK (true);
