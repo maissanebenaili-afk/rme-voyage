@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, MousePointerClick, Target, Euro } from 'lucide-react';
+import ConnectAccount from '@/components/affiliate/ConnectAccount';
 
 type AffiliateStats = {
   program: string;
@@ -19,24 +20,32 @@ export default function AffiliateDashboard() {
   ]);
   const [loading, setLoading] = useState(true);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch affiliate data from API (when backend is ready)
-    // For now, show placeholder stats
+    // Get userId from localStorage
+    const storedUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') : null;
+    setUserId(storedUserId);
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
     const loadStats = async () => {
       try {
-        // const response = await fetch('/api/affiliate/stats');
-        // const data = await response.json();
-        // setStats(data.programs);
-        // setTotalRevenue(data.totalRevenue);
+        const response = await fetch('/api/affiliate/stats', {
+          headers: {
+            'x-user-id': userId,
+          },
+        });
 
-        // Placeholder data
-        setStats([
-          { program: 'Airalo', clicks: 24, conversions: 3, revenue: 48.50, rate: '12.5%' },
-          { program: 'Direct Ferries', clicks: 8, conversions: 1, revenue: 15.00, rate: '12.5%' },
-          { program: 'Omio', clicks: 0, conversions: 0, revenue: 0, rate: '0%' },
-        ]);
-        setTotalRevenue(63.50);
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data.programs);
+          setTotalRevenue(data.totalRevenue);
+        } else {
+          console.error('Failed to load stats:', response.statusText);
+        }
       } catch (error) {
         console.error('Failed to load affiliate stats:', error);
       } finally {
@@ -45,7 +54,7 @@ export default function AffiliateDashboard() {
     };
 
     loadStats();
-  }, []);
+  }, [userId]);
 
   const totalClicks = stats.reduce((sum, s) => sum + s.clicks, 0);
   const totalConversions = stats.reduce((sum, s) => sum + s.conversions, 0);
@@ -59,6 +68,13 @@ export default function AffiliateDashboard() {
           <h1 className="text-4xl font-bold text-slate-900">Tableau de bord affilié</h1>
           <p className="mt-2 text-lg text-slate-600">Suivi des ventes et revenus en temps réel</p>
         </div>
+
+        {/* Stripe Connect Account */}
+        {userId && (
+          <div className="mb-8">
+            <ConnectAccount userId={userId} />
+          </div>
+        )}
 
         {/* Key Metrics */}
         <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

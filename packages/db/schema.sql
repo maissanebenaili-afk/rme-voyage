@@ -247,3 +247,76 @@ CREATE POLICY "Users can read own conversions" ON affiliate_conversions
 
 CREATE POLICY "Conversions can be created by system" ON affiliate_conversions
   FOR INSERT WITH CHECK (true);
+
+-- Stripe Connect for affiliate payouts
+CREATE TABLE IF NOT EXISTS user_stripe_connect (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  stripe_connect_id TEXT UNIQUE NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  email TEXT,
+  country VARCHAR(2),
+  verified_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Affiliate payout records
+CREATE TABLE IF NOT EXISTS affiliate_payouts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  stripe_connect_id TEXT NOT NULL,
+  total_amount DECIMAL(10, 2) NOT NULL,
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  stripe_transfer_id TEXT,
+  stripe_payout_id TEXT,
+  processed_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Partner webhook audit log
+CREATE TABLE IF NOT EXISTS affiliate_partner_webhooks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  program VARCHAR(50) NOT NULL,
+  payload_hash VARCHAR(64) NOT NULL UNIQUE,
+  status VARCHAR(20) DEFAULT 'pending',
+  payload JSONB,
+  error_message TEXT,
+  processed_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for Connect tables
+CREATE INDEX idx_user_stripe_connect_user ON user_stripe_connect(user_id);
+CREATE INDEX idx_user_stripe_connect_stripe_id ON user_stripe_connect(stripe_connect_id);
+CREATE INDEX idx_affiliate_payouts_user ON affiliate_payouts(user_id);
+CREATE INDEX idx_affiliate_payouts_status ON affiliate_payouts(status);
+CREATE INDEX idx_affiliate_payouts_period ON affiliate_payouts(period_start, period_end);
+CREATE INDEX idx_affiliate_partner_webhooks_program ON affiliate_partner_webhooks(program);
+CREATE INDEX idx_affiliate_partner_webhooks_created ON affiliate_partner_webhooks(created_at DESC);
+
+-- RLS for Connect tables
+ALTER TABLE user_stripe_connect ENABLE ROW LEVEL SECURITY;
+ALTER TABLE affiliate_payouts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE affiliate_partner_webhooks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own Connect account" ON user_stripe_connect
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own Connect account" ON user_stripe_connect
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can read own payouts" ON affiliate_payouts
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "System can create payouts" ON affiliate_payouts
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Partner webhooks are internal only" ON affiliate_partner_webhooks
+  FOR SELECT USING (false);
+
+CREATE POLICY "System can log webhooks" ON affiliate_partner_webhooks
+  FOR INSERT WITH CHECK (true);
