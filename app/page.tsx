@@ -43,6 +43,7 @@ import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
+import AiraloWidget from '@/components/affiliate/AiraloWidget';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -335,10 +336,18 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Weather + Calendar */}
+          {/* Airalo eSIM - Featured Widget */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2">
-            <WeatherMorocco />
+            <AiraloWidget destination="Maroc" source="home-featured" />
+            <div>
+              <WeatherMorocco />
+            </div>
+          </div>
+
+          {/* Weather + Calendar */}
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <MoroccanCalendar />
+            <div />
           </div>
 
           {/* Darija Phrasebook + Customs */}
