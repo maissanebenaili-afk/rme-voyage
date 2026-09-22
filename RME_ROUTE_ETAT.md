@@ -1,5 +1,44 @@
 # RME Route — état maître
 
+## Audit hébergement — état de la migration vers un hébergeur gratuit (2026-09-22)
+
+Demande initiale : vérifier si une migration de Vercel vers un hébergeur
+gratuit (Cloudflare Pages/Workers, Netlify, ou autre) avait été préparée ou
+finalisée dans le dépôt, suite à une observation externe (ChatGPT, contrôle
+GitHub + Vercel) signalant l'absence de bascule visible sur `main` et un
+dernier déploiement de production en erreur (`0fdae81` — "Mark Phase 1
+progress (Week 1 complete)").
+
+**Vérifications effectuées (lecture directe du dépôt, pas d'hypothèse sur les
+noms de commits) :**
+- Recherche de fichiers de config : aucun `wrangler.toml`, `netlify.toml`,
+  `_routes.json`, ni fichier nommé `cloudflare*`/`netlify*` dans le dépôt
+  (hors `node_modules`).
+- Recherche texte globale ("cloudflare", "netlify", "wrangler", "pages.dev",
+  "workers.dev") sur tous les `.md`/`.json`/`.mjs`/`.ts`/`.js`/`.yml` : seules
+  deux mentions, dans `DEPLOYMENT.md` et `AUDIT_PREDEPLOIEMENT.md`, sous forme
+  de suggestion générique ("Web (Recommandé : Vercel, Netlify, Railway)") —
+  aucune configuration active, aucune étape de migration documentée.
+- `next.config.mjs` : la ligne `output: 'export'` (mode requis pour un export
+  statique portable vers Cloudflare Pages) est explicitement commentée et
+  désactivée, avec la note "Disabled: API routes require server-side
+  rendering". Le projet est donc configuré pour du SSR, incompatible en l'état
+  avec un simple export statique.
+- `.vercelignore` toujours présent à la racine → Vercel reste la cible de
+  déploiement active et configurée.
+- Workflows CI (`.github/workflows/ci.yml`,
+  `ai-agent-auto-improvement-ci.yml`, `network-sentinel-ci.yml`) : uniquement
+  lint/test/build, aucun job de déploiement vers Cloudflare, Netlify ou
+  ailleurs.
+
+**Conclusion :** aucune migration d'hébergement n'a été commencée ni cachée
+ailleurs dans le dépôt. Vercel demeure la seule infrastructure de déploiement
+réellement configurée, avec des routes API server-side actives — une
+migration vers Cloudflare Pages nécessiterait une réécriture de ces routes en
+Cloudflare Pages Functions/Workers (ou un choix équivalent côté Netlify
+Functions), travail non entamé à ce jour. **Ne pas retirer Vercel tant que
+cette migration n'est pas réalisée et vérifiée.**
+
 ## Harmonisation nom + accessibilité renforcée (2026-09-11, branche `chore/harmonisation-nom-et-accessibilite`)
 
 Deux chantiers menés en parallèle sur demande explicite du propriétaire produit
