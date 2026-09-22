@@ -1,5 +1,42 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+
+// ---------------------------------------------------------------------------
+// Supabase session refresh
+// ---------------------------------------------------------------------------
+//
+// Ported from the former middleware.ts (Next.js 16 disallows having both a
+// middleware.ts and a proxy.ts file — see RME_ROUTE_ETAT.md). Follows the
+// same "mock data mode" fallback as packages/utils/supabase.ts: when Supabase
+// isn't configured, skip the refresh instead of throwing on every request.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+async function refreshSupabaseSession(request: NextRequest): Promise<NextResponse> {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next({ request });
+  }
+
+  const supabaseResponse = NextResponse.next({ request });
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          supabaseResponse.cookies.set(name, value, options as CookieOptions);
+        });
+      },
+    },
+  });
+
+  await supabase.auth.getSession();
+
+  return supabaseResponse;
+}
 
 // ---------------------------------------------------------------------------
 // Rate limiting
@@ -112,7 +149,7 @@ function applyCorsHeaders(response: NextResponse, request: NextRequest) {
 // Proxy (formerly Middleware)
 // ---------------------------------------------------------------------------
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip static assets entirely.
@@ -165,7 +202,7 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.next();
+  const response = await refreshSupabaseSession(request);
 
   if (isApiRoute) {
     applyCorsHeaders(response, request);

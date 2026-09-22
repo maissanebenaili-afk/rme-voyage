@@ -1,5 +1,63 @@
 # RME Route — état maître
 
+## Correctif build cassé — conflit `middleware.ts` / `proxy.ts` (2026-09-22, branche `fix/proxy-middleware-conflict`)
+
+**Cause racine du build en échec sur `main` depuis le commit `ed51d0a`
+("Implement Supabase authentication") :** Next.js 16 a renommé la convention
+`middleware.ts` en `proxy.ts` et refuse désormais catégoriquement la présence
+simultanée des deux fichiers (`Error: Both middleware file "./middleware.ts"
+and proxy file "./proxy.ts" are detected.`). Le commit `ed51d0a` avait ajouté
+`middleware.ts` (rafraîchissement de session Supabase) sans savoir que
+`proxy.ts` existait déjà et gérait CORS, rate limiting, CSP et l'auth
+`/api/trips`. Conséquence : tous les builds Vercel de production depuis ce
+commit échouent (`Command "npm run build" exited with 1`), y compris le
+dernier déploiement `main` (`0fdae81`) repéré en erreur.
+
+**Second bug latent découvert pendant la correction :** `middleware.ts`
+importait `@supabase/ssr`, un paquet jamais déclaré dans `package.json` ni
+présent dans `package-lock.json`. Même sans le conflit de nommage, ce fichier
+n'aurait jamais pu builder — l'import aurait échoué avec
+`Cannot find module '@supabase/ssr'`.
+
+**Correctif appliqué :**
+- Logique `updateSession()` (rafraîchissement de session Supabase) portée
+  dans `proxy.ts`, dans une fonction `refreshSupabaseSession()` appelée en
+  fin de `proxy()`, juste avant l'application des headers CORS/sécurité —
+  remplace le `NextResponse.next()` générique précédent tout en préservant
+  intégralement CORS, rate limiting, CSP et l'auth `/api/trips` déjà en
+  place.
+- Suit le même filet de sécurité que `packages/utils/supabase.ts` : si
+  `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` ne sont pas
+  configurées, le rafraîchissement de session est simplement sauté (pas de
+  crash sur chaque requête en environnement sans Supabase configuré, y
+  compris en CI/tests).
+- `@supabase/ssr` ajouté comme dépendance réelle (`npm install
+  @supabase/ssr`, version `^0.12.7`) — nécessaire pour que
+  `createServerClient` soit réellement installé.
+- `middleware.ts` et `lib/supabase/middleware.ts` (désormais inutilisé)
+  supprimés.
+- `proxy()` devenu `async` (la session Supabase nécessite un appel réseau
+  asynchrone) ; `__tests__/proxy.test.ts` mis à jour pour `await` chaque
+  appel, plus un test ajouté vérifiant que le rafraîchissement de session est
+  bien sauté quand Supabase n'est pas configuré.
+- Signature `NextResponse.next(init, base)` à deux arguments (copiée depuis
+  l'ancien `middleware.ts`) simplifiée en un seul appel
+  `NextResponse.next({ request })` suivi de `.cookies.set(...)` directement
+  sur cette réponse unique : la version à deux arguments n'est plus valide
+  dans cette version de Next.js (`Expected 0-1 arguments, but got 2`),
+  détecté par `tsc --noEmit`.
+
+**Vérifications, toutes passées avant ce commit :**
+- `npm run lint` : 0 erreur (1 warning préexistant, sans rapport,
+  `components/caftan/CaftanVisual.tsx`).
+- `npm test` : 25 suites, 135 tests réussis.
+- `npx tsc --noEmit` : aucune erreur.
+- `npm run build` : réussi — sortie confirmant `ƒ Proxy (Middleware)` (un
+  seul fichier proxy reconnu, plus de conflit).
+
+Aucun changement hors de ce périmètre (pas touché à la migration
+d'hébergement, sujet traité séparément).
+
 ## Harmonisation nom + accessibilité renforcée (2026-09-11, branche `chore/harmonisation-nom-et-accessibilite`)
 
 Deux chantiers menés en parallèle sur demande explicite du propriétaire produit
