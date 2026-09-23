@@ -1,0 +1,2 @@
+# Captured source responses must stay byte-exact (their SHA-256 is recorded): no EOL conversion.
+fixtures/real/** -text -diff
