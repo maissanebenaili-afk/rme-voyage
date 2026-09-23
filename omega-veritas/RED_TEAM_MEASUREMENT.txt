@@ -169,3 +169,42 @@ STATUS
 GATE_1 // REAL_SCHEMA_FIXTURE_LOCAL_READY
   (one real source schema, byte-exact fixtures with recorded provenance,
    invariants re-verified on real data; not a network certification)
+
+======================================================================
+E. GATE 2 — AIDES-TERRITOIRES: BLOCKED_BY_AUTH (capture tooling ready)
+======================================================================
+EVIDENCE (2026-09-23)
+  GET https://aides-territoires.beta.gouv.fr/api/aids/
+      -> HTTP 401 {"code":401,"message":"JWT Token not found"}
+  Official page https://aides-territoires.beta.gouv.fr/data/ :
+      data under Licence Ouverte v2.0; access = free account -> personal
+      API key -> POST /api/connexion/ (X-AUTH-TOKEN) -> Bearer token (24 h).
+  Public export listed on data.gouv.fr (dataset 6200dcebbf241867e8a218d9,
+      organization Aides-territoires, last modified 2022-09-27):
+      .../aides-territoires-prod/aids/all-aids.json -> HTTP 404.
+  API documentation /api/docs (Hydra, API v1.8.4) is public and describes
+      the "aid" resource fields, but documentation is not a response sample.
+  No authentication was bypassed; no page was scraped.
+
+READY
+  scripts/capture-aides-territoires.mjs: documented auth flow, key read
+  from AIDES_TERRITOIRES_API_KEY, key and token kept in memory only,
+  capture record without secrets, --list / --check, 1 s between requests.
+  tests/captureAidesTerritoires.test.ts: 8/8 PASS against a local
+  stand-in server (no network): no key -> BLOCKED_BY_AUTH, wrong key ->
+  AUTH_FAILED, exact bytes + sha256, secrets absent from disk and output,
+  non-200 writes nothing, invalid id rejected, --check UNCHANGED/DRIFT,
+  --list. Mutation check 3/3 killed (token in capture record, missing-key
+  check removed, write despite non-200).
+
+MEASUREMENTS
+  Jest 104 / 104                                        PASS
+  tsc --noEmit                                          PASS
+  Real Aides-territoires fixture                        BLOCKED_BY_AUTH
+  AIDES_TERRITOIRES adapter                             SYNTHETIC_TEST (unchanged)
+
+NEXT STEP
+  Set AIDES_TERRITOIRES_API_KEY in the environment settings, then:
+  node scripts/capture-aides-territoires.mjs --list 20
+  node scripts/capture-aides-territoires.mjs <ids>
+  and write the real adapter against the captured bytes (as Gate 1).
