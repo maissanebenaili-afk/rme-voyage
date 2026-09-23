@@ -19,7 +19,7 @@
 
 ```bash
 npm ci                 # installs pinned devDependencies (package-lock.json)
-npm test               # Jest, 96 tests
+npm test               # Jest, 104 tests
 npm run typecheck      # tsc --noEmit over src + tests
 npm run proof          # dependency-free: tsc build + node:test, 17 checks
 ```
@@ -35,4 +35,13 @@ Real fixtures (network, run manually, never in CI):
 ```bash
 node scripts/capture-data-europa.mjs fts 5fe3432f3a715b283f886b8b   # (re)capture
 node scripts/capture-data-europa.mjs --check                        # report drift, writes nothing
+```
+
+Aides-territoires (Gate 2, needs a personal API key in `AIDES_TERRITOIRES_API_KEY`;
+see https://aides-territoires.beta.gouv.fr/data/):
+
+```bash
+node scripts/capture-aides-territoires.mjs --list 20   # ids and names, writes nothing
+node scripts/capture-aides-territoires.mjs <ids>       # capture exact bytes + capture record
+node scripts/capture-aides-territoires.mjs --check     # report drift, writes nothing
 ```
