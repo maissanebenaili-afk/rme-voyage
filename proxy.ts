@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { isSupabaseConfigured, updateSession } from '@/lib/supabase/middleware';
 
 // ---------------------------------------------------------------------------
 // Rate limiting
@@ -108,11 +109,25 @@ function applyCorsHeaders(response: NextResponse, request: NextRequest) {
   return response;
 }
 
+// The browser Supabase client (lib/supabase/client.ts, used by useUser) calls the
+// project URL directly, so connect-src must allow its origin when Supabase is set up.
+// Only a valid https origin is added; a malformed value adds nothing.
+function supabaseConnectSrc(): string {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw);
+    return url.protocol === 'https:' ? ` ${url.origin}` : '';
+  } catch {
+    return '';
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Proxy (formerly Middleware)
 // ---------------------------------------------------------------------------
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip static assets entirely.
@@ -165,7 +180,9 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.next();
+  // Supabase auth session refresh (formerly middleware.ts). Every header below is
+  // added to the response it returns so the refreshed cookies are kept.
+  const response = isSupabaseConfigured() ? await updateSession(request) : NextResponse.next();
 
   if (isApiRoute) {
     applyCorsHeaders(response, request);
@@ -203,7 +220,7 @@ export function proxy(request: NextRequest) {
     "font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com",
     "img-src 'self' data: https: blob:",
     // Note: Anthropic API called server-side, not from browser — not needed in CSP
-    "connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com",
+    `connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com${supabaseConnectSrc()}`,
     "frame-src 'self' https://www.openstreetmap.org",
     "frame-ancestors 'none'",
     "object-src 'none'",

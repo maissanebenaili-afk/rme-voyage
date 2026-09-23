@@ -45,6 +45,7 @@
   "exclude": [
     "node_modules",
     "ai-agent-auto-improvement",
-    "network-sentinel"
+    "network-sentinel",
+    "omega-veritas"
   ]
 }

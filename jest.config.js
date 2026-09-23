@@ -28,10 +28,12 @@ const customJestConfig = {
   // with their own package.json and Vitest suites — Jest's default recursive
   // testMatch would otherwise pick up their *.test.ts files and fail with
   // "Cannot find module 'vitest'" since it isn't a root dependency.
+  // omega-veritas/ is standalone too, with its own Jest config and node test environment.
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/ai-agent-auto-improvement/',
     '<rootDir>/network-sentinel/',
+    '<rootDir>/omega-veritas/',
   ],
 }
 
