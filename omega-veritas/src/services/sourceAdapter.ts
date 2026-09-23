@@ -5,7 +5,8 @@ export interface NormalizedSourcePayload {
   externalId: string;
   title: string;
   description: string;
-  rawValueCents: number;
+  /** null when the source carries no monetary amount (distinct from an explicit 0). */
+  rawValueCents: number | null;
   sourceEventTimestamp: number;
   sourceEventType: SourceEventType;
   payloadUrl: string;
@@ -49,6 +50,61 @@ function optionalDescription(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+// Language preference for multilingual maps ({ "fr": "...", "en": "..." }):
+// fr, then en, then the smallest remaining language code. Deterministic.
+const LANGUAGE_PREFERENCE = ["fr", "en"] as const;
+
+function pickLocalized(value: unknown, name: string): string {
+  if (!isRecord(value)) throw new Error(`${name}_INVALID_LOCALIZED`);
+  const languages = Object.keys(value).filter(
+    (lang) => typeof value[lang] === "string" && (value[lang] as string).trim() !== "",
+  );
+  const preferred = LANGUAGE_PREFERENCE.find((lang) => languages.includes(lang));
+  const chosen = preferred ?? languages.sort()[0];
+  if (chosen === undefined) throw new Error(`${name}_INVALID_LOCALIZED`);
+  return (value[chosen] as string).trim();
+}
+
+function optionalLocalized(value: unknown, name: string): string {
+  if (value === undefined || value === null) return "";
+  return pickLocalized(value, name);
+}
+
+const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?(Z|[+-]\d{2}:\d{2})?)?$/;
+
+/**
+ * ISO 8601 date or date-time → epoch milliseconds.
+ * A value without offset ("2015-07-27", "2020-12-23T14:16:31.403") is read as UTC:
+ * this is an explicit assumption, the source does not state its timezone.
+ * Impossible calendar dates (2021-02-30) are rejected.
+ */
+function assertIsoDateUtc(value: unknown, name: string): number {
+  const str = assertValidString(value, name);
+  const m = ISO_DATE.exec(str);
+  if (!m) throw new Error(`${name}_INVALID_DATE`);
+  const [, y, mo, d, h = "00", mi = "00", sec = "00", ms = "0", offset] = m;
+  const utc = Date.UTC(+y, +mo - 1, +d, +h, +mi, +sec, +ms.padEnd(3, "0"));
+  const check = new Date(utc);
+  if (check.getUTCFullYear() !== +y || check.getUTCMonth() !== +mo - 1 || check.getUTCDate() !== +d
+    || check.getUTCHours() !== +h || check.getUTCMinutes() !== +mi || check.getUTCSeconds() !== +sec) {
+    throw new Error(`${name}_INVALID_DATE`);
+  }
+  let offsetMs = 0;
+  if (offset && offset !== "Z") {
+    const sign = offset[0] === "-" ? -1 : 1;
+    const [oh, om] = offset.slice(1).split(":").map(Number);
+    if (oh > 23 || om > 59) throw new Error(`${name}_INVALID_DATE`);
+    offsetMs = sign * (oh * 60 + om) * 60_000;
+  }
+  return assertNonNegativeInteger(utc - offsetMs, name);
+}
+
+function firstLandingPage(value: unknown): unknown {
+  if (!Array.isArray(value)) return undefined;
+  const first: unknown = value[0];
+  return isRecord(first) ? first.resource : undefined;
+}
+
 export function throttle(ms: number): Promise<void> {
   if (typeof ms !== "number" || !Number.isSafeInteger(ms) || ms < 0) {
     return Promise.reject(new Error("THROTTLE_INVALID_MS"));
@@ -56,8 +112,25 @@ export function throttle(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// [SCHEMA_SYNTHETIQUE_TEST] — fields below are fixtures only until real source schemas are certified.
+export type SourceSchemaStatus = "SYNTHETIC_TEST" | "REAL_FIXTURE";
+
+/**
+ * Schema provenance per adapter. REAL_FIXTURE means the extractor was written against
+ * real captured responses (fixtures/real/); it is NOT a certified network integration.
+ */
+export const SOURCE_SCHEMA_STATUS: Readonly<Record<string, SourceSchemaStatus>> = {
+  AIDES_TERRITOIRES: "SYNTHETIC_TEST",
+  ADEME: "SYNTHETIC_TEST",
+  BOAMP: "SYNTHETIC_TEST",
+  DATA_EUROPA: "SYNTHETIC_TEST",
+  CORDIS: "SYNTHETIC_TEST",
+  FUNDING_TENDERS: "SYNTHETIC_TEST",
+  AIDES_ENTREPRISES: "SYNTHETIC_TEST",
+  DATA_EUROPA_HUB: "REAL_FIXTURE",
+};
+
 const SOURCE_EXTRACTORS_REGISTRY: Record<string, PropertyExtractor> = {
+  // [SCHEMA_SYNTHETIQUE_TEST] — the seven entries below are fixtures only until real source schemas are certified.
   AIDES_TERRITOIRES: (raw) => ({
     externalId: assertValidString(raw.id, "AIDES_TERRITOIRES_ID"),
     title: assertValidString(raw.nom, "AIDES_TERRITOIRES_TITLE"),
@@ -126,6 +199,23 @@ const SOURCE_EXTRACTORS_REGISTRY: Record<string, PropertyExtractor> = {
     sourceEventType: "update",
     payloadUrl: assertValidUrl(raw.url_fiche, "url_fiche"),
   }),
+  // [SCHEMA_REEL_FIXTURE] — written against real responses of
+  // https://data.europa.eu/api/hub/search/datasets/{id} captured 2026-09-23 (fixtures/real/data-europa/).
+  // Dataset records carry no monetary amount: rawValueCents is null, never 0.
+  DATA_EUROPA_HUB: (envelope) => {
+    const raw = envelope.result;
+    if (!isRecord(raw)) throw new Error("DATA_EUROPA_HUB_RESULT_INVALID");
+    const landingPage = firstLandingPage(raw.landing_page);
+    return {
+      externalId: assertValidString(raw.id, "DATA_EUROPA_HUB_ID"),
+      title: pickLocalized(raw.title, "DATA_EUROPA_HUB_TITLE"),
+      description: optionalLocalized(raw.description, "DATA_EUROPA_HUB_DESCRIPTION"),
+      rawValueCents: null,
+      sourceEventTimestamp: assertIsoDateUtc(raw.issued, "DATA_EUROPA_HUB_ISSUED"),
+      sourceEventType: "publication",
+      payloadUrl: assertValidUrl(landingPage ?? raw.resource, "DATA_EUROPA_HUB_URL"),
+    };
+  },
 };
 
 export function normalizeSourcePayload(sourceType: string, rawData: unknown): NormalizedSourcePayload {

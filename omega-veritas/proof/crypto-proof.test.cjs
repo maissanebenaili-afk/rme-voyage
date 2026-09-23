@@ -127,3 +127,45 @@ test("financial gate: non-zero cost returns null, invalid cost throws", async ()
     await assert.rejects(run(bad), /ACQUISITION_COST_INVALID/);
   }
 });
+
+// Gate 1 — real data.europa.eu fixtures (captured bytes; not a network certification).
+const fs = require("node:fs");
+const path = require("node:path");
+const FIXTURES = path.join(__dirname, "..", "fixtures", "real", "data-europa");
+const fixture = (id) => new Uint8Array(fs.readFileSync(path.join(FIXTURES, `${id}.json`)));
+const captureRecord = (id) => JSON.parse(fs.readFileSync(path.join(FIXTURES, `${id}.capture.json`), "utf8"));
+
+test("G1 real fixtures: bytes match capture sha256 and pass the strict parser", async () => {
+  for (const id of ["fts", "5fe3432f3a715b283f886b8b"]) {
+    const bytes = fixture(id);
+    assert.equal(await ci.sha256Buffer(bytes), captureRecord(id).sha256);
+    assert.doesNotThrow(() => ci.parseSourceBytes(bytes));
+  }
+});
+
+test("G1 DATA_EUROPA_HUB: exact normalization of the real fts record, amount null", () => {
+  const n = sa.normalizeSourcePayload("DATA_EUROPA_HUB", ci.parseSourceBytes(fixture("fts")));
+  assert.equal(n.externalId, "fts");
+  assert.equal(n.title, "Système de transparence financière (FTS)");
+  assert.equal(n.rawValueCents, null);
+  assert.equal(n.sourceEventTimestamp, Date.UTC(2015, 6, 27));
+  assert.equal(n.payloadUrl, "https://ec.europa.eu/budget/financial-transparency-system/index.html");
+});
+
+test("G1 real bytes: re-serialization keeps version, portal churn changes version only", async () => {
+  const run = (bytes) => ch.ingestOpportunitySignal(bytes, {
+    source: "DATA_EUROPA_HUB", url: "https://data.europa.eu/api/hub/search/datasets/fts",
+    previousHash: ch.GENESIS_PREVIOUS_HASH, metrics, capturedAt: 1,
+  });
+  const doc = JSON.parse(new TextDecoder().decode(fixture("fts")));
+  const original = await run(fixture("fts"));
+  const pretty = await run(bytes(JSON.stringify(doc, null, 2)));
+  assert.equal(original.sourceContentHash, captureRecord("fts").sha256);
+  assert.notEqual(pretty.sourceContentHash, original.sourceContentHash);
+  assert.equal(pretty.versionId, original.versionId);
+  doc.result.quality_meas = { scoring: 530 };
+  const churned = await run(bytes(JSON.stringify(doc)));
+  assert.notEqual(churned.versionId, original.versionId);
+  assert.equal(churned.h_normalized_semantic, original.h_normalized_semantic);
+  assert.equal(churned.opportunityId, original.opportunityId);
+});

@@ -1,4 +1,5 @@
-OMEGA-VERITAS v12.3-final-proof-2 — RED TEAM MEASUREMENT
+OMEGA-VERITAS v12.4 — RED TEAM MEASUREMENT
+(sections A-C: Gate 0, v12.3-final-proof-2; section D: Gate 1, v12.4)
 Date: 2026-09-23
 Environment: Linux, Node v22.22.2, npm 10.9.7 (registry reachable),
              TypeScript 5.7.2 (project, pinned) and 6.0.2 (global)
@@ -115,3 +116,56 @@ GATE_0 // DOUBLE_PROVENANCE_LOCAL_READY
   6. dependency limits declared ............................. yes (none blocking here)
   7. adapters identified as synthetic ....................... yes
   8. no network certification claimed ....................... yes
+
+======================================================================
+D. GATE 1 (v12.4) — FIRST REAL EXTERNAL SCHEMA: data.europa.eu
+======================================================================
+CAPTURE (network, run manually by scripts/capture-data-europa.mjs)
+  GET https://data.europa.eu/api/hub/search/datasets/fts
+      HTTP 200, 225493 bytes,
+      sha256 3e7ade2fe03f7d9c5c6a42d2e5ce3c7db5f6c19c81130ee19e75fe33edc6f8dc
+      (Financial Transparency System, DG Budget, 25 languages)
+  GET https://data.europa.eu/api/hub/search/datasets/5fe3432f3a715b283f886b8b
+      HTTP 200, 7085 bytes,
+      sha256 4c96d0cdd6b0cf8a2c863935e07c92c4b446ec207600d4b692ec666d8ba10087
+      (Subventions versées aux associations, Le Mée-sur-Seine, fr only)
+  Captured 2026-09-23T22:48Z. Immediate re-fetch (--check): UNCHANGED x2.
+
+REAL SCHEMA vs SYNTHETIC ASSUMPTIONS (findings)
+  - record wrapped in {"result": {...}}
+  - title/description are multilingual maps (25 languages or 1)
+    -> policy: fr, then en, then smallest language code
+  - issued is "2015-07-27" (date) or "2020-12-23T14:16:31.403" (no offset)
+    -> read as UTC: explicit ASSUMPTION, the source states no timezone
+  - landing_page is an array of {resource}; may be absent -> resource URI
+  - no monetary amount -> rawValueCents: null (type widened to number | null;
+    the synthetic adapters keep their absent -> 0 behaviour, unchanged)
+  - portal-managed volatile fields (catalog_record.modified, quality_meas)
+    change h_source_semantic and versionId on re-harvest while the dataset
+    content is unchanged; h_normalized_semantic stays stable (tested).
+    versionId = "the source document changed"; substantive change is read
+    from h_normalized_semantic.
+  - both real documents pass the strict parser (no duplicate keys, no
+    unsafe integers)
+
+MEASUREMENTS
+  tsc --noEmit (TS 5.7.2 and 6.0.2)                    PASS
+  Jest 96 / 96                                         PASS
+    omega-veritas 35, sourceAdapter 17, doubleProvenance 26, realFixtures 18
+  node:test proof runner 17 / 17 (no node_modules)     PASS
+  Mutation check 21 / 21 killed                        PASS
+    (15 Gate 0 + 6 Gate 1: amount null->0, language order, timezone offset,
+     calendar check, landing_page, result unwrap)
+  envelope.sourceContentHash == capture sha256         PASS
+  pretty-printed real bytes: raw differs, versionId equal PASS
+
+STATUS
+  SCHEMA DATA_EUROPA_HUB                               REAL_FIXTURE
+  SCHEMA 7 original adapters                           SYNTHETIC_TEST
+  NETWORK in production code                           0 calls
+  NETWORK certification                                NOT_EXECUTED
+  Capture script in CI                                 NOT_EXECUTED (manual only)
+
+GATE_1 // REAL_SCHEMA_FIXTURE_LOCAL_READY
+  (one real source schema, byte-exact fixtures with recorded provenance,
+   invariants re-verified on real data; not a network certification)
