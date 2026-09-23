@@ -1,0 +1,27 @@
+OMEGA-VERITAS v12.3 — RED TEAM MEASUREMENT
+Timestamp: 2026-09-24 session
+
+STATIC
+- any token in src/tests/public: 0
+- Jest test declarations: 52 (35 + 17)
+- production TypeScript check with global TypeScript 5.8.3: PASS
+
+RUNTIME EXECUTION WITHOUT NPM DEPENDENCIES
+- SHA-256 raw vector A: aa486e75e0b3070d199c813de0d5082a3d7cca7f82959ba464c6796999e8ce11
+- object-key reorder: raw hashes differ; semantic hashes equal: PASS
+- array reorder: semantic hashes differ: PASS
+- opportunity identity determinism: PASS
+- identity SHA-256 format: PASS
+- Capital Hunter envelope sealing: PASS
+- Worker nominal calculation: PASS
+- Worker toll overflow rejection: PASS
+- Worker fuel overflow rejection: PASS
+
+DEPENDENCY-BLOCKED CHECKS
+- npm install: timed out in this execution environment
+- Jest: NOT EXECUTED (dependencies unavailable)
+- global project tsc using actual dependency type packages: NOT EXECUTED
+
+IMPORTANT
+The static 52-test count is not equivalent to 52 executed tests.
+No Jest PASS count is claimed.
