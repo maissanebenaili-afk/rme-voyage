@@ -1,0 +1,13 @@
+{
+  "schema": "omega-veritas/fixture-capture/v1",
+  "source": "BOAMP_ODS",
+  "idweb": "26-90272",
+  "url": "https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records?where=idweb%3D%2226-90272%22",
+  "retrievedAt": "2026-09-23T23:45:18.032Z",
+  "httpStatus": 200,
+  "contentType": "application/json; charset=utf-8",
+  "contentEncoding": "gzip",
+  "serverDate": "Wed, 23 Sep 2026 23:45:18 GMT",
+  "byteLength": 13033,
+  "sha256": "582194a95a7eb9be1de7616a18fc8ba685db266374bcae3be05c2f2dfbbfc042"
+}

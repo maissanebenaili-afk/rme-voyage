@@ -127,6 +127,7 @@ export const SOURCE_SCHEMA_STATUS: Readonly<Record<string, SourceSchemaStatus>> 
   FUNDING_TENDERS: "SYNTHETIC_TEST",
   AIDES_ENTREPRISES: "SYNTHETIC_TEST",
   DATA_EUROPA_HUB: "REAL_FIXTURE",
+  BOAMP_ODS: "REAL_FIXTURE",
 };
 
 const SOURCE_EXTRACTORS_REGISTRY: Record<string, PropertyExtractor> = {
@@ -216,7 +217,35 @@ const SOURCE_EXTRACTORS_REGISTRY: Record<string, PropertyExtractor> = {
       payloadUrl: assertValidUrl(landingPage ?? raw.resource, "DATA_EUROPA_HUB_URL"),
     };
   },
+  // [SCHEMA_REEL_FIXTURE] — written against real responses of the public BOAMP API
+  // https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records?where=idweb="…"
+  // captured 2026-09-23 (fixtures/real/boamp/). One response must hold exactly one notice.
+  // Estimated amounts are per lot and are estimates, not values: rawValueCents stays null.
+  BOAMP_ODS: (envelope) => {
+    const notice = singleBoampRecord(envelope);
+    const descriptors = Array.isArray(notice.descripteur_libelle)
+      ? notice.descripteur_libelle.filter((d): d is string => typeof d === "string")
+      : [];
+    return {
+      externalId: assertValidString(notice.idweb, "BOAMP_ODS_IDWEB"),
+      title: assertValidString(notice.objet, "BOAMP_ODS_OBJET"),
+      description: descriptors.join("; "),
+      rawValueCents: null,
+      sourceEventTimestamp: assertIsoDateUtc(notice.dateparution, "BOAMP_ODS_DATEPARUTION"),
+      sourceEventType: "publication",
+      payloadUrl: assertValidUrl(notice.url_avis, "BOAMP_ODS_URL"),
+    };
+  },
 };
+
+/** The single notice of a BOAMP Opendatasoft response ({ total_count: 1, results: [notice] }). */
+export function singleBoampRecord(envelope: unknown): UnknownRecord {
+  if (!isRecord(envelope) || envelope.total_count !== 1 || !Array.isArray(envelope.results)
+    || envelope.results.length !== 1 || !isRecord(envelope.results[0])) {
+    throw new Error("BOAMP_ODS_EXPECTED_ONE_RECORD");
+  }
+  return envelope.results[0];
+}
 
 export function normalizeSourcePayload(sourceType: string, rawData: unknown): NormalizedSourcePayload {
   const sourceName = assertValidString(sourceType, "SOURCE_TYPE");
