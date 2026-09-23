@@ -1,9 +1,5 @@
 import { canonicalJson } from "../src/core/cryptoIngestion";
-import {
-  generateOpportunityId,
-  normalizeSourcePayload,
-  throttle,
-} from "../src/services/sourceAdapter";
+import { normalizeSourcePayload, throttle } from "../src/services/sourceAdapter";
 
 type Fixture = { source: string; raw: Record<string, unknown> };
 
@@ -18,7 +14,6 @@ const fixtures: Fixture[] = [
 ];
 
 const boamp = fixtures[2].raw;
-const validSemanticHash = "a".repeat(64);
 
 describe("OMEGA-VERITAS v12.3 — source adapter proof matrix", () => {
   test("01 — AIDES_TERRITOIRES nominal", () => expect(normalizeSourcePayload(fixtures[0].source, fixtures[0].raw).sourceEventType).toBe("publication"));
@@ -45,7 +40,7 @@ describe("OMEGA-VERITAS v12.3 — source adapter proof matrix", () => {
     expect(() => normalizeSourcePayload("BOAMP", { ...boamp, prix_cents: 12.5 })).toThrow("prix_cents_INVALID_INTEGER");
     expect(() => normalizeSourcePayload("BOAMP", { ...boamp, prix_cents: Number.MAX_SAFE_INTEGER + 1 })).toThrow("prix_cents_INVALID_INTEGER");
   });
-  test("12 — absent amount differs structurally from explicit zero", () => {
+  test("12 — absent amount normalizes to zero, indistinguishable from explicit zero", () => {
     const absent = normalizeSourcePayload("BOAMP", { ...boamp });
     const zero = normalizeSourcePayload("BOAMP", { ...boamp, prix_cents: 0 });
     expect(absent.rawValueCents).toBe(0);
@@ -60,28 +55,26 @@ describe("OMEGA-VERITAS v12.3 — source adapter proof matrix", () => {
     expect(() => normalizeSourcePayload("BOAMP", { ...boamp, url_avis: "/relative" })).toThrow("url_avis_INVALID_URL");
     expect(() => normalizeSourcePayload("BOAMP", { ...boamp, url_avis: "ftp://example.test/x" })).toThrow("url_avis_INVALID_URL");
   });
-  test("15 — unsupported source and invalid semantic hash rejected", async () => {
+  test("15 — unsupported source rejected, including inherited property names", () => {
     expect(() => normalizeSourcePayload("UNKNOWN", boamp)).toThrow("UNSUPPORTED_SOURCE_TYPE_UNKNOWN");
-    const payload = normalizeSourcePayload("BOAMP", boamp);
-    await expect(generateOpportunityId(payload, "z".repeat(64))).rejects.toThrow("INVALID_SEMANTIC_HASH_PROVENANCE");
-    await expect(generateOpportunityId(payload, "a".repeat(63))).rejects.toThrow("INVALID_SEMANTIC_HASH_PROVENANCE");
+    for (const name of ["constructor", "__proto__", "toString", "hasOwnProperty"]) {
+      expect(() => normalizeSourcePayload(name, { evil: 1 })).toThrow(`UNSUPPORTED_SOURCE_TYPE_${name}`);
+    }
   });
-  test("16 — deterministic identity changes with semantic provenance", async () => {
-    const payload = normalizeSourcePayload("BOAMP", boamp);
-    const id1 = await generateOpportunityId(payload, validSemanticHash);
-    const id2 = await generateOpportunityId(payload, validSemanticHash);
-    const id3 = await generateOpportunityId(payload, "b".repeat(64));
-    expect(id1).toBe(id2);
-    expect(id3).not.toBe(id1);
-    expect(id1).toMatch(/^[0-9a-f]{64}$/);
+  test("16 — normalization is deterministic and carries identity keys", () => {
+    const a = normalizeSourcePayload("BOAMP", boamp);
+    const b = normalizeSourcePayload("BOAMP", { ...boamp });
+    expect(a).toEqual(b);
+    expect(a.sourceName).toBe("BOAMP");
+    expect(a.externalId).toBe("BOAMP-1");
   });
   test("17 — canonical arrays preserve order and throttle validates/executes", async () => {
     expect(canonicalJson({ list: ["France", "Maroc"] })).toBe('{"list":["France","Maroc"]}');
     expect(canonicalJson({ list: ["Maroc", "France"] })).toBe('{"list":["Maroc","France"]}');
     await expect(throttle(0)).resolves.toBeUndefined();
     await expect(throttle(NaN)).rejects.toThrow("THROTTLE_INVALID_MS");
-    const start = Date.now();
-    await throttle(5);
-    expect(Date.now() - start).toBeGreaterThanOrEqual(0);
+    const start = performance.now();
+    await throttle(20);
+    expect(performance.now() - start).toBeGreaterThanOrEqual(15);
   });
 });

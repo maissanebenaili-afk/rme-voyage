@@ -1,5 +1,3 @@
-import { canonicalJson, sha256Buffer } from "../core/cryptoIngestion";
-
 export type SourceEventType = "publication" | "emission" | "update" | "deadline" | "start";
 
 export interface NormalizedSourcePayload {
@@ -134,25 +132,12 @@ export function normalizeSourcePayload(sourceType: string, rawData: unknown): No
   const sourceName = assertValidString(sourceType, "SOURCE_TYPE");
   if (!isRecord(rawData)) throw new Error("INVALID_RAW_DATA_OBJECT");
 
-  const extractor = SOURCE_EXTRACTORS_REGISTRY[sourceName];
+  // Own-property lookup: "constructor", "__proto__", "toString"... are not extractors.
+  const extractor = Object.hasOwn(SOURCE_EXTRACTORS_REGISTRY, sourceName)
+    ? SOURCE_EXTRACTORS_REGISTRY[sourceName]
+    : undefined;
   if (!extractor) throw new Error(`UNSUPPORTED_SOURCE_TYPE_${sourceName}`);
 
   const extracted = extractor(rawData);
   return { sourceName, ...extracted };
-}
-
-export async function generateOpportunityId(
-  payload: NormalizedSourcePayload,
-  semanticHash: string,
-): Promise<string> {
-  if (!/^[0-9a-f]{64}$/i.test(semanticHash)) {
-    throw new Error("INVALID_SEMANTIC_HASH_PROVENANCE");
-  }
-  const identityBlock = canonicalJson({
-    sourceName: payload.sourceName,
-    externalId: payload.externalId,
-    payloadUrl: payload.payloadUrl,
-    semanticHash,
-  });
-  return sha256Buffer(new TextEncoder().encode(identityBlock));
 }

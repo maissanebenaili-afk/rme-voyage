@@ -2,22 +2,27 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import {
+  HASH_DOMAINS,
   canonicalJson,
-  canonicalize,
   processIncomingPayload,
   sha256Buffer,
 } from '../src/core/cryptoIngestion';
 import { initDb, setCache, getCache } from '../src/lib/offlineDb';
 import {
+  GENESIS_PREVIOUS_HASH,
   ingestOpportunitySignal,
   scelleEnvelope,
+  validateChain,
   type OpportunityEnvelope,
   type MoneyHuntMetrics,
 } from '../src/services/capitalHunter';
 
 const enc = new TextEncoder();
 const bytes = (s: string) => enc.encode(s);
-const ZERO_HASH = '0'.repeat(64);
+const ZERO_HASH = GENESIS_PREVIOUS_HASH;
+const ADEME_SOURCE = (budgetCents: number) =>
+  `{"reference":"ADEME-1","intitule":"Aide test","budget_cents":${budgetCents},"timestamp_creation":1700000000001,"lien_appel":"https://example.test/ademe"}`;
+const domainSha = (domain: string, payload: unknown) => sha256Buffer(enc.encode(canonicalJson({ domain, payload })));
 const PAYLOAD_A = '{"a":1,"b":"test","nested":{"x":42},"list":["France","Maroc"]}';
 const PAYLOAD_B = '{"a":1,"b":"test","nested":{"x":42},"list":["Maroc","France"]}';
 type WorkerResult =
@@ -64,9 +69,10 @@ function metrics(overrides: Partial<MoneyHuntMetrics> = {}): MoneyHuntMetrics {
 
 function coreEnvelope(overrides: Partial<Omit<OpportunityEnvelope, 'currentHash'>> = {}) {
   return {
-    schemaVersion: 'hunter-v1-canonical', opportunityId: 'opp_mock', identityHash: ZERO_HASH, capturedAt: 1711234567890,
-    source: 'test', sourceUrl: 'https://test.url', sourceContentHash: 'hash',
-    semanticHash: 'sem', evidenceHash: 'ev', moneyHunt: metrics(), previousHash: ZERO_HASH,
+    schemaVersion: 'omega-veritas/envelope/v2', opportunityId: 'opp_mock', identityHash: ZERO_HASH,
+    versionId: 'ver_mock', versionHash: ZERO_HASH, capturedAt: 1711234567890,
+    source: 'test', externalId: 'E-1', sourceUrl: 'https://test.url', sourceContentHash: 'hash',
+    h_source_semantic: 'hs', h_normalized_semantic: 'hn', evidenceHash: 'ev', moneyHunt: metrics(), previousHash: ZERO_HASH,
     ...overrides,
   } satisfies Omit<OpportunityEnvelope, 'currentHash'>;
 }
@@ -221,61 +227,69 @@ describe('OMEGA-VERITAS v12.3 — 35 real tests', () => {
   });
 
   test('26 Capital Hunter accepts exact zero-cost opportunity', async () => {
-    const envelope = await ingestOpportunitySignal(bytes('{"grant":500}'), {
-      source: 'test', url: 'https://test.source', previousHash: ZERO_HASH, metrics: metrics(),
+    const envelope = await ingestOpportunitySignal(bytes(ADEME_SOURCE(500)), {
+      source: 'ADEME', url: 'https://test.source', previousHash: ZERO_HASH, metrics: metrics(),
     });
     expect(envelope).not.toBeNull();
     expect(envelope?.moneyHunt.acquisitionCostCents).toBe(0);
   });
 
   test('27 Capital Hunter rejects non-zero acquisition cost', async () => {
-    await expect(ingestOpportunitySignal(bytes('{"deal":1}'), {
-      source: 'test', url: 'https://test.source', previousHash: ZERO_HASH,
+    await expect(ingestOpportunitySignal(bytes(ADEME_SOURCE(1)), {
+      source: 'ADEME', url: 'https://test.source', previousHash: ZERO_HASH,
       metrics: metrics({ acquisitionCostCents: 2900 }),
     })).resolves.toBeNull();
   });
 
-  test('28 identityHash matches canonical production formula', async () => {
-    const raw = bytes('{"id":42}');
-    const sourceUrl = 'https://test.source';
-    const sourceContentHash = await sha256Buffer(raw);
-    const semanticHash = await sha256Buffer(enc.encode(canonicalJson({ id: 42 })));
-    const expected = await sha256Buffer(enc.encode(canonicalJson({ sourceUrl, sourceContentHash, semanticHash })));
-    const envelope = await ingestOpportunitySignal(raw, { source: 'test', url: sourceUrl, previousHash: ZERO_HASH, metrics: metrics() });
+  test('28 identityHash matches domain-separated (sourceName, externalId) formula', async () => {
+    const expected = await domainSha(HASH_DOMAINS.opportunityId, { sourceName: 'ADEME', externalId: 'ADEME-1' });
+    const envelope = await ingestOpportunitySignal(bytes(ADEME_SOURCE(0)), { source: 'ADEME', url: 'https://test.source', previousHash: ZERO_HASH, metrics: metrics() });
     expect(envelope?.identityHash).toBe(expected);
   });
 
-  test('29 opportunityId is derived from identityHash', async () => {
-    const envelope = await ingestOpportunitySignal(bytes('{"id":29}'), { source: 'test', url: 'https://test.source', previousHash: ZERO_HASH, metrics: metrics() });
+  test('29 opportunityId and versionId are derived from their hashes', async () => {
+    const envelope = await ingestOpportunitySignal(bytes(ADEME_SOURCE(29)), { source: 'ADEME', url: 'https://test.source', previousHash: ZERO_HASH, metrics: metrics() });
     expect(envelope?.opportunityId).toBe(`opp_${envelope?.identityHash.slice(0, 32)}`);
     expect(envelope?.opportunityId).toMatch(/^opp_[a-f0-9]{32}$/);
+    expect(envelope?.versionId).toBe(`ver_${envelope?.versionHash.slice(0, 32)}`);
+    expect(envelope?.versionId).toMatch(/^ver_[a-f0-9]{32}$/);
   });
 
-  test('30 evidenceHash matches canonical evidence block', async () => {
-    const raw = bytes('{"id":30}');
+  test('30 evidenceHash matches domain-separated canonical evidence block', async () => {
+    const raw = bytes(ADEME_SOURCE(30));
     const sourceUrl = 'https://test.source';
     const sourceContentHash = await sha256Buffer(raw);
-    const expected = await sha256Buffer(enc.encode(canonicalJson({ sourceUrl, sourceContentHash })));
-    const envelope = await ingestOpportunitySignal(raw, { source: 'test', url: sourceUrl, previousHash: ZERO_HASH, metrics: metrics() });
+    const expected = await domainSha(HASH_DOMAINS.evidence, { sourceUrl, sourceContentHash });
+    const envelope = await ingestOpportunitySignal(raw, { source: 'ADEME', url: sourceUrl, previousHash: ZERO_HASH, metrics: metrics() });
     expect(envelope?.evidenceHash).toBe(expected);
   });
 
-  test('31 append-only chain links previousHash to predecessor currentHash', async () => {
+  test('31 append-only chain links previousHash to predecessor currentHash and validates', async () => {
     const block0 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_0' }));
     const block1 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_1', previousHash: block0.currentHash }));
     const block2 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_2', previousHash: block1.currentHash }));
     expect(block1.previousHash).toBe(block0.currentHash);
     expect(block2.previousHash).toBe(block1.currentHash);
+    await expect(validateChain([block0, block1, block2])).resolves.toEqual({ valid: true });
   });
 
-  test('32 historical tampering breaks chain validation', async () => {
+  test('32 historical tampering fails validateChain', async () => {
     const block0 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_0', sourceUrl: 'https://original' }));
     const block1 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_1', previousHash: block0.currentHash }));
     const block2 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_2', previousHash: block1.currentHash }));
-    const tampered0 = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_0', sourceUrl: 'https://tampered' }));
-    expect(tampered0.currentHash).not.toBe(block0.currentHash);
-    expect(block1.previousHash).not.toBe(tampered0.currentHash);
-    expect(block2.previousHash).toBe(block1.currentHash);
+
+    // modified in place, seal left untouched
+    const edited = { ...block0, sourceUrl: 'https://tampered' };
+    await expect(validateChain([edited, block1, block2])).resolves.toEqual({ valid: false, index: 0, reason: 'CURRENT_HASH_MISMATCH' });
+
+    // modified and resealed: the successor's previousHash no longer matches
+    const resealed = await scelleEnvelope(coreEnvelope({ opportunityId: 'opp_0', sourceUrl: 'https://tampered' }));
+    expect(resealed.currentHash).not.toBe(block0.currentHash);
+    await expect(validateChain([resealed, block1, block2])).resolves.toEqual({ valid: false, index: 1, reason: 'PREVIOUS_HASH_MISMATCH' });
+
+    // first envelope must start from genesis
+    const orphan = await scelleEnvelope(coreEnvelope({ previousHash: 'f'.repeat(64) }));
+    await expect(validateChain([orphan])).resolves.toEqual({ valid: false, index: 0, reason: 'PREVIOUS_HASH_MISMATCH' });
   });
 
   test('33 invalid processIncomingPayload parameter fails safely', async () => {
@@ -283,11 +297,13 @@ describe('OMEGA-VERITAS v12.3 — 35 real tests', () => {
     expect(result.success).toBe(false);
   });
 
-  test('34 invalid negative financial assertion is rejected', () => {
-    expect(() => {
-      const value = -50;
-      if (!Number.isSafeInteger(value) || value < 0) throw new Error('ACQUISITION_COST_INVALID');
-    }).toThrow('ACQUISITION_COST_INVALID');
+  test('34 negative, fractional, NaN, Infinity and unsafe costs are rejected by ingestOpportunitySignal', async () => {
+    const ingest = (acquisitionCostCents: number) => ingestOpportunitySignal(bytes(ADEME_SOURCE(0)), {
+      source: 'ADEME', url: 'https://test.source', previousHash: ZERO_HASH, metrics: metrics({ acquisitionCostCents }),
+    });
+    for (const bad of [-50, 0.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+      await expect(ingest(bad)).rejects.toThrow('ACQUISITION_COST_INVALID');
+    }
   });
 
   test('35 independent hashes and semantic invariants are correct', async () => {
@@ -297,8 +313,10 @@ describe('OMEGA-VERITAS v12.3 — 35 real tests', () => {
     if (a.success && b.success) {
       expect(a.h_http_raw).toBe('aa486e75e0b3070d199c813de0d5082a3d7cca7f82959ba464c6796999e8ce11');
       expect(b.h_http_raw).toBe('e58d0af9e9430611daac03dbd795199811378934fbe1039fd01893d0ae314cfd');
-      expect(a.h_semantic).toBe(a.h_http_raw);
-      expect(b.h_semantic).toBe(b.h_http_raw);
+      // PAYLOAD_A keys are not sorted ("nested" before "list") and the semantic hash is
+      // domain-separated, so it must differ from the raw-bytes hash.
+      expect(a.h_semantic).toBe(await domainSha(HASH_DOMAINS.sourceSemantic, JSON.parse(PAYLOAD_A)));
+      expect(a.h_semantic).not.toBe(a.h_http_raw);
       expect(a.h_semantic).not.toBe(b.h_semantic);
     }
   });

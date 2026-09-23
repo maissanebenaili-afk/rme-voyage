@@ -1,27 +1,117 @@
-OMEGA-VERITAS v12.3 — RED TEAM MEASUREMENT
-Timestamp: 2026-09-24 session
+OMEGA-VERITAS v12.3-final-proof-2 — RED TEAM MEASUREMENT
+Date: 2026-09-23
+Environment: Linux, Node v22.22.2, npm 10.9.7 (registry reachable),
+             TypeScript 5.7.2 (project, pinned) and 6.0.2 (global)
+Baseline artifact: omega-veritas-v12.3-final-proof.zip
+  sha256 cf5684ff62276359b042a0d0b78cbc0797a1818a9ab2c7afaf69a14fda6ff067
 
+Status vocabulary: PASS / FAIL / BLOCKED_BY_DEPS / NOT_EXECUTED.
+Every line below was produced by a command actually run; nothing is inferred.
+
+======================================================================
+A. BASELINE v12.3 — FIRST REAL JEST EXECUTION (unmodified artifact)
+======================================================================
+npm install                                   PASS (281 packages, ~10 s)
+tsc --noEmit (TS 5.7.2)                       PASS
+Jest, jest.config as shipped (jsdom)          FAIL
+  - omega-veritas.test.ts: suite fails to load
+    (ReferenceError: TextEncoder is not defined under jsdom): 0/35 executed
+  - sourceAdapter.test.ts: 16 passed, 1 failed (test 16, same TextEncoder error)
+  => 16 / 52 declared tests actually passed.
+Jest, testEnvironment switched to node only   FAIL: 51 passed, 1 failed
+  - test 35 fails on its own assertion: it asserts h_semantic === h_http_raw
+    for PAYLOAD_A, whose keys are not sorted ("nested" before "list").
+    The assertion was wrong; production code was not.
+
+Defects found in the v12.3 artifact by audit + execution:
+  D1 capitalHunter identity = H(sourceUrl, sourceContentHash, semanticHash):
+     a whitespace change or a URL change created a new opportunityId.
+  D2 Two divergent identity formulas (capitalHunter vs
+     sourceAdapter.generateOpportunityId).
+  D3 canonicalize(): result["__proto__"] = x sets the prototype, so
+     {"__proto__":{"admin":true},"x":1} and {"x":1} had the SAME semantic hash
+     (collision reproduced).
+  D4 canonicalize(): sorted object + JSON.stringify does not sort
+     integer-like keys ("9" was emitted before "10"). Deterministic, not sorted.
+  D5 JSON.parse silently kept the last duplicate key.
+  D6 normalizeSourcePayload("constructor", {...}) returned an unvalidated
+     payload (registry lookup without own-property check; reproduced).
+  D7 Decorative / tautological tests: 32 (no validator existed), 34 (tested
+     inline code, not production), 17 (asserted elapsed >= 0), 12 (misnamed).
+  D8 capturedAt = Date.now() hard-wired: seals not reproducible in tests.
+  D9 jsdom test environment incompatible with the code under test
+     (TextEncoder, structuredClone, cross-realm Uint8Array).
+
+======================================================================
+B. v12.3-final-proof-2 — MEASUREMENTS
+======================================================================
 STATIC
-- any token in src/tests/public: 0
-- Jest test declarations: 52 (35 + 17)
-- production TypeScript check with global TypeScript 5.8.3: PASS
+  "any" type annotations in src/tests/public/proof     0
+  expect(true) in tests                                0
+  Jest test declarations                               78 (35 + 17 + 26)
+  node:test proof declarations                         14
+  network primitives (fetch/XHR/WebSocket/http)        0
+  Date.now / Math.random in src/core/provenance.ts     0 (one occurrence, in the
+                                                       comment forbidding it)
 
-RUNTIME EXECUTION WITHOUT NPM DEPENDENCIES
-- SHA-256 raw vector A: aa486e75e0b3070d199c813de0d5082a3d7cca7f82959ba464c6796999e8ce11
-- object-key reorder: raw hashes differ; semantic hashes equal: PASS
-- array reorder: semantic hashes differ: PASS
-- opportunity identity determinism: PASS
-- identity SHA-256 format: PASS
-- Capital Hunter envelope sealing: PASS
-- Worker nominal calculation: PASS
-- Worker toll overflow rejection: PASS
-- Worker fuel overflow rejection: PASS
+COMPILE
+  tsc --noEmit, TS 5.7.2 (src + tests)                 PASS
+  tsc --noEmit, TS 6.0.2 (src + tests)                 PASS
+  tsc -p tsconfig.proof.json, TS 6.0.2 (src emit)      PASS
 
-DEPENDENCY-BLOCKED CHECKS
-- npm install: timed out in this execution environment
-- Jest: NOT EXECUTED (dependencies unavailable)
-- global project tsc using actual dependency type packages: NOT EXECUTED
+JEST (npm ci, testEnvironment node)
+  78 / 78                                              PASS
+    omega-veritas.test.ts      35/35
+    sourceAdapter.test.ts      17/17
+    doubleProvenance.test.ts   26/26
 
-IMPORTANT
-The static 52-test count is not equivalent to 52 executed tests.
-No Jest PASS count is claimed.
+CRYPTO_RUNTIME_PROOF (node:test, NO node_modules present, global tsc)
+  14 / 14                                              PASS
+
+MUTATION CHECK (each fix reverted in turn, Jest re-run, source restored)
+  15 / 15 mutants killed                               PASS
+    capturedAt in opportunityId; URL in opportunityId; h_normalized or
+    h_source dropped from versionId; JSON.parse instead of strict parser;
+    non-fatal TextDecoder; no domain separation; old canonicalizer;
+    validateChain without seal check / without link check; currentHash in
+    its own seal; registry without hasOwn; unsafe integers accepted; lone
+    surrogates accepted; financial gate removed.
+
+GATE 0 INVARIANTS (Jest + node:test)
+  I1  key permutation: raw differs, source-semantic equal     PASS
+  I2  array permutation: source-semantic differs              PASS
+  I3  value change: source-semantic differs                   PASS
+  I4  same source, 2 normalizers: h_source equal,
+      h_normalized differ, versionId differ, opportunityId equal PASS
+  I5  content change: new versionId, same opportunityId       PASS
+  I6  capturedAt change: opportunityId and versionId equal    PASS
+  I7  duplicate JSON keys rejected                            PASS
+  I8  invalid UTF-8 rejected                                  PASS
+  I9  domain separation                                       PASS
+  I10 sourceUrl change: identity stable, evidence differs     PASS
+
+NETWORK
+  Network certification                                NOT_EXECUTED
+  Real external schemas                                NOT_EXECUTED
+  All 7 adapters remain [SCHEMA_SYNTHETIQUE_TEST] fixtures.
+
+NOT IN SCOPE OF GATE 0
+  External headHash anchor                             NOT_EXECUTED
+  (validateChain proves internal consistency only; a test shows that a full
+   rewrite of the chain passes it.)
+  RFC 8785 full conformance suite                      NOT_EXECUTED
+  (JCS vectors for numbers and key order pass; no certification claimed.)
+
+======================================================================
+C. STATUS
+======================================================================
+GATE_0 // DOUBLE_PROVENANCE_LOCAL_READY
+  1. both semantic hashes in the code ....................... yes
+  2. versionId depends on both; opportunityId is the stable
+     entity key (architecture review 2) ..................... yes
+  3. invariants coded ....................................... yes (I1-I10)
+  4. executable invariants measured ......................... yes (Jest + node:test)
+  5. no decorative test ..................................... yes (mutation check)
+  6. dependency limits declared ............................. yes (none blocking here)
+  7. adapters identified as synthetic ....................... yes
+  8. no network certification claimed ....................... yes
