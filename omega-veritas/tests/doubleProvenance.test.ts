@@ -115,7 +115,10 @@ describe('Gate 0 — double provenance invariants', () => {
       const result = await processIncomingPayload(bytes(raw));
       expect(result).toEqual({ success: false, error: expect.stringMatching(/^JSON_DUPLICATE_KEY/) });
     }
-    await expect(ingest(ademe().replace('{', '{"reference":"SHADOW",'))).rejects.toThrow(/JSON_DUPLICATE_KEY/);
+    // Same record with a second "reference" key prepended: {"reference":"SHADOW","reference":"ADEME-1",...}
+    const shadowed = `{"reference":"SHADOW",${ademe().slice(1)}`;
+    expect(shadowed.match(/"reference":/g)).toHaveLength(2);
+    await expect(ingest(shadowed)).rejects.toThrow(/JSON_DUPLICATE_KEY/);
   });
 
   test('I8 invalid UTF-8 is rejected', async () => {
