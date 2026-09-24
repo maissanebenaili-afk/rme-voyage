@@ -179,18 +179,20 @@ describe('Gate 1 — double provenance on real bytes', () => {
 });
 
 describe('Gate 1 — schema status is explicit and machine-checkable', () => {
-  test('exactly two REAL_FIXTURE adapters (Gate 1, Gate 3), each with captured fixtures on disk', () => {
+  test('exactly three REAL_FIXTURE adapters (Gates 1, 3 and 2), each with captured fixtures on disk', () => {
     const real = Object.entries(SOURCE_SCHEMA_STATUS).filter(([, status]) => status === 'REAL_FIXTURE').map(([name]) => name);
-    expect(real).toEqual(['DATA_EUROPA_HUB', 'BOAMP_ODS']);
+    expect(real).toEqual(['DATA_EUROPA_HUB', 'BOAMP_ODS', 'AIDES_TERRITOIRES_API']);
     for (const id of IDS) expect(fs.existsSync(path.join(DIR, `${id}.capture.json`))).toBe(true);
     const boampDir = path.resolve(process.cwd(), 'fixtures/real/boamp');
     expect(fs.readdirSync(boampDir).filter((f) => f.endsWith('.capture.json')).length).toBeGreaterThan(0);
+    const aidsDir = path.resolve(process.cwd(), 'fixtures/real/aides-territoires');
+    expect(fs.readdirSync(aidsDir).filter((f) => f.endsWith('.capture.json')).length).toBeGreaterThan(0);
   });
 
-  test('every declared source has a registered extractor (9 sources)', () => {
+  test('every declared source has a registered extractor (10 sources)', () => {
     for (const name of Object.keys(SOURCE_SCHEMA_STATUS)) {
       expect(() => normalizeSourcePayload(name, {})).not.toThrow(/UNSUPPORTED_SOURCE_TYPE/);
     }
-    expect(Object.keys(SOURCE_SCHEMA_STATUS)).toHaveLength(9);
+    expect(Object.keys(SOURCE_SCHEMA_STATUS)).toHaveLength(10);
   });
 });

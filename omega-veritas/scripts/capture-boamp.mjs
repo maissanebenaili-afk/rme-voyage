@@ -7,53 +7,24 @@
 // The server gzip-encodes responses; fetch() decodes them, so the stored bytes and the
 // recorded sha256 are those of the decoded body (Content-Encoding is recorded, not kept).
 // A captured fixture is a real schema sample, NOT a certified network integration.
-import { createHash } from "node:crypto";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { assertSingleRecord, fetchNotice } from "./lib/boamp-api.mjs";
 
-const API = "https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records";
 const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "fixtures", "real", "boamp");
-const IDWEB = /^[0-9]{2}-[0-9]{1,7}$/;
 const DELAY_MS = 1000;
-
-const recordUrl = (idweb) => `${API}?where=${encodeURIComponent(`idweb="${idweb}"`)}`;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function fetchNotice(idweb) {
-  if (!IDWEB.test(idweb)) throw new Error(`INVALID_IDWEB ${idweb}`);
-  const url = recordUrl(idweb);
-  const response = await fetch(url, { headers: { accept: "application/json" } });
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  return {
-    bytes,
-    capture: {
-      schema: "omega-veritas/fixture-capture/v1",
-      source: "BOAMP_ODS",
-      idweb,
-      url,
-      retrievedAt: new Date().toISOString(),
-      httpStatus: response.status,
-      contentType: response.headers.get("content-type"),
-      contentEncoding: response.headers.get("content-encoding"),
-      serverDate: response.headers.get("date"),
-      byteLength: bytes.byteLength,
-      sha256: createHash("sha256").update(bytes).digest("hex"),
-    },
-  };
-}
 
 async function capture(ids) {
   await mkdir(DIR, { recursive: true });
   for (const [index, idweb] of ids.entries()) {
     if (index > 0) await sleep(DELAY_MS);
-    const { bytes, capture } = await fetchNotice(idweb);
-    if (capture.httpStatus !== 200) throw new Error(`HTTP_${capture.httpStatus} ${idweb}`);
-    const total = JSON.parse(new TextDecoder().decode(bytes)).total_count;
-    if (total !== 1) throw new Error(`EXPECTED_ONE_RECORD ${idweb} got ${total}`);
-    await writeFile(path.join(DIR, `${idweb}.json`), bytes);
-    await writeFile(path.join(DIR, `${idweb}.capture.json`), JSON.stringify(capture, null, 2) + "\n");
-    console.log(`CAPTURED ${idweb} ${capture.byteLength} bytes sha256=${capture.sha256}`);
+    const notice = await fetchNotice(idweb);
+    assertSingleRecord(notice);
+    await writeFile(path.join(DIR, `${idweb}.json`), notice.bytes);
+    await writeFile(path.join(DIR, `${idweb}.capture.json`), JSON.stringify(notice.capture, null, 2) + "\n");
+    console.log(`CAPTURED ${idweb} ${notice.capture.byteLength} bytes sha256=${notice.capture.sha256}`);
   }
 }
 

@@ -128,6 +128,7 @@ export const SOURCE_SCHEMA_STATUS: Readonly<Record<string, SourceSchemaStatus>> 
   AIDES_ENTREPRISES: "SYNTHETIC_TEST",
   DATA_EUROPA_HUB: "REAL_FIXTURE",
   BOAMP_ODS: "REAL_FIXTURE",
+  AIDES_TERRITOIRES_API: "REAL_FIXTURE",
 };
 
 const SOURCE_EXTRACTORS_REGISTRY: Record<string, PropertyExtractor> = {
@@ -234,6 +235,26 @@ const SOURCE_EXTRACTORS_REGISTRY: Record<string, PropertyExtractor> = {
       sourceEventTimestamp: assertIsoDateUtc(notice.dateparution, "BOAMP_ODS_DATEPARUTION"),
       sourceEventType: "publication",
       payloadUrl: assertValidUrl(notice.url_avis, "BOAMP_ODS_URL"),
+    };
+  },
+  // [SCHEMA_REEL_FIXTURE] — written against real authenticated responses of
+  // https://aides-territoires.beta.gouv.fr/api/aids/by-id/{id} captured 2026-09-24
+  // (fixtures/real/aides-territoires/). date_updated is refreshed nightly by the platform,
+  // so the stable date_created is used; aid records carry no amount: rawValueCents is null.
+  AIDES_TERRITOIRES_API: (raw) => {
+    if (typeof raw.id !== "number" || !Number.isSafeInteger(raw.id) || raw.id <= 0) {
+      throw new Error("AIDES_TERRITOIRES_API_ID_INVALID");
+    }
+    const path = assertValidString(raw.url, "AIDES_TERRITOIRES_API_URL");
+    if (!path.startsWith("/aides/")) throw new Error("AIDES_TERRITOIRES_API_URL_INVALID_URL");
+    return {
+      externalId: String(raw.id),
+      title: assertValidString(raw.name, "AIDES_TERRITOIRES_API_NAME"),
+      description: Array.isArray(raw.aid_types) ? raw.aid_types.filter((t): t is string => typeof t === "string").join("; ") : "",
+      rawValueCents: null,
+      sourceEventTimestamp: assertIsoDateUtc(raw.date_created, "AIDES_TERRITOIRES_API_DATE_CREATED"),
+      sourceEventType: "publication",
+      payloadUrl: assertValidUrl(`https://aides-territoires.beta.gouv.fr${path}`, "AIDES_TERRITOIRES_API_URL"),
     };
   },
 };
