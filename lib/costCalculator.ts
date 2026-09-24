@@ -13,14 +13,20 @@ export interface TravelCostBreakdown {
   grandTotal: number;
 }
 
+// Valeur négative ou non finie (champ vidé, NaN) → 0, pour qu'un total ne
+// devienne jamais négatif ni « NaN € ».
+function nonNegative(value: number): number {
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
 export function calculateTravelCost(input: TravelCostInput): TravelCostBreakdown {
   const fuelTotal =
-    (input.distanceKm / 100) *
-    input.consumptionPer100Km *
-    input.fuelPricePerLiter;
+    (nonNegative(input.distanceKm) / 100) *
+    nonNegative(input.consumptionPer100Km) *
+    nonNegative(input.fuelPricePerLiter);
 
-  const tollTotal = Math.max(0, input.tollFeesEstimate);
-  const ferryTotal = Math.max(0, input.ferryTicketCost);
+  const tollTotal = nonNegative(input.tollFeesEstimate);
+  const ferryTotal = nonNegative(input.ferryTicketCost);
 
   return {
     fuelTotal: Math.round(fuelTotal * 100) / 100,

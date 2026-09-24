@@ -111,3 +111,17 @@ describe('calculateTravelCost', () => {
     })
   })
 })
+
+describe('calculateTravelCost — input guards', () => {
+  it('never returns a negative or NaN fuel total', () => {
+    const result = calculateTravelCost({
+      distanceKm: -1000,
+      fuelPricePerLiter: Number.NaN,
+      consumptionPer100Km: 6,
+      tollFeesEstimate: 10,
+      ferryTicketCost: 20,
+    })
+    expect(result.fuelTotal).toBe(0)
+    expect(result.grandTotal).toBe(30)
+  })
+})

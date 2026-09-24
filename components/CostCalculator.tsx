@@ -3,9 +3,11 @@
 import { useMemo, useState } from "react";
 import { calculateTravelCost } from "@/lib/costCalculator";
 import { Car, Fuel, Ship, Waypoints, Wallet } from "lucide-react";
+import DistanceProvenanceNote from "./DistanceProvenanceNote";
+import { useRouteDistance } from "@/lib/hooks/useRouteDistance";
 
 export default function CostCalculator() {
-  const [distance, setDistance] = useState(2100);
+  const { distanceKm: distance, provenance, setManualDistance: setDistance } = useRouteDistance(2100);
   const [consumption, setConsumption] = useState(6.5);
   const [fuelPrice, setFuelPrice] = useState(1.65);
   const [tolls, setTolls] = useState(120);
@@ -61,6 +63,7 @@ export default function CostCalculator() {
           </label>
         ))}
       </div>
+      <DistanceProvenanceNote provenance={provenance} className="mt-3 text-sable-700" />
 
       {/* Results */}
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -83,9 +86,9 @@ export default function CostCalculator() {
 
       {/* Tips */}
       <div className="mt-4 rounded-xl bg-safran-50 p-4 text-sm text-safran-900">
-        💡 <strong>Astuce :</strong> Le trajet Paris-Tanger en voiture coûte en moyenne 350-450€
-        (carburant + péages + ferry), contre 150-300€ par personne en avion.
-        À 3+ voyageurs, la route devient plus économique.
+        💡 <strong>Astuce :</strong> le coût de la route (carburant, péages, ferry) se partage
+        entre les passagers, alors qu'un billet d'avion se paie par personne. Comparez les deux
+        avec vos propres chiffres dans le Reality Check ci-dessous.
       </div>
     </section>
   );

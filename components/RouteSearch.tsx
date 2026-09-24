@@ -14,6 +14,7 @@ import {
   shareTripLink,
   validateRoute,
 } from "@/lib/tripShare";
+import { publishRoute, toComputedRoute } from "@/lib/routeContext";
 
 type RouteCalcStatus = "idle" | "loading" | "error" | "ready";
 
@@ -90,6 +91,8 @@ export default function RouteSearch() {
       setRouteGeometry(data.geometry);
       setRouteInfo({ distanceMeters: data.distanceMeters, durationSeconds: data.durationSeconds });
       setRouteStatus("ready");
+      // Alimente le Reality Check et le budget avec la distance mesurée.
+      publishRoute(toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds));
     } catch (error) {
       if ((error as Error).name === "AbortError") return;
       setRouteError("Itinéraire indisponible. Vérifiez votre connexion et réessayez.");
@@ -142,6 +145,7 @@ export default function RouteSearch() {
             onChange={(v) => {
               setOrigin(v);
               setOriginCity(null);
+              publishRoute(null);
             }}
             onSelect={(result) => setOriginCity(result)}
           />
@@ -152,6 +156,7 @@ export default function RouteSearch() {
             onChange={(v) => {
               setDestination(v);
               setDestinationCity(null);
+              publishRoute(null);
             }}
             onSelect={(result) => setDestinationCity(result)}
           />

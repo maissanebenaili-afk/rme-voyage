@@ -2,11 +2,15 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { Car, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
+import DistanceProvenanceNote from './DistanceProvenanceNote';
+import { useRouteDistance } from '@/lib/hooks/useRouteDistance';
+import { trackFunnelEvent } from '@/lib/partnerTracking';
+import { computeTripEconomics, type TripMode } from '@/lib/tripEconomics';
 
-type Mode = 'car' | 'mixed' | 'flight';
-
-type AnalyticsWindow = Window & {
-  va?: (event: string, properties?: Record<string, string>) => void;
+const MODE_LABELS: Record<TripMode, string> = {
+  car: 'la voiture seule',
+  mixed: 'voiture + ferry',
+  flight: "l'avion",
 };
 
 function boundedNumber(raw: string, min: number, max: number, fallback: number) {
@@ -19,43 +23,36 @@ function eur(value: number) {
 }
 
 export default function TripDecisionEngine() {
-  const [distance, setDistance] = useState(1450);
+  const { distanceKm: distance, provenance, setManualDistance: setDistance } = useRouteDistance(1450);
   const [consumption, setConsumption] = useState(6.5);
   const [fuelPrice, setFuelPrice] = useState(1.75);
   const [tolls, setTolls] = useState(120);
   const [ferry, setFerry] = useState(180);
   const [travelers, setTravelers] = useState(4);
   const [flightPerPerson, setFlightPerPerson] = useState(180);
-  const [mode, setMode] = useState<Mode>('car');
+  const [mode, setMode] = useState<TripMode>('car');
   const trackedUse = useRef(false);
-
-  function trackFunnelEvent(event: string, placement: string) {
-    if (typeof window === 'undefined') return;
-    const analytics = window as AnalyticsWindow;
-    if (typeof analytics.va === 'function') {
-      analytics.va(event, { placement, page: window.location.pathname });
-    }
-  }
 
   function markUsed() {
     if (trackedUse.current) return;
     trackedUse.current = true;
-    trackFunnelEvent('reality_check_used', 'trip_decision_engine');
+    trackFunnelEvent({ event: 'reality_check_used', placement: 'trip_decision_engine' });
   }
 
-  const result = useMemo(() => {
-    const fuel = (distance / 100) * consumption * fuelPrice;
-    const carTrip = fuel + tolls;
-    const mixedTrip = carTrip + ferry;
-    const flightTrip = flightPerPerson * travelers;
-    const selected = mode === 'car' ? carTrip : mode === 'mixed' ? mixedTrip : flightTrip;
-    const buffer = selected * 0.1;
-    const options = [carTrip, mixedTrip, flightTrip];
-    const cheapest = Math.min(...options);
-    const perPerson = travelers > 0 ? selected / travelers : 0;
-    const deltaVsCheapest = selected - cheapest;
-    return { fuel, carTrip, mixedTrip, flightTrip, selected, buffer, low: selected, high: selected + buffer, perPerson, deltaVsCheapest };
-  }, [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode]);
+  const result = useMemo(
+    () =>
+      computeTripEconomics({
+        distanceKm: distance,
+        consumptionPer100Km: consumption,
+        fuelPricePerLiter: fuelPrice,
+        tollsTotal: tolls,
+        ferryTotal: ferry,
+        travelers,
+        flightPricePerPerson: flightPerPerson,
+        mode,
+      }),
+    [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode]
+  );
 
   return (
     <section className="overflow-hidden rounded-[2rem] border border-[#dbe4ef] bg-white shadow-sm" aria-labelledby="reality-check-title">
@@ -87,7 +84,7 @@ export default function TripDecisionEngine() {
       <div className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
         <div className="grid gap-4">
           {[
-            ['Distance (km)', distance, setDistance, 100, 5000, 50],
+            ['Distance (km)', distance, setDistance, 1, 10000, 10],
             ['Conso. (L/100 km)', consumption, setConsumption, 3, 15, 0.1],
             ['Carburant (€/L)', fuelPrice, setFuelPrice, 1, 3, 0.01],
             ['Péages (€)', tolls, setTolls, 0, 1000, 5],
@@ -100,6 +97,7 @@ export default function TripDecisionEngine() {
               <input type="number" min={min as number} max={max as number} step={step as number} value={value as number} onChange={(e) => { (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number)); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40" />
             </label>
           ))}
+          <DistanceProvenanceNote provenance={provenance} className="text-[#64748b]" />
         </div>
 
         <div className="rounded-2xl bg-[#f8fafc] p-5 sm:p-6">
@@ -108,7 +106,7 @@ export default function TripDecisionEngine() {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct</p>
             <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d]">{eur(result.selected)}</p>
             <p className="mt-2 text-sm text-[#64748b]">≈ {eur(result.perPerson)} / personne · marge indicative : jusqu’à {eur(result.high)}</p>
-            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport au scénario le moins cher.`}</p>
+            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport à ${MODE_LABELS[result.cheapestMode]}.`}</p>
           </div>
           <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
@@ -117,7 +115,7 @@ export default function TripDecisionEngine() {
             <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
           <p className="mt-5 text-xs leading-5 text-[#64748b]">Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.</p>
-          <a href="#booking-title" onClick={() => trackFunnelEvent('reality_check_cta', 'trip_decision_engine')} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">Comparer les ferries et les vols <ArrowRight size={16} /></a>
+          <a href="#booking-title" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">Comparer les ferries et les vols <ArrowRight size={16} /></a>
         </div>
       </div>
     </section>
