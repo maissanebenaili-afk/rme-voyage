@@ -21,13 +21,16 @@ export default function TripDecisionEngine() {
 
   const result = useMemo(() => {
     const fuel = (distance / 100) * consumption * fuelPrice;
-    const carKnown = fuel + tolls;
-    const carTrip = carKnown + ferry;
-    const mixedTrip = ferry + fuel * 0.35 + tolls * 0.35;
+    const carTrip = fuel + tolls;
+    const mixedTrip = carTrip + ferry;
     const flightTrip = flightPerPerson * travelers;
     const selected = mode === 'car' ? carTrip : mode === 'mixed' ? mixedTrip : flightTrip;
     const buffer = selected * 0.1;
-    return { fuel, carTrip, mixedTrip, flightTrip, selected, buffer, low: selected, high: selected + buffer };
+    const options = [carTrip, mixedTrip, flightTrip];
+    const cheapest = Math.min(...options);
+    const perPerson = selected / travelers;
+    const deltaVsCheapest = selected - cheapest;
+    return { fuel, carTrip, mixedTrip, flightTrip, selected, buffer, low: selected, high: selected + buffer, perPerson, deltaVsCheapest };
   }, [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode]);
 
   return (
@@ -103,18 +106,21 @@ export default function TripDecisionEngine() {
           <div className="mt-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct</p>
             <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d]">{eur(result.selected)}</p>
-            <p className="mt-2 text-sm text-[#64748b]">marge indicative de 10 % : jusqu’à {eur(result.high)}</p>
+            <p className="mt-2 text-sm text-[#64748b]">≈ {eur(result.perPerson)} / personne · marge indicative : jusqu’à {eur(result.high)}</p>
+            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">
+              {result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport au scénario le moins cher.`}
+            </p>
           </div>
 
           <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
             <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.carTrip)}</strong></div>
-            <div className="flex justify-between"><span>Voiture + ferry optimisée*</span><strong>{eur(result.mixedTrip)}</strong></div>
+            <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.mixedTrip)}</strong></div>
             <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
 
           <p className="mt-5 text-xs leading-5 text-[#64748b]">
-            * Scénario indicatif. Les prix, péages, traversées, bagages et suppléments doivent être vérifiés avant achat.
+            Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.
           </p>
 
           <a href="#planifier" className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d] hover:text-[#b45309]">
