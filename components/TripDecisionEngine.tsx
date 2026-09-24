@@ -13,8 +13,13 @@ function eur(value: number) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 }
 
-export default function TripDecisionEngine() {
+type TripDecisionEngineProps = {
+  routeDistanceKm?: number;
+};
+
+export default function TripDecisionEngine({ routeDistanceKm }: TripDecisionEngineProps) {
   const [distance, setDistance] = useState(1450);
+  const [routeDistanceApplied, setRouteDistanceApplied] = useState(false);
   const [consumption, setConsumption] = useState(6.5);
   const [fuelPrice, setFuelPrice] = useState(1.75);
   const [tolls, setTolls] = useState(120);
@@ -23,6 +28,13 @@ export default function TripDecisionEngine() {
   const [flightPerPerson, setFlightPerPerson] = useState(180);
   const [mode, setMode] = useState<Mode>('car');
   const trackedUse = useRef(false);
+
+  useMemo(() => {
+    if (typeof routeDistanceKm === 'number' && Number.isFinite(routeDistanceKm) && routeDistanceKm > 0) {
+      setDistance(Math.round(routeDistanceKm));
+      setRouteDistanceApplied(true);
+    }
+  }, [routeDistanceKm]);
 
   function trackFunnelEvent(event: string, placement: string) {
     if (typeof window === 'undefined') return;
@@ -68,6 +80,11 @@ export default function TripDecisionEngine() {
               Pas seulement le prix affiché : carburant, péages, ferry et nombre de voyageurs.
               Ajustez les hypothèses pour obtenir un ordre de grandeur immédiatement.
             </p>
+            {routeDistanceApplied && (
+              <p className="mt-3 inline-flex rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-100">
+                Distance issue de votre itinéraire calculé : {Math.round(distance)} km
+              </p>
+            )}
           </div>
         </div>
 
