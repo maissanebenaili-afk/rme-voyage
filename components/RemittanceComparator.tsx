@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, TrendingDown, Clock, Banknote } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
+import { trackPartnerClick } from '@/lib/partnerTracking';
 
 interface Provider {
   id: string;
@@ -12,6 +13,8 @@ interface Provider {
   received: number;
   time: string;
   affiliateUrl: string | null;
+  isAffiliate: boolean;
+  costBasis: 'estimated';
 }
 
 interface RemittanceData {
@@ -20,6 +23,8 @@ interface RemittanceData {
   amount: number;
   midRate: number;
   providers: Provider[];
+  rateSource: string;
+  observedAt: string;
 }
 
 export default function RemittanceComparator() {
@@ -54,6 +59,12 @@ export default function RemittanceComparator() {
       {data && !loading && (
         <p className="text-sm text-[#0f1f3d]/60 mb-6">
           {t('remittanceMidRate')}: <span className="font-semibold">1 {currency} = {data.midRate.toFixed(4)} MAD</span>
+          <span className="ml-2 text-xs">· taux indicatif, source externe</span>
+        </p>
+      )}
+      {data && !loading && (
+        <p className="mb-4 text-xs leading-5 text-[#0f1f3d]/55">
+          Les frais et délais affichés sont des estimations calculées par RME Voyage, pas des tarifs contractuels. Vérifiez le montant final chez le prestataire avant d’envoyer.
         </p>
       )}
 
@@ -133,7 +144,7 @@ export default function RemittanceComparator() {
                   </span>
                   <span className="flex items-center gap-1">
                     <Banknote className="w-3 h-3" />
-                    {t('remittanceFee')}: {p.fee.toFixed(2)}€
+                    Frais estimés: {p.fee.toFixed(2)}€
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
@@ -152,12 +163,21 @@ export default function RemittanceComparator() {
 
               {/* CTA */}
               <a
-                href={p.affiliateUrl || `https://www.google.com/search?q=${encodeURIComponent(p.name + ' transfert argent Maroc')}`}
+                href={p.affiliateUrl || '#'}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={p.isAffiliate ? "sponsored noopener noreferrer" : "noopener noreferrer"}
+                onClick={() => {
+                  if (!p.affiliateUrl) return;
+                  trackPartnerClick({
+                    partner: p.id,
+                    product: 'transfer',
+                    placement: 'remittance_comparator',
+                    page: window.location.pathname,
+                  });
+                }
                 className="shrink-0 flex items-center gap-1 rounded-lg bg-[#0f1f3d] text-white text-sm font-medium px-3 py-2 hover:bg-[#0f1f3d]/80 transition-colors"
               >
-                {t('remittanceSend')}
+                {t('remittanceSend')}{p.isAffiliate ? ' · partenaire' : ''}
                 <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </div>
