@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 export default function NewsletterSection() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('Une erreur est survenue. Réessaie.');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -16,10 +17,16 @@ export default function NewsletterSection() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      if (!res.ok) throw new Error('failed');
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        setErrorMessage(body.error ?? 'Une erreur est survenue. Réessaie.');
+        setStatus('error');
+        return;
+      }
       setStatus('success');
       setEmail('');
     } catch {
+      setErrorMessage('Une erreur est survenue. Réessaie.');
       setStatus('error');
     }
   }
@@ -61,7 +68,7 @@ export default function NewsletterSection() {
         )}
 
         {status === 'error' && (
-          <p className="mt-3 text-sm text-red-300">Une erreur est survenue. Réessaie.</p>
+          <p className="mt-3 text-sm text-red-300">{errorMessage}</p>
         )}
       </div>
     </section>
