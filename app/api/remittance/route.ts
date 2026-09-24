@@ -86,7 +86,8 @@ export async function GET(request: NextRequest) {
     const netSent = amount - p.fee;
     const received = netSent > 0 ? netSent * midRate * (1 - p.spread) : 0;
     const affiliateBase = process.env[p.affiliateEnvKey];
-    // Prefer affiliate URL; fall back to pre-filled deep link (better UX + conversion)
+    const isAffiliate = Boolean(affiliateBase);
+    // Use an approved partner URL when configured; otherwise use a public pre-filled link.
     const affiliateUrl = affiliateBase ?? p.deepLinkFn(amount);
     return {
       id: p.id,
@@ -96,6 +97,8 @@ export async function GET(request: NextRequest) {
       received: parseFloat(received.toFixed(2)),
       time: p.time,
       affiliateUrl,
+      isAffiliate,
+      costBasis: 'estimated',
     };
   }).sort((a, b) => b.received - a.received);
 
@@ -104,6 +107,8 @@ export async function GET(request: NextRequest) {
     to,
     amount,
     midRate,
+    rateSource: 'fawazahmed0/currency-api',
+    observedAt: new Date().toISOString(),
     providers: results,
   });
 }
