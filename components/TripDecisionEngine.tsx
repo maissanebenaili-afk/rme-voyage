@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Car, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
 
 type Mode = 'car' | 'mixed' | 'flight';
+
+type AnalyticsWindow = Window & {
+  va?: (event: string, properties?: Record<string, string>) => void;
+};
 
 function eur(value: number) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
@@ -18,6 +22,21 @@ export default function TripDecisionEngine() {
   const [travelers, setTravelers] = useState(4);
   const [flightPerPerson, setFlightPerPerson] = useState(180);
   const [mode, setMode] = useState<Mode>('car');
+  const trackedUse = useRef(false);
+
+  function trackFunnelEvent(event: string, placement: string) {
+    if (typeof window === 'undefined') return;
+    const analytics = window as AnalyticsWindow;
+    if (typeof analytics.va === 'function') {
+      analytics.va(event, { placement, page: window.location.pathname });
+    }
+  }
+
+  function markUsed() {
+    if (trackedUse.current) return;
+    trackedUse.current = true;
+    trackFunnelEvent('reality_check_used', 'trip_decision_engine');
+  }
 
   const result = useMemo(() => {
     const fuel = (distance / 100) * consumption * fuelPrice;
@@ -61,7 +80,10 @@ export default function TripDecisionEngine() {
             <button
               key={value}
               type="button"
-              onClick={() => setMode(value)}
+              onClick={() => {
+                setMode(value);
+                markUsed();
+              }}
               className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`}
               aria-pressed={mode === value}
             >
@@ -91,7 +113,10 @@ export default function TripDecisionEngine() {
                 max={max as number}
                 step={step as number}
                 value={value as number}
-                onChange={(e) => (setter as (v: number) => void)(Number(e.target.value))}
+                onChange={(e) => {
+                  (setter as (v: number) => void)(Number(e.target.value));
+                  markUsed();
+                }}
                 className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40"
               />
             </label>
@@ -123,8 +148,12 @@ export default function TripDecisionEngine() {
             Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.
           </p>
 
-          <a href="#planifier" className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d] hover:text-[#b45309]">
-            Affiner mon trajet <ArrowRight size={16} />
+          <a
+            href="#booking-title"
+            onClick={() => trackFunnelEvent('reality_check_cta', 'trip_decision_engine')}
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]"
+          >
+            Comparer les ferries et les vols <ArrowRight size={16} />
           </a>
         </div>
       </div>
