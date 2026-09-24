@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import {
   ArrowRight,
   BadgeCheck,
@@ -68,6 +69,8 @@ const features = [
 ];
 
 export default function Home() {
+  const [routeDistanceKm, setRouteDistanceKm] = useState<number | undefined>(undefined);
+
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b]">
       {/* Hero Section */}
@@ -237,9 +240,9 @@ export default function Home() {
           </p>
         </div>
         <div className="space-y-6">
-          <RouteSearch />
+          <RouteSearch onRouteReady={(distanceKm) => setRouteDistanceKm(distanceKm)} />
           <CostCalculator />
-          <TripDecisionEngine />
+          <TripDecisionEngine routeDistanceKm={routeDistanceKm} />
         </div>
       </section>
 
