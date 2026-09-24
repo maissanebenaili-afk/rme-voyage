@@ -1,5 +1,3 @@
-import { track } from '@vercel/analytics';
-
 export type PartnerProduct = 'ferry' | 'flight' | 'transfer' | 'hotel' | 'car_rental' | 'other';
 
 export type PartnerClickEvent = {
@@ -9,13 +7,20 @@ export type PartnerClickEvent = {
   page: string;
 };
 
+type AnalyticsWindow = Window & {
+  va?: (event: string, properties?: Record<string, string>) => void;
+};
+
 export function trackPartnerClick(event: PartnerClickEvent): void {
   if (typeof window === 'undefined') return;
 
-  track('partner_click', {
-    partner: event.partner,
-    product: event.product,
-    placement: event.placement,
-    page: event.page,
-  });
+  const analytics = window as AnalyticsWindow;
+  if (typeof analytics.va === 'function') {
+    analytics.va('partner_click', {
+      partner: event.partner,
+      product: event.product,
+      placement: event.placement,
+      page: event.page,
+    });
+  }
 }
