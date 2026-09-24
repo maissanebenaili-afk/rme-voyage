@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, TrendingDown, Clock, Banknote } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
-import { trackPartnerClick } from '@/lib/partnerTracking';
+import { trackFunnelEvent, trackPartnerClick } from '@/lib/partnerTracking';
 
 interface Provider {
   id: string;
@@ -46,7 +46,7 @@ export default function RemittanceComparator() {
           if (!r.ok) throw new Error('fetch failed');
           return r.json() as Promise<RemittanceData>;
         })
-        .then((d) => { setData(d); setLoading(false); })
+        .then((d) => { setData(d); setLoading(false); trackFunnelEvent({ event: 'remittance_result_viewed', placement: 'remittance_comparator' }); })
         .catch(() => { setError(true); setLoading(false); });
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
