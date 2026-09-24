@@ -114,7 +114,7 @@ export default function TripDecisionEngine() {
 
           <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
-            <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.carTrip)}</strong></div>
+            <div className="flex justify-between"><span>Voiture (sans ferry)</span><strong>{eur(result.carTrip)}</strong></div>
             <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.mixedTrip)}</strong></div>
             <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
