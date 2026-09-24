@@ -174,7 +174,7 @@ export default function RemittanceComparator() {
                     placement: 'remittance_comparator',
                     page: window.location.pathname,
                   });
-                }
+                }}
                 className="shrink-0 flex items-center gap-1 rounded-lg bg-[#0f1f3d] text-white text-sm font-medium px-3 py-2 hover:bg-[#0f1f3d]/80 transition-colors"
               >
                 {t('remittanceSend')}{p.isAffiliate ? ' · partenaire' : ''}
