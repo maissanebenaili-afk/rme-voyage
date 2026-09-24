@@ -17,7 +17,11 @@ import {
 
 type RouteCalcStatus = "idle" | "loading" | "error" | "ready";
 
-export default function RouteSearch() {
+type RouteSearchProps = {
+  onRouteReady?: (distanceKm: number) => void;
+};
+
+export default function RouteSearch({ onRouteReady }: RouteSearchProps) {
   const [origin, setOrigin] = useState("Paris, France");
   const [destination, setDestination] = useState("Tanger, Maroc");
   const [date, setDate] = useState("");
@@ -89,6 +93,7 @@ export default function RouteSearch() {
 
       setRouteGeometry(data.geometry);
       setRouteInfo({ distanceMeters: data.distanceMeters, durationSeconds: data.durationSeconds });
+      onRouteReady?.(data.distanceMeters / 1000);
       setRouteStatus("ready");
     } catch (error) {
       if ((error as Error).name === "AbortError") return;
