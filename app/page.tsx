@@ -439,6 +439,7 @@ export default function Home() {
                 <li><Link href="/decouvrir" className="hover:text-white">Découvrir</Link></li>
                 <li><Link href="/boutique" className="hover:text-white">Boutique ✨</Link></li>
                 <li><Link href="/telecharger" className="hover:text-white">Télécharger</Link></li>
+                <li><Link href="/soutenir" className="hover:text-white">Soutenir le projet 💛</Link></li>
                 <li><a href="/rss.xml" className="hover:text-white">Flux RSS</a></li>
               </ul>
             </div>
