@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Car, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
 
 type Mode = 'car' | 'mixed' | 'flight';
@@ -29,7 +29,7 @@ export default function TripDecisionEngine({ routeDistanceKm }: TripDecisionEngi
   const [mode, setMode] = useState<Mode>('car');
   const trackedUse = useRef(false);
 
-  useMemo(() => {
+  useEffect(() => {
     if (typeof routeDistanceKm === 'number' && Number.isFinite(routeDistanceKm) && routeDistanceKm > 0) {
       setDistance(Math.round(routeDistanceKm));
       setRouteDistanceApplied(true);
