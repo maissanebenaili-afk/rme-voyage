@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
 import CostCalculator from '@/components/CostCalculator';
+import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
 import NewsFeed from '@/components/NewsFeed';
@@ -238,6 +239,7 @@ export default function Home() {
         <div className="space-y-6">
           <RouteSearch />
           <CostCalculator />
+          <TripDecisionEngine />
         </div>
       </section>
 
