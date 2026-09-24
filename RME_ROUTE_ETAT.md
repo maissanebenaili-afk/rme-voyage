@@ -1,5 +1,35 @@
 # RME Route — état maître
 
+## Build réparé : Supabase fusionné dans `proxy.ts` (2026-09-23, branche `claude/omega-veritas-double-provenance-aqh9f6`)
+
+Depuis le commit Supabase `ed51d0a`, `next build` échouait sur `main` (CI
+`Lint, Test & Build` et déploiement Vercel rouges) :
+- `middleware.ts` et `proxy.ts` coexistaient, ce que Next 16 refuse ;
+- `@supabase/ssr` était importé mais absent de `package.json` (14 erreurs `tsc`) ;
+- `NextResponse.next()` était appelé avec 2 arguments.
+
+Correctif :
+- `middleware.ts` supprimé ; `proxy()` devient `async` et appelle
+  `updateSession()` (`lib/supabase/middleware.ts`) seulement si
+  `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` sont définies
+  (Supabase reste optionnel : sans elles, mode données fictives, aucun appel) ;
+- les en-têtes de sécurité et CORS sont posés sur la réponse renvoyée par
+  `updateSession()`, pour ne pas perdre les cookies de session rafraîchis ;
+- `getClaims()` remplace `getSession()` (validation du JWT) ; si Supabase est
+  injoignable, la page est servie quand même, sans session rafraîchie ;
+- `@supabase/ssr@0.12.7` ajouté aux dépendances ;
+- CSP `connect-src` : l'origine https du projet Supabase est ajoutée quand elle
+  est configurée, sinon le client navigateur (`useUser`) était bloqué.
+
+Vérifié : `tsc --noEmit` 0 erreur (14 avant), `npm test` 140/140 (6 tests
+Supabase ajoutés, 3 mutants tués), `npm run lint` 0 erreur, `npm run build` PASS.
+
+Note (session documentaire séparée) : une PR de correctif équivalente
+(`fix/proxy-middleware-conflict`, #77) avait été préparée en parallèle sur la
+même cause racine, avant que ce commit ne soit repéré déjà fusionné sur
+`main`. Fermée sans merge pour ne pas écraser cette version (déjà en
+production, et légèrement plus poussée : validation JWT via `getClaims()`).
+
 ## Audit hébergement — état de la migration vers un hébergeur gratuit (2026-09-22)
 
 Demande initiale : vérifier si une migration de Vercel vers un hébergeur

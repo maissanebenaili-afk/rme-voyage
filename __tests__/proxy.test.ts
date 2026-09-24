@@ -4,6 +4,27 @@ import { NextRequest } from "next/server";
 
 import { proxy } from "../proxy";
 
+const mockGetClaims = jest.fn();
+let mockCookiesToSet: Array<{ name: string; value: string; options: Record<string, unknown> }> = [];
+
+// Stand-in for the Supabase server client: getClaims() "refreshes" the session by
+// handing new cookies to the setAll adapter, as @supabase/ssr does.
+jest.mock("@supabase/ssr", () => ({
+  createServerClient: (
+    _url: string,
+    _key: string,
+    { cookies }: { cookies: { setAll: (c: typeof mockCookiesToSet) => void } },
+  ) => ({
+    auth: {
+      getClaims: async () => {
+        mockGetClaims();
+        if (mockCookiesToSet.length > 0) cookies.setAll(mockCookiesToSet);
+        return { data: null, error: null };
+      },
+    },
+  }),
+}));
+
 function buildRequest(
   path: string,
   init: { headers?: Record<string, string>; method?: string } = {},
@@ -15,8 +36,8 @@ function buildRequest(
 }
 
 describe("middleware", () => {
-  it("sets hardened security headers including X-Frame-Options: DENY", () => {
-    const response = proxy(buildRequest("/"));
+  it("sets hardened security headers including X-Frame-Options: DENY", async () => {
+    const response = await proxy(buildRequest("/"));
 
     expect(response.headers.get("X-Frame-Options")).toBe("DENY");
     expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
@@ -24,20 +45,20 @@ describe("middleware", () => {
     expect(response.headers.get("Content-Security-Policy")).not.toContain("unsafe-eval");
   });
 
-  it("allows same-origin microphone (Hadak voice) but keeps camera disabled", () => {
-    const response = proxy(buildRequest("/"));
+  it("allows same-origin microphone (Hadak voice) but keeps camera disabled", async () => {
+    const response = await proxy(buildRequest("/"));
 
     const policy = response.headers.get("Permissions-Policy");
     expect(policy).toContain("microphone=(self)");
     expect(policy).toContain("camera=()");
   });
 
-  it("rate limits /api/hadak more strictly than the standard API routes", () => {
+  it("rate limits /api/hadak more strictly than the standard API routes", async () => {
     const ip = "203.0.113.55";
     let last;
 
     for (let i = 0; i < 9; i++) {
-      last = proxy(
+      last = await proxy(
         buildRequest("/api/hadak", { method: "POST", headers: { "x-forwarded-for": ip } }),
       );
     }
@@ -46,8 +67,8 @@ describe("middleware", () => {
     expect(last!.headers.get("Retry-After")).toBeTruthy();
   });
 
-  it("does not attach CORS headers for a disallowed origin on API routes", () => {
-    const response = proxy(
+  it("does not attach CORS headers for a disallowed origin on API routes", async () => {
+    const response = await proxy(
       buildRequest("/api/prayer?latitude=1&longitude=1", {
         headers: { origin: "https://evil.example.com" },
       }),
@@ -56,8 +77,8 @@ describe("middleware", () => {
     expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
   });
 
-  it("attaches CORS headers for an allowed origin on API routes", () => {
-    const response = proxy(
+  it("attaches CORS headers for an allowed origin on API routes", async () => {
+    const response = await proxy(
       buildRequest("/api/prayer?latitude=1&longitude=1", {
         headers: { origin: "https://rme-voyage.com" },
       }),
@@ -66,8 +87,8 @@ describe("middleware", () => {
     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://rme-voyage.com");
   });
 
-  it("answers CORS preflight OPTIONS requests without hitting the route handler", () => {
-    const response = proxy(
+  it("answers CORS preflight OPTIONS requests without hitting the route handler", async () => {
+    const response = await proxy(
       buildRequest("/api/affiliates", {
         method: "OPTIONS",
         headers: { origin: "https://rme-voyage.com" },
@@ -79,12 +100,12 @@ describe("middleware", () => {
     expect(response.headers.get("Access-Control-Allow-Methods")).toContain("GET");
   });
 
-  it("rate limits a client after exceeding the request threshold on a limited route", () => {
+  it("rate limits a client after exceeding the request threshold on a limited route", async () => {
     const ip = "203.0.113.42";
     let last;
 
     for (let i = 0; i < 31; i++) {
-      last = proxy(
+      last = await proxy(
         buildRequest("/api/prayer?latitude=1&longitude=1", {
           headers: { "x-forwarded-for": ip },
         }),
@@ -95,14 +116,107 @@ describe("middleware", () => {
     expect(last!.headers.get("Retry-After")).toBeTruthy();
   });
 
-  it("does not rate limit routes outside the protected list", () => {
+  it("does not rate limit routes outside the protected list", async () => {
     const ip = "203.0.113.99";
     let last;
 
     for (let i = 0; i < 40; i++) {
-      last = proxy(buildRequest("/", { headers: { "x-forwarded-for": ip } }));
+      last = await proxy(buildRequest("/", { headers: { "x-forwarded-for": ip } }));
     }
 
     expect(last!.status).not.toBe(429);
+  });
+});
+
+describe("proxy + Supabase session refresh", () => {
+  const saved = { ...process.env };
+
+  beforeEach(() => {
+    mockGetClaims.mockClear();
+    mockCookiesToSet = [];
+  });
+
+  afterEach(() => {
+    process.env = { ...saved };
+  });
+
+  it("does not touch Supabase when it is not configured (mock-data mode)", async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    const response = await proxy(buildRequest("/"));
+
+    expect(mockGetClaims).not.toHaveBeenCalled();
+    expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+  });
+
+  it("keeps refreshed session cookies and security headers on the same response", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    mockCookiesToSet = [{ name: "sb-project-auth-token", value: "refreshed", options: { path: "/", httpOnly: true } }];
+
+    const response = await proxy(buildRequest("/"));
+
+    expect(mockGetClaims).toHaveBeenCalledTimes(1);
+    expect(response.cookies.get("sb-project-auth-token")?.value).toBe("refreshed");
+    expect(response.headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+    expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+  });
+
+  it("keeps CORS headers on API responses when a session is refreshed", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    mockCookiesToSet = [{ name: "sb-project-auth-token", value: "refreshed", options: {} }];
+
+    const response = await proxy(
+      buildRequest("/api/prayer?latitude=1&longitude=1", { headers: { origin: "https://rme-voyage.com" } }),
+    );
+
+    expect(response.cookies.get("sb-project-auth-token")?.value).toBe("refreshed");
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://rme-voyage.com");
+  });
+
+  it("allows the Supabase project origin in connect-src only when configured with https", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co/some/path";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    const configured = (await proxy(buildRequest("/"))).headers.get("Content-Security-Policy") ?? "";
+    expect(configured).toMatch(/connect-src [^;]* https:\/\/project\.supabase\.co(;|$)/);
+    expect(configured).not.toContain("/some/path");
+
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "javascript:alert(1)";
+    const malformed = (await proxy(buildRequest("/"))).headers.get("Content-Security-Policy") ?? "";
+    expect(malformed).not.toContain("javascript:");
+
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const absent = (await proxy(buildRequest("/"))).headers.get("Content-Security-Policy") ?? "";
+    expect(absent).not.toContain("supabase");
+  });
+
+  it("still serves the page with security headers when Supabase is unreachable", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    mockGetClaims.mockImplementationOnce(() => {
+      throw new Error("fetch failed");
+    });
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    const response = await proxy(buildRequest("/"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("does not call Supabase for requests rejected before routing (preflight)", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+
+    const response = await proxy(
+      buildRequest("/api/affiliates", { method: "OPTIONS", headers: { origin: "https://rme-voyage.com" } }),
+    );
+
+    expect(response.status).toBe(204);
+    expect(mockGetClaims).not.toHaveBeenCalled();
   });
 });

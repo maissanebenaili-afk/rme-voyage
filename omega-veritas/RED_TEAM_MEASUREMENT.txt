@@ -1,0 +1,366 @@
+OMEGA-VERITAS v12.4 — RED TEAM MEASUREMENT
+(sections A-C: Gate 0, v12.3-final-proof-2; section D: Gate 1, v12.4)
+Date: 2026-09-23
+Environment: Linux, Node v22.22.2, npm 10.9.7 (registry reachable),
+             TypeScript 5.7.2 (project, pinned) and 6.0.2 (global)
+Baseline artifact: omega-veritas-v12.3-final-proof.zip
+  sha256 cf5684ff62276359b042a0d0b78cbc0797a1818a9ab2c7afaf69a14fda6ff067
+
+Status vocabulary: PASS / FAIL / BLOCKED_BY_DEPS / NOT_EXECUTED.
+Every line below was produced by a command actually run; nothing is inferred.
+
+======================================================================
+A. BASELINE v12.3 — FIRST REAL JEST EXECUTION (unmodified artifact)
+======================================================================
+npm install                                   PASS (281 packages, ~10 s)
+tsc --noEmit (TS 5.7.2)                       PASS
+Jest, jest.config as shipped (jsdom)          FAIL
+  - omega-veritas.test.ts: suite fails to load
+    (ReferenceError: TextEncoder is not defined under jsdom): 0/35 executed
+  - sourceAdapter.test.ts: 16 passed, 1 failed (test 16, same TextEncoder error)
+  => 16 / 52 declared tests actually passed.
+Jest, testEnvironment switched to node only   FAIL: 51 passed, 1 failed
+  - test 35 fails on its own assertion: it asserts h_semantic === h_http_raw
+    for PAYLOAD_A, whose keys are not sorted ("nested" before "list").
+    The assertion was wrong; production code was not.
+
+Defects found in the v12.3 artifact by audit + execution:
+  D1 capitalHunter identity = H(sourceUrl, sourceContentHash, semanticHash):
+     a whitespace change or a URL change created a new opportunityId.
+  D2 Two divergent identity formulas (capitalHunter vs
+     sourceAdapter.generateOpportunityId).
+  D3 canonicalize(): result["__proto__"] = x sets the prototype, so
+     {"__proto__":{"admin":true},"x":1} and {"x":1} had the SAME semantic hash
+     (collision reproduced).
+  D4 canonicalize(): sorted object + JSON.stringify does not sort
+     integer-like keys ("9" was emitted before "10"). Deterministic, not sorted.
+  D5 JSON.parse silently kept the last duplicate key.
+  D6 normalizeSourcePayload("constructor", {...}) returned an unvalidated
+     payload (registry lookup without own-property check; reproduced).
+  D7 Decorative / tautological tests: 32 (no validator existed), 34 (tested
+     inline code, not production), 17 (asserted elapsed >= 0), 12 (misnamed).
+  D8 capturedAt = Date.now() hard-wired: seals not reproducible in tests.
+  D9 jsdom test environment incompatible with the code under test
+     (TextEncoder, structuredClone, cross-realm Uint8Array).
+
+======================================================================
+B. v12.3-final-proof-2 — MEASUREMENTS
+======================================================================
+STATIC
+  "any" type annotations in src/tests/public/proof     0
+  expect(true) in tests                                0
+  Jest test declarations                               78 (35 + 17 + 26)
+  node:test proof declarations                         14
+  network primitives (fetch/XHR/WebSocket/http)        0
+  Date.now / Math.random in src/core/provenance.ts     0 (one occurrence, in the
+                                                       comment forbidding it)
+
+COMPILE
+  tsc --noEmit, TS 5.7.2 (src + tests)                 PASS
+  tsc --noEmit, TS 6.0.2 (src + tests)                 PASS
+  tsc -p tsconfig.proof.json, TS 6.0.2 (src emit)      PASS
+
+JEST (npm ci, testEnvironment node)
+  78 / 78                                              PASS
+    omega-veritas.test.ts      35/35
+    sourceAdapter.test.ts      17/17
+    doubleProvenance.test.ts   26/26
+
+CRYPTO_RUNTIME_PROOF (node:test, NO node_modules present, global tsc)
+  14 / 14                                              PASS
+
+MUTATION CHECK (each fix reverted in turn, Jest re-run, source restored)
+  15 / 15 mutants killed                               PASS
+    capturedAt in opportunityId; URL in opportunityId; h_normalized or
+    h_source dropped from versionId; JSON.parse instead of strict parser;
+    non-fatal TextDecoder; no domain separation; old canonicalizer;
+    validateChain without seal check / without link check; currentHash in
+    its own seal; registry without hasOwn; unsafe integers accepted; lone
+    surrogates accepted; financial gate removed.
+
+GATE 0 INVARIANTS (Jest + node:test)
+  I1  key permutation: raw differs, source-semantic equal     PASS
+  I2  array permutation: source-semantic differs              PASS
+  I3  value change: source-semantic differs                   PASS
+  I4  same source, 2 normalizers: h_source equal,
+      h_normalized differ, versionId differ, opportunityId equal PASS
+  I5  content change: new versionId, same opportunityId       PASS
+  I6  capturedAt change: opportunityId and versionId equal    PASS
+  I7  duplicate JSON keys rejected                            PASS
+  I8  invalid UTF-8 rejected                                  PASS
+  I9  domain separation                                       PASS
+  I10 sourceUrl change: identity stable, evidence differs     PASS
+
+NETWORK
+  Network certification                                NOT_EXECUTED
+  Real external schemas                                NOT_EXECUTED
+  All 7 adapters remain [SCHEMA_SYNTHETIQUE_TEST] fixtures.
+
+NOT IN SCOPE OF GATE 0
+  External headHash anchor                             NOT_EXECUTED
+  (validateChain proves internal consistency only; a test shows that a full
+   rewrite of the chain passes it.)
+  RFC 8785 full conformance suite                      NOT_EXECUTED
+  (JCS vectors for numbers and key order pass; no certification claimed.)
+
+======================================================================
+C. STATUS
+======================================================================
+GATE_0 // DOUBLE_PROVENANCE_LOCAL_READY
+  1. both semantic hashes in the code ....................... yes
+  2. versionId depends on both; opportunityId is the stable
+     entity key (architecture review 2) ..................... yes
+  3. invariants coded ....................................... yes (I1-I10)
+  4. executable invariants measured ......................... yes (Jest + node:test)
+  5. no decorative test ..................................... yes (mutation check)
+  6. dependency limits declared ............................. yes (none blocking here)
+  7. adapters identified as synthetic ....................... yes
+  8. no network certification claimed ....................... yes
+
+======================================================================
+D. GATE 1 (v12.4) — FIRST REAL EXTERNAL SCHEMA: data.europa.eu
+======================================================================
+CAPTURE (network, run manually by scripts/capture-data-europa.mjs)
+  GET https://data.europa.eu/api/hub/search/datasets/fts
+      HTTP 200, 225493 bytes,
+      sha256 3e7ade2fe03f7d9c5c6a42d2e5ce3c7db5f6c19c81130ee19e75fe33edc6f8dc
+      (Financial Transparency System, DG Budget, 25 languages)
+  GET https://data.europa.eu/api/hub/search/datasets/5fe3432f3a715b283f886b8b
+      HTTP 200, 7085 bytes,
+      sha256 4c96d0cdd6b0cf8a2c863935e07c92c4b446ec207600d4b692ec666d8ba10087
+      (Subventions versées aux associations, Le Mée-sur-Seine, fr only)
+  Captured 2026-09-23T22:48Z. Immediate re-fetch (--check): UNCHANGED x2.
+
+REAL SCHEMA vs SYNTHETIC ASSUMPTIONS (findings)
+  - record wrapped in {"result": {...}}
+  - title/description are multilingual maps (25 languages or 1)
+    -> policy: fr, then en, then smallest language code
+  - issued is "2015-07-27" (date) or "2020-12-23T14:16:31.403" (no offset)
+    -> read as UTC: explicit ASSUMPTION, the source states no timezone
+  - landing_page is an array of {resource}; may be absent -> resource URI
+  - no monetary amount -> rawValueCents: null (type widened to number | null;
+    the synthetic adapters keep their absent -> 0 behaviour, unchanged)
+  - portal-managed volatile fields (catalog_record.modified, quality_meas)
+    change h_source_semantic and versionId on re-harvest while the dataset
+    content is unchanged; h_normalized_semantic stays stable (tested).
+    versionId = "the source document changed"; substantive change is read
+    from h_normalized_semantic.
+  - both real documents pass the strict parser (no duplicate keys, no
+    unsafe integers)
+
+MEASUREMENTS
+  tsc --noEmit (TS 5.7.2 and 6.0.2)                    PASS
+  Jest 96 / 96                                         PASS
+    omega-veritas 35, sourceAdapter 17, doubleProvenance 26, realFixtures 18
+  node:test proof runner 17 / 17 (no node_modules)     PASS
+  Mutation check 21 / 21 killed                        PASS
+    (15 Gate 0 + 6 Gate 1: amount null->0, language order, timezone offset,
+     calendar check, landing_page, result unwrap)
+  envelope.sourceContentHash == capture sha256         PASS
+  pretty-printed real bytes: raw differs, versionId equal PASS
+
+STATUS
+  SCHEMA DATA_EUROPA_HUB                               REAL_FIXTURE
+  SCHEMA 7 original adapters                           SYNTHETIC_TEST
+  NETWORK in production code                           0 calls
+  NETWORK certification                                NOT_EXECUTED
+  Capture script in CI                                 NOT_EXECUTED (manual only)
+
+GATE_1 // REAL_SCHEMA_FIXTURE_LOCAL_READY
+  (one real source schema, byte-exact fixtures with recorded provenance,
+   invariants re-verified on real data; not a network certification)
+
+======================================================================
+E. GATE 2 — AIDES-TERRITOIRES: BLOCKED_BY_AUTH (capture tooling ready)
+   [superseded by section H: key provided, capture done]
+======================================================================
+EVIDENCE (2026-09-23)
+  GET https://aides-territoires.beta.gouv.fr/api/aids/
+      -> HTTP 401 {"code":401,"message":"JWT Token not found"}
+  Official page https://aides-territoires.beta.gouv.fr/data/ :
+      data under Licence Ouverte v2.0; access = free account -> personal
+      API key -> POST /api/connexion/ (X-AUTH-TOKEN) -> Bearer token (24 h).
+  Public export listed on data.gouv.fr (dataset 6200dcebbf241867e8a218d9,
+      organization Aides-territoires, last modified 2022-09-27):
+      .../aides-territoires-prod/aids/all-aids.json -> HTTP 404.
+  API documentation /api/docs (Hydra, API v1.8.4) is public and describes
+      the "aid" resource fields, but documentation is not a response sample.
+  No authentication was bypassed; no page was scraped.
+
+READY
+  scripts/capture-aides-territoires.mjs: documented auth flow, key read
+  from AIDES_TERRITOIRES_API_KEY, key and token kept in memory only,
+  capture record without secrets, --list / --check, 1 s between requests.
+  tests/captureAidesTerritoires.test.ts: 8/8 PASS against a local
+  stand-in server (no network): no key -> BLOCKED_BY_AUTH, wrong key ->
+  AUTH_FAILED, exact bytes + sha256, secrets absent from disk and output,
+  non-200 writes nothing, invalid id rejected, --check UNCHANGED/DRIFT,
+  --list. Mutation check 3/3 killed (token in capture record, missing-key
+  check removed, write despite non-200).
+
+MEASUREMENTS
+  Jest 104 / 104                                        PASS
+  tsc --noEmit                                          PASS
+  Real Aides-territoires fixture                        BLOCKED_BY_AUTH
+  AIDES_TERRITOIRES adapter                             SYNTHETIC_TEST (unchanged)
+
+NEXT STEP
+  Set AIDES_TERRITOIRES_API_KEY in the environment settings, then:
+  node scripts/capture-aides-territoires.mjs --list 20
+  node scripts/capture-aides-territoires.mjs <ids>
+  and write the real adapter against the captured bytes (as Gate 1).
+
+======================================================================
+F. GATE 3 (v12.5) — BOAMP: REAL SCHEMA + ECONOMIC EVALUATION
+======================================================================
+SOURCE
+  Public BOAMP API (DILA, Opendatasoft), no authentication:
+  https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records
+  1 708 881 notices; newest published 2026-09-23 (checked at capture).
+  Query used to find candidates: departments 44/49/53/72/85, deadline >=
+  2026-09-24, keywords formation/recrutement/insertion/emploi/compétences/
+  accompagnement/agroalimentaire -> 14 open notices; plus historical award
+  and rectificatif notices for adversarial cases.
+
+FIXTURES (12, captured 2026-09-23T23:45Z; --check UNCHANGED x12)
+  open, retained candidates: 26-83998 26-83332 26-86504 26-89746 26-90272
+                             26-90281 26-90875
+  adversarial: 26-48056 (awarded training), 26-19238 (awarded supplies,
+               "centre de formation"), 26-66104 (rectificatif, works),
+               26-70382 ("insertion d'une voie", road works),
+               26-87965 (social housing service, off domain)
+  All 12 pass the strict parser, including the JSON nested in `donnees`.
+
+REAL-DATA FINDINGS
+  - responses are gzip-encoded; hashes cover the decoded body
+  - `donnees` is JSON-in-a-string with three schemas: EFORMS, FNSimple, MAPA
+  - estimated amounts exist only in some eForms notices, and per lot
+    (26-89746: 120 000 / 15 000 / 60 000 / 7 000 / 32 000 EUR HT): never summed
+  - the API's full-text search is broad ("formation" matched telephony and
+    urban design awards): the evaluator uses its own word-boundary rules
+  - 26-90272 (open procedure) and 26-90281 (adapted procedure, 48 months):
+    same buyer, title and deadline day, different procedures: flagged as
+    possible duplicates, not merged
+  - eForms states reserved-procurement explicitly ("none"): OBSERVED
+
+RESULT (asOf = latest capture, never the clock)
+  12 notices -> 7 retained, 5 eliminated, each by named rule.
+  All retained ones have confidence LOW: the Nova Presta profile (activity,
+  certifications, capacity) was not provided, and the tender documents (DCE)
+  are not captured. No revenue is claimed; acquisition cost 0 is INFERRED
+  (free access to consultation documents), initial cost stays UNKNOWN.
+
+MEASUREMENTS
+  Jest 139 / 139 (boampEvaluator 35 new)                PASS
+  node:test 20 / 20, also without node_modules          PASS
+  tsc --noEmit                                          PASS
+  Mutation check Gate 3: 15 / 15 killed                 PASS
+  Mutation check Gates 0-1 re-run: 21 / 21 killed       PASS
+  ECONOMIC_REPORT_BOAMP.md regenerated byte for byte    PASS
+  (with Date.now mocked to 2031: identical)
+
+STATUS
+  SCHEMA BOAMP_ODS                                      REAL_FIXTURE
+  Nova Presta profile fit                               UNKNOWN (profile not provided)
+  Tender documents (DCE)                                NOT_EXECUTED (not captured)
+  NETWORK certification                                 NOT_EXECUTED
+
+GATE_3 // BOAMP_REAL_SCHEMA_AND_EVALUATION_LOCAL_READY
+
+======================================================================
+G. GATE 3b (v12.6) — BOAMP WIDENED + CPV / NUTS
+======================================================================
+DISCOVERY (reproducible: node scripts/discover-boamp.mjs 2026-09-24)
+  Scope: departments 44/49/53/72/85, nature APPEL_OFFRE, deadline >=
+  2026-09-24, descriptor "Formation" or title terms formation/recrutement/
+  intérim/insertion/emploi/compétences/personnel -> 15 open notices, all
+  captured. With the 4 historical adversarial notices: 19 fixtures.
+  --check: UNCHANGED x19.
+
+CPV / NUTS (eForms only; FNSimple and MAPA carry none -> UNKNOWN)
+  - CPV codes classify the contract itself; when present they decide the
+    domain (OBSERVED). Domain prefixes: 80 (education, training), 7960-7962
+    (recruitment, placement, temporary staff), 79632/79633 (staff training).
+  - 26-75122: temporary staffing, descriptor "Informatique", CPV 79620000
+    -> retained on the CPV.
+  - 25-29168: descriptor "Formation" but CPV 92000000 (recreation) -> the
+    CPV prevails: OUT_OF_DOMAIN, OBSERVED. The official descriptor alone
+    would have produced a false positive.
+  - 26-86916: "personnel" in an insurance title, CPV 66512000 -> OBSERVED
+    out of domain.
+  - NUTS: organisation addresses also carry NUTS codes (26-83332 lists
+    FRK24, Isère, for an organisation); only cac:RealizedLocation is read
+    (26-83332 -> FRG04, Sarthe).
+
+RESULT
+  19 notices -> 12 retained, 7 eliminated. Confidence LOW for all retained
+  ones (profile not provided, DCE not captured). 26-91063 (Gendarmerie,
+  8 departments, correspondence course) is retained: regional anchoring
+  gives no advantage there.
+
+MEASUREMENTS
+  Jest 152 / 152                                        PASS
+  node:test 20 / 20                                     PASS
+  tsc --noEmit                                          PASS
+  Mutation check Gate 3b: 5 / 5 killed                  PASS
+  ECONOMIC_REPORT_BOAMP.md regenerated byte for byte    PASS
+
+AIDES-TERRITOIRES: unchanged, BLOCKED_BY_AUTH. The public export listed on
+data.gouv.fr returns 404; no bulk endpoint without a key was found and none
+is used. No authentication is bypassed.
+
+======================================================================
+H. GATE 2 (v12.7) — AIDES-TERRITOIRES: REAL CAPTURE + EVALUATION
+======================================================================
+ACCESS
+  The user created an API key. Documented flow: POST /api/connexion/
+  (X-AUTH-TOKEN) -> Bearer token (503 chars) -> GET /api/aids/by-id/{id}.
+  Key and token used in memory only; checked absent from every fixture and
+  capture record (test). 3 202 aids reachable. Note: the key appeared in a
+  screenshot in the conversation; rotating it is recommended.
+
+REAL-DATA FINDINGS
+  - list endpoint shape: {count, previous, next, results}
+  - by-id returns 404 "Cette aide n'existe pas" for non-live aids
+  - the official audience vocabulary (/api/aids/audiences/) has no private-
+    company value (collectivities, public bodies, public local companies
+    only); `targeted_audiences[]=private_sector` filters but cannot mean
+    "private company" -> company eligibility is read from the text (HEURISTIC)
+  - 104612: structured audiences are public only, text targets "PME situées
+    en Pays de la Loire" -> structured field and text disagree
+  - 143365 (Cerema) is a paid training listed as an aid (is_charged)
+  - 163848: text says "jusqu'en 2025", deadline field says 2026-12-31;
+    the apostrophe is HTML-encoded as &#039; (numeric entities decoded)
+  - date_updated is refreshed nightly (~04:00 UTC) -> date_created is used
+    in the normalized payload so nightly churn does not change it
+  - "formation" usually means a training GIVEN to the beneficiary, not a
+    market for a provider
+
+RESULT (11 aids, asOf = latest capture 2026-09-24T01:10Z)
+  retained 4: 104612 (Région PdL, demand lever: PMEs get up to 50 % of an
+  external consultant's fee, HR among eligible themes; MEDIUM), 150665
+  (demand lever, training bought from training organisations), 163848
+  (warning: date contradiction; LOW), 71866 (LOW)
+  eliminated 7: PAID_SERVICE 143365; PUBLIC_AUDIENCE_ONLY 104659, 117631;
+  EU_CONSORTIUM_CALL 166404, 166736, 166539; OUT_OF_THEME 152366
+
+DAILY BOAMP WATCH
+  scripts/boamp-watch.mjs + .github/workflows/omega-veritas-boamp-watch.yml
+  (05:00 UTC daily, manual trigger). Captures only never-seen notices into
+  fixtures/real/boamp-watch/<date>/, checks each response holds the
+  requested idweb, writes watch/BOAMP_WATCH_<date>.md, runs the suite, opens
+  a PR. The curated regression set is never modified. First real run
+  (2026-09-24): 15 discovered, 15 known, nothing written.
+  Not verifiable from here: GitHub's "Allow GitHub Actions to create pull
+  requests" setting; if disabled, the branch is pushed but the PR step fails.
+
+MEASUREMENTS
+  Jest 184 / 184                                        PASS
+  node:test 21 / 21                                     PASS
+  tsc --noEmit                                          PASS
+  Mutation check Gate 2 aids: 14 / 14 killed            PASS
+    (one survivor at first: 50 % is its own complement; derived 80 % / 100 %
+     cases added, then killed)
+  Mutation check watch: 3 / 3 killed                    PASS
+  ECONOMIC_REPORT_AIDES_TERRITOIRES.md byte for byte    PASS
+  Scheduled workflow run on GitHub                      NOT_EXECUTED (first run tomorrow 05:00 UTC)

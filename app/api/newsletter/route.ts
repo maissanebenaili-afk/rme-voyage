@@ -37,7 +37,11 @@ export async function POST(request: NextRequest) {
     return Response.json({ ok: true, message: 'Inscrit avec succès' });
   }
 
-  // No Resend configured — log and return success (collect manually later)
-  console.log('[newsletter] new subscriber (no Resend configured):', email);
-  return Response.json({ ok: true, message: 'Inscrit avec succès' });
+  // No Resend configured: the address cannot be stored, so never report a success
+  // (and never write the address to the logs).
+  console.warn('[newsletter] subscription refused: RESEND_API_KEY / RESEND_AUDIENCE_ID not configured');
+  return Response.json(
+    { error: 'Les inscriptions ne sont pas encore ouvertes. Reviens bientôt.' },
+    { status: 503 },
+  );
 }

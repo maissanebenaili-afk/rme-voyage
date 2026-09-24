@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Ship, Plane, ExternalLink } from "lucide-react";
 import { comparisonFallbacks, verifiedPartnerUrl, type BookingType } from "@/lib/bookingLinks";
+import { trackPartnerClick } from "@/lib/partnerTracking";
 
 type Props = { origin: string; destination: string; date?: string };
 
@@ -49,6 +50,12 @@ export default function BookingCards({ origin, destination, date }: Props) {
           return (
             <a key={type} href={partner || comparisonFallbacks[type]} target="_blank"
               rel={partner ? 'sponsored noopener noreferrer' : 'noopener noreferrer'}
+              onClick={() => trackPartnerClick({
+                partner: partner ? (type === 'ferry' ? 'direct_ferries' : 'flight_partner') : (type === 'ferry' ? 'direct_ferries_public' : 'skyscanner_public'),
+                product: type,
+                placement: 'booking_cards',
+                page: window.location.pathname,
+              })}
               data-testid={`compare-${type}`}
               className={`flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>
               <Icon size={22} className="mt-1 shrink-0" aria-hidden />

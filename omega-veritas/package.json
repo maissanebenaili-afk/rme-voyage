@@ -1,0 +1,18 @@
+{
+  "name": "omega-veritas-v12-3-proof-harness",
+  "private": true,
+  "version": "12.7.0",
+  "scripts": {
+    "test": "jest --runInBand --verbose",
+    "test:omega": "jest tests/omega-veritas.test.ts --runInBand --verbose",
+    "typecheck": "tsc --noEmit",
+    "proof": "tsc -p tsconfig.proof.json && node --test proof/crypto-proof.test.cjs"
+  },
+  "devDependencies": {
+    "@types/jest": "29.5.14",
+    "fake-indexeddb": "6.2.5",
+    "jest": "29.7.0",
+    "ts-jest": "29.4.5",
+    "typescript": "5.7.2"
+  }
+}

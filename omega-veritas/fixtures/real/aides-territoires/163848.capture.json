@@ -1,0 +1,13 @@
+{
+  "schema": "omega-veritas/fixture-capture/v1",
+  "source": "AIDES_TERRITOIRES",
+  "aidId": "163848",
+  "url": "https://aides-territoires.beta.gouv.fr/api/aids/by-id/163848",
+  "authenticated": true,
+  "retrievedAt": "2026-09-24T01:10:02.475Z",
+  "httpStatus": 200,
+  "contentType": "application/json",
+  "serverDate": "Thu, 24 Sep 2026 01:10:02 GMT",
+  "byteLength": 6361,
+  "sha256": "3ba048954cfa9d7bb6939720b9ab53e9b7263a5032f6aacf03acf76ecf4acf27"
+}

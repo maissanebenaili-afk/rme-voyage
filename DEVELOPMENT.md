@@ -105,13 +105,13 @@ rme-voyage/
 │   │   ├── budget.ts      # Costs & budgets
 │   │   └── emergency.ts   # Emergency services
 │   ├── db/
-│   │   └── schema.sql     # Database schema
+│   │   └── schema.sql     # Legacy SAFAR schema (reference only, not applied by any script)
 │   ├── types/
 │   │   └── agent.ts       # TypeScript interfaces
 │   └── utils/
-│       ├── realtime.ts    # External API integrations
-│       ├── freemium.ts    # Subscription management
-│       └── tts.ts         # Text-to-speech
+│       ├── supabase.ts    # Server Supabase client (trips, tips, health routes)
+│       ├── languages.ts   # Language helpers
+│       └── regional-knowledge.ts
 ├── ARCHITECTURE.md        # High-level architecture
 ├── API.md                 # API documentation
 ├── DEVELOPMENT.md         # This file

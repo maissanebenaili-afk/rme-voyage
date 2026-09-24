@@ -1,0 +1,13 @@
+{
+  "schema": "omega-veritas/fixture-capture/v1",
+  "datasetId": "fts",
+  "url": "https://data.europa.eu/api/hub/search/datasets/fts",
+  "retrievedAt": "2026-09-23T22:48:18.312Z",
+  "httpStatus": 200,
+  "contentType": "application/json",
+  "serverDate": "Wed, 23 Sep 2026 22:48:18 GMT",
+  "etag": null,
+  "lastModified": null,
+  "byteLength": 225493,
+  "sha256": "3e7ade2fe03f7d9c5c6a42d2e5ce3c7db5f6c19c81130ee19e75fe33edc6f8dc"
+}
