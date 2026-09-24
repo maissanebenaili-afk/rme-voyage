@@ -143,17 +143,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Enforce authentication for trips API
-  if (pathname.startsWith('/api/trips')) {
-    const userId = request.headers.get('x-user-id');
-    if (!userId || userId.length < 10) {
-      return NextResponse.json(
-        { error: 'Unauthorized: X-User-ID header required (min 10 chars)' },
-        { status: 401 }
-      );
-    }
-  }
-
   const isRateLimitedRoute = RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isAiRateLimitedRoute = AI_RATE_LIMITED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isApiRoute = pathname.startsWith('/api/');
@@ -181,8 +170,34 @@ export async function proxy(request: NextRequest) {
   }
 
   // Supabase auth session refresh (formerly middleware.ts). Every header below is
-  // added to the response it returns so the refreshed cookies are kept.
-  const response = isSupabaseConfigured() ? await updateSession(request) : NextResponse.next();
+  // added to the response it returns so the refreshed cookies are kept. This also
+  // overwrites X-User-ID with the userId validated from the session JWT (or strips
+  // it), so route handlers never see a client-forged value.
+  const supabaseConfigured = isSupabaseConfigured();
+  const { response, userId: sessionUserId } = supabaseConfigured
+    ? await updateSession(request)
+    : { response: NextResponse.next(), userId: null };
+
+  // Enforce authentication for trips API. With Supabase configured, identity is
+  // exactly what updateSession() above just verified from the session JWT — a
+  // client-supplied X-User-ID is never trusted. Without Supabase there is no real
+  // identity system (mock-data mode, see DEVELOPMENT.md): keep the previous,
+  // explicitly non-authenticated header check so local/dev usage still works.
+  if (pathname.startsWith('/api/trips')) {
+    if (supabaseConfigured) {
+      if (!sessionUserId) {
+        return NextResponse.json({ error: 'Unauthorized: sign in required' }, { status: 401 });
+      }
+    } else {
+      const userId = request.headers.get('x-user-id');
+      if (!userId || userId.length < 10) {
+        return NextResponse.json(
+          { error: 'Unauthorized: X-User-ID header required (min 10 chars)' },
+          { status: 401 }
+        );
+      }
+    }
+  }
 
   if (isApiRoute) {
     applyCorsHeaders(response, request);

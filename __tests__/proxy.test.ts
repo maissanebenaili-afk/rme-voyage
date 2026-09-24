@@ -6,6 +6,7 @@ import { proxy } from "../proxy";
 
 const mockGetClaims = jest.fn();
 let mockCookiesToSet: Array<{ name: string; value: string; options: Record<string, unknown> }> = [];
+let mockClaimsSub: string | null = null;
 
 // Stand-in for the Supabase server client: getClaims() "refreshes" the session by
 // handing new cookies to the setAll adapter, as @supabase/ssr does.
@@ -19,7 +20,7 @@ jest.mock("@supabase/ssr", () => ({
       getClaims: async () => {
         mockGetClaims();
         if (mockCookiesToSet.length > 0) cookies.setAll(mockCookiesToSet);
-        return { data: null, error: null };
+        return { data: mockClaimsSub ? { claims: { sub: mockClaimsSub } } : null, error: null };
       },
     },
   }),
@@ -134,6 +135,7 @@ describe("proxy + Supabase session refresh", () => {
   beforeEach(() => {
     mockGetClaims.mockClear();
     mockCookiesToSet = [];
+    mockClaimsSub = null;
   });
 
   afterEach(() => {
@@ -218,5 +220,58 @@ describe("proxy + Supabase session refresh", () => {
 
     expect(response.status).toBe(204);
     expect(mockGetClaims).not.toHaveBeenCalled();
+  });
+});
+
+describe("/api/trips authentication — never trusts a client-supplied X-User-ID", () => {
+  const saved = { ...process.env };
+
+  beforeEach(() => {
+    mockGetClaims.mockClear();
+    mockCookiesToSet = [];
+    mockClaimsSub = null;
+  });
+
+  afterEach(() => {
+    process.env = { ...saved };
+  });
+
+  it("rejects a spoofed X-User-ID when Supabase is configured but there is no session", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    mockClaimsSub = null; // unauthenticated
+
+    const response = await proxy(
+      buildRequest("/api/trips", { headers: { "x-user-id": "victim-user-id-1234" } }),
+    );
+
+    expect(response.status).toBe(401);
+  });
+
+  it("overwrites a spoofed X-User-ID with the verified session user id", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    mockClaimsSub = "real-authenticated-user-id";
+
+    const response = await proxy(
+      buildRequest("/api/trips", { headers: { "x-user-id": "victim-user-id-1234" } }),
+    );
+
+    expect(response.status).not.toBe(401);
+    expect(response.headers.get("x-middleware-request-x-user-id")).toBe("real-authenticated-user-id");
+    expect(response.headers.get("x-middleware-request-x-user-id")).not.toBe("victim-user-id-1234");
+  });
+
+  it("falls back to the legacy header check only when Supabase is not configured", async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    const rejected = await proxy(buildRequest("/api/trips", { headers: { "x-user-id": "short" } }));
+    expect(rejected.status).toBe(401);
+
+    const accepted = await proxy(
+      buildRequest("/api/trips", { headers: { "x-user-id": "mock-user-id-1234" } }),
+    );
+    expect(accepted.status).not.toBe(401);
   });
 });
