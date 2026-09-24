@@ -1,0 +1,127 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import { Car, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
+
+type Mode = 'car' | 'mixed' | 'flight';
+
+function eur(value: number) {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
+}
+
+export default function TripDecisionEngine() {
+  const [distance, setDistance] = useState(1450);
+  const [consumption, setConsumption] = useState(6.5);
+  const [fuelPrice, setFuelPrice] = useState(1.75);
+  const [tolls, setTolls] = useState(120);
+  const [ferry, setFerry] = useState(180);
+  const [travelers, setTravelers] = useState(4);
+  const [flightPerPerson, setFlightPerPerson] = useState(180);
+  const [mode, setMode] = useState<Mode>('car');
+
+  const result = useMemo(() => {
+    const fuel = (distance / 100) * consumption * fuelPrice;
+    const carKnown = fuel + tolls;
+    const carTrip = carKnown + ferry;
+    const mixedTrip = ferry + fuel * 0.35 + tolls * 0.35;
+    const flightTrip = flightPerPerson * travelers;
+    const selected = mode === 'car' ? carTrip : mode === 'mixed' ? mixedTrip : flightTrip;
+    const buffer = selected * 0.1;
+    return { fuel, carTrip, mixedTrip, flightTrip, selected, buffer, low: selected, high: selected + buffer };
+  }, [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode]);
+
+  return (
+    <section className="overflow-hidden rounded-[2rem] border border-[#dbe4ef] bg-white shadow-sm" aria-labelledby="reality-check-title">
+      <div className="bg-[#0f1f3d] p-6 text-white sm:p-8">
+        <div className="flex items-start gap-4">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#f59e0b] text-[#0f1f3d]">
+            <WalletCards size={23} />
+          </div>
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#fde68a]">RME Reality Check</p>
+            <h2 id="reality-check-title" className="mt-1 text-2xl font-display font-semibold sm:text-3xl">
+              Le coût réel avant de choisir.
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
+              Pas seulement le prix affiché : carburant, péages, ferry et nombre de voyageurs.
+              Ajustez les hypothèses pour obtenir un ordre de grandeur immédiatement.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-3 gap-2">
+          {([
+            ['car', 'Voiture', Car],
+            ['mixed', 'Voiture + ferry', Ship],
+            ['flight', 'Avion', Plane],
+          ] as const).map(([value, label, Icon]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setMode(value)}
+              className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`}
+              aria-pressed={mode === value}
+            >
+              <Icon size={17} className="mb-2" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
+        <div className="grid gap-4">
+          {[
+            ['Distance (km)', distance, setDistance, 100, 5000, 50],
+            ['Conso. (L/100 km)', consumption, setConsumption, 3, 15, 0.1],
+            ['Carburant (€/L)', fuelPrice, setFuelPrice, 1, 3, 0.01],
+            ['Péages (€)', tolls, setTolls, 0, 1000, 5],
+            ['Ferry (€)', ferry, setFerry, 0, 1500, 10],
+            ['Voyageurs', travelers, setTravelers, 1, 12, 1],
+            ['Avion / personne (€)', flightPerPerson, setFlightPerPerson, 20, 2000, 10],
+          ].map(([label, value, setter, min, max, step]) => (
+            <label key={label as string} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
+              <span className="font-semibold text-[#334155]">{label as string}</span>
+              <input
+                type="number"
+                min={min as number}
+                max={max as number}
+                step={step as number}
+                value={value as number}
+                onChange={(e) => (setter as (v: number) => void)(Number(e.target.value))}
+                className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40"
+              />
+            </label>
+          ))}
+        </div>
+
+        <div className="rounded-2xl bg-[#f8fafc] p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]">
+            <ShieldCheck size={17} className="text-[#b45309]" />
+            Votre estimation
+          </div>
+          <div className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct</p>
+            <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d]">{eur(result.selected)}</p>
+            <p className="mt-2 text-sm text-[#64748b]">marge indicative de 10 % : jusqu’à {eur(result.high)}</p>
+          </div>
+
+          <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
+            <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
+            <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.carTrip)}</strong></div>
+            <div className="flex justify-between"><span>Voiture + ferry optimisée*</span><strong>{eur(result.mixedTrip)}</strong></div>
+            <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
+          </div>
+
+          <p className="mt-5 text-xs leading-5 text-[#64748b]">
+            * Scénario indicatif. Les prix, péages, traversées, bagages et suppléments doivent être vérifiés avant achat.
+          </p>
+
+          <a href="#planifier" className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d] hover:text-[#b45309]">
+            Affiner mon trajet <ArrowRight size={16} />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
