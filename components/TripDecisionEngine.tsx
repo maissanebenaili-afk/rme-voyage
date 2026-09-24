@@ -9,7 +9,7 @@ type AnalyticsWindow = Window & {
   va?: (event: string, properties?: Record<string, string>) => void;
 };
 
-function eur(value: number) {
+function boundedNumber(raw: string, min: number, max: number, fallback: number) {\n  const value = Number(raw);\n  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;\n}\n\nfunction eur(value: number) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 }
 
@@ -47,7 +47,7 @@ export default function TripDecisionEngine() {
     const buffer = selected * 0.1;
     const options = [carTrip, mixedTrip, flightTrip];
     const cheapest = Math.min(...options);
-    const perPerson = selected / travelers;
+    const perPerson = travelers > 0 ? selected / travelers : 0;
     const deltaVsCheapest = selected - cheapest;
     return { fuel, carTrip, mixedTrip, flightTrip, selected, buffer, low: selected, high: selected + buffer, perPerson, deltaVsCheapest };
   }, [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode]);
@@ -114,7 +114,7 @@ export default function TripDecisionEngine() {
                 step={step as number}
                 value={value as number}
                 onChange={(e) => {
-                  (setter as (v: number) => void)(Number(e.target.value));
+                  (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number));
                   markUsed();
                 }}
                 className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40"
