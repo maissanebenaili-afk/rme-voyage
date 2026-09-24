@@ -162,24 +162,29 @@ export default function RemittanceComparator() {
               </div>
 
               {/* CTA */}
-              <a
-                href={p.affiliateUrl || '#'}
-                target="_blank"
-                rel={p.isAffiliate ? "sponsored noopener noreferrer" : "noopener noreferrer"}
-                onClick={() => {
-                  if (!p.affiliateUrl) return;
-                  trackPartnerClick({
-                    partner: p.id,
-                    product: 'transfer',
-                    placement: 'remittance_comparator',
-                    page: window.location.pathname,
-                  });
-                }}
-                className="shrink-0 flex items-center gap-1 rounded-lg bg-[#0f1f3d] text-white text-sm font-medium px-3 py-2 hover:bg-[#0f1f3d]/80 transition-colors"
-              >
-                {t('remittanceSend')}{p.isAffiliate ? ' · partenaire' : ''}
-                <ArrowRight className="w-3.5 h-3.5" />
-              </a>
+              {p.affiliateUrl ? (
+                <a
+                  href={p.affiliateUrl}
+                  target="_blank"
+                  rel={p.isAffiliate ? "sponsored noopener noreferrer" : "noopener noreferrer"}
+                  onClick={() => {
+                    trackPartnerClick({
+                      partner: p.id,
+                      product: 'transfer',
+                      placement: 'remittance_comparator',
+                      page: window.location.pathname,
+                    });
+                  }}
+                  className="shrink-0 flex items-center gap-1 rounded-lg bg-[#0f1f3d] text-white text-sm font-medium px-3 py-2 hover:bg-[#0f1f3d]/80 transition-colors"
+                >
+                  {t('remittanceSend')}{p.isAffiliate ? ' · partenaire' : ''}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
+              ) : (
+                <span className="shrink-0 text-xs font-semibold text-[#0f1f3d]/40">
+                  Lien indisponible
+                </span>
+              )}
             </div>
           ))}
         </div>
