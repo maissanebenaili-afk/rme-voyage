@@ -29,13 +29,9 @@ export function trackFunnelEvent(event: FunnelEvent): void {
   }
 }
 
+// Un seul événement par clic : l'ancien appel supplémentaire à
+// trackFunnelEvent('partner_click') doublait chaque clic partenaire.
 export function trackPartnerClick(event: PartnerClickEvent): void {
-  trackFunnelEvent({
-    event: 'partner_click',
-    placement: event.placement,
-    page: event.page,
-  });
-
   if (typeof window === 'undefined') return;
 
   const analytics = window as AnalyticsWindow;
