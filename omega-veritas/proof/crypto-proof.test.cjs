@@ -208,3 +208,24 @@ test("G3 BOAMP: committed economic report regenerates byte for byte", async () =
   const { asOfMs, packs } = await brep.buildEvidencePacks(boampNotices());
   assert.equal(brep.renderBoampReport(asOfMs, packs), fs.readFileSync(path.join(__dirname, "..", "ECONOMIC_REPORT_BOAMP.md"), "utf8"));
 });
+
+// Gate 2 — real Aides-territoires aids (authenticated API; no key or token in the fixtures).
+const aev = require("../.proof-build/src/services/aidesEvaluator.js");
+const arep = require("../.proof-build/src/services/aidesReport.js");
+const AIDS = path.join(__dirname, "..", "fixtures", "real", "aides-territoires");
+const aidFixtures = () => fs.readdirSync(AIDS).filter((f) => /^\d+\.json$/.test(f)).sort().map((f) => ({
+  bytes: new Uint8Array(fs.readFileSync(path.join(AIDS, f))),
+  capture: JSON.parse(fs.readFileSync(path.join(AIDS, f.replace(/\.json$/, ".capture.json")), "utf8")),
+}));
+
+test("G2 aids: 11 real aids, 4 retained, paid service and EU calls eliminated, report reproducible", async () => {
+  const { asOfMs, packs } = await arep.buildAidPacks(aidFixtures());
+  assert.equal(packs.length, 11);
+  const byId = Object.fromEntries(packs.map((p) => [p.facts.id, p.evaluation]));
+  assert.deepEqual(packs.filter((p) => p.evaluation.retained).map((p) => p.facts.id), [104612, 150665, 163848, 71866]);
+  assert.deepEqual(byId[143365].eliminations.map((e) => e.rule), ["PAID_SERVICE"]);
+  assert.equal(byId[104612].role.value, "DEMAND_LEVER");
+  assert.equal(byId[163848].warnings.length, 1);
+  assert.equal(arep.renderAidesReport(asOfMs, packs), fs.readFileSync(path.join(__dirname, "..", "ECONOMIC_REPORT_AIDES_TERRITOIRES.md"), "utf8"));
+  for (const a of aidFixtures()) assert.doesNotMatch(Buffer.from(a.bytes).toString("utf8"), /eyJhbGci/);
+});

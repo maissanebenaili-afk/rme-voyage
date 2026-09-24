@@ -4,7 +4,7 @@ Priorité: sources publiques, gratuites/open-data, avec provenance stable. Aucun
 
 | Source | Type | Usage | Coût d'accès | URL | Statut du schéma |
 |---|---|---|---|---|---|
-| Aides Territoires | API (clé personnelle gratuite) | aides financières/ingénierie par territoire | 0€ annoncé | https://aides-territoires.beta.gouv.fr/api | SYNTHETIC_TEST (capture BLOCKED_BY_AUTH) |
+| Aides Territoires | API (clé personnelle gratuite) | aides financières/ingénierie par territoire | 0€ | https://aides-territoires.beta.gouv.fr/api | REAL_FIXTURE (`AIDES_TERRITOIRES_API`, 11 aides capturées 2026-09-24) + SYNTHETIC_TEST (`AIDES_TERRITOIRES`) |
 | ADEME aides financières | API open data | subventions/aides remboursables | 0€ annoncé | https://data.ademe.fr/data-fair/api/v1/datasets/les-aides-financieres-de-lademe | SYNTHETIC_TEST |
 | BOAMP | API gratuite | marchés publics, avis et résultats | 0€ | https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records | REAL_FIXTURE (`BOAMP_ODS`, 19 avis capturés 2026-09-23/24) + SYNTHETIC_TEST (`BOAMP`) |
 | data.europa.eu | API + RSS | datasets et flux RSS européens | 0€ | https://data.europa.eu/api/hub/search/ | REAL_FIXTURE (`DATA_EUROPA_HUB`, capturé 2026-09-23) + SYNTHETIC_TEST (`DATA_EUROPA`) |

@@ -1,0 +1,71 @@
+name: OMEGA-VERITAS BOAMP watch
+
+# Every morning, finds open BOAMP notices in the Nova Presta scope that OMEGA has never seen,
+# captures them byte for byte, evaluates them offline and opens a PR with the dated report.
+# Does nothing when there is nothing new. No secret needed: the BOAMP API is public.
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 05:00 UTC = 07:00 Paris (summer time)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: omega-veritas-boamp-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    name: Discover, capture, evaluate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: omega-veritas
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: omega-veritas/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build compiled modules
+        run: npx tsc -p tsconfig.proof.json
+
+      - name: Watch BOAMP
+        id: watch
+        run: node scripts/boamp-watch.mjs
+
+      - name: Verify the suite with the new fixtures
+        if: steps.watch.outputs.new_count != '0'
+        run: npm test && npm run proof
+
+      - name: Open a pull request with the new notices
+        if: steps.watch.outputs.new_count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DATE: ${{ steps.watch.outputs.date }}
+          NEW_COUNT: ${{ steps.watch.outputs.new_count }}
+          RETAINED: ${{ steps.watch.outputs.retained_count }}
+          REPORT: ${{ steps.watch.outputs.report }}
+        run: |
+          branch="omega-veritas/boamp-watch-${DATE}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add "fixtures/real/boamp-watch/${DATE}" "$REPORT"
+          git commit -m "omega-veritas: BOAMP watch ${DATE}: ${NEW_COUNT} new notices, ${RETAINED} retained"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "BOAMP watch ${DATE}: ${NEW_COUNT} new notices, ${RETAINED} retained" \
+            --body-file "$REPORT"
