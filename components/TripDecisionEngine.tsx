@@ -9,7 +9,12 @@ type AnalyticsWindow = Window & {
   va?: (event: string, properties?: Record<string, string>) => void;
 };
 
-function boundedNumber(raw: string, min: number, max: number, fallback: number) {\n  const value = Number(raw);\n  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;\n}\n\nfunction eur(value: number) {
+function boundedNumber(raw: string, min: number, max: number, fallback: number) {
+  const value = Number(raw);
+  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+}
+
+function eur(value: number) {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 }
 
@@ -61,13 +66,8 @@ export default function TripDecisionEngine() {
           </div>
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#fde68a]">RME Reality Check</p>
-            <h2 id="reality-check-title" className="mt-1 text-2xl font-display font-semibold sm:text-3xl">
-              Le coût réel avant de choisir.
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
-              Pas seulement le prix affiché : carburant, péages, ferry et nombre de voyageurs.
-              Ajustez les hypothèses pour obtenir un ordre de grandeur immédiatement.
-            </p>
+            <h2 id="reality-check-title" className="mt-1 text-2xl font-display font-semibold sm:text-3xl">Le coût réel avant de choisir.</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">Pas seulement le prix affiché : carburant, péages, ferry et nombre de voyageurs. Ajustez les hypothèses pour obtenir un ordre de grandeur immédiatement.</p>
           </div>
         </div>
 
@@ -77,18 +77,8 @@ export default function TripDecisionEngine() {
             ['mixed', 'Voiture + ferry', Ship],
             ['flight', 'Avion', Plane],
           ] as const).map(([value, label, Icon]) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => {
-                setMode(value);
-                markUsed();
-              }}
-              className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`}
-              aria-pressed={mode === value}
-            >
-              <Icon size={17} className="mb-2" />
-              {label}
+            <button key={value} type="button" onClick={() => { setMode(value); markUsed(); }} className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`} aria-pressed={mode === value}>
+              <Icon size={17} className="mb-2" />{label}
             </button>
           ))}
         </div>
@@ -107,54 +97,27 @@ export default function TripDecisionEngine() {
           ].map(([label, value, setter, min, max, step]) => (
             <label key={label as string} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
               <span className="font-semibold text-[#334155]">{label as string}</span>
-              <input
-                type="number"
-                min={min as number}
-                max={max as number}
-                step={step as number}
-                value={value as number}
-                onChange={(e) => {
-                  (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number));
-                  markUsed();
-                }}
-                className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40"
-              />
+              <input type="number" min={min as number} max={max as number} step={step as number} value={value as number} onChange={(e) => { (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number)); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40" />
             </label>
           ))}
         </div>
 
         <div className="rounded-2xl bg-[#f8fafc] p-5 sm:p-6">
-          <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]">
-            <ShieldCheck size={17} className="text-[#b45309]" />
-            Votre estimation
-          </div>
+          <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]"><ShieldCheck size={17} className="text-[#b45309]" />Votre estimation</div>
           <div className="mt-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct</p>
             <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d]">{eur(result.selected)}</p>
             <p className="mt-2 text-sm text-[#64748b]">≈ {eur(result.perPerson)} / personne · marge indicative : jusqu’à {eur(result.high)}</p>
-            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">
-              {result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport au scénario le moins cher.`}
-            </p>
+            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport au scénario le moins cher.`}</p>
           </div>
-
           <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
             <div className="flex justify-between"><span>Voiture (sans ferry)</span><strong>{eur(result.carTrip)}</strong></div>
             <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.mixedTrip)}</strong></div>
             <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
-
-          <p className="mt-5 text-xs leading-5 text-[#64748b]">
-            Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.
-          </p>
-
-          <a
-            href="#booking-title"
-            onClick={() => trackFunnelEvent('reality_check_cta', 'trip_decision_engine')}
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]"
-          >
-            Comparer les ferries et les vols <ArrowRight size={16} />
-          </a>
+          <p className="mt-5 text-xs leading-5 text-[#64748b]">Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.</p>
+          <a href="#booking-title" onClick={() => trackFunnelEvent('reality_check_cta', 'trip_decision_engine')} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">Comparer les ferries et les vols <ArrowRight size={16} /></a>
         </div>
       </div>
     </section>
