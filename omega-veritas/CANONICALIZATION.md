@@ -42,6 +42,7 @@ suite has been run.
 | `identityHash` / `opportunityId` | domain `omega-veritas/opportunity-id/v1`, payload `{ sourceName, externalId }`; `opp_` + first 32 hex |
 | `versionHash` / `versionId` | domain `omega-veritas/version-id/v1`, payload `{ sourceName, externalId, h_source_semantic, h_normalized_semantic }`; `ver_` + first 32 hex |
 | `currentHash` | domain `omega-veritas/envelope-seal/v1`, payload = envelope without `currentHash` |
+| `economicStateHash` (BOAMP) | domain `omega-veritas/economic-state/v1`, payload = buyer, nature, deadline, departments, market types, awardees, lot estimates, recurrence. Wording is excluded: a reworded notice keeps its economic state |
 
 Neither `capturedAt`, `sourceUrl`, `Date.now()`, randomness nor insertion order
 enters `opportunityId` or `versionId`.
@@ -53,3 +54,13 @@ enters `opportunityId` or `versionId`.
 - **It proves internal consistency only.** Whoever controls the whole chain can
   rewrite and reseal it; a test demonstrates this. Immutability needs a
   `headHash` stored outside the protected storage (not part of Gate 0).
+
+## Transport encoding
+
+BOAMP responses are gzip-encoded by the server. `fetch()` decodes them: fixtures and
+`sourceContentHash` cover the decoded body; `contentEncoding` is recorded in the capture record.
+
+## Nested JSON
+
+BOAMP's `donnees` field is JSON inside a string. `h_source_semantic` treats it as a string
+(so its inner whitespace matters); the evaluator re-parses it with `parseStrictJson`.

@@ -15,6 +15,7 @@ export const HASH_DOMAINS = {
   opportunityId: "omega-veritas/opportunity-id/v1",
   versionId: "omega-veritas/version-id/v1",
   envelopeSeal: "omega-veritas/envelope-seal/v1",
+  economicState: "omega-veritas/economic-state/v1",
 } as const;
 
 export type HashDomain = (typeof HASH_DOMAINS)[keyof typeof HASH_DOMAINS];

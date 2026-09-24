@@ -169,3 +169,40 @@ test("G1 real bytes: re-serialization keeps version, portal churn changes versio
   assert.equal(churned.h_normalized_semantic, original.h_normalized_semantic);
   assert.equal(churned.opportunityId, original.opportunityId);
 });
+
+// Gate 3 — real BOAMP notices (public API, no authentication; captured bytes).
+const bev = require("../.proof-build/src/services/boampEvaluator.js");
+const brep = require("../.proof-build/src/services/boampReport.js");
+const BOAMP = path.join(__dirname, "..", "fixtures", "real", "boamp");
+const boampNotices = () => fs.readdirSync(BOAMP).filter((f) => /^\d{2}-\d+\.json$/.test(f)).sort().map((f) => ({
+  bytes: new Uint8Array(fs.readFileSync(path.join(BOAMP, f))),
+  capture: JSON.parse(fs.readFileSync(path.join(BOAMP, f.replace(/\.json$/, ".capture.json")), "utf8")),
+}));
+
+test("G3 BOAMP: 12 real notices, 7 retained, adversarial ones eliminated for the right rule", async () => {
+  const { packs } = await brep.buildEvidencePacks(boampNotices());
+  assert.equal(packs.length, 12);
+  const byId = Object.fromEntries(packs.map((p) => [p.facts.idweb, p.evaluation]));
+  assert.equal(packs.filter((p) => p.evaluation.retained).length, 7);
+  assert.deepEqual(byId["26-48056"].eliminations.map((e) => e.rule), ["ALREADY_AWARDED"]);
+  assert.ok(byId["26-66104"].eliminations.some((e) => e.rule === "DOCUMENTARY_NOTICE"));
+  assert.deepEqual(byId["26-70382"].eliminations.map((e) => e.rule), ["MARKET_TYPE_NOT_DELIVERABLE", "OUT_OF_DOMAIN"]);
+  assert.deepEqual(byId["26-90272"].possibleDuplicateOf, ["26-90281"]);
+  assert.equal(byId["26-90272"].retained, true);
+});
+
+test("G3 BOAMP: wording change keeps the economic state, a deadline change does not", async () => {
+  const env = JSON.parse(fs.readFileSync(path.join(BOAMP, "26-89746.json"), "utf8"));
+  const base = await bev.economicStateHash(bev.extractBoampFacts(env));
+  const reworded = structuredClone(env);
+  reworded.results[0].objet += " (reformulé)";
+  assert.equal(await bev.economicStateHash(bev.extractBoampFacts(reworded)), base);
+  const moved = structuredClone(env);
+  moved.results[0].datelimitereponse = "2026-10-26T09:30:00+00:00";
+  assert.notEqual(await bev.economicStateHash(bev.extractBoampFacts(moved)), base);
+});
+
+test("G3 BOAMP: committed economic report regenerates byte for byte", async () => {
+  const { asOfMs, packs } = await brep.buildEvidencePacks(boampNotices());
+  assert.equal(brep.renderBoampReport(asOfMs, packs), fs.readFileSync(path.join(__dirname, "..", "ECONOMIC_REPORT_BOAMP.md"), "utf8"));
+});

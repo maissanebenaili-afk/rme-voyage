@@ -1,7 +1,7 @@
 {
   "name": "omega-veritas-v12-3-proof-harness",
   "private": true,
-  "version": "12.4.0",
+  "version": "12.5.0",
   "scripts": {
     "test": "jest --runInBand --verbose",
     "test:omega": "jest tests/omega-veritas.test.ts --runInBand --verbose",
