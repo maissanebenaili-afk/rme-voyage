@@ -42,6 +42,10 @@ export interface BoampFacts {
   recurring: boolean | null;
   /** eForms reserved-procurement codes per lot ("none" = not reserved); null when the schema has none. */
   reservedCodes: string[] | null;
+  /** CPV codes of the procurement and its lots (eForms); null when the schema carries none. */
+  cpv: string[] | null;
+  /** NUTS codes of the place of performance only (RealizedLocation), not of organisation addresses. */
+  performanceNuts: string[] | null;
   url: string;
 }
 
@@ -52,6 +56,8 @@ export interface EvaluationProfile {
   domainDescriptors: string[];
   /** Word-boundary patterns on the title (lexical, weaker than descriptors). */
   domainPatterns: RegExp[];
+  /** CPV code prefixes of the domain. When a notice has CPV codes, they decide the domain. */
+  domainCpvPrefixes: string[];
   /** Market types the profile can deliver; an assumption about the profile, not an observation. */
   deliverableMarketTypes: string[];
   /** null when the profile's certifications are not known. */
@@ -78,7 +84,7 @@ export interface BoampEvaluation {
   idweb: string;
   retained: boolean;
   eliminations: Elimination[];
-  domainSignal: { descriptorMatches: string[]; titleMatches: string[] };
+  domainSignal: { descriptorMatches: string[]; titleMatches: string[]; cpvMatches: string[] | null };
   economics: {
     acquisitionCostCents: Claim<number>;
     initialCostCents: Claim<number>;
@@ -120,6 +126,20 @@ function eurosToCents(text: unknown): number | null {
   return Number.isSafeInteger(cents) ? cents : null;
 }
 
+function cpvAndNuts(project: Rec, cpv: Set<string>, nuts: Set<string>): void {
+  for (const key of ["cac:MainCommodityClassification", "cac:AdditionalCommodityClassification"]) {
+    for (const c of asArray(project[key])) {
+      const code = isRec(c) ? c["cbc:ItemClassificationCode"] : undefined;
+      if (isRec(code) && code["@listName"] === "cpv" && typeof code["#text"] === "string") cpv.add(code["#text"]);
+    }
+  }
+  for (const loc of asArray(project["cac:RealizedLocation"])) {
+    const address = isRec(loc) ? loc["cac:Address"] : undefined;
+    const sub = isRec(address) ? address["cbc:CountrySubentityCode"] : undefined;
+    if (isRec(sub) && typeof sub["#text"] === "string" && String(sub["@listName"]).startsWith("nuts")) nuts.add(sub["#text"]);
+  }
+}
+
 function eformsLots(notice: Rec): { lots: BoampLot[]; recurring: boolean | null; reservedCodes: string[] } {
   const lots: BoampLot[] = [];
   const flags: boolean[] = [];
@@ -155,6 +175,8 @@ export function extractBoampFacts(envelope: unknown): BoampFacts {
   let lots: BoampLot[] = [];
   let recurring: boolean | null = null;
   let reservedCodes: string[] | null = null;
+  let cpv: string[] | null = null;
+  let performanceNuts: string[] | null = null;
   if (typeof r.donnees === "string") {
     // Nested JSON-in-string: parsed with the same strict parser (duplicate keys rejected).
     const inner = parseStrictJson(r.donnees);
@@ -166,6 +188,12 @@ export function extractBoampFacts(envelope: unknown): BoampFacts {
           const extracted = eformsLots(notice);
           ({ lots, recurring } = extracted);
           reservedCodes = extracted.reservedCodes.length > 0 ? extracted.reservedCodes : null;
+          const cpvSet = new Set<string>();
+          const nutsSet = new Set<string>();
+          const projects = [notice["cac:ProcurementProject"], ...asArray(notice["cac:ProcurementProjectLot"]).map((l) => (isRec(l) ? l["cac:ProcurementProject"] : undefined))];
+          for (const project of projects) if (isRec(project)) cpvAndNuts(project, cpvSet, nutsSet);
+          cpv = cpvSet.size > 0 ? [...cpvSet].sort() : null;
+          performanceNuts = nutsSet.size > 0 ? [...nutsSet].sort() : null;
         }
       } else if ("FNSimple" in inner) schema = "FNSimple";
       else if ("MAPA" in inner) schema = "MAPA";
@@ -190,6 +218,8 @@ export function extractBoampFacts(envelope: unknown): BoampFacts {
     lots,
     recurring,
     reservedCodes,
+    cpv,
+    performanceNuts,
     url: requireString(r.url_avis, "URL_AVIS"),
   };
 }
@@ -209,6 +239,7 @@ export function economicStateHash(f: BoampFacts): Promise<string> {
     awardees: [...f.awardees].sort(),
     lots: f.lots.map((l) => ({ id: l.id, estimatedAmountCents: l.estimatedAmountCents })),
     recurring: f.recurring,
+    cpv: f.cpv,
   });
 }
 
@@ -218,7 +249,8 @@ const normalizeText = (s: string) =>
 function domainSignal(f: BoampFacts, profile: EvaluationProfile) {
   const descriptorMatches = f.descriptors.filter((d) => profile.domainDescriptors.includes(d));
   const titleMatches = profile.domainPatterns.filter((p) => p.test(f.title)).map((p) => p.source);
-  return { descriptorMatches, titleMatches };
+  const cpvMatches = f.cpv === null ? null : f.cpv.filter((c) => profile.domainCpvPrefixes.some((prefix) => c.startsWith(prefix)));
+  return { descriptorMatches, titleMatches, cpvMatches };
 }
 
 function eliminations(f: BoampFacts, asOfMs: number, profile: EvaluationProfile): Elimination[] {
@@ -246,8 +278,14 @@ function eliminations(f: BoampFacts, asOfMs: number, profile: EvaluationProfile)
     out.push({ rule: "MARKET_TYPE_NOT_DELIVERABLE", status: "HEURISTIC", reason: `Marché de ${f.marketTypes.join(", ").toLowerCase() || "type inconnu"} ; hypothèse de profil : seules des prestations de ${profile.deliverableMarketTypes.join(", ").toLowerCase()} sont réalisables` });
   }
   const signal = domainSignal(f, profile);
-  if (signal.descriptorMatches.length === 0 && signal.titleMatches.length === 0) {
-    out.push({ rule: "OUT_OF_DOMAIN", status: "HEURISTIC", reason: `Ni descripteur BOAMP (${f.descriptors.join(", ") || "aucun"}) ni mot-clé du domaine dans l'objet` });
+  if (signal.cpvMatches !== null) {
+    // CPV codes classify the contract itself: when present, they decide.
+    if (signal.cpvMatches.length === 0) {
+      const conflict = signal.descriptorMatches.length > 0 || signal.titleMatches.length > 0;
+      out.push({ rule: "OUT_OF_DOMAIN", status: "OBSERVED", reason: `Codes CPV ${f.cpv?.join(", ")} hors domaine${conflict ? " (contredit le descripteur ou l'objet, le CPV prévaut)" : ""}` });
+    }
+  } else if (signal.descriptorMatches.length === 0 && signal.titleMatches.length === 0) {
+    out.push({ rule: "OUT_OF_DOMAIN", status: "HEURISTIC", reason: `Pas de CPV ; ni descripteur BOAMP (${f.descriptors.join(", ") || "aucun"}) ni mot-clé du domaine dans l'objet` });
   }
   return out;
 }
@@ -343,7 +381,12 @@ export const NOVA_PRESTA_PROFILE: EvaluationProfile = {
     /\binsertion (?:professionnelle|sociale|par l'activit[ée])/i,
     /\bcomp[ée]tences\b/i,
     /\bemploi\b/i,
+    /\bint[ée]rim(?:aires?)?\b/i,
+    /mise [àa] disposition de personnel/i,
   ],
+  // 80: education and training; 7960-7962: recruitment, placement, supply of (temporary) staff;
+  // 79632 / 79633: personnel training, staff development.
+  domainCpvPrefixes: ["80", "7960", "7961", "7962", "79632", "79633"],
   deliverableMarketTypes: ["SERVICES"],
   certifications: null,
 };

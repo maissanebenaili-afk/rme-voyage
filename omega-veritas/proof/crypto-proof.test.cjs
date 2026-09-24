@@ -179,11 +179,13 @@ const boampNotices = () => fs.readdirSync(BOAMP).filter((f) => /^\d{2}-\d+\.json
   capture: JSON.parse(fs.readFileSync(path.join(BOAMP, f.replace(/\.json$/, ".capture.json")), "utf8")),
 }));
 
-test("G3 BOAMP: 12 real notices, 7 retained, adversarial ones eliminated for the right rule", async () => {
+test("G3 BOAMP: 19 real notices, 12 retained, adversarial ones eliminated for the right rule", async () => {
   const { packs } = await brep.buildEvidencePacks(boampNotices());
-  assert.equal(packs.length, 12);
+  assert.equal(packs.length, 19);
   const byId = Object.fromEntries(packs.map((p) => [p.facts.idweb, p.evaluation]));
-  assert.equal(packs.filter((p) => p.evaluation.retained).length, 7);
+  assert.equal(packs.filter((p) => p.evaluation.retained).length, 12);
+  assert.deepEqual(byId["25-29168"].eliminations.map((e) => [e.rule, e.status]), [["OUT_OF_DOMAIN", "OBSERVED"]]);
+  assert.deepEqual(byId["26-75122"].domainSignal.cpvMatches, ["79620000", "79625000"]);
   assert.deepEqual(byId["26-48056"].eliminations.map((e) => e.rule), ["ALREADY_AWARDED"]);
   assert.ok(byId["26-66104"].eliminations.some((e) => e.rule === "DOCUMENTARY_NOTICE"));
   assert.deepEqual(byId["26-70382"].eliminations.map((e) => e.rule), ["MARKET_TYPE_NOT_DELIVERABLE", "OUT_OF_DOMAIN"]);
