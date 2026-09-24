@@ -121,7 +121,7 @@ export default function Home() {
             <div className="mt-10 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold text-white/70">
               <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Gratuit, sans inscription</span>
               <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> 15+ outils intégrés</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Taux de change live</span>
+              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Taux de change indicatif</span>
             </div>
           </div>
 
@@ -251,7 +251,7 @@ export default function Home() {
             </h2>
             <p className="mt-4 text-lg leading-8 text-[#475569]">
               5 millions de MRE envoient <strong>€4,8 milliards par an</strong> vers le Maroc.
-              RME Voyage compare les frais en temps réel et renvoie vers Wise, WorldRemit ou Western Union — avec commission à chaque clic.
+              RME Voyage fournit un taux de change indicatif et des estimations de coûts. Certains liens vers des prestataires peuvent être affiliés.
             </p>
           </div>
           <RemittanceComparator />
