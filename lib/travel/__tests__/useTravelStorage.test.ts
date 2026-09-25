@@ -96,6 +96,40 @@ describe("useTravelStorage", () => {
     expect(localStorage.getItem(TRAVEL_STORAGE_BACKUP_KEY)).toBe(raw);
   });
 
+  test("setTravel accepts a functional updater", async () => {
+    const { result } = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(result.current.isHydrated).toBe(true));
+
+    act(() => {
+      result.current.setTravel((prev) => ({
+        ...prev,
+        modeTransport: "plane",
+      }));
+    });
+
+    expect(result.current.travel.modeTransport).toBe("plane");
+  });
+
+  test("updateTravel merges nested villes and preferences", async () => {
+    const { result } = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(result.current.isHydrated).toBe(true));
+
+    act(() => {
+      result.current.updateTravel({
+        villes: { depart: "Paris" },
+        preferences: { notifications: true },
+      });
+    });
+
+    expect(result.current.travel.villes).toEqual({
+      depart: "Paris",
+      arrivee: "",
+    });
+    expect(result.current.travel.preferences).toEqual({
+      notifications: true,
+    });
+  });
+
   test("does not update derniereConsultation during an ordinary update", async () => {
     const { result } = renderHook(() => useTravelStorage());
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
