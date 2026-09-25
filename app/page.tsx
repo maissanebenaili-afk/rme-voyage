@@ -88,9 +88,9 @@ export default function Home() {
           have to read before you can act. Muted blue-gray surface with just
           a whisper of warm horizon tone at the base — navy carries the
           structure (nav, borders, headings), not a bright full-bleed wash. */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#eef6f1] via-[#eef1ec] to-[#e6dfc9] text-[#0f1f3d]">
+      <section className="relative isolate overflow-hidden bg-gradient-to-b from-printemps-50 via-[#edf5f3] to-[#e6dfc9] text-[#0f1f3d]">
         <div className="absolute -top-24 right-[-10%] -z-10 h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,.14),transparent_70%)] blur-2xl" />
-        <div className="absolute -bottom-16 left-[-8%] -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(35,122,84,.14),transparent_70%)] blur-2xl" />
+        <div className="absolute -bottom-16 left-[-8%] -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(31,117,79,.16),transparent_70%)] blur-2xl" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-16 bg-gradient-to-t from-[#f59e0b]/10 to-transparent" />
 
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
@@ -128,28 +128,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
-          Atlas pâle plutôt que gris neutre : une section qu'on identifie
-          d'un coup d'œil, un peu de couleur au lieu du "tout blanc". */}
-      <section className="border-b border-slate-200 bg-atlas-100 py-10">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <TripDecisionEngine />
-        </div>
-      </section>
-
-      {/* RME Live — compact, useful, and intentionally secondary to the journey */ }
-      <section aria-label="RME Live" className="border-b border-slate-200 bg-white">
+      {/* Fil d'actualité : visible immédiatement, avant le coût. */}
+      <section aria-label="Fil d'actualité RME" className="border-b border-printemps-100 bg-[#f8fcfd]">
         <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2.5 sm:px-8">
-          <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700">
-            🔴 RME Live
-          </span>
-          <div className="min-w-0 overflow-hidden">
-            <div className="flex min-w-max animate-[marquee_32s_linear_infinite] gap-8 text-xs font-semibold text-slate-600">
+          <a href="#infos" className="shrink-0 rounded-full bg-atlas-700 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm transition hover:bg-atlas-800">🟢 RME Actualités</a>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <div className="flex min-w-max animate-[marquee_32s_linear_infinite] gap-8 text-xs font-bold text-[#315d66]">
               {[...liveTicker, ...liveTicker].map((item, index) => (
-                <span key={index} className="whitespace-nowrap">{item}</span>
+                <a key={index} href="#infos" className="whitespace-nowrap transition hover:text-atlas-700">{item}</a>
               ))}
             </div>
           </div>
+          <a href="/rss.xml" className="shrink-0 rounded-full border border-printemps-200 bg-white px-3 py-1.5 text-[10px] font-black text-[#2b6670] shadow-sm transition hover:bg-printemps-50" aria-label="Ouvrir le flux RSS RME Voyage">RSS ↗</a>
+        </div>
+      </section>
+
+      {/* Coût — juste après le fil d'actualité : TRAJET → ACTU → COÛT. Vert
+          Atlas plus profond pour que la zone se repère immédiatement. */
+      <section className="border-b border-slate-200 bg-atlas-100 py-10">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <TripDecisionEngine />
         </div>
       </section>
 
@@ -230,7 +228,7 @@ export default function Home() {
 
       {/* Spiritual & Services Section — léger violet Jacaranda, comme le vert
           Atlas plus haut : une section de plus qui se repère d'un regard. */}
-      <section className="bg-jacaranda-50 py-20">
+      <section id="infos" className="bg-jacaranda-50 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <div className="mb-10 max-w-2xl">
             <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">En route</p>
