@@ -40,6 +40,7 @@ import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts,
 import SmartPacking from '@/components/SmartPacking';
 import NewsletterSection from '@/components/NewsletterSection';
 import FaicalWidget from '@/components/FaicalWidget';
+import SportsHub from '@/components/SportsHub';
 import TVWidget from '@/components/TVWidget';
 import MarwaCaftanWidget from '@/components/MarwaCaftanWidget';
 import ServicesProWidget from '@/components/ServicesProWidget';
@@ -343,6 +344,9 @@ export default function Home() {
           <div className="mt-6">
             <SmartPacking />
           </div>
+
+          {/* RME Sport — unified match hub */}
+          <div className="mt-6"><SportsHub /></div>
 
           {/* Faical Football Picks */}
           <div className="mt-6">
