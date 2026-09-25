@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CurrentTravelData } from "./travelStorage.types";
 import {
   createDefaultTravelState,
@@ -11,10 +11,11 @@ export const TRAVEL_STORAGE_KEY = "rme_personal_travel_data";
 export const TRAVEL_STORAGE_BACKUP_KEY =
   "rme_personal_travel_data_corrupted";
 
-type TravelUpdate = Partial<
-  Omit<CurrentTravelData, "version" | "derniereConsultation">
-> & {
+type TravelUpdate = {
   villes?: Partial<CurrentTravelData["villes"]>;
+  dateVoyage?: CurrentTravelData["dateVoyage"];
+  modeTransport?: CurrentTravelData["modeTransport"];
+  checklistProgress?: CurrentTravelData["checklistProgress"];
   preferences?: Partial<CurrentTravelData["preferences"]>;
 };
 
@@ -27,6 +28,7 @@ export function useTravelStorage() {
     createDefaultTravelState,
   );
   const [isHydrated, setIsHydrated] = useState(false);
+  const skipNextPersistRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -41,7 +43,7 @@ export function useTravelStorage() {
       }
 
       const parsed: unknown = JSON.parse(rawData);
-      const validatedData = migrateAndValidateTravelData(parsed as Record<string, unknown>);
+      const validatedData = migrateAndValidateTravelData(parsed);
       setTravelState(validatedData);
     } catch (error) {
       console.error("RME Storage Error: reset par defaut.", error);
@@ -65,6 +67,11 @@ export function useTravelStorage() {
 
   useEffect(() => {
     if (!isHydrated || typeof window === "undefined") {
+      return;
+    }
+
+    if (skipNextPersistRef.current) {
+      skipNextPersistRef.current = false;
       return;
     }
 
@@ -126,6 +133,7 @@ export function useTravelStorage() {
       }
     }
 
+    skipNextPersistRef.current = true;
     setTravelState(createDefaultTravelState());
   }, []);
 
