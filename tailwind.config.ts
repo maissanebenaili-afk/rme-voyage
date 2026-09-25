@@ -59,11 +59,11 @@ const config: Config = {
           200: "#b3d9c0",
           300: "#82bd98",
           400: "#4f9c72",
-          500: "#237a54", // brand accent
-          600: "#186745",
-          700: "#125239",
-          800: "#0d3e2c",
-          900: "#092c20",
+          500: "#1f754f", // brand accent
+          600: "#145f40",
+          700: "#0d4932",
+          800: "#0a3828",
+          900: "#06271c",
         },
         // Jacaranda — Marrakech's purple-flowering trees, a second gentle
         // accent alongside Atlas green, used the same way: pale on reading
@@ -80,7 +80,7 @@ const config: Config = {
           800: "#382753",
           900: "#271c3a",
         },
-        // Sable / neutrals — clean cool slate
+        // Printemps — bleu léger, frais et calme pour la zone itinéraire\n        printemps: {\n          50: "#eff9fb",\n          100: "#dff2f5",\n          200: "#c5e7ec",\n          300: "#9bd2da",\n          400: "#6bb8c2",\n          500: "#4a9ca8",\n          600: "#377f8b",\n          700: "#2b6670",\n          800: "#214f57",\n          900: "#193d43",\n        },\n        // Sable / neutrals — clean cool slate
         sable: {
           50: "#f0f9ff",
           100: "#f8fafc", // app background
