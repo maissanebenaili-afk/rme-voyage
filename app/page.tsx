@@ -43,8 +43,6 @@ import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
-import RoutePulse from '@/components/RoutePulse';
-import { pulseSnapshotDemo } from '@/lib/data/pulse-snapshot-demo';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -80,12 +78,15 @@ const features = [
 export default function Home() {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b]">
-      {/* Hero — product-first, visual and mobile-first. Light background, dark
-          text: easier to read than light-on-dark for low-vision and older
-          users (glare/halation from bright text on near-black is a known
-          legibility problem, not just a contrast-ratio number). */}
-      <section className="relative isolate overflow-hidden bg-[#f8fafc] text-[#0f1f3d]">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_20%,rgba(245,158,11,.10),transparent_28%),radial-gradient(circle_at_12%_70%,rgba(14,165,233,.08),transparent_30%)]" />
+      {/* Hero — product-first, visual and mobile-first. Warm dusk-horizon
+          gradient (cream → golden glow) instead of flat white/near-black:
+          keeps the dark, opacity-free text from the accessibility pass
+          (no glare/halation) while giving the top of the page some depth —
+          the "golden horizon at dusk, seen through a plane window" mood. */}
+      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#fffaf0] via-[#fdf0d5] to-[#f8dfa6] text-[#0f1f3d]">
+        <div className="absolute -top-24 right-[-10%] -z-10 h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(circle,rgba(253,230,138,.9),rgba(245,158,11,.25)_55%,transparent_75%)] blur-2xl" />
+        <div className="absolute bottom-[-8rem] left-[-6%] -z-10 h-72 w-[36rem] rounded-full bg-[radial-gradient(ellipse,rgba(14,165,233,.14),transparent_70%)] blur-2xl" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-[#f59e0b]/15 to-transparent" />
         <div className="absolute inset-x-0 top-0 -z-10 h-1 bg-gradient-to-r from-transparent via-[#f59e0b] to-transparent" />
 
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
@@ -279,13 +280,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* RME Route Pulse — methodology demo, not live telemetry */}
-      <section className="bg-[#f8fafc] py-16">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <RoutePulse snapshot={pulseSnapshotDemo} />
         </div>
       </section>
 
