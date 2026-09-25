@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { Caftan, CaftanView } from '@/lib/caftans';
 import CaftanIllustration, { type Variant } from './CaftanIllustration';
 
@@ -18,13 +19,16 @@ export default function CaftanVisual({ caftan, view = 'face', variant = 'card', 
 
   if (photo) {
     return (
-      <img
-        src={photo.src}
-        alt={photo.alt}
-        loading="lazy"
-        decoding="async"
-        className={className || 'h-full w-full object-cover'}
-      />
+      <div className={className || 'relative h-full w-full'}>
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          fill
+          sizes="(min-width: 1024px) 300px, (min-width: 640px) 250px, 100vw"
+          loading="lazy"
+          className="object-cover"
+        />
+      </div>
     );
   }
 
