@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+
 import { Car, Hotel, Luggage, Plane, ShieldCheck, Ship, Smartphone, Sparkles, Wallet } from "lucide-react";
 import type { PartnerCatalogueEntry, PartnerCategory } from "@/lib/partnerCatalogue";
 import { trackPartnerClick } from "@/lib/partnerTracking";
@@ -17,16 +17,7 @@ const categoryMeta: Record<PartnerCategory, { label: string; icon: typeof Ship }
   insurance: { label: "Assurance", icon: ShieldCheck },
 };
 
-export default function PartnerComparison() {
-  const [partners, setPartners] = useState<PartnerCatalogueEntry[]>([]);
-
-  useEffect(() => {
-    fetch("/api/partners", { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((data) => setPartners(Array.isArray(data.partners) ? data.partners : []))
-      .catch(() => setPartners([]));
-  }, []);
-
+export default function PartnerComparison({ partners }: { partners: PartnerCatalogueEntry[] }) {
   if (!partners.length) return null;
 
   return (
