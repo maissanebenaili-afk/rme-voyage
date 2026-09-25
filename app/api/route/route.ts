@@ -9,7 +9,7 @@ import {
   MOROCCO_SIDE,
   type Port,
 } from "@/lib/ferryCrossings";
-import type { FerryLeg, RoadLeg, RouteLeg } from "@/lib/routeLegs";
+import type { FerryLeg, RouteLeg } from "@/lib/routeLegs";
 
 /**
  * Server-side directions endpoint: geocodes two free-text places (Nominatim)
@@ -41,15 +41,27 @@ const OSRM = "https://router.project-osrm.org";
 /** Au-delà, le point demandé n'est pas desservi par le réseau routier trouvé. */
 const MAX_SNAP_METERS = 10_000;
 
+/** En deçà, départ et arrivée géocodés désignent le même lieu. */
+const SAME_PLACE_METERS = 1_000;
+
 const NO_ROAD_ERROR = "Aucun itinéraire routier trouvé entre ces deux lieux.";
 
 class UpstreamError extends Error {}
+
+interface OsrmStep {
+  mode: string;
+  name: string;
+  distance: number;
+  duration: number;
+  coordinates: LonLat[];
+}
 
 interface OsrmRoad {
   coordinates: LonLat[];
   distance: number;
   duration: number;
   snapMeters: number;
+  steps: OsrmStep[];
 }
 
 function osrmFetch(path: string, params: Record<string, string>) {
@@ -71,11 +83,22 @@ async function osrmRoute(from: LonLat, to: LonLat): Promise<OsrmRoad | null> {
   const response = await osrmFetch(`/route/v1/driving/${coordinatePath([from, to])}`, {
     overview: "full",
     geometries: "geojson",
+    // Les étapes portent le mode (« driving » / « ferry ») : OSRM emprunte
+    // certains ferries (Manche, Baléares…) qu'il ne faut ni compter en
+    // kilomètres routiers ni facturer en carburant.
+    steps: "true",
   });
   if (!response.ok) throw new UpstreamError();
   const data = (await response.json()) as {
     code: string;
-    routes?: { geometry: { coordinates: LonLat[] }; distance: number; duration: number }[];
+    routes?: {
+      geometry: { coordinates: LonLat[] };
+      distance: number;
+      duration: number;
+      legs?: {
+        steps?: { mode?: string; name?: string; distance: number; duration: number; geometry?: { coordinates: LonLat[] } }[];
+      }[];
+    }[];
     waypoints?: { distance?: number }[];
   };
   const route = data.routes?.[0];
@@ -85,6 +108,15 @@ async function osrmRoute(from: LonLat, to: LonLat): Promise<OsrmRoad | null> {
     distance: route.distance,
     duration: route.duration,
     snapMeters: Math.max(0, ...(data.waypoints ?? []).map((w) => w.distance ?? 0)),
+    steps: (route.legs ?? []).flatMap((leg) =>
+      (leg.steps ?? []).map((step) => ({
+        mode: step.mode ?? "driving",
+        name: step.name ?? "",
+        distance: step.distance,
+        duration: step.duration,
+        coordinates: step.geometry?.coordinates ?? [],
+      })),
+    ),
   };
 }
 
@@ -102,15 +134,61 @@ async function osrmTable(sources: LonLat[], destinations: LonLat[]): Promise<(nu
   return data.distances;
 }
 
-function roadLeg(from: string, to: string, road: OsrmRoad): RoadLeg {
-  return {
-    kind: "road",
-    from,
-    to,
-    distanceMeters: road.distance,
-    durationSeconds: road.duration,
-    countries: splitByCountry(road.coordinates, road.distance),
+/** « Portsmouth (UK) - Cherbourg (F) » → ports de départ et d'arrivée, si lisibles. */
+function ferryPorts(name: string): [string, string] {
+  const parts = name.split(/\s+[-–]\s+/);
+  return parts.length === 2 ? [parts[0], parts[1]] : [name || "Traversée maritime", ""];
+}
+
+/**
+ * Découpe un itinéraire OSRM en tronçons routiers et traversées. Distance et
+ * durée routières excluent les ferries empruntés par OSRM.
+ */
+function legsFromRoad(from: string, to: string, road: OsrmRoad): { legs: RouteLeg[]; meters: number; seconds: number } {
+  const steps = road.steps.length
+    ? road.steps
+    : [{ mode: "driving", name: "", distance: road.distance, duration: road.duration, coordinates: road.coordinates }];
+  const legs: RouteLeg[] = [];
+  let chunk = { from, coordinates: [] as LonLat[], meters: 0, seconds: 0 };
+  let meters = 0;
+  let seconds = 0;
+
+  const flush = (until: string) => {
+    if (chunk.meters > 0) {
+      legs.push({
+        kind: "road",
+        from: chunk.from,
+        to: until,
+        distanceMeters: chunk.meters,
+        durationSeconds: chunk.seconds,
+        countries: splitByCountry(chunk.coordinates, chunk.meters),
+      });
+    }
   };
+
+  for (const step of steps) {
+    if (step.mode === "ferry") {
+      const [departure, arrival] = ferryPorts(step.name);
+      flush(departure);
+      const ferry: FerryLeg = {
+        kind: "ferry",
+        from: departure,
+        to: arrival,
+        distanceMeters: Math.round(step.distance),
+        measured: "route",
+      };
+      legs.push(ferry);
+      chunk = { from: arrival || departure, coordinates: [], meters: 0, seconds: 0 };
+    } else {
+      chunk.coordinates.push(...step.coordinates);
+      chunk.meters += step.distance;
+      chunk.seconds += step.duration;
+      meters += step.distance;
+      seconds += step.duration;
+    }
+  }
+  flush(to);
+  return { legs, meters, seconds };
 }
 
 function toLeaflet(coordinates: LonLat[]) {
@@ -123,11 +201,12 @@ async function directRoute(origin: string, destination: string, from: LonLat, to
   if (!road || road.snapMeters > MAX_SNAP_METERS) {
     return Response.json({ error: NO_ROAD_ERROR }, { status: 404 });
   }
-  const legs: RouteLeg[] = [roadLeg(origin, destination, road)];
+  const { legs, meters, seconds } = legsFromRoad(origin, destination, road);
   return Response.json({
     geometry: toLeaflet(road.coordinates),
-    distanceMeters: road.distance,
-    durationSeconds: road.duration,
+    // Distance et durée routières : hors traversées éventuelles.
+    distanceMeters: meters,
+    durationSeconds: seconds,
     legs,
   });
 }
@@ -177,19 +256,18 @@ async function crossingRoute(
     from: best.departure.name,
     to: best.arrival.name,
     distanceMeters: Math.round(best.sea),
+    measured: "straight-line",
   };
-  const legs: RouteLeg[] = [
-    roadLeg(origin, best.departure.name, first),
-    ferry,
-    roadLeg(best.arrival.name, destination, last),
-  ];
+  const before = legsFromRoad(origin, best.departure.name, first);
+  const after = legsFromRoad(best.arrival.name, destination, last);
+  const legs: RouteLeg[] = [...before.legs, ferry, ...after.legs];
 
   return Response.json({
     // Le segment port → port est tracé en ligne droite entre les deux tronçons.
     geometry: toLeaflet([...first.coordinates, ...last.coordinates]),
     // Distance et durée routières (ce que parcourt la voiture), hors traversée.
-    distanceMeters: first.distance + last.distance,
-    durationSeconds: first.duration + last.duration,
+    distanceMeters: before.meters + after.meters,
+    durationSeconds: before.seconds + after.seconds,
     legs,
     crossings: candidates.map((c) => ({
       from: c.departure.name,
@@ -223,6 +301,9 @@ export async function GET(request: Request) {
 
   const from = lonLat(originPoint);
   const to = lonLat(destinationPoint);
+  if (haversineMeters(from, to) < SAME_PLACE_METERS) {
+    return Response.json({ error: "Le départ et la destination désignent le même endroit." }, { status: 400 });
+  }
   const originCountry = countryNear(from);
   const destinationCountry = countryNear(to);
   const toMorocco = EUROPE_SIDE.has(originCountry ?? "") && MOROCCO_SIDE.has(destinationCountry ?? "");

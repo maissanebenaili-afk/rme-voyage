@@ -61,7 +61,7 @@ describe('Reality Check — fuel by leg and country', () => {
       kind: 'road', from: 'Paris', to: 'Tarifa', distanceMeters: 1_938_871, durationSeconds: 70_000,
       countries: [{ country: 'FR', meters: 1_000_000 }, { country: 'ES', meters: 938_871 }],
     },
-    { kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', distanceMeters: 30_000 },
+    { kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', distanceMeters: 30_000, measured: 'straight-line' },
     {
       kind: 'road', from: 'Tanger Ville', to: 'Marrakech', distanceMeters: 573_093, durationSeconds: 22_000,
       countries: [{ country: 'MA', meters: 573_093 }],

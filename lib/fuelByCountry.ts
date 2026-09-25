@@ -37,7 +37,7 @@ export interface CountryFuelLine {
 
 export type LegCost =
   | { kind: 'road'; from: string; to: string; km: number; fuel: number; countries: CountryFuelLine[] }
-  | { kind: 'ferry'; from: string; to: string; km: number };
+  | { kind: 'ferry'; from: string; to: string; km: number; measured: 'route' | 'straight-line' };
 
 export interface FuelByCountryResult {
   legs: LegCost[];
@@ -93,7 +93,7 @@ export function computeFuelByCountry(input: {
     const km = nonNegative(leg.distanceMeters) / 1000;
     if (leg.kind === 'ferry') {
       seaKm += km;
-      return { kind: 'ferry', from: leg.from, to: leg.to, km: round(km, 1) };
+      return { kind: 'ferry', from: leg.from, to: leg.to, km: round(km, 1), measured: leg.measured };
     }
     roadKm += km;
     const countries = leg.countries.map(({ country, meters }) => {

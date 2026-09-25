@@ -21,9 +21,15 @@ export interface RoadLeg {
 export interface FerryLeg {
   kind: 'ferry';
   from: string;
+  /** Vide quand le nom de la ligne ne permet pas d'isoler le port d'arrivée. */
   to: string;
-  /** Distance port à port à vol d'oiseau : la route maritime réelle est plus longue. */
   distanceMeters: number;
+  /**
+   * « route » : longueur de la ligne maritime cartographiée (OSRM/OSM) ;
+   * « straight-line » : port à port à vol d'oiseau (traversées Espagne ↔ Maroc
+   * composées par RME), la route maritime réelle est plus longue.
+   */
+  measured: 'route' | 'straight-line';
 }
 
 export type RouteLeg = RoadLeg | FerryLeg;
@@ -45,7 +51,7 @@ function isRouteLeg(value: unknown): value is RouteLeg {
   if (typeof v.distanceMeters !== 'number' || !Number.isFinite(v.distanceMeters) || v.distanceMeters < 0) {
     return false;
   }
-  if (v.kind === 'ferry') return true;
+  if (v.kind === 'ferry') return v.measured === 'route' || v.measured === 'straight-line';
   return (
     v.kind === 'road' &&
     typeof v.durationSeconds === 'number' &&

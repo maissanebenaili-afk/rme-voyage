@@ -39,12 +39,16 @@ export function countryAt(point: LonLat): string | null {
   return null;
 }
 
+/** Lacune maximale comblée par le pays voisin (côte simplifiée, pont, tunnel). */
+export const MAX_GAP_METERS = 25_000;
+
 /**
  * Répartit `totalMeters` (distance officielle OSRM du tronçon) entre les pays
  * traversés, au prorata des segments du tracé classés par leur milieu.
- * Un segment hors de tout contour (côte simplifiée, port, pont, tunnel)
- * hérite du pays précédent, ou du suivant en début de tracé ; « null » ne
- * subsiste que si aucun pays n'est rencontré du tout.
+ * Une courte portion hors contour (≤ MAX_GAP_METERS : côte simplifiée, pont,
+ * tunnel) est rattachée au pays précédent, ou au suivant en début de tracé.
+ * Une longue portion hors contour est un pays non couvert (Algérie,
+ * Mauritanie…) : elle reste « null » plutôt que d'être attribuée à tort.
  */
 export function splitByCountry(coordinates: LonLat[], totalMeters: number): CountryDistance[] {
   const segments: { country: string | null; length: number }[] = [];
@@ -55,17 +59,28 @@ export function splitByCountry(coordinates: LonLat[], totalMeters: number): Coun
     if (length > 0) segments.push({ country: countryAt([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]), length });
   }
 
-  const firstKnown = segments.find((segment) => segment.country !== null)?.country ?? null;
-  let previous = firstKnown;
+  // Regroupe les segments consécutifs de même classement, puis comble les courtes lacunes.
+  const runs: { country: string | null; length: number }[] = [];
+  for (const segment of segments) {
+    const last = runs[runs.length - 1];
+    if (last && last.country === segment.country) last.length += segment.length;
+    else runs.push({ ...segment });
+  }
+  runs.forEach((run, index) => {
+    if (run.country !== null || run.length > MAX_GAP_METERS) return;
+    const neighbour =
+      runs.slice(0, index).reverse().find((r) => r.country !== null) ??
+      runs.slice(index + 1).find((r) => r.country !== null);
+    if (neighbour) run.country = neighbour.country;
+  });
+
   const order: (string | null)[] = [];
   const meters = new Map<string | null, number>();
   let measured = 0;
-  for (const segment of segments) {
-    const country = segment.country ?? previous;
-    previous = country;
-    if (!meters.has(country)) order.push(country);
-    meters.set(country, (meters.get(country) ?? 0) + segment.length);
-    measured += segment.length;
+  for (const run of runs) {
+    if (!meters.has(run.country)) order.push(run.country);
+    meters.set(run.country, (meters.get(run.country) ?? 0) + run.length);
+    measured += run.length;
   }
 
   if (measured === 0) return [];

@@ -18,8 +18,10 @@ import { publishRoute, toComputedRoute } from "@/lib/routeContext";
 import { parseRouteLegs } from "@/lib/routeLegs";
 
 function ferryLabel(legs: unknown): string | undefined {
-  const ferry = parseRouteLegs(legs)?.find((leg) => leg.kind === "ferry");
-  return ferry ? `${ferry.from} → ${ferry.to}` : undefined;
+  const ferries = (parseRouteLegs(legs) ?? []).filter((leg) => leg.kind === "ferry");
+  return ferries.length
+    ? ferries.map((leg) => (leg.to ? `${leg.from} → ${leg.to}` : leg.from)).join(", ")
+    : undefined;
 }
 
 type RouteCalcStatus = "idle" | "loading" | "error" | "ready";

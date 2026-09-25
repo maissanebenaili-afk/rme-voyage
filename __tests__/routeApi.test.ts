@@ -109,7 +109,9 @@ describe("GET /api/route", () => {
   it("returns 404 when OSRM finds no route between the two points", async () => {
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input.toString());
-      if (url.hostname === "nominatim.openstreetmap.org") return jsonResponse([{ lat: "1", lon: "1" }]);
+      if (url.hostname === "nominatim.openstreetmap.org") {
+        return jsonResponse(url.searchParams.get("q") === "A" ? [{ lat: "1", lon: "1" }] : [{ lat: "2", lon: "2" }]);
+      }
       return jsonResponse({ code: "NoRoute" });
     });
     global.fetch = fetchMock as unknown as typeof fetch;
@@ -119,5 +121,69 @@ describe("GET /api/route", () => {
     );
 
     expect(response.status).toBe(404);
+  });
+
+  it("refuses an origin and destination that geocode to the same place", async () => {
+    const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") return jsonResponse([{ lat: "48.8566", lon: "2.3522" }]);
+      throw new Error(`OSRM must not be called: ${url}`);
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    const response = await GET(new Request("http://localhost/api/route?origin=Paris&destination=Paris%2C%20France"));
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toMatch(/même endroit/);
+  });
+
+  it("splits OSRM's own ferry steps out of the road distance (Palma → mainland)", async () => {
+    const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") {
+        return jsonResponse(
+          url.searchParams.get("q") === "Palma" ? [{ lat: "39.5696", lon: "2.6502" }] : [{ lat: "40.4168", lon: "-3.7038" }],
+        );
+      }
+      const step = (mode: string, name: string, distance: number, duration: number, coordinates: number[][]) => ({
+        mode, name, distance, duration, geometry: { coordinates },
+      });
+      return jsonResponse({
+        code: "Ok",
+        routes: [
+          {
+            geometry: { coordinates: [[2.6502, 39.5696], [3.14, 39.83], [2.177, 41.37], [-3.7038, 40.4168]] },
+            distance: 60_000 + 200_900 + 620_000,
+            duration: 3_000 + 23_400 + 22_000,
+            legs: [
+              {
+                steps: [
+                  step("driving", "Ma-13", 60_000, 3_000, [[2.6502, 39.5696], [3.14, 39.83]]),
+                  step("ferry", "Barcelona – Alcúdia", 200_900, 23_400, [[3.14, 39.83], [2.177, 41.37]]),
+                  step("driving", "A-2", 620_000, 22_000, [[2.177, 41.37], [-0.88, 41.65], [-3.7038, 40.4168]]),
+                ],
+              },
+            ],
+          },
+        ],
+        waypoints: [{ distance: 10 }, { distance: 10 }],
+      });
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    const response = await GET(new Request("http://localhost/api/route?origin=Palma&destination=Madrid"));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.legs.map((leg: { kind: string }) => leg.kind)).toEqual(["road", "ferry", "road"]);
+    expect(data.legs[1]).toEqual({
+      kind: "ferry", from: "Barcelona", to: "Alcúdia", distanceMeters: 200_900, measured: "route",
+    });
+    expect(data.legs[0]).toMatchObject({ from: "Palma", to: "Barcelona" });
+    expect(data.legs[2]).toMatchObject({ from: "Alcúdia", to: "Madrid" });
+    // Distance et durée routières : sans les 200,9 km ni les 6 h 30 de mer.
+    expect(data.distanceMeters).toBe(680_000);
+    expect(data.durationSeconds).toBe(25_000);
   });
 });

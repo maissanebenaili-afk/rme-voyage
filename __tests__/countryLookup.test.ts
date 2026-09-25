@@ -36,9 +36,17 @@ describe('splitByCountry', () => {
     expect(Math.abs(parts.reduce((s, p) => s + p.meters, 0) - 1_270_000)).toBeLessThanOrEqual(1)
   })
 
-  it('attributes a leading off-coast segment to the next country, not to "null"', () => {
-    const parts = splitByCountry([[-5.81, 35.79], [-6.5, 35.2], [-7.98, 31.63]], 500_000)
-    expect(parts.map((p) => p.country)).toEqual(['MA'])
+  it('attributes a short leading off-coast stretch to the next country, not to "null"', () => {
+    // Le terminal de Tarifa est « en mer » sur le trait de côte 1:50m.
+    const parts = splitByCountry([[-5.6026, 36.0109], [-5.58, 36.03], [-3.7038, 40.4168]], 600_000)
+    expect(parts.map((p) => p.country)).toEqual(['ES'])
+  })
+
+  it('keeps a long stretch through an uncovered country as "null" instead of the previous country', () => {
+    // Oujda (MA) → Oran (Algérie, hors couverture) : ~200 km hors contours.
+    const parts = splitByCountry([[-1.908, 34.681], [-1.7, 34.75], [-1.3, 34.88], [-0.64, 35.7]], 230_000)
+    expect(parts.map((p) => p.country)).toEqual(['MA', null])
+    expect(parts[1].meters).toBeGreaterThan(100_000)
   })
 
   it('returns nothing for a degenerate line', () => {
@@ -49,7 +57,7 @@ describe('splitByCountry', () => {
 describe('parseRouteLegs', () => {
   it('accepts well-formed legs and rejects malformed payloads', () => {
     const road = { kind: 'road', from: 'A', to: 'B', distanceMeters: 1, durationSeconds: 1, countries: [{ country: 'FR', meters: 1 }] }
-    const ferry = { kind: 'ferry', from: 'B', to: 'C', distanceMeters: 1 }
+    const ferry = { kind: 'ferry', from: 'B', to: 'C', distanceMeters: 1, measured: 'route' }
     expect(parseRouteLegs([road, ferry])).toHaveLength(2)
     expect(parseRouteLegs([])).toBeNull()
     expect(parseRouteLegs('x')).toBeNull()

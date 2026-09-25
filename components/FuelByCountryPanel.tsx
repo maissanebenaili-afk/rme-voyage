@@ -31,6 +31,7 @@ export default function FuelByCountryPanel({
   fuelType: FuelType;
 }) {
   const usesUserPrice = result.countries.some((line) => line.priceSource === 'user');
+  const ferries = result.legs.filter((leg) => leg.kind === 'ferry').length;
   return (
     <div className="border-t border-[#e2e8f0] p-6 sm:p-8" aria-labelledby="fuel-by-country-title">
       <h3 id="fuel-by-country-title" className="text-sm font-extrabold text-[#0f1f3d]">
@@ -42,8 +43,10 @@ export default function FuelByCountryPanel({
             <li key={index} className="flex items-center gap-2 rounded-xl bg-[#eff6ff] px-4 py-3 text-[#1e3a5f]">
               <Ship size={16} aria-hidden="true" />
               <span>
-                Traversée {leg.from} → {leg.to} · ≈ {km(leg.km)} à vol d'oiseau · prix du billet : votre
-                hypothèse « Ferry »
+                Traversée {leg.from}
+                {leg.to ? ` → ${leg.to}` : ''} ·{' '}
+                {leg.measured === 'straight-line' ? `≈ ${km(leg.km)} à vol d'oiseau` : `${km(leg.km)} de ligne maritime`}{' '}
+                · pas de carburant compté
               </span>
             </li>
           ) : (
@@ -89,7 +92,8 @@ export default function FuelByCountryPanel({
           </>
         )}
         {usesUserPrice && result.dataset.fresh && ' Hors UE (Maroc, Suisse…), votre prix « Carburant (€/L) » est utilisé.'}{' '}
-        Péages : votre hypothèse globale, non ventilée par pays.
+        Péages{ferries > 1 ? ' et billets des ' + ferries + ' traversées' : ' et billet de ferry'} : vos
+        hypothèses globales, non ventilées.
       </p>
     </div>
   );

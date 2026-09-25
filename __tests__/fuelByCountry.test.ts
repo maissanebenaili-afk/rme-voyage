@@ -15,7 +15,7 @@ const europeLeg: RoadLeg = {
 
 const legs: RouteLeg[] = [
   europeLeg,
-  { kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', distanceMeters: 30_000 },
+  { kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', distanceMeters: 30_000, measured: 'straight-line' },
   {
     kind: 'road', from: 'Tanger Ville', to: 'Marrakech', distanceMeters: 600_000, durationSeconds: 1,
     countries: [{ country: 'MA', meters: 600_000 }],
@@ -42,7 +42,7 @@ describe('computeFuelByCountry', () => {
     ])
     expect(r.fuelTotal).toBe(203.5)
     expect(r.legs[0]).toMatchObject({ kind: 'road', km: 1900, fuel: 167.5 })
-    expect(r.legs[1]).toEqual({ kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', km: 30 })
+    expect(r.legs[1]).toEqual({ kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', km: 30, measured: 'straight-line' })
   })
 
   it('never burns fuel on the sea crossing', () => {
