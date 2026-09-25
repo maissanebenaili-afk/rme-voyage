@@ -31,6 +31,8 @@ import QiblaCompass from '@/components/QiblaCompass';
 import TravelChecklist from '@/components/TravelChecklist';
 import CurrencyConverter from '@/components/CurrencyConverter';
 import RemittanceComparator from '@/components/RemittanceComparator';
+import PartnerComparison from '@/components/PartnerComparison';
+import { getPartnerCatalogue } from "@/lib/partnerCatalogue";
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import HadakAI from '@/components/HadakAI';
 import DailyWidget from '@/components/DailyWidget';
@@ -225,6 +227,13 @@ export default function Home() {
             </p>
           </div>
           <RemittanceComparator />
+        </div>
+      </section>
+
+      {/* Affiliate Comparison — one neutral marketplace layer for every travel vertical */}
+      <section className="bg-slate-50 py-12">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <PartnerComparison partners={getPartnerCatalogue()} />
         </div>
       </section>
 
