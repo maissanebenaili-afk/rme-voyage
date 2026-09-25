@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import TripDecisionEngine from '../components/TripDecisionEngine'
 import { publishRoute, toComputedRoute } from '@/lib/routeContext'
 
@@ -118,9 +118,15 @@ describe('Reality Check — scenarios follow the computed route', () => {
         road('Paris', 'Madrid', 1_268_000, 'FR'),
       ])),
     )
-    expect(screen.getByRole('button', { name: /^Voiture$/ })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.queryByText('Voiture + ferry', { selector: 'span' })).not.toBeInTheDocument()
-    expect(screen.getByText('Voiture (sans ferry)')).toBeInTheDocument()
+    // Le bouton affiche désormais aussi le prix (Reality Check) : on ne
+    // matche plus le nom accessible exact, juste "Voiture" non suivi de "+".
+    expect(screen.getByRole('button', { name: /^Voiture(?!\s*\+)/ })).toHaveAttribute('aria-pressed', 'true')
+    // Le bouton "Voiture + ferry" reste toujours affiché (c'est un choix, pas
+    // un scénario masqué) ; seule la ligne de détail du scénario impossible
+    // doit disparaître — d'où la portée sur le bloc de détail, pas le bouton.
+    const breakdown = screen.getByTestId('scenario-breakdown')
+    expect(within(breakdown).queryByText('Voiture + ferry')).not.toBeInTheDocument()
+    expect(within(breakdown).getByText('Voiture (sans ferry)')).toBeInTheDocument()
   })
 
   it('hides the impossible car-only scenario when the route needs a crossing', () => {

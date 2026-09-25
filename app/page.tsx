@@ -21,6 +21,8 @@ import {
   Banknote,
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
+import RouteJourney from '@/components/RouteJourney';
+import SplashScreen from '@/components/SplashScreen';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -77,135 +79,61 @@ const features = [
 
 export default function Home() {
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b]">
-      {/* Hero — product-first, visual and mobile-first. Warm dusk-horizon
-          gradient (cream → golden glow) instead of flat white/near-black:
-          keeps the dark, opacity-free text from the accessibility pass
-          (no glare/halation) while giving the top of the page some depth —
-          the "golden horizon at dusk, seen through a plane window" mood. */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#fffaf0] via-[#fdf0d5] to-[#f8dfa6] text-[#0f1f3d]">
-        <div className="absolute -top-24 right-[-10%] -z-10 h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(circle,rgba(253,230,138,.9),rgba(245,158,11,.25)_55%,transparent_75%)] blur-2xl" />
-        <div className="absolute bottom-[-8rem] left-[-6%] -z-10 h-72 w-[36rem] rounded-full bg-[radial-gradient(ellipse,rgba(14,165,233,.14),transparent_70%)] blur-2xl" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-[#f59e0b]/15 to-transparent" />
-        <div className="absolute inset-x-0 top-0 -z-10 h-1 bg-gradient-to-r from-transparent via-[#f59e0b] to-transparent" />
+    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#eef1f6] text-[#1e293b]">
+      <SplashScreen />
+
+      {/* Hero — the planner itself, not a pitch. Someone who has never heard
+          of RME Voyage sees, in one glance: enter your two cities, get your
+          route/ferry/cost. Waze-style "map first" rather than a headline you
+          have to read before you can act. Muted blue-gray surface with just
+          a whisper of warm horizon tone at the base — navy carries the
+          structure (nav, borders, headings), not a bright full-bleed wash. */}
+      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#eef6f1] via-[#eef1ec] to-[#e6dfc9] text-[#0f1f3d]">
+        <div className="absolute -top-24 right-[-10%] -z-10 h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,.14),transparent_70%)] blur-2xl" />
+        <div className="absolute -bottom-16 left-[-8%] -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(35,122,84,.14),transparent_70%)] blur-2xl" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-16 bg-gradient-to-t from-[#f59e0b]/10 to-transparent" />
 
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] font-black text-[#0f1f3d] shadow-lg shadow-[#f59e0b]/20">R</span>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#0f1f3d] font-black text-[#f59e0b] shadow-lg shadow-[#0f1f3d]/20">R</span>
             <span className="text-base font-black tracking-tight sm:text-lg">RME <span className="font-medium text-[#b45309]">Voyage</span></span>
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-[#334155] transition hover:bg-[#0f1f3d]/5 hover:text-[#0f1f3d] sm:block">Guide</Link>
             <Link href="/decouvrir" className="hidden rounded-full px-3 py-2 text-sm font-bold text-[#334155] transition hover:bg-[#0f1f3d]/5 hover:text-[#0f1f3d] sm:block">Découvrir</Link>
             <LanguageSwitcher />
-            <a href="#planifier" className="rounded-full bg-[#0f1f3d] px-4 py-2 text-xs font-black text-white transition hover:bg-[#1e3a5f] sm:text-sm">Planifier</a>
           </div>
         </nav>
 
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-7 sm:px-8 sm:pb-16 sm:pt-12">
-          <div className="grid gap-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:gap-12">
-            <div className="animate-fade-up">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-extrabold text-[#92400e]">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-[#16a34a]" />
-                Votre copilote Europe ↔ Maroc
-              </div>
-              <h1 className="mt-5 max-w-xl text-5xl font-display font-semibold leading-[.94] tracking-tight sm:text-7xl">
-                La route vers le Maroc, <span className="gradient-text-gold">autrement.</span>
-              </h1>
-              <p className="mt-5 max-w-lg text-base leading-7 text-[#334155] sm:text-lg">
-                Itinéraire, ferry, budget et repères utiles réunis dans une expérience pensée comme une vraie application de voyage.
-              </p>
-
-              <div className="mt-7 flex flex-wrap gap-2 text-xs font-bold text-[#334155]">
-                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">🗺️ Route</span>
-                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">⛴️ Ferry</span>
-                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">💶 Budget</span>
-                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">🕌 Repères</span>
-              </div>
-
-              <div className="mt-7 flex items-center gap-3 text-sm text-[#334155]">
-                <BadgeCheck size={18} className="text-[#b45309]" />
-                Gratuit · sans inscription · pensé mobile
-              </div>
-            </div>
-
-            {/* App preview — the product is the hero, not a marketing illustration */}
-            <div className="relative mx-auto w-full max-w-2xl animate-scale-in">
-              <div className="absolute -inset-5 -z-10 rounded-[2.5rem] bg-[#f59e0b]/10 blur-2xl" />
-              <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[#f7fafc] shadow-2xl shadow-slate-300/60">
-                <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-5">
-                  <div className="flex items-center gap-2">
-                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#07152f] text-xs font-black text-[#f59e0b]">R</span>
-                    <div>
-                      <p className="text-xs font-black text-[#07152f]">RME Voyage</p>
-                      <p className="text-[10px] text-slate-500">Itinéraire intelligent</p>
-                    </div>
-                  </div>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-extrabold text-emerald-700">PRÊT À PARTIR</span>
-                </div>
-
-                <div className="relative min-h-[330px] overflow-hidden bg-[#dceaf0]">
-                  <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(rgba(255,255,255,.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.7)_1px,transparent_1px)] [background-size:34px_34px]" />
-                  <div className="absolute left-[8%] top-[18%] h-28 w-40 rotate-[-8deg] rounded-[45%] bg-[#f8fafc] shadow-sm" />
-                  <div className="absolute left-[32%] top-[35%] h-40 w-52 rotate-[9deg] rounded-[45%] bg-[#f8fafc] shadow-sm" />
-                  <div className="absolute right-[5%] bottom-[2%] h-48 w-56 rotate-[-12deg] rounded-[45%] bg-[#f8fafc] shadow-sm" />
-                  <div className="absolute left-[15%] top-[31%] h-1 w-[63%] rotate-[18deg] origin-left bg-[#07152f] shadow-[0_0_0_3px_rgba(245,158,11,.35)]" />
-                  <div className="absolute left-[49%] top-[51%] flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-[#f59e0b] text-[#07152f] shadow-lg">
-                    <Ship size={15} />
-                  </div>
-                  <div className="absolute left-[11%] top-[27%] h-3.5 w-3.5 rounded-full border-2 border-white bg-[#07152f] shadow-md" />
-                  <div className="absolute right-[9%] bottom-[13%] h-3.5 w-3.5 rounded-full border-2 border-white bg-[#07152f] shadow-md" />
-
-                  <div className="absolute left-4 top-4 rounded-2xl border border-white/70 bg-white/90 p-3 shadow-lg backdrop-blur sm:left-5 sm:top-5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Départ</p>
-                    <p className="mt-0.5 text-sm font-black text-[#07152f]">Paris</p>
-                  </div>
-                  <div className="absolute right-4 bottom-4 rounded-2xl border border-white/70 bg-white/90 p-3 shadow-lg backdrop-blur sm:right-5 sm:bottom-5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Arrivée</p>
-                    <p className="mt-0.5 text-sm font-black text-[#07152f]">Marrakech</p>
-                  </div>
-
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/80 bg-[#07152f]/95 px-4 py-2 text-xs font-bold text-white shadow-xl backdrop-blur">
-                    🇫🇷 Paris → ⛴️ Tanger → 🇲🇦 Marrakech
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-px border-t border-slate-200 bg-slate-200">
-                  <div className="bg-white p-3 sm:p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Distance</p>
-                    <p className="mt-1 text-lg font-black text-[#07152f]">≈ 2 500 km</p>
-                  </div>
-                  <div className="bg-white p-3 sm:p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Étapes</p>
-                    <p className="mt-1 text-lg font-black text-[#07152f]">Route + ferry</p>
-                  </div>
-                  <div className="bg-white p-3 sm:p-4">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Budget</p>
-                    <p className="mt-1 text-lg font-black text-[#07152f]">Calculé</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div id="planifier" className="mx-auto max-w-5xl px-4 pb-12 pt-2 sm:px-8 sm:pb-16">
+          <div className="animate-fade-up text-center">
+            <h1 className="text-3xl font-display font-semibold leading-tight tracking-tight sm:text-5xl">
+              Où voulez-vous aller <span className="gradient-text-gold">au Maroc ?</span>
+            </h1>
+            <p className="mx-auto mt-2 max-w-md text-sm text-[#475569] sm:text-base">
+              Entrez vos deux villes : itinéraire, ferry et budget en un instant.
+            </p>
           </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            {[
-              { icon: RouteIcon, title: 'Choisir sa route', text: 'Europe → Maroc, avec les vraies étapes.' },
-              { icon: Wallet, title: 'Voir le coût', text: 'Carburant, ferry et hypothèses visibles.' },
-              { icon: Sparkles, title: 'Continuer le voyage', text: 'Météo, prière, services et conseils.' },
-            ].map(({ icon: Icon, title, text }) => (
-              <a key={title} href="#planifier" className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                <div className="flex items-center gap-3">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-amber-50 text-[#b45309]"><Icon size={17} /></span>
-                  <div>
-                    <p className="text-sm font-extrabold text-[#0f1f3d]">{title}</p>
-                    <p className="mt-0.5 text-xs text-[#64748b]">{text}</p>
-                  </div>
-                  <ArrowRight size={15} className="ml-auto text-slate-300 transition group-hover:translate-x-1 group-hover:text-[#f59e0b]" />
-                </div>
-              </a>
-            ))}
+          <div className="mt-6 animate-scale-in">
+            <RouteSearch />
+            <RouteJourney />
           </div>
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-bold text-[#475569]">
+            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={15} className="text-[#b45309]" /> Gratuit</span>
+            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={15} className="text-[#b45309]" /> Sans inscription</span>
+            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={15} className="text-[#b45309]" /> Pensé mobile</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
+          Atlas pâle plutôt que gris neutre : une section qu'on identifie
+          d'un coup d'œil, un peu de couleur au lieu du "tout blanc". */}
+      <section className="border-b border-slate-200 bg-atlas-100 py-10">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <TripDecisionEngine />
         </div>
       </section>
 
@@ -283,21 +211,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Planning Section */}
-      <section id="planifier" className="mx-auto max-w-5xl px-5 py-20 sm:px-8">
-        <div className="mb-10 max-w-2xl animate-fade-up">
-          <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Préparez sereinement</p>
-          <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">L'essentiel, au bon moment.</h2>
-          <p className="mt-4 text-lg leading-8 text-[#475569]">
-            Commencez par votre trajet, puis ajustez votre budget avant de comparer vos options.
-          </p>
-        </div>
-        <div className="space-y-6">
-          <RouteSearch />
-          <TripDecisionEngine />
-        </div>
-      </section>
-
       {/* Remittance Section — hero product, investor highlight */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
@@ -315,8 +228,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Spiritual & Services Section */}
-      <section className="bg-[#f8fafc] py-20">
+      {/* Spiritual & Services Section — léger violet Jacaranda, comme le vert
+          Atlas plus haut : une section de plus qui se repère d'un regard. */}
+      <section className="bg-jacaranda-50 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <div className="mb-10 max-w-2xl">
             <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">En route</p>
@@ -380,7 +294,7 @@ export default function Home() {
       </section>
 
       {/* Widgets Suite Section */}
-      <section className="py-16 bg-gradient-to-b from-[#f8fafc] to-[#e2e8f0]">
+      <section className="py-16 bg-gradient-to-b from-[#f5f7fa] to-[#e2e8f0]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-[#b45309]">Suite d'outils</p>
