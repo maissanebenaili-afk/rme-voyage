@@ -25,7 +25,7 @@ export const FUEL_PRICE_MAX_AGE_DAYS = 14;
 
 export const FUEL_PRICES = fuelPrices as FuelPriceDataset;
 
-export type PriceSource = 'bulletin' | 'user' | 'reference';
+export type PriceSource = 'bulletin' | 'user';
 
 export interface CountryFuelLine {
   country: string | null;
@@ -80,18 +80,11 @@ export function computeFuelByCountry(input: {
 
   function priceFor(country: string | null): { pricePerLiter: number; priceSource: PriceSource } {
     const price = fresh && country ? dataset.prices[country]?.[input.fuelType] : undefined;
-    if (typeof price === 'number' && price > 0) {
-      return { pricePerLiter: price, priceSource: 'bulletin' };
-    }
-
-    // Le bulletin européen ne couvre pas le Maroc ni le Sahara occidental.
-    // Pour le calcul, le fallback fourni par la page est une hypothèse de prix
-    // de référence, pas une classification territoriale.
-    if (country === 'EH') {
-      return { pricePerLiter: fallback, priceSource: 'reference' };
-    }
-
-    return { pricePerLiter: fallback, priceSource: 'user' };
+    // Le bulletin européen ne couvre pas le Maroc : le prix saisi s'applique,
+    // et l'interface le signale comme une hypothèse de l'utilisateur.
+    return typeof price === 'number' && price > 0
+      ? { pricePerLiter: price, priceSource: 'bulletin' }
+      : { pricePerLiter: fallback, priceSource: 'user' };
   }
 
   const totals = new Map<string | null, CountryFuelLine>();

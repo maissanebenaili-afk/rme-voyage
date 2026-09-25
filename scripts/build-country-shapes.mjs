@@ -18,9 +18,11 @@ const COUNTRIES = {
   '372': 'IE', '380': 'IT', '428': 'LV', '438': 'LI', '440': 'LT', '442': 'LU', '470': 'MT',
   '492': 'MC', '504': 'MA', '528': 'NL', '578': 'NO', '616': 'PL', '620': 'PT', '642': 'RO',
   '674': 'SM', '703': 'SK', '705': 'SI', '724': 'ES', '752': 'SE', '756': 'CH', '826': 'GB',
-  // Natural Earth code 732 = Western Sahara. Keep it geographically distinct
-  // from Morocco; pricing can use an explicit reference-price rule later.
-  '732': 'EH',
+  // Natural Earth isole un code 732 dont le contour ne couvre que l'intérieur
+  // est : Laâyoune, Dakhla et toute la façade atlantique sont déjà dans le
+  // polygone marocain (504), vérifié en 1:50m et en 1:10m. La zone est donc
+  // rattachée au Maroc, comme le reste du territoire.
+  '732': 'MA',
 };
 
 const input = process.argv[2] ?? SOURCE_URL;
