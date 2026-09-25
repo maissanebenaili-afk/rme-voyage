@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
 import RouteJourney from '@/components/RouteJourney';
+import SplashScreen from '@/components/SplashScreen';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -79,6 +80,8 @@ const features = [
 export default function Home() {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#eef1f6] text-[#1e293b]">
+      <SplashScreen />
+
       {/* Hero — the planner itself, not a pitch. Someone who has never heard
           of RME Voyage sees, in one glance: enter your two cities, get your
           route/ferry/cost. Waze-style "map first" rather than a headline you
