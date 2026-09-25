@@ -58,11 +58,13 @@ export function migrateAndValidateTravelData(
     throw new TypeError("Payload racine invalide.");
   }
 
-  if (payload.version !== CURRENT_VERSION) {
-    throw new Error(`Version non supportee : ${String(payload.version)}`);
+  const data = payload as Record<string, unknown>;
+
+  if (data.version !== CURRENT_VERSION) {
+    throw new Error(`Version non supportee : ${String(data.version)}`);
   }
 
-  return enforceV1StrictRules(payload);
+  return enforceV1StrictRules(data);
 }
 
 function enforceV1StrictRules(
