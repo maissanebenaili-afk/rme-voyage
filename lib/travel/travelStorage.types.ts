@@ -15,7 +15,3 @@ export interface TravelDataV1 {
 
 export type CurrentTravelData = TravelDataV1;
 
-export interface UnversionedStoragePayload {
-  version?: unknown;
-  [key: string]: unknown;
-}
