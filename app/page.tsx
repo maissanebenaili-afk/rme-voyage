@@ -131,7 +131,7 @@ export default function Home() {
       {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
           Atlas pâle plutôt que gris neutre : une section qu'on identifie
           d'un coup d'œil, un peu de couleur au lieu du "tout blanc". */}
-      <section className="border-b border-slate-200 bg-atlas-50 py-10">
+      <section className="border-b border-slate-200 bg-atlas-100 py-10">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <TripDecisionEngine />
         </div>
@@ -228,8 +228,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Spiritual & Services Section */}
-      <section className="bg-[#f5f7fa] py-20">
+      {/* Spiritual & Services Section — léger violet Jacaranda, comme le vert
+          Atlas plus haut : une section de plus qui se repère d'un regard. */}
+      <section className="bg-jacaranda-50 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <div className="mb-10 max-w-2xl">
             <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">En route</p>

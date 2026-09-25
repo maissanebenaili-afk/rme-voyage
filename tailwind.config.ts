@@ -65,6 +65,21 @@ const config: Config = {
           800: "#0d3e2c",
           900: "#092c20",
         },
+        // Jacaranda — Marrakech's purple-flowering trees, a second gentle
+        // accent alongside Atlas green, used the same way: pale on reading
+        // surfaces only.
+        jacaranda: {
+          50: "#f5f1fb",
+          100: "#e8dff5",
+          200: "#d0bfeb",
+          300: "#b096da",
+          400: "#9270c4",
+          500: "#7952ac",
+          600: "#61408c",
+          700: "#4c336f",
+          800: "#382753",
+          900: "#271c3a",
+        },
         // Sable / neutrals — clean cool slate
         sable: {
           50: "#f0f9ff",
