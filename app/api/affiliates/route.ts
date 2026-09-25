@@ -31,13 +31,19 @@ export function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid affiliate request." }, { status: 400 });
   }
 
-  const affiliateUrl =
-    type === "flight"
-      ? buildFlightAffiliateUrl({ origin, destination, date })
-      : buildFerryAffiliateUrl({ origin, destination, date });
+  if (type === "flight") {
+    const affiliateUrl = buildFlightAffiliateUrl({ origin, destination, date });
+    return NextResponse.json({
+      configured: Boolean(affiliateUrl),
+      affiliateUrl,
+      provider: affiliateUrl ? "travelpayouts" : null,
+    }, { headers: { 'Cache-Control': 'no-store' } });
+  }
 
+  const ferry = buildFerryAffiliateUrl({ origin, destination, date });
   return NextResponse.json({
-    configured: Boolean(affiliateUrl),
-    affiliateUrl,
+    configured: Boolean(ferry),
+    affiliateUrl: ferry?.url ?? null,
+    provider: ferry?.provider ?? null,
   }, { headers: { 'Cache-Control': 'no-store' } });
 }

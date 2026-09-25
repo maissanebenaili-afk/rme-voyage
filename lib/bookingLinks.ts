@@ -7,7 +7,12 @@ export const comparisonFallbacks: Record<BookingType, string> = {
 
 const partnerHosts: Record<BookingType, string[]> = {
   flight: ['tp.media', 'www.aviasales.com', 'www.skyscanner.fr'],
-  ferry: ['www.directferries.fr', 'www.directferries.com', 'directferries.com', 'tp.media'],
+  // gnv.it (Grandi Navi Veloci) and frs.es (FRS) are the operators' own
+  // booking domains, per their public partner pages (lib/affiliate.ts).
+  ferry: [
+    'www.directferries.fr', 'www.directferries.com', 'directferries.com', 'tp.media',
+    'www.gnv.it', 'www.frs.es',
+  ],
 };
 
 export function verifiedPartnerUrl(value: string | undefined, type: BookingType): string | null {

@@ -38,6 +38,7 @@ describe("GET /api/affiliates", () => {
     await expect(response.json()).resolves.toEqual({
       configured: false,
       affiliateUrl: null,
+      provider: null,
     });
   });
 
@@ -53,8 +54,25 @@ describe("GET /api/affiliates", () => {
 
     expect(response.status).toBe(200);
     expect(data.configured).toBe(true);
+    expect(data.provider).toBe("travelpayouts");
     expect(data.affiliateUrl).toContain("tp.media");
     expect(data.affiliateUrl).toContain("marker=test-marker");
     expect(data.affiliateUrl).toContain("skyscanner");
+  });
+
+  it("returns the GNV provider name when only GNV is configured", async () => {
+    delete process.env.DIRECT_FERRIES_AFFILIATE_URL;
+    process.env.GNV_AFFILIATE_URL = "https://www.gnv.it/fr/booking?ref=test";
+
+    const response = GET(
+      new NextRequest("http://localhost/api/affiliates?type=ferry&origin=Paris&destination=Tanger"),
+    );
+    const data = await response.json();
+
+    expect(data.configured).toBe(true);
+    expect(data.provider).toBe("gnv");
+    expect(data.affiliateUrl).toBe("https://www.gnv.it/fr/booking?ref=test");
+
+    delete process.env.GNV_AFFILIATE_URL;
   });
 });
