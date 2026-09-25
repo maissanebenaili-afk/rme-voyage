@@ -105,7 +105,12 @@ export function useTravelStorage() {
         const updated: CurrentTravelData = { ...prev };
 
         if (computedFields.villes) {
-          updated.villes = { ...prev.villes, ...computedFields.villes };
+          const cleanedVilles = Object.fromEntries(
+            Object.entries(computedFields.villes).filter(
+              ([, val]) => val !== undefined,
+            ),
+          ) as Partial<CurrentTravelData["villes"]>;
+          updated.villes = { ...prev.villes, ...cleanedVilles };
         }
 
         if (computedFields.preferences) {
