@@ -1,0 +1,116 @@
+{
+  "source": "Commission européenne — Weekly Oil Bulletin, prix moyens nationaux TTC",
+  "sourceUrl": "https://energy.ec.europa.eu/document/download/264c2d0f-f161-4ea3-a777-78faae59bea0_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20with%20Taxes%20-%202026-09-21.xlsx",
+  "observedAt": "2026-09-21",
+  "unit": "EUR/L",
+  "prices": {
+    "AT": {
+      "petrol95": 1.925,
+      "diesel": 2.238
+    },
+    "BE": {
+      "petrol95": 1.988,
+      "diesel": 2.387
+    },
+    "BG": {
+      "petrol95": 1.663,
+      "diesel": 1.916
+    },
+    "CY": {
+      "petrol95": 1.677,
+      "diesel": 1.948
+    },
+    "CZ": {
+      "petrol95": 1.884,
+      "diesel": 2.071
+    },
+    "DE": {
+      "petrol95": 2.348,
+      "diesel": 2.457
+    },
+    "DK": {
+      "petrol95": 2.618,
+      "diesel": 2.555
+    },
+    "EE": {
+      "petrol95": 1.917,
+      "diesel": 2.113
+    },
+    "ES": {
+      "petrol95": 1.928,
+      "diesel": 1.918
+    },
+    "FI": {
+      "petrol95": 2.364,
+      "diesel": 2.555
+    },
+    "FR": {
+      "petrol95": 2.219,
+      "diesel": 2.383
+    },
+    "GR": {
+      "petrol95": 2.197,
+      "diesel": 2.224
+    },
+    "HR": {
+      "petrol95": 1.796,
+      "diesel": 1.975
+    },
+    "HU": {
+      "petrol95": 1.752,
+      "diesel": 1.957
+    },
+    "IE": {
+      "petrol95": 1.945,
+      "diesel": 2.05
+    },
+    "IT": {
+      "petrol95": 2.141,
+      "diesel": 2.281
+    },
+    "LT": {
+      "petrol95": 1.95,
+      "diesel": 2.258
+    },
+    "LU": {
+      "petrol95": 1.849,
+      "diesel": 2.114
+    },
+    "LV": {
+      "petrol95": 1.997,
+      "diesel": 2.168
+    },
+    "MT": {
+      "petrol95": 1.34,
+      "diesel": 1.21
+    },
+    "NL": {
+      "petrol95": 2.449,
+      "diesel": 2.579
+    },
+    "PL": {
+      "petrol95": 1.82,
+      "diesel": 2.039
+    },
+    "PT": {
+      "petrol95": 2.107,
+      "diesel": 2.21
+    },
+    "RO": {
+      "petrol95": 1.891,
+      "diesel": 2.093
+    },
+    "SE": {
+      "petrol95": 1.579,
+      "diesel": 2.09
+    },
+    "SI": {
+      "petrol95": 1.706,
+      "diesel": 1.975
+    },
+    "SK": {
+      "petrol95": 1.853,
+      "diesel": 1.95
+    }
+  }
+}

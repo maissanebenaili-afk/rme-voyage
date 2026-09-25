@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Car, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
 import DistanceProvenanceNote from './DistanceProvenanceNote';
+import FuelByCountryPanel from './FuelByCountryPanel';
+import { computeFuelByCountry, hasFerry, type FuelType } from '@/lib/fuelByCountry';
 import { useRouteDistance } from '@/lib/hooks/useRouteDistance';
 import { trackFunnelEvent } from '@/lib/partnerTracking';
 import { computeTripEconomics, type TripMode } from '@/lib/tripEconomics';
@@ -31,7 +33,29 @@ export default function TripDecisionEngine() {
   const [travelers, setTravelers] = useState(4);
   const [flightPerPerson, setFlightPerPerson] = useState(180);
   const [mode, setMode] = useState<TripMode>('car');
+  const [fuelType, setFuelType] = useState<FuelType>('diesel');
   const trackedUse = useRef(false);
+
+  const route = provenance.kind === 'route' ? provenance.route : null;
+  const byCountry = useMemo(
+    () =>
+      route?.legs
+        ? computeFuelByCountry({
+            legs: route.legs,
+            consumptionPer100Km: consumption,
+            fuelType,
+            fallbackPricePerLiter: fuelPrice,
+            // Fraîcheur des prix jugée à l'heure du calcul de l'itinéraire.
+            now: new Date(route.computedAt),
+          })
+        : null,
+    [route, consumption, fuelType, fuelPrice]
+  );
+
+  // Un itinéraire qui impose une traversée n'a pas de sens en « voiture seule ».
+  useEffect(() => {
+    if (hasFerry(route?.legs)) setMode((current) => (current === 'car' ? 'mixed' : current));
+  }, [route]);
 
   function markUsed() {
     if (trackedUse.current) return;
@@ -50,8 +74,9 @@ export default function TripDecisionEngine() {
         travelers,
         flightPricePerPerson: flightPerPerson,
         mode,
+        fuelCostOverride: byCountry?.fuelTotal,
       }),
-    [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode]
+    [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode, byCountry]
   );
 
   return (
@@ -97,6 +122,15 @@ export default function TripDecisionEngine() {
               <input type="number" min={min as number} max={max as number} step={step as number} value={value as number} onChange={(e) => { (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number)); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40" />
             </label>
           ))}
+          {byCountry && (
+            <label className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
+              <span className="font-semibold text-[#334155]">Carburant</span>
+              <select value={fuelType} onChange={(e) => { setFuelType(e.target.value as FuelType); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] bg-white px-2 py-2 font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40">
+                <option value="diesel">Gazole</option>
+                <option value="petrol95">SP95</option>
+              </select>
+            </label>
+          )}
           <DistanceProvenanceNote provenance={provenance} className="text-[#64748b]" />
         </div>
 
@@ -118,6 +152,7 @@ export default function TripDecisionEngine() {
           <a href="#booking-title" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">Comparer les ferries et les vols <ArrowRight size={16} /></a>
         </div>
       </div>
+      {byCountry && <FuelByCountryPanel result={byCountry} fuelType={fuelType} />}
     </section>
   );
 }

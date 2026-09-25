@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { parseRouteLegs, type RouteLeg } from '@/lib/routeLegs';
 
 /**
  * Contexte de trajet partagé côté client : RouteSearch publie l'itinéraire
@@ -17,6 +18,8 @@ export interface ComputedRoute {
   source: 'osrm';
   /** Horodatage (ms epoch) du calcul, pour juger de la fraîcheur. */
   computedAt: number;
+  /** Tronçons (route / traversée) avec ventilation par pays, si fournis. */
+  legs?: RouteLeg[];
 }
 
 type Listener = () => void;
@@ -47,6 +50,7 @@ export function toComputedRoute(
   distanceMeters: unknown,
   durationSeconds: unknown,
   now: number = Date.now(),
+  legs?: unknown,
 ): ComputedRoute | null {
   if (typeof distanceMeters !== 'number' || !Number.isFinite(distanceMeters) || distanceMeters <= 0) {
     return null;
@@ -62,6 +66,7 @@ export function toComputedRoute(
     durationSeconds: duration,
     source: 'osrm',
     computedAt: now,
+    ...(parseRouteLegs(legs) ? { legs: parseRouteLegs(legs)! } : {}),
   };
 }
 

@@ -15,6 +15,12 @@ import {
   validateRoute,
 } from "@/lib/tripShare";
 import { publishRoute, toComputedRoute } from "@/lib/routeContext";
+import { parseRouteLegs } from "@/lib/routeLegs";
+
+function ferryLabel(legs: unknown): string | undefined {
+  const ferry = parseRouteLegs(legs)?.find((leg) => leg.kind === "ferry");
+  return ferry ? `${ferry.from} → ${ferry.to}` : undefined;
+}
 
 type RouteCalcStatus = "idle" | "loading" | "error" | "ready";
 
@@ -89,10 +95,16 @@ export default function RouteSearch() {
       }
 
       setRouteGeometry(data.geometry);
-      setRouteInfo({ distanceMeters: data.distanceMeters, durationSeconds: data.durationSeconds });
+      setRouteInfo({
+        distanceMeters: data.distanceMeters,
+        durationSeconds: data.durationSeconds,
+        ferry: ferryLabel(data.legs),
+      });
       setRouteStatus("ready");
       // Alimente le Reality Check et le budget avec la distance mesurée.
-      publishRoute(toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds));
+      publishRoute(
+        toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds, Date.now(), data.legs),
+      );
     } catch (error) {
       if ((error as Error).name === "AbortError") return;
       setRouteError("Itinéraire indisponible. Vérifiez votre connexion et réessayez.");

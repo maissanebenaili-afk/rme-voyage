@@ -36,19 +36,20 @@ describe("GET /api/route", () => {
       if (url.hostname === "nominatim.openstreetmap.org" && url.searchParams.get("q") === "Paris") {
         return jsonResponse([{ lat: "48.8566", lon: "2.3522" }]);
       }
-      if (url.hostname === "nominatim.openstreetmap.org" && url.searchParams.get("q") === "Tanger") {
-        return jsonResponse([{ lat: "35.7595", lon: "-5.834" }]);
+      if (url.hostname === "nominatim.openstreetmap.org" && url.searchParams.get("q") === "Madrid") {
+        return jsonResponse([{ lat: "40.4168", lon: "-3.7038" }]);
       }
       if (url.hostname === "router.project-osrm.org") {
         return jsonResponse({
           code: "Ok",
           routes: [
             {
-              geometry: { coordinates: [[2.3522, 48.8566], [-5.834, 35.7595]] },
-              distance: 1850000,
-              duration: 65400,
+              geometry: { coordinates: [[2.3522, 48.8566], [0, 45], [-3.7038, 40.4168]] },
+              distance: 1270000,
+              duration: 45000,
             },
           ],
+          waypoints: [{ distance: 12 }, { distance: 30 }],
         });
       }
       throw new Error(`Unexpected fetch: ${url}`);
@@ -56,14 +57,40 @@ describe("GET /api/route", () => {
     global.fetch = fetchMock as unknown as typeof fetch;
 
     const response = await GET(
-      new Request("http://localhost/api/route?origin=Paris&destination=Tanger"),
+      new Request("http://localhost/api/route?origin=Paris&destination=Madrid"),
     );
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.geometry).toEqual([[48.8566, 2.3522], [35.7595, -5.834]]);
-    expect(data.distanceMeters).toBe(1850000);
-    expect(data.durationSeconds).toBe(65400);
+    expect(data.geometry).toEqual([[48.8566, 2.3522], [45, 0], [40.4168, -3.7038]]);
+    expect(data.distanceMeters).toBe(1270000);
+    expect(data.durationSeconds).toBe(45000);
+    expect(data.legs).toHaveLength(1);
+    expect(data.legs[0].kind).toBe("road");
+    expect(data.legs[0].countries.map((c: { country: string }) => c.country)).toEqual(["FR", "ES"]);
+    const splitTotal = data.legs[0].countries.reduce((sum: number, c: { meters: number }) => sum + c.meters, 0);
+    expect(Math.abs(splitTotal - 1270000)).toBeLessThanOrEqual(2);
+  });
+
+  it("refuses a road route whose endpoint OSRM had to snap far away", async () => {
+    const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") {
+        return jsonResponse(
+          url.searchParams.get("q") === "Paris" ? [{ lat: "48.8566", lon: "2.3522" }] : [{ lat: "40.4168", lon: "-3.7038" }],
+        );
+      }
+      return jsonResponse({
+        code: "Ok",
+        routes: [{ geometry: { coordinates: [[2.3522, 48.8566], [-3.7, 40.4]] }, distance: 1, duration: 1 }],
+        waypoints: [{ distance: 5 }, { distance: 50_000 }],
+      });
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    const response = await GET(new Request("http://localhost/api/route?origin=Paris&destination=Ailleurs"));
+
+    expect(response.status).toBe(404);
   });
 
   it("returns 404 with a French error when a place can't be geocoded", async () => {

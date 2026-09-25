@@ -9,6 +9,8 @@ export type RoutePoint = [number, number];
 export type RouteInfo = {
   distanceMeters?: number;
   durationSeconds?: number;
+  /** « Algeciras → Tanger Med » quand l'itinéraire inclut une traversée. */
+  ferry?: string;
 };
 
 type InteractiveMapProps = {
@@ -90,9 +92,15 @@ export default function InteractiveMap({
           </div>
           {(distance || duration) && (
             <dl className="mt-4 grid gap-3 sm:grid-cols-2">
-              {distance && <div className="rounded-2xl bg-sable-100 p-3"><dt className="text-xs text-sable-700">Distance</dt><dd className="font-bold text-zellige-800">{distance}</dd></div>}
-              {duration && <div className="rounded-2xl bg-sable-100 p-3"><dt className="text-xs text-sable-700">Durée</dt><dd className="font-bold text-zellige-800">{duration}</dd></div>}
+              {distance && <div className="rounded-2xl bg-sable-100 p-3"><dt className="text-xs text-sable-700">{routeInfo?.ferry ? "Distance routière" : "Distance"}</dt><dd className="font-bold text-zellige-800">{distance}</dd></div>}
+              {duration && <div className="rounded-2xl bg-sable-100 p-3"><dt className="text-xs text-sable-700">{routeInfo?.ferry ? "Durée de conduite" : "Durée"}</dt><dd className="font-bold text-zellige-800">{duration}</dd></div>}
             </dl>
+          )}
+          {routeInfo?.ferry && (
+            <p className="mt-3 text-xs leading-5 text-sable-700">
+              Traversée {routeInfo.ferry} non comprise dans la distance ni la durée (tracée en ligne
+              droite). Horaires et tarifs à vérifier auprès des compagnies.
+            </p>
           )}
         </>
       )}

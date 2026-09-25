@@ -18,6 +18,11 @@ export interface TripEconomicsInput {
   travelers: number;
   flightPricePerPerson: number;
   mode: TripMode;
+  /**
+   * Coût carburant déjà calculé par tronçon et par pays (lib/fuelByCountry.ts).
+   * Remplace alors distance × consommation × prix unique.
+   */
+  fuelCostOverride?: number;
 }
 
 export interface TripEconomicsResult {
@@ -55,7 +60,10 @@ export function computeTripEconomics(input: TripEconomicsInput): TripEconomicsRe
   const travelers = Math.max(1, Math.floor(nonNegative(input.travelers)));
   const flightPerPerson = nonNegative(input.flightPricePerPerson);
 
-  const fuel = (distance / 100) * consumption * fuelPrice;
+  const fuel =
+    input.fuelCostOverride !== undefined
+      ? nonNegative(input.fuelCostOverride)
+      : (distance / 100) * consumption * fuelPrice;
   const carTrip = fuel + tolls;
   const mixedTrip = carTrip + ferry;
   const flightTrip = flightPerPerson * travelers;
