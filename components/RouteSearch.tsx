@@ -165,14 +165,11 @@ export default function RouteSearch() {
 
   return (
     <>
-      <section className="rounded-2xl border bg-white p-5 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Navigation size={20} className="text-emerald-600" />
-          <h1 className="text-xl font-bold">Votre voyage Europe → Maroc</h1>
+      <section className="rounded-2xl border bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
+          <Navigation size={16} className="text-emerald-600" />
+          Départ et destination
         </div>
-        <p className="mt-1 text-sm text-slate-500">
-          RME Voyage centralise les informations essentielles pour préparer un départ serein.
-        </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <CityAutocomplete

@@ -24,16 +24,17 @@ describe("Homepage branding", () => {
     expect(screen.getAllByText(/RME/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Voyage/).length).toBeGreaterThan(0);
 
-    // Hero headline introduced by the product-first redesign.
+    // Hero headline introduced by the planner-first redesign: the real
+    // trip planner sits directly under it, not a marketing pitch.
     expect(
       screen.getByRole("heading", {
-        name: /La route vers le Maroc.*autrement/i,
+        name: /Où voulez-vous aller.*au Maroc/i,
       }),
     ).toBeTruthy();
 
     // Hero subtext describing the value proposition.
     expect(
-      screen.getByText(/itinéraire, ferry, budget et repères utiles/i),
+      screen.getByText(/itinéraire, ferry et budget en un instant/i),
     ).toBeTruthy();
 
     // Legacy product name must not resurface.
