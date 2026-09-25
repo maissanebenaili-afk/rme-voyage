@@ -466,6 +466,9 @@ async function callAnthropic(apiKey: string, systemPrompt: string, message: stri
 }
 
 // ── System prompts ─────────────────────────────────────────────────────────
+/** Au-delà, la requête est refusée avant tout appel à un fournisseur LLM. */
+const MAX_MESSAGE_CHARS = 1_000;
+
 const SYSTEM_PROMPTS: Record<string, string> = {
   da: `Nta Hadak — assistant dyal MRE. Jaweb b darija, MAX 2 jmal, 3tini l-jawab mbachar bla moqadima. L-Maghrib: UTC+1.`,
   fr: `Tu es Hadak — assistant MRE. Réponds en français, MAX 2 phrases, va droit au but sans intro. Maroc : UTC+1.`,
@@ -481,8 +484,15 @@ export async function POST(req: NextRequest) {
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
+    // Chaque message peut partir vers un LLM payant : on borne sa taille
+    // avant tout appel (la limite par IP du proxy ne borne pas les tokens).
+    if (message.length > MAX_MESSAGE_CHARS) {
+      return NextResponse.json({ error: 'Message too long' }, { status: 413 });
+    }
 
-    const systemPrompt = SYSTEM_PROMPTS[lang] ?? SYSTEM_PROMPTS.fr;
+    // hasOwn : « constructor » ou « __proto__ » ne doivent pas servir de prompt système.
+    const systemPrompt =
+      typeof lang === 'string' && Object.hasOwn(SYSTEM_PROMPTS, lang) ? SYSTEM_PROMPTS[lang] : SYSTEM_PROMPTS.fr;
     const intent = detectIntent(message);
 
     // 1. Smart local responder — free, always available, real-time data

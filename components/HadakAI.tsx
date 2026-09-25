@@ -916,6 +916,7 @@ export default function HadakAI() {
           >
             <div className="flex items-center gap-2">
               <input
+                maxLength={1000}
                 ref={inputRef}
                 type="text"
                 value={input}
