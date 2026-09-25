@@ -102,16 +102,32 @@ export function useTravelStorage() {
         const computedFields =
           typeof fields === "function" ? fields(prev) : fields;
 
-        return {
-          ...prev,
-          ...computedFields,
-          villes: computedFields.villes
-            ? { ...prev.villes, ...computedFields.villes }
-            : prev.villes,
-          preferences: computedFields.preferences
-            ? { ...prev.preferences, ...computedFields.preferences }
-            : prev.preferences,
-        };
+        const updated: CurrentTravelData = { ...prev };
+
+        if (computedFields.villes) {
+          updated.villes = { ...prev.villes, ...computedFields.villes };
+        }
+
+        if (computedFields.preferences) {
+          const cleanedPrefs = Object.fromEntries(
+            Object.entries(computedFields.preferences).filter(
+              ([, val]) => val !== undefined,
+            ),
+          ) as Record<string, string | number | boolean | null>;
+          updated.preferences = { ...prev.preferences, ...cleanedPrefs };
+        }
+
+        if (computedFields.dateVoyage !== undefined) {
+          updated.dateVoyage = computedFields.dateVoyage;
+        }
+        if (computedFields.modeTransport !== undefined) {
+          updated.modeTransport = computedFields.modeTransport;
+        }
+        if (computedFields.checklistProgress !== undefined) {
+          updated.checklistProgress = computedFields.checklistProgress;
+        }
+
+        return updated;
       });
     },
     [],
