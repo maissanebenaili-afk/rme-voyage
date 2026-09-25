@@ -68,6 +68,17 @@ describe("middleware", () => {
     expect(last!.headers.get("Retry-After")).toBeTruthy();
   });
 
+  it("rate limits /api/faical as strictly as the other paid-LLM route (3 Anthropic calls/request)", async () => {
+    const ip = "203.0.113.56";
+    let last;
+
+    for (let i = 0; i < 9; i++) {
+      last = await proxy(buildRequest("/api/faical", { headers: { "x-forwarded-for": ip } }));
+    }
+
+    expect(last!.status).toBe(429);
+  });
+
   it("does not attach CORS headers for a disallowed origin on API routes", async () => {
     const response = await proxy(
       buildRequest("/api/prayer?latitude=1&longitude=1", {

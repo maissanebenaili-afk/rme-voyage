@@ -34,7 +34,7 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, ro
 const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
 const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services', '/api/support'];
-const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak'];
+const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak', '/api/faical'];
 
 function getClientKey(request: NextRequest): string {
   // x-forwarded-for peut contenir plusieurs IPs (client, proxies) ; on garde
