@@ -34,6 +34,7 @@ export default function RemittanceComparator() {
   const [data, setData] = useState<RemittanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const trackedView = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -46,7 +47,15 @@ export default function RemittanceComparator() {
           if (!r.ok) throw new Error('fetch failed');
           return r.json() as Promise<RemittanceData>;
         })
-        .then((d) => { setData(d); setLoading(false); trackFunnelEvent({ event: 'remittance_result_viewed', placement: 'remittance_comparator' }); })
+        .then((d) => {
+          setData(d);
+          setLoading(false);
+          // Une fois par visite : chaque frappe (débouncée) relançait l'événement.
+          if (!trackedView.current) {
+            trackedView.current = true;
+            trackFunnelEvent({ event: 'remittance_result_viewed', placement: 'remittance_comparator' });
+          }
+        })
         .catch(() => { setError(true); setLoading(false); });
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };

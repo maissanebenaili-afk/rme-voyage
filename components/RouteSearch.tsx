@@ -16,6 +16,7 @@ import {
 } from "@/lib/tripShare";
 import { publishRoute, toComputedRoute } from "@/lib/routeContext";
 import { parseRouteLegs } from "@/lib/routeLegs";
+import { trackFunnelEvent } from "@/lib/partnerTracking";
 
 function ferryLabel(legs: unknown): string | undefined {
   const ferries = (parseRouteLegs(legs) ?? []).filter((leg) => leg.kind === "ferry");
@@ -107,6 +108,11 @@ export default function RouteSearch() {
       publishRoute(
         toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds, Date.now(), data.legs),
       );
+      trackFunnelEvent({
+        event: "route_computed",
+        placement: "route_search",
+        data: { has_ferry: Boolean(ferryLabel(data.legs)) },
+      });
     } catch (error) {
       if ((error as Error).name === "AbortError") return;
       setRouteError("Itinéraire indisponible. Vérifiez votre connexion et réessayez.");

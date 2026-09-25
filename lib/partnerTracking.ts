@@ -1,3 +1,5 @@
+import { track } from '@vercel/analytics';
+
 export type PartnerProduct = 'ferry' | 'flight' | 'transfer' | 'hotel' | 'car_rental' | 'other';
 
 export type PartnerClickEvent = {
@@ -11,36 +13,28 @@ export type FunnelEvent = {
   event: string;
   placement: string;
   page?: string;
+  /** Contexte non personnel (ex. has_ferry), jamais d'adresse ni de ville saisie. */
+  data?: Record<string, string | number | boolean>;
 };
 
-type AnalyticsWindow = Window & {
-  va?: (event: string, properties?: Record<string, string>) => void;
-};
-
+// Passe par track() de @vercel/analytics : le script Vercel n'accepte que
+// va('event', { name, data }). L'ancien appel direct va(nom, props) était
+// ignoré, si bien qu'aucun événement de l'entonnoir n'était enregistré.
 export function trackFunnelEvent(event: FunnelEvent): void {
   if (typeof window === 'undefined') return;
-
-  const analytics = window as AnalyticsWindow;
-  if (typeof analytics.va === 'function') {
-    analytics.va(event.event, {
-      placement: event.placement,
-      page: event.page ?? window.location.pathname,
-    });
-  }
+  track(event.event, {
+    ...event.data,
+    placement: event.placement,
+    page: event.page ?? window.location.pathname,
+  });
 }
 
-// Un seul événement par clic : l'ancien appel supplémentaire à
-// trackFunnelEvent('partner_click') doublait chaque clic partenaire.
 export function trackPartnerClick(event: PartnerClickEvent): void {
   if (typeof window === 'undefined') return;
-
-  const analytics = window as AnalyticsWindow;
-  if (typeof analytics.va === 'function') {
-    analytics.va('partner_click', {
-      partner: event.partner,
-      product: event.product,
-      placement: event.placement,
-      page: event.page,
-    });
-  }
+  track('partner_click', {
+    partner: event.partner,
+    product: event.product,
+    placement: event.placement,
+    page: event.page,
+  });
 }

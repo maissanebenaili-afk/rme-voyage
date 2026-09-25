@@ -1,20 +1,17 @@
+import { track } from '@vercel/analytics'
 import { trackFunnelEvent, trackPartnerClick } from '@/lib/partnerTracking'
 
-type VaWindow = Window & { va?: jest.Mock }
+jest.mock('@vercel/analytics', () => ({ track: jest.fn() }))
+
+const trackMock = track as jest.MockedFunction<typeof track>
 
 describe('partnerTracking', () => {
-  const w = window as VaWindow
-  beforeEach(() => {
-    w.va = jest.fn()
-  })
-  afterEach(() => {
-    delete w.va
-  })
+  beforeEach(() => trackMock.mockClear())
 
-  it('sends exactly one partner_click event per click, with partner and product', () => {
+  it('sends exactly one partner_click event per click, through the official track() API', () => {
     trackPartnerClick({ partner: 'directferries', product: 'ferry', placement: 'booking_cards', page: '/' })
-    expect(w.va).toHaveBeenCalledTimes(1)
-    expect(w.va).toHaveBeenCalledWith('partner_click', {
+    expect(trackMock).toHaveBeenCalledTimes(1)
+    expect(trackMock).toHaveBeenCalledWith('partner_click', {
       partner: 'directferries',
       product: 'ferry',
       placement: 'booking_cards',
@@ -22,16 +19,20 @@ describe('partnerTracking', () => {
     })
   })
 
-  it('defaults the funnel event page to the current path', () => {
-    trackFunnelEvent({ event: 'reality_check_used', placement: 'trip_decision_engine' })
-    expect(w.va).toHaveBeenCalledWith('reality_check_used', {
-      placement: 'trip_decision_engine',
+  it('defaults the funnel event page to the current path and forwards non-personal context', () => {
+    trackFunnelEvent({ event: 'route_computed', placement: 'route_search', data: { has_ferry: true } })
+    expect(trackMock).toHaveBeenCalledWith('route_computed', {
+      has_ferry: true,
+      placement: 'route_search',
       page: window.location.pathname,
     })
   })
 
-  it('is a no-op when analytics is not loaded', () => {
-    delete w.va
-    expect(() => trackPartnerClick({ partner: 'x', product: 'other', placement: 'p', page: '/' })).not.toThrow()
+  it('never calls window.va directly (Vercel only accepts va("event", …))', () => {
+    const va = jest.fn()
+    ;(window as Window & { va?: jest.Mock }).va = va
+    trackPartnerClick({ partner: 'x', product: 'other', placement: 'p', page: '/' })
+    expect(va).not.toHaveBeenCalled()
+    delete (window as Window & { va?: jest.Mock }).va
   })
 })
