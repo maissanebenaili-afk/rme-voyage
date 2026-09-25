@@ -64,6 +64,12 @@ for row in rows[2:]:
     if entry:
         prices[code] = entry
 
+# Garde-fou : une erreur d'unité ou de colonne ne doit jamais atteindre l'app.
+for code, entry in prices.items():
+    for key, value in entry.items():
+        if not 0.5 <= value <= 5:
+            raise SystemExit(f"Prix hors bornes pour {code}/{key} : {value} EUR/L")
+
 missing = set(COUNTRIES.values()) - set(prices)
 if missing:
     raise SystemExit(f"Pays manquants dans le bulletin : {sorted(missing)}")
