@@ -1,6 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import TripDecisionEngine from '../components/TripDecisionEngine'
-import CostCalculator from '../components/CostCalculator'
 import { publishRoute, toComputedRoute } from '@/lib/routeContext'
 
 function distanceInput() {
@@ -37,12 +36,6 @@ describe('Route → Reality Check bridge', () => {
     fireEvent.change(distanceInput(), { target: { value: '1900' } })
     expect(distanceInput().value).toBe('1900')
     expect(screen.getByText('Distance saisie manuellement.')).toBeInTheDocument()
-  })
-
-  it('feeds the budget calculator too', () => {
-    render(<CostCalculator />)
-    act(() => publishRoute(toComputedRoute('Bruxelles', 'Nador', 2_550_000, 90_000)))
-    expect(distanceInput().value).toBe('2550')
   })
 
   it('does not tell a car+ferry traveller that car-only is cheaper', () => {
@@ -102,5 +95,43 @@ describe('Reality Check — fuel by leg and country', () => {
     publish('2026-09-25T10:00:00Z')
     fireEvent.change(distanceInput(), { target: { value: '2400' } })
     expect(screen.queryByText(/Carburant par tronçon et par pays/)).not.toBeInTheDocument()
+  })
+})
+
+describe('Reality Check — scenarios follow the computed route', () => {
+  afterEach(() => act(() => publishRoute(null)))
+
+  const road = (from: string, to: string, meters: number, country: string) => ({
+    kind: 'road', from, to, distanceMeters: meters, durationSeconds: 1, countries: [{ country, meters }],
+  })
+
+  it('defaults to "Voiture + ferry" (Europe ↔ Maroc) and labels the budget as one-way', () => {
+    render(<TripDecisionEngine />)
+    expect(screen.getByRole('button', { name: /Voiture \+ ferry/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText(/aller simple/i)).toBeInTheDocument()
+  })
+
+  it('switches to car-only and hides the ferry scenario for a route without crossing', () => {
+    render(<TripDecisionEngine />)
+    act(() =>
+      publishRoute(toComputedRoute('Paris', 'Madrid', 1_268_000, 1, Date.parse('2026-09-25T10:00:00Z'), [
+        road('Paris', 'Madrid', 1_268_000, 'FR'),
+      ])),
+    )
+    expect(screen.getByRole('button', { name: /^Voiture$/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText('Voiture + ferry', { selector: 'span' })).not.toBeInTheDocument()
+    expect(screen.getByText('Voiture (sans ferry)')).toBeInTheDocument()
+  })
+
+  it('hides the impossible car-only scenario when the route needs a crossing', () => {
+    render(<TripDecisionEngine />)
+    act(() =>
+      publishRoute(toComputedRoute('Paris', 'Tanger', 1_940_000, 1, Date.parse('2026-09-25T10:00:00Z'), [
+        road('Paris', 'Tarifa', 1_937_000, 'FR'),
+        { kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', distanceMeters: 30_600, measured: 'straight-line' },
+        road('Tanger Ville', 'Tanger', 3_000, 'MA'),
+      ])),
+    )
+    expect(screen.queryByText('Voiture (sans ferry)')).not.toBeInTheDocument()
   })
 })

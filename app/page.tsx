@@ -21,7 +21,6 @@ import {
   Banknote,
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
-import CostCalculator from '@/components/CostCalculator';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -238,7 +237,6 @@ export default function Home() {
         </div>
         <div className="space-y-6">
           <RouteSearch />
-          <CostCalculator />
           <TripDecisionEngine />
         </div>
       </section>

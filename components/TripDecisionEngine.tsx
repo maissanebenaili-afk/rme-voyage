@@ -32,7 +32,8 @@ export default function TripDecisionEngine() {
   const [ferry, setFerry] = useState(180);
   const [travelers, setTravelers] = useState(4);
   const [flightPerPerson, setFlightPerPerson] = useState(180);
-  const [mode, setMode] = useState<TripMode>('car');
+  // Europe ↔ Maroc par défaut : la traversée fait partie du trajet type.
+  const [mode, setMode] = useState<TripMode>('mixed');
   const [fuelType, setFuelType] = useState<FuelType>('diesel');
   const trackedUse = useRef(false);
 
@@ -52,10 +53,16 @@ export default function TripDecisionEngine() {
     [route, consumption, fuelType, fuelPrice]
   );
 
-  // Un itinéraire qui impose une traversée n'a pas de sens en « voiture seule ».
+  // Le scénario routier suit l'itinéraire calculé : traversée imposée →
+  // « voiture + ferry » ; itinéraire sans traversée → « voiture ».
+  const routeNeedsFerry = route?.legs ? hasFerry(route.legs) : null;
   useEffect(() => {
-    if (hasFerry(route?.legs)) setMode((current) => (current === 'car' ? 'mixed' : current));
-  }, [route]);
+    if (routeNeedsFerry === null) return;
+    setMode((current) => {
+      if (current === 'flight') return current;
+      return routeNeedsFerry ? 'mixed' : 'car';
+    });
+  }, [routeNeedsFerry, route]);
 
   function markUsed() {
     if (trackedUse.current) return;
@@ -137,15 +144,15 @@ export default function TripDecisionEngine() {
         <div className="rounded-2xl bg-[#f8fafc] p-5 sm:p-6">
           <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]"><ShieldCheck size={17} className="text-[#b45309]" />Votre estimation</div>
           <div className="mt-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct · aller simple</p>
             <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d]">{eur(result.selected)}</p>
             <p className="mt-2 text-sm text-[#64748b]">≈ {eur(result.perPerson)} / personne · marge indicative : jusqu’à {eur(result.high)}</p>
             <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport à ${MODE_LABELS[result.cheapestMode]}.`}</p>
           </div>
           <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
-            <div className="flex justify-between"><span>Voiture (sans ferry)</span><strong>{eur(result.carTrip)}</strong></div>
-            <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.mixedTrip)}</strong></div>
+            {routeNeedsFerry !== true && <div className="flex justify-between"><span>Voiture (sans ferry)</span><strong>{eur(result.carTrip)}</strong></div>}
+            {routeNeedsFerry !== false && <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.mixedTrip)}</strong></div>}
             <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
           <p className="mt-5 text-xs leading-5 text-[#64748b]">Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.</p>
