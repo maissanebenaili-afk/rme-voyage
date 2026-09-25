@@ -9,6 +9,7 @@ import {
 import {
   TRAVEL_STORAGE_BACKUP_KEY,
   TRAVEL_STORAGE_KEY,
+  resetTravelStoreForTests,
   useTravelStorage,
 } from "../useTravelStorage";
 
@@ -43,6 +44,7 @@ describe("useTravelStorage", () => {
   beforeEach(() => {
     localStorage.clear();
     jest.restoreAllMocks();
+    resetTravelStoreForTests();
   });
 
   test("starts from an isolated default state and hydrates", async () => {
@@ -195,6 +197,77 @@ describe("useTravelStorage", () => {
 
     expect(result.current.travel.modeTransport).toBe("mixed");
     setItem.mockRestore();
+  });
+
+  test("two hook instances share one state (update and reset propagate)", async () => {
+    const a = renderHook(() => useTravelStorage());
+    const b = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(b.result.current.isHydrated).toBe(true));
+
+    act(() => {
+      a.result.current.updateTravel({ villes: { arrivee: "Nador" } });
+    });
+    expect(b.result.current.travel.villes.arrivee).toBe("Nador");
+
+    act(() => {
+      b.result.current.resetTravel();
+    });
+    expect(a.result.current.travel).toEqual(createDefaultTravelState());
+  });
+
+  test("reads storage once, however many components mount", async () => {
+    const getItem = jest.spyOn(Storage.prototype, "getItem");
+    const hooks = [1, 2, 3].map(() => renderHook(() => useTravelStorage()));
+    await waitFor(() => expect(hooks[2].result.current.isHydrated).toBe(true));
+    expect(getItem).toHaveBeenCalledTimes(1);
+  });
+
+  test("an update survives a page reload", async () => {
+    const first = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(first.result.current.isHydrated).toBe(true));
+    act(() => {
+      first.result.current.updateTravel({ dateVoyage: "2026-10-01", modeTransport: "ferry" });
+    });
+    first.unmount();
+
+    resetTravelStoreForTests();
+    const reloaded = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(reloaded.result.current.isHydrated).toBe(true));
+    expect(reloaded.result.current.travel).toMatchObject({
+      dateVoyage: "2026-10-01",
+      modeTransport: "ferry",
+    });
+  });
+
+  test("an update made before hydration never overwrites the stored trip", async () => {
+    localStorage.setItem(TRAVEL_STORAGE_KEY, JSON.stringify(validPayload));
+    let updatedBeforeHydration = false;
+    const { result } = renderHook(() => {
+      const storage = useTravelStorage();
+      if (!updatedBeforeHydration) {
+        updatedBeforeHydration = true;
+        storage.updateTravel({ modeTransport: "plane" });
+      }
+      return storage;
+    });
+    await waitFor(() => expect(result.current.isHydrated).toBe(true));
+
+    expect(JSON.parse(localStorage.getItem(TRAVEL_STORAGE_KEY)!)).toEqual(validPayload);
+    expect(result.current.travel).toEqual(validPayload);
+  });
+
+  test("keeps the corrupted payload in place when the backup cannot be written", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    localStorage.setItem(TRAVEL_STORAGE_KEY, "### CORRUPT ###");
+    jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("QuotaExceededError");
+    });
+
+    const { result } = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(result.current.isHydrated).toBe(true));
+
+    expect(result.current.travel).toEqual(createDefaultTravelState());
+    expect(localStorage.getItem(TRAVEL_STORAGE_KEY)).toBe("### CORRUPT ###");
   });
 
   test("reset clears persisted state and restores defaults", async () => {
