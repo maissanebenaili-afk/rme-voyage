@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Tv, Radio, ExternalLink, Signal } from 'lucide-react';
+import { Tv, Radio, ExternalLink, Signal, MapPin } from 'lucide-react';
 
 type Channel = {
   name: string;
@@ -14,36 +14,33 @@ type Channel = {
 
 const CHANNELS: Record<string, Channel[]> = {
   maroc: [
-    { name: 'Arryadia',       flag: '🇲🇦', desc: 'SNRT Sport — Botola Pro live',   url: 'https://www.snrt.ma/fr/live/arryadia',          sport: true,  live: true },
-    { name: '2M Maroc',       flag: '🇲🇦', desc: 'Info, divertissement, sport',    url: 'https://www.2m.ma/fr/direct/',                  live: true },
-    { name: 'Al Aoula',       flag: '🇲🇦', desc: 'SNRT 1 — chaîne nationale',      url: 'https://www.snrt.ma/fr/live/alaoulaHD',         live: true },
-    { name: 'Medi1 TV',       flag: '🇲🇦', desc: 'News Maghreb & Afrique',         url: 'https://medi1tv.com/fr/live',                   live: true },
-    { name: 'Al Maghribia',   flag: '🇲🇦', desc: 'SNRT diaspora MRE',             url: 'https://www.snrt.ma/fr/live/almaghribia',       live: true },
-    { name: 'Chada TV',       flag: '🇲🇦', desc: 'Musique & culture marocaine',    url: 'https://www.youtube.com/@ChadaTVOfficiel/streams', live: true },
+    { name: 'Arryadia / SNRT', flag: '🇲🇦', desc: 'Sport marocain — page officielle SNRT', url: 'https://www.snrt.ma/fr/arryadia', sport: true, live: true },
+    { name: 'SNRT', flag: '🇲🇦', desc: 'Portail officiel des chaînes marocaines', url: 'https://www.snrt.ma/', live: true },
+    { name: '2M', flag: '🇲🇦', desc: 'Chaîne marocaine — site officiel', url: 'https://www.2m.ma/', live: true },
+    { name: 'Medi1TV', flag: '🇲🇦', desc: 'Information Maroc, Maghreb & Afrique', url: 'https://www.medi1tv.com/', live: true },
+    { name: 'SNRTnews', flag: '🇲🇦', desc: 'Actualités et directs SNRT', url: 'https://snrtnews.com/live', live: true },
+    { name: 'Chada TV', flag: '🇲🇦', desc: 'Musique & culture marocaine', url: 'https://www.youtube.com/@ChadaTVOfficiel/streams', live: true },
   ],
   sport: [
-    { name: 'Arryadia',       flag: '⚽', desc: 'Botola Pro & sport marocain',    url: 'https://www.snrt.ma/fr/live/arryadia',          sport: true,  live: true },
-    { name: 'beIN Sports',    flag: '⚽', desc: 'Champions League, Ligue 1…',     url: 'https://www.beinsports.com/fr-ma/',             sport: true,  live: false },
-    { name: 'SSC Sport',      flag: '⚽', desc: 'Foot arabe, Saudi Pro League',   url: 'https://www.ssc.sa/ar/tv',                     sport: true,  live: true },
-    { name: 'Al Kass Sport',  flag: '⚽', desc: 'Sport & football Qatar',         url: 'https://www.alkass.net/live',                  sport: true,  live: true },
-    { name: 'Abu Dhabi Sport',flag: '⚽', desc: 'Foot & sports premium',          url: 'https://www.adtv.ae/live',                     sport: true,  live: false },
-    { name: 'Eurosport',      flag: '⚽', desc: 'Tennis, cyclisme, JO',           url: 'https://www.eurosport.fr/',                    sport: true,  live: false },
+    { name: '🇲🇦 Maroc–Gabon · Arryadia TNT', flag: '⚽', desc: 'Diffusion officielle au Maroc — TNT', url: 'https://www.snrt.ma/fr/node/4070', sport: true, live: true },
+    { name: 'beIN SPORTS · Maroc–Gabon', flag: '⚽', desc: 'Page officielle du match — diffusion selon territoire', url: 'https://www.beinsports.com/en-mena/football/africa-cup-of-nations-qualification/morocco-vs-gabon-2026-09-25', sport: true, live: true },
+    { name: 'beIN SPORTS France', flag: '⚽', desc: 'Scores, directs et programme officiel', url: 'https://www.beinsports.com/fr-fr/scores', sport: true, live: true },
+    { name: 'Arryadia / SNRT', flag: '⚽', desc: 'Programme sport officiel SNRT', url: 'https://www.snrt.ma/fr/arryadia', sport: true, live: true },
+    { name: 'SSC Sport', flag: '⚽', desc: 'Sport arabe — site officiel', url: 'https://www.ssc.sa/ar/tv', sport: true },
+    { name: 'Al Kass Sport', flag: '⚽', desc: 'Sport & football Qatar — site officiel', url: 'https://www.alkass.net/live', sport: true },
   ],
   arabe: [
-    { name: 'Al Jazeera',     flag: '🌍', desc: 'Info monde en arabe',            url: 'https://www.aljazeera.net/ajlive',              live: true },
-    { name: 'Sky News Arabia',flag: '🌍', desc: 'Breaking news Moyen-Orient',     url: 'https://www.skynewsarabia.com/live-tv',         live: true },
-    { name: 'MBC 1',          flag: '🌍', desc: 'Divertissement arabe n°1',       url: 'https://www.mbc.net/ar/programmes/live/mbc1',  live: false },
-    { name: 'Rotana Khalijia',flag: '🌍', desc: 'Musique & variétés arabes',      url: 'https://www.rotana.net/rotanakhalijiain',      live: false },
-    { name: 'DW عربي',        flag: '🌍', desc: 'Deutsche Welle en arabe',        url: 'https://www.dw.com/ar/live-tv',                live: true },
-    { name: 'RT Arabic',      flag: '🌍', desc: 'Russia Today arabe',             url: 'https://arabic.rt.com/on_air/',                live: true },
+    { name: 'Al Jazeera', flag: '🌍', desc: 'Info monde en arabe', url: 'https://www.aljazeera.net/', live: true },
+    { name: 'Sky News Arabia', flag: '🌍', desc: 'Information en arabe', url: 'https://www.skynewsarabia.com/', live: true },
+    { name: 'MBC', flag: '🌍', desc: 'Télévision et divertissement arabe', url: 'https://www.mbc.net/', live: true },
+    { name: 'DW عربية', flag: '🌍', desc: 'Deutsche Welle en arabe', url: 'https://www.dw.com/ar', live: true },
   ],
   inter: [
-    { name: 'France 24',      flag: '🌐', desc: 'Info internationale en français',url: 'https://www.france24.com/fr/direct/',           live: true },
-    { name: 'Arte',           flag: '🌐', desc: 'Culture & documentaires FR/DE',  url: 'https://www.arte.tv/fr/direct/',               live: true },
-    { name: 'TV5 Monde',      flag: '🌐', desc: 'Francophonie mondiale',          url: 'https://www.tv5monde.com/tv/direct',           live: true },
-    { name: 'Al Jazeera EN',  flag: '🌐', desc: 'Al Jazeera en anglais',          url: 'https://www.aljazeera.com/live/',              live: true },
-    { name: 'euronews FR',    flag: '🌐', desc: 'Europe & monde en direct',       url: 'https://fr.euronews.com/direct-live',          live: true },
-    { name: 'BBC Arabic',     flag: '🌐', desc: 'BBC en arabe',                   url: 'https://www.bbc.com/arabic/media/av/tv',       live: true },
+    { name: 'France 24', flag: '🌐', desc: 'Info internationale en français', url: 'https://www.france24.com/fr/direct/', live: true },
+    { name: 'Arte', flag: '🌐', desc: 'Culture & documentaires FR/DE', url: 'https://www.arte.tv/fr/direct/', live: true },
+    { name: 'TV5 Monde', flag: '🌐', desc: 'Francophonie mondiale', url: 'https://www.tv5monde.com/tv/direct', live: true },
+    { name: 'Al Jazeera English', flag: '🌐', desc: 'Information internationale', url: 'https://www.aljazeera.com/live/', live: true },
+    { name: 'Euronews', flag: '🌐', desc: 'Europe & monde en direct', url: 'https://fr.euronews.com/direct-live', live: true },
   ],
 };
 
@@ -55,6 +52,10 @@ const TABS = [
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
+
+function isTonightMatchDay() {
+  return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()) === '25/09/2026';
+}
 
 function ChannelCard({ ch }: { ch: Channel }) {
   return (
@@ -90,6 +91,7 @@ function ChannelCard({ ch }: { ch: Channel }) {
 
 export default function TVWidget() {
   const [tab, setTab] = useState<TabKey>('sport');
+  const showTonight = isTonightMatchDay();
 
   return (
     <div className="rounded-3xl border border-[#e2e8f0] bg-white overflow-hidden shadow-sm">
@@ -99,12 +101,26 @@ export default function TVWidget() {
           <Tv size={18} className="text-[#0f1f3d]" />
         </div>
         <div>
-          <h2 className="font-black text-white text-base tracking-tight">TV Gratuite</h2>
+          <h2 className="font-black text-white text-base tracking-tight">RME TV</h2>
           <p className="text-xs text-[#fde68a]/80 font-semibold flex items-center gap-1">
-            <Radio size={10} className="animate-pulse" /> Chaînes en direct — officielles &amp; gratuites
+            <Radio size={10} className="animate-pulse" /> Diffusions officielles — disponibilité selon pays
           </p>
         </div>
       </div>
+
+      {showTonight && (
+        <div className="border-b border-emerald-100 bg-emerald-50 px-5 py-4">
+          <div className="flex items-start gap-3">
+            <MapPin size={18} className="mt-0.5 shrink-0 text-emerald-700" />
+            <div>
+              <p className="text-sm font-black text-emerald-900">🇲🇦 Maroc–Gabon · ce soir</p>
+              <p className="mt-1 text-xs leading-5 text-emerald-800">
+                La SNRT annonce le match sur <strong>Arryadia TNT au Maroc</strong>. En France, les sources de diffusion indiquent beIN SPORTS. L'accès dépend du territoire et des droits.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex overflow-x-auto border-b border-[#e2e8f0] bg-[#f8fafc]">
@@ -131,7 +147,7 @@ export default function TVWidget() {
       </div>
 
       <p className="px-5 pb-4 text-center text-[10px] text-[#94a3b8]">
-        Liens vers les sites officiels — aucun stream hébergé sur RME Voyage
+        Les droits et la disponibilité peuvent changer selon le pays. RME ouvre uniquement les pages officielles des diffuseurs.
       </p>
     </div>
   );
