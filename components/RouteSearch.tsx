@@ -45,21 +45,38 @@ export default function RouteSearch() {
   >({ status: "idle" });
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const routeRequestRef = useRef<AbortController | null>(null);
+  const pendingSharedRoute = useRef<{ origin: string; destination: string } | null>(null);
 
   const [routeStatus, setRouteStatus] = useState<RouteCalcStatus>("idle");
   const [routeGeometry, setRouteGeometry] = useState<RoutePoint[] | undefined>(undefined);
   const [routeInfo, setRouteInfo] = useState<RouteInfo | undefined>(undefined);
   const [routeError, setRouteError] = useState<string | undefined>(undefined);
 
-  // Réhydratation depuis un lien partagé (/?from=...&to=...&date=...#planifier).
-  // Paramètres invalides ou absents sont simplement ignorés.
+  // Réhydratation depuis un lien partagé (/?from=...&to=...&date=...#planifier)
+  // et depuis les pages /trajet/…. Paramètres invalides ou absents ignorés.
+  // Le trajet reçu est calculé aussitôt : remplir les champs sans rien calculer
+  // laissait les estimations sur la distance d'exemple.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const shared = parseShareParams(window.location.href);
     if (shared.from) setOrigin(shared.from);
     if (shared.to) setDestination(shared.to);
     if (shared.date) setDate(shared.date);
+    if (shared.from && shared.to) {
+      pendingSharedRoute.current = { origin: shared.from, destination: shared.to };
+    }
   }, []);
+
+  // Un seul calcul, une fois les champs remplis par l'effet ci-dessus.
+  useEffect(() => {
+    const pending = pendingSharedRoute.current;
+    if (!pending || pending.origin !== origin || pending.destination !== destination) return;
+    pendingSharedRoute.current = null;
+    void calculateRoute();
+    // calculateRoute lit l'état courant ; l'effet ne doit se déclencher que
+    // lorsque les champs partagés sont en place.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [origin, destination]);
 
   // Nettoyage du timeout de réinitialisation du message de partage au
   // démontage, pour éviter un setState sur composant démonté.
@@ -106,7 +123,7 @@ export default function RouteSearch() {
       setRouteStatus("ready");
       // Alimente le Reality Check et le budget avec la distance mesurée.
       publishRoute(
-        toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds, Date.now(), data.legs),
+        toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds, Date.now(), data.legs, date || undefined),
       );
       trackFunnelEvent({
         event: "route_computed",
@@ -300,7 +317,12 @@ export default function RouteSearch() {
           errorMessage={routeError}
         />
       )}
-      <BookingCards origin={origin} destination={destination} date={date || undefined} />
+      <BookingCards
+        origin={origin}
+        destination={destination}
+        date={date || undefined}
+        crossing={routeStatus === "ready" ? routeInfo?.ferry : undefined}
+      />
     </>
   );
 }

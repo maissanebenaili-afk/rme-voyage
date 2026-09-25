@@ -20,6 +20,8 @@ export interface ComputedRoute {
   computedAt: number;
   /** Tronçons (route / traversée) avec ventilation par pays, si fournis. */
   legs?: RouteLeg[];
+  /** Date de départ saisie (AAAA-MM-JJ), si renseignée. */
+  date?: string;
 }
 
 type Listener = () => void;
@@ -51,6 +53,7 @@ export function toComputedRoute(
   durationSeconds: unknown,
   now: number = Date.now(),
   legs?: unknown,
+  date?: string,
 ): ComputedRoute | null {
   if (typeof distanceMeters !== 'number' || !Number.isFinite(distanceMeters) || distanceMeters <= 0) {
     return null;
@@ -67,6 +70,7 @@ export function toComputedRoute(
     source: 'osrm',
     computedAt: now,
     ...(parseRouteLegs(legs) ? { legs: parseRouteLegs(legs)! } : {}),
+    ...(typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { date } : {}),
   };
 }
 

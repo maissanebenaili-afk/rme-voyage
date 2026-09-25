@@ -7,6 +7,8 @@ export type PartnerClickEvent = {
   product: PartnerProduct;
   placement: string;
   page: string;
+  /** Contexte non personnel (ex. has_crossing), jamais une ville saisie. */
+  context?: Record<string, string | number | boolean>;
 };
 
 export type FunnelEvent = {
@@ -32,6 +34,7 @@ export function trackFunnelEvent(event: FunnelEvent): void {
 export function trackPartnerClick(event: PartnerClickEvent): void {
   if (typeof window === 'undefined') return;
   track('partner_click', {
+    ...event.context,
     partner: event.partner,
     product: event.product,
     placement: event.placement,
