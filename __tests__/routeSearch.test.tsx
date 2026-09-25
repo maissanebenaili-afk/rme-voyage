@@ -241,4 +241,50 @@ describe('RouteSearch', () => {
     await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'error'))
     expect(screen.getByTestId('map-mock')).toHaveAttribute('data-error', 'Destination introuvable : Nullepart')
   })
+
+  it('offers the route calculation in "Voiture + ferry" mode instead of a "coming soon" notice', () => {
+    render(<RouteSearch />)
+    fireEvent.change(screen.getByLabelText('Mode de transport'), { target: { value: 'car-ferry' } })
+    expect(screen.getByRole('button', { name: /Calculer l.itinéraire/i })).toBeInTheDocument()
+    expect(screen.queryByText(/arrive bientôt/)).not.toBeInTheDocument()
+  })
+
+  it('computes the shared/deep-linked trip instead of only filling the fields', async () => {
+    setLocation('https://rme.test/?from=Paris%2C%20France&to=Tanger%2C%20Maroc&date=2099-07-01#planifier')
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          geometry: [[48.85, 2.35], [35.76, -5.83]],
+          distanceMeters: 1_940_000,
+          durationSeconds: 74_520,
+          legs: [
+            { kind: 'road', from: 'Paris', to: 'Tarifa', distanceMeters: 1_937_000, durationSeconds: 74_000, countries: [{ country: 'FR', meters: 1_937_000 }] },
+            { kind: 'ferry', from: 'Tarifa', to: 'Tanger Ville', distanceMeters: 30_600, measured: 'straight-line' },
+            { kind: 'road', from: 'Tanger Ville', to: 'Tanger', distanceMeters: 3_000, durationSeconds: 520, countries: [{ country: 'MA', meters: 3_000 }] },
+          ],
+        }),
+    })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<RouteSearch />)
+
+    await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'ready'))
+    const requested = new URL(fetchMock.mock.calls[0][0] as string, 'https://rme.test')
+    expect(requested.pathname).toBe('/api/route')
+    expect(requested.searchParams.get('origin')).toBe('Paris, France')
+    expect(requested.searchParams.get('destination')).toBe('Tanger, Maroc')
+    // Un seul calcul, même si les champs se remplissent en plusieurs rendus.
+    expect(fetchMock.mock.calls.filter((c) => String(c[0]).includes('/api/route'))).toHaveLength(1)
+  })
+
+  it('does not auto-compute when the link carries no trip', () => {
+    setLocation('https://rme.test/')
+    const fetchMock = jest.fn()
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<RouteSearch />)
+
+    expect(fetchMock.mock.calls.filter((c) => String(c[0]).includes('/api/route'))).toHaveLength(0)
+  })
 })

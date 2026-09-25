@@ -24,7 +24,6 @@ export async function GET() {
         },
       },
       endpoints: {
-        chat: 'POST /api/chat',
         trips: 'GET/POST/PUT/DELETE /api/trips',
         tips: 'GET/POST /api/tips',
         health: 'GET /api/health',

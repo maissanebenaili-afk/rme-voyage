@@ -10,6 +10,8 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
+    // jsdom résout la condition « browser » (ESM) du paquet ; Jest a besoin du build CommonJS.
+    '^@vercel/analytics$': '<rootDir>/node_modules/@vercel/analytics/dist/index.js',
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '^@/lib/(.*)$': '<rootDir>/lib/$1',
     '^@/(.*)$': '<rootDir>/lib/$1',

@@ -1,14 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Ship, Plane, ExternalLink } from "lucide-react";
 import { comparisonFallbacks, verifiedPartnerUrl, type BookingType } from "@/lib/bookingLinks";
 import { trackPartnerClick } from "@/lib/partnerTracking";
 
-type Props = { origin: string; destination: string; date?: string };
+type Props = {
+  origin: string;
+  destination: string;
+  date?: string;
+  /** « Tarifa → Tanger Ville » lorsque l'itinéraire calculé impose une traversée. */
+  crossing?: string;
+};
 
-export default function BookingCards({ origin, destination, date }: Props) {
+export default function BookingCards({ origin, destination, date, crossing }: Props) {
   const [partners, setPartners] = useState<Partial<Record<BookingType, string>>>({});
+  // Trajet tel qu'il est au montage de la section : le lien partenaire vient
+  // du tableau de bord et ne dépend pas du trajet, l'appel ne doit donc pas
+  // repartir à chaque frappe.
+  const tripAtMount = useRef({ origin, destination });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -17,7 +27,12 @@ export default function BookingCards({ origin, destination, date }: Props) {
     // Public comparison links are already usable while this optional lookup runs.
     (['ferry', 'flight'] as const).forEach(async (type) => {
       try {
-        const response = await fetch(`/api/affiliates?type=${type}&origin=Europe&destination=Maroc`, {
+        const params = new URLSearchParams({
+          type,
+          origin: tripAtMount.current.origin || 'Europe',
+          destination: tripAtMount.current.destination || 'Maroc',
+        });
+        const response = await fetch(`/api/affiliates?${params.toString()}`, {
           signal: controller.signal, cache: 'no-store',
         });
         if (!response.ok) return;
@@ -39,9 +54,17 @@ export default function BookingCards({ origin, destination, date }: Props) {
       <p className="mt-2 break-words text-sm text-sable-700">
         {origin || 'Votre départ'} → {destination || 'Votre destination'}{date ? ` · ${date}` : ''}
       </p>
+      {crossing && (
+        <p className="mt-3 rounded-xl bg-zellige-50 px-4 py-3 text-sm text-zellige-800">
+          D’après l’itinéraire calculé, la traversée la plus courte est <strong>{crossing}</strong>. Cherchez
+          cette liaison chez les compagnies, et comparez-la aux autres ports : le prix et les horaires du jour
+          peuvent rendre une traversée plus longue préférable.
+        </p>
+      )}
       <p className="mt-2 text-sm leading-6 text-sable-700">
         Les comparateurs s’ouvrent dans un nouvel onglet. Renseignez-y votre trajet, vos dates
-        et vos voyageurs pour obtenir les disponibilités et les prix.
+        et vos voyageurs pour obtenir les disponibilités et les prix : nous ne pré-remplissons pas ces
+        formulaires, faute de format de lien documenté par les partenaires.
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {(['ferry', 'flight'] as const).map((type) => {
@@ -55,6 +78,7 @@ export default function BookingCards({ origin, destination, date }: Props) {
                 product: type,
                 placement: 'booking_cards',
                 page: window.location.pathname,
+                context: { has_crossing: Boolean(crossing) },
               })}
               data-testid={`compare-${type}`}
               className={`flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>

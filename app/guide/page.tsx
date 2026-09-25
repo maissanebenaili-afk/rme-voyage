@@ -28,8 +28,10 @@ const pillars = [
 ];
 
 export const metadata = {
-  title: 'RME Voyage | Préparer son voyage vers le Maroc',
+  // Le gabarit du layout ajoute déjà « | RME Voyage ».
+  title: 'Préparer son voyage vers le Maroc',
   description: 'Comparez, planifiez et voyagez plus sereinement entre l’Europe et le Maroc.',
+  alternates: { canonical: '/guide' },
 };
 
 export default function GuidePage() {

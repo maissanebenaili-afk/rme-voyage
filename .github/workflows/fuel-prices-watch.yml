@@ -1,0 +1,88 @@
+name: Fuel prices watch
+
+# Chaque jour, récupère le Weekly Oil Bulletin officiel de la Commission
+# européenne (scripts/update-fuel-prices.py) et ouvre une PR seulement si un
+# nouveau bulletin est paru. Sans cette mise à jour, lib/fuelByCountry.ts
+# bascule sur le prix saisi par l'utilisateur 14 jours après le bulletin.
+# Aucun secret : la page du bulletin est publique.
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: fuel-prices-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    name: Fetch bulletin, open PR if new
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Update lib/data/fuelPrices.json
+        id: update
+        run: |
+          pip install --quiet openpyxl==3.1.5
+          python3 scripts/update-fuel-prices.py
+          observed=$(python3 -c "import json; print(json.load(open('lib/data/fuelPrices.json'))['observedAt'])")
+          echo "observed=$observed" >> "$GITHUB_OUTPUT"
+          if git diff --quiet -- lib/data/fuelPrices.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if a PR branch already exists for this bulletin
+        id: branch
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          branch="data/fuel-prices-${{ steps.update.outputs.observed }}"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        if: steps.update.outputs.changed == 'true' && steps.branch.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Check the engine against the new data
+        if: steps.update.outputs.changed == 'true' && steps.branch.outputs.exists == 'false'
+        run: |
+          npm ci
+          npx jest __tests__/fuelByCountry.test.ts __tests__/travelWidgetsTrust.test.tsx
+
+      - name: Open a pull request
+        if: steps.update.outputs.changed == 'true' && steps.branch.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          OBSERVED: ${{ steps.update.outputs.observed }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add lib/data/fuelPrices.json
+          git commit -m "data: Weekly Oil Bulletin du ${OBSERVED}"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "Prix carburant : Weekly Oil Bulletin du ${OBSERVED}" \
+            --body "Mise à jour automatique de lib/data/fuelPrices.json depuis le Weekly Oil Bulletin de la Commission européenne (prix moyens nationaux TTC). Source : voir le champ sourceUrl du fichier."

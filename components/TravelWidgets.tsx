@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { countryName } from "@/lib/countries";
+import { MOROCCO_EMERGENCY_NUMBERS, MOROCCO_EMERGENCY_SOURCE } from "@/lib/data/emergencyMorocco";
+import { datasetExpiry, FUEL_PRICES } from "@/lib/fuelByCountry";
 import {
   CloudRain,
   Volume2,
@@ -75,12 +78,14 @@ const WMO_CODE_MAP: Record<number, { label: string; emoji: string }> = {
 };
 
 const WEATHER_CITIES = [
-  { name: "Casablanca", lat: 33.57, lon: 7.59 },
-  { name: "Rabat", lat: 34.02, lon: 6.83 },
-  { name: "Marrakech", lat: 31.63, lon: 7.99 },
-  { name: "Fès", lat: 34.03, lon: 5.0 },
-  { name: "Tanger", lat: 35.76, lon: 5.83 },
-  { name: "Agadir", lat: 30.42, lon: 9.6 },
+  // Maroc = longitudes ouest (négatives). Les valeurs positives d'origine
+  // interrogeaient Open-Meteo sur des points en Algérie et en Tunisie.
+  { name: "Casablanca", lat: 33.57, lon: -7.59 },
+  { name: "Rabat", lat: 34.02, lon: -6.83 },
+  { name: "Marrakech", lat: 31.63, lon: -7.99 },
+  { name: "Fès", lat: 34.03, lon: -5.0 },
+  { name: "Tanger", lat: 35.76, lon: -5.83 },
+  { name: "Agadir", lat: 30.42, lon: -9.6 },
 ];
 
 function getWeatherInfo(code: number) {
@@ -559,14 +564,8 @@ export function CustomsCalculator() {
 /* ============================================================
    4. EmergencyContacts — SOS embassy & emergency widget
    ============================================================ */
-const EMERGENCY_NUMBERS = [
-  { label: "Police", number: "190", emoji: "🚓" },
-  { label: "Ambulance", number: "150", emoji: "🚑" },
-  { label: "Pompiers", number: "150", emoji: "🚒" },
-  { label: "Autoroute (assistance)", number: "177", emoji: "🛣️" },
-  { label: "Garde Royale", number: "177", emoji: "👑" },
-  { label: "SOS Maroc", number: "112", emoji: "📱" },
-];
+// Source et date : lib/data/emergencyMorocco.ts (France Diplomatie).
+const EMERGENCY_NUMBERS = MOROCCO_EMERGENCY_NUMBERS;
 
 const EMBASSIES = [
   {
@@ -584,9 +583,10 @@ const EMBASSIES = [
     hours: "Lun–Ven 8h–12h",
   },
   {
-    name: "Ambassade de France",
+    // France Diplomatie : consulat général (pas une ambassade), 2 place de France.
+    name: "Consulat Général de France",
     city: "Tanger",
-    address: "Rue du Général Khenoussi, Tanger",
+    address: "2 place de France, Tanger",
     phone: "+212539321000",
     hours: "Lun–Ven 9h–12h",
   },
@@ -663,7 +663,7 @@ export function EmergencyContacts() {
         <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {EMERGENCY_NUMBERS.map((item) => (
             <a
-              key={`${item.label}-${item.number}`}
+              key={item.key}
               href={`tel:${item.number}`}
               className="flex flex-col items-center rounded-xl border-2 border-red-200 bg-white p-3 transition-all duration-200 hover:border-red-500 hover:shadow-md"
             >
@@ -674,6 +674,13 @@ export function EmergencyContacts() {
               <span className="text-lg font-black text-red-500">{item.number}</span>
             </a>
           ))}
+          <p className="col-span-full text-xs text-[#0f1f3d]/70">
+            Source :{" "}
+            <a href={MOROCCO_EMERGENCY_SOURCE.url} target="_blank" rel="noopener noreferrer" className="underline">
+              France Diplomatie
+            </a>
+            , vérifié le {frenchDate(MOROCCO_EMERGENCY_SOURCE.checkedAt)}.
+          </p>
         </div>
       )}
 
@@ -1139,57 +1146,25 @@ export function TimeZoneSIM() {
 }
 
 /* ============================================================
-   8. FuelPriceComparator — Fuel prices FR/ES/MA
+   8. FuelPriceComparator — prix carburant officiels UE (Weekly Oil Bulletin)
    ============================================================ */
-type FuelData = {
-  country: string;
-  flag: string;
-  currency: string;
-  fuels: { name: string; price: number; unit: string }[];
-};
+// Pays de départ les plus fréquents vers le Maroc, puis ceux traversés.
+const FUEL_COUNTRIES = ["FR", "BE", "NL", "DE", "IT", "ES", "PT"] as const;
+const TANK_LITERS = 50;
 
-const FUEL_DATA: FuelData[] = [
-  {
-    country: "France",
-    flag: "🇫🇷",
-    currency: "€",
-    fuels: [
-      { name: "Diesel (Gasoil)", price: 1.89, unit: "€/L" },
-      { name: "SP95", price: 1.78, unit: "€/L" },
-      { name: "SP98", price: 1.85, unit: "€/L" },
-    ],
-  },
-  {
-    country: "Espagne",
-    flag: "🇪🇸",
-    currency: "€",
-    fuels: [
-      { name: "Diesel (Gasoil)", price: 1.52, unit: "€/L" },
-      { name: "SP95", price: 1.65, unit: "€/L" },
-    ],
-  },
-  {
-    country: "Maroc",
-    flag: "🇲🇦",
-    currency: "MAD",
-    fuels: [
-      { name: "Diesel (Gasoil)", price: 14.95, unit: "MAD/L" },
-      { name: "SP95", price: 15.3, unit: "MAD/L" },
-    ],
-  },
-];
-
-const EUR_TO_MAD_RATE = 10.8;
+function frenchDate(isoDate: string) {
+  return new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" }).format(
+    new Date(`${isoDate}T00:00:00Z`),
+  );
+}
 
 export function FuelPriceComparator() {
-  const tankSize = 50; // liters
-  const franceDieselEUR = 1.89;
-  const moroccoDieselMAD = 14.95;
-  const moroccoDieselEUR = moroccoDieselMAD / EUR_TO_MAD_RATE;
-  const franceTotal = franceDieselEUR * tankSize;
-  const moroccoTotal = moroccoDieselEUR * tankSize;
-  const savings = franceTotal - moroccoTotal;
-  const savingsPct = ((savings / franceTotal) * 100).toFixed(0);
+  // Prix auparavant écrits à la main (France 1,89 €, « subventionné » au
+  // Maroc…) : remplacés par le bulletin officiel déjà utilisé par le
+  // Reality Check, pour qu'une même page n'affiche pas deux prix différents.
+  const [now] = useState(() => Date.now());
+  const expiresAt = datasetExpiry(FUEL_PRICES.observedAt);
+  const fresh = now < expiresAt.getTime();
 
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
@@ -1198,67 +1173,54 @@ export function FuelPriceComparator() {
         <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Prix du carburant</h2>
       </div>
       <p className="mt-1 text-sm text-[#0f1f3d]/70">
-        Comparaison FR / ES / MA — prix approximatifs 2026
+        Moyennes nationales à la pompe, taxes comprises, relevées le {frenchDate(FUEL_PRICES.observedAt)}.
       </p>
 
-      {/* Comparison table */}
-      <div className="mt-4 space-y-2">
-        {FUEL_DATA.map((country) => (
-          <div
-            key={country.country}
-            className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b]"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{country.flag}</span>
-              <h3 className="text-sm font-bold text-[#0f1f3d]">{country.country}</h3>
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {country.fuels.map((fuel) => (
-                <div
-                  key={fuel.name}
-                  className="rounded-lg bg-[#0f1f3d]/5 p-2 text-center"
-                >
-                  <p className="text-xs text-[#0f1f3d]/70">{fuel.name}</p>
-                  <p className="text-base font-black text-[#0f1f3d]">
-                    {fuel.price}
-                    <span className="text-xs"> {fuel.unit}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Savings calculator */}
-      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0f1f3d] to-[#0f1f3d]/90 p-4 text-center text-[#f8fafc]">
-        <p className="text-xs uppercase tracking-wide text-[#f59e0b]">
-          Économie réservoir plein (50L Diesel)
+      {!fresh && (
+        <p className="mt-3 rounded-lg bg-[#fff7ed] p-3 text-sm font-semibold text-[#9a3412]" role="status">
+          Ces prix datent de plus de deux semaines : vérifiez-les avant de partir.
         </p>
-        <div className="mt-2 flex items-center justify-center gap-4">
-          <div>
-            <p className="text-xs text-[#f8fafc]/60">🇫🇷 France</p>
-            <p className="text-lg font-bold">{franceTotal.toFixed(2)}€</p>
-          </div>
-          <span className="text-2xl text-[#f59e0b]">→</span>
-          <div>
-            <p className="text-xs text-[#f8fafc]/60">🇲🇦 Maroc</p>
-            <p className="text-lg font-bold">{moroccoTotal.toFixed(2)}€</p>
-          </div>
-        </div>
-        <div className="mt-3 rounded-lg bg-[#f59e0b] p-3">
-          <p className="text-2xl font-black text-[#0f1f3d]">
-            Économie: {savings.toFixed(2)}€
-          </p>
-          <p className="text-sm font-bold text-[#0f1f3d]/70">
-            Soit {savingsPct}% moins cher au Maroc!
-          </p>
-        </div>
-      </div>
+      )}
+
+      <table className="mt-4 w-full text-sm">
+        <thead>
+          <tr className="text-xs text-[#0f1f3d]/70">
+            <th className="py-1 text-left font-semibold">Pays</th>
+            <th className="py-1 text-right font-semibold">Gazole</th>
+            <th className="py-1 text-right font-semibold">SP95</th>
+            <th className="py-1 text-right font-semibold">Plein {TANK_LITERS} L gazole</th>
+          </tr>
+        </thead>
+        <tbody>
+          {FUEL_COUNTRIES.map((code) => {
+            const prices = FUEL_PRICES.prices[code];
+            return (
+              <tr key={code} data-country={code} className="border-t border-[#0f1f3d]/10">
+                <td className="py-2 font-bold text-[#0f1f3d]">{countryName(code)}</td>
+                <td className="py-2 text-right">{prices?.diesel?.toFixed(3) ?? "—"} €</td>
+                <td className="py-2 text-right">{prices?.petrol95?.toFixed(3) ?? "—"} €</td>
+                <td className="py-2 text-right font-black text-[#0f1f3d]">
+                  {prices?.diesel ? `${Math.round(prices.diesel * TANK_LITERS)} €` : "—"}
+                </td>
+              </tr>
+            );
+          })}
+          <tr data-country="MA" className="border-t border-[#0f1f3d]/10">
+            <td className="py-2 font-bold text-[#0f1f3d]">Maroc</td>
+            <td className="py-2 text-right text-[#0f1f3d]/70" colSpan={3}>
+              Pas de source officielle intégrée : vérifiez à la pompe.
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <p className="mt-3 text-xs text-[#0f1f3d]/70">
-        Prix indicatifs 2026 — susceptibles de varier. Le carburant marocain
-        reste subventionné par l'État.
+        Source :{" "}
+        <a href={FUEL_PRICES.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline">
+          Commission européenne, Weekly Oil Bulletin
+        </a>
+        . Les stations d'autoroute sont souvent plus chères. Le coût carburant de votre trajet, pays par pays,
+        s'affiche dans le Reality Check après calcul de l'itinéraire.
       </p>
     </section>
   );

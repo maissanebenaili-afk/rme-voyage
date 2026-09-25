@@ -33,6 +33,10 @@ export const metadata: Metadata = {
   creator: 'Nova Presta',
   publisher: 'Nova Presta',
   manifest: '/manifest.webmanifest',
+  // Canonique relative : chaque page pointe vers elle-même, sans les
+  // paramètres des liens partagés (/?from=…&to=…), qui créaient autant de
+  // doublons de la page d'accueil.
+  alternates: { canonical: './' },
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
@@ -115,20 +119,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="apple-touch-icon" href="/icon-192.svg" />
         <meta name="theme-color" content="#0f1f3d" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
-                { '@type': 'ListItem', position: 2, name: 'Guide', item: `${siteUrl}/guide` },
-                { '@type': 'ListItem', position: 3, name: 'Découvrir', item: `${siteUrl}/decouvrir` },
-              ],
-            }),
-          }}
-        />
+        {/* Le fil d'Ariane décrit une page précise : chaque page qui en a un
+            l'émet elle-même (voir app/trajet/[slug]). Il ne peut pas être
+            global : il annonçait Accueil > Guide > Découvrir partout. */}
       </head>
       <body>
         <a className="skip-link" href="#main-content">Aller au contenu principal</a>

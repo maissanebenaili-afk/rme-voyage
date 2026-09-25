@@ -26,4 +26,32 @@ describe('Comparison journey', () => {
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     expect(screen.getByTestId('compare-flight')).toHaveAttribute('href', 'https://www.skyscanner.fr/');
   });
+
+  it('names the computed crossing and never claims the partner form is prefilled', async () => {
+    global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
+    render(
+      <BookingCards
+        origin="Paris, France"
+        destination="Marrakech, Maroc"
+        date="2099-07-01"
+        crossing="Tarifa → Tanger Ville"
+      />,
+    );
+
+    expect(screen.getByText(/Tarifa → Tanger Ville/)).toBeInTheDocument();
+    expect(screen.getByText(/nous ne pré-remplissons pas ces/)).toBeInTheDocument();
+    // Les liens restent les comparateurs publics : aucun format de lien profond
+    // n'est documenté par les partenaires, donc aucun n'est fabriqué.
+    expect(screen.getByTestId('compare-ferry')).toHaveAttribute('href', 'https://www.directferries.fr/');
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+    const requested = new URL((global.fetch as jest.Mock).mock.calls[0][0] as string, 'https://rme.test');
+    expect(requested.searchParams.get('origin')).toBe('Paris, France');
+  });
+
+  it('shows no crossing line when the itinerary has none', async () => {
+    global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
+    render(<BookingCards origin="Paris" destination="Madrid" />);
+    expect(screen.queryByText(/la traversée la plus courte/)).not.toBeInTheDocument();
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+  });
 });
