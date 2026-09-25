@@ -143,7 +143,7 @@ export default function Accessibility() {
       /* Le bouton flottant "Vue+" et le panneau restent lisibles avec leurs
          propres couleurs fortes plutôt que d'être forcés en noir/jaune,
          pour ne pas se confondre avec le fond de page. */
-      .rme-high-contrast .rme-skip-link {
+      .rme-high-contrast .skip-link {
         background-color: #ffd700 !important;
         color: #000 !important;
         border: 2px solid #000 !important;
@@ -168,33 +168,12 @@ export default function Accessibility() {
         box-shadow: none !important;
       }
 
-      /* Skip link */
-      .rme-skip-link {
-        position: absolute;
-        top: -100px;
-        left: 0;
-        z-index: 10000;
-        padding: 12px 24px;
-        background: #f59e0b;
-        color: #0f1f3d;
-        font-weight: 700;
-        font-size: 14px;
-        border-radius: 0 0 12px 0;
-        text-decoration: none;
-        transition: top 0.2s ease;
-      }
-      .rme-skip-link:focus {
-        top: 0;
-      }
     `;
     document.head.appendChild(style);
 
-    // Add skip link
-    const skipLink = document.createElement('a');
-    skipLink.href = '#main-content';
-    skipLink.className = 'rme-skip-link';
-    skipLink.textContent = 'Aller au contenu principal';
-    document.body.insertBefore(skipLink, document.body.firstChild);
+    // Pas de lien d'évitement ici : app/layout.tsx en pose déjà un, premier
+    // enfant de <body>. En injecter un second faisait tabuler deux fois sur
+    // le même lien avant d'atteindre la page.
 
     return () => {
       // Note: don't remove on unmount as it's a global utility
