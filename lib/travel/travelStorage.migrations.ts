@@ -1,7 +1,6 @@
 import type {
   CurrentTravelData,
   TravelMode,
-  UnversionedStoragePayload,
 } from "./travelStorage.types";
 
 export const CURRENT_VERSION = 1;
@@ -49,7 +48,7 @@ export function isValidIsoTimestamp(value: unknown): value is string {
 }
 
 export function migrateAndValidateTravelData(
-  payload: UnversionedStoragePayload,
+  payload: unknown,
 ): CurrentTravelData {
   if (
     payload === null ||
