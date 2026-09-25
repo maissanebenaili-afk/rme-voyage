@@ -27,7 +27,11 @@ import {
   MicOff,
   Volume2,
   Trophy,
+  Navigation,
 } from 'lucide-react';
+
+import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
+import { buildShareUrl } from '@/lib/tripShare';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -44,6 +48,8 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   topic?: TopicKey | null;
+  /** Lien vers le planificateur, préempli avec la ville marocaine détectée dans la question. */
+  plannerLink?: { url: string; cityLabel: string };
 }
 
 type TopicKey =
@@ -532,6 +538,14 @@ export default function HadakAI() {
     setInput('');
     setIsTyping(true);
 
+    // Une ville marocaine citée déclenche un lien direct vers le planificateur
+    // déjà préempli (même mécanisme que "Partager mon trajet"), pour que
+    // "je veux aller à Taza" mène droit au calcul réel plutôt qu'à du texte.
+    const cityKey = detectCity(content);
+    const plannerLink = cityKey
+      ? { url: buildShareUrl({ from: '', to: `${MOROCCO_CITIES[cityKey].fr}, Maroc` }), cityLabel: MOROCCO_CITIES[cityKey].fr }
+      : undefined;
+
     try {
       const response = await fetch('/api/hadak', {
         method: 'POST',
@@ -545,7 +559,7 @@ export default function HadakAI() {
         console.error('Hadak API error, falling back to local KB:', response.status);
         setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
         setLastTopic(topic);
         return;
       }
@@ -558,7 +572,7 @@ export default function HadakAI() {
         console.error('Failed to parse Hadak response, status:', response.status);
         setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
         setLastTopic(topic);
         return;
       }
@@ -566,7 +580,7 @@ export default function HadakAI() {
       if (data.fallback || !data.response) {
         setIsOffline(true);
         const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink }]);
         setLastTopic(localTopic);
         return;
       }
@@ -575,13 +589,13 @@ export default function HadakAI() {
       const answer = data.response;
       const topic = findTopic(content);
 
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
       setLastTopic(topic);
     } catch (error) {
       console.error('Error calling Hadak API:', error);
       setIsOffline(true);
       const { content: answer, topic } = getAnswer(content, lang);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
       setLastTopic(topic);
     } finally {
       setIsTyping(false);
@@ -815,6 +829,23 @@ export default function HadakAI() {
                     >
                       {msg.content}
                     </div>
+                    {msg.role === 'assistant' && msg.plannerLink && (
+                      <a
+                        href={msg.plannerLink.url}
+                        onClick={() => setOpen(false)}
+                        className="self-start ms-1 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors"
+                        style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}
+                      >
+                        <Navigation className="h-3.5 w-3.5" />
+                        {lang === 'ar'
+                          ? `افتح مخطط الرحلة إلى ${msg.plannerLink.cityLabel}`
+                          : lang === 'en'
+                          ? `Open trip planner to ${msg.plannerLink.cityLabel}`
+                          : lang === 'es'
+                          ? `Abrir planificador hacia ${msg.plannerLink.cityLabel}`
+                          : `Voir le trajet vers ${msg.plannerLink.cityLabel} →`}
+                      </a>
+                    )}
                     {msg.role === 'assistant' && (
                       <button
                         onClick={() => speakMessage(msg.content, i)}
