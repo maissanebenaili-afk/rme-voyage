@@ -6,10 +6,7 @@ import {
   isValidIsoTimestamp,
   isValidTravelDate,
 } from "../travelStorage.migrations";
-import { useTravelStorage } from "../useTravelStorage";
-
-const STORAGE_KEY = "rme_personal_travel_data";
-const BACKUP_KEY = "rme_personal_travel_data_corrupted";
+import { TRAVEL_TRAVEL_STORAGE_KEY, TRAVEL_STORAGE_TRAVEL_STORAGE_BACKUP_KEY, useTravelStorage } from "../useTravelStorage";
 
 const validPayload = {
   version: 1,
@@ -53,7 +50,7 @@ describe("useTravelStorage", () => {
   });
 
   test("restores a valid persisted payload", async () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(validPayload));
+    localStorage.setItem(TRAVEL_STORAGE_KEY, JSON.stringify(validPayload));
 
     const { result } = renderHook(() => useTravelStorage());
 
@@ -85,14 +82,14 @@ describe("useTravelStorage", () => {
       JSON.stringify({ ...validPayload, preferences: { theme: { main: "dark" } } }),
     ],
   ])("rejects corrupted persisted data: %s", async (_label, raw) => {
-    localStorage.setItem(STORAGE_KEY, raw);
+    localStorage.setItem(TRAVEL_STORAGE_KEY, raw);
 
     const { result } = renderHook(() => useTravelStorage());
 
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
 
     expect(result.current.travel).toEqual(createDefaultTravelState());
-    expect(localStorage.getItem(BACKUP_KEY)).toBe(raw);
+    expect(localStorage.getItem(TRAVEL_STORAGE_BACKUP_KEY)).toBe(raw);
   });
 
   test("does not update derniereConsultation during an ordinary update", async () => {
@@ -147,13 +144,13 @@ describe("useTravelStorage", () => {
     act(() => {
       result.current.updateTravel({ modeTransport: "car" });
     });
-    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
+    expect(localStorage.getItem(TRAVEL_STORAGE_KEY)).not.toBeNull();
 
     act(() => {
       result.current.resetTravel();
     });
 
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(TRAVEL_STORAGE_KEY)).toBeNull();
     expect(result.current.travel).toEqual(createDefaultTravelState());
   });
 });
