@@ -20,12 +20,12 @@ const partnerHosts: Record<BookingType, string[]> = {
   ],
 };
 
-export function verifiedPartnerUrl(value: string | undefined, type: BookingType): string | null {
+export function verifiedPartnerUrl(value: string | undefined, type: BookingType, allowedHosts?: string[]): string | null {
   if (!value?.trim()) return null;
   try {
     const url = new URL(value.trim());
     if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
-    if (!partnerHosts[type].includes(url.hostname)) return null;
+    if (!(allowedHosts ?? partnerHosts[type]).includes(url.hostname)) return null;
     return url.toString();
   } catch {
     return null;
