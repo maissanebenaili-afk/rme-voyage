@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Car, Hotel, Luggage, Plane, ShieldCheck, Ship, Smartphone, Sparkles, TrainFront, Wallet } from "lucide-react";
+import { Car, Hotel, Luggage, Plane, ShieldCheck, Ship, Smartphone, Sparkles, Wallet } from "lucide-react";
 import type { PartnerCatalogueEntry, PartnerCategory } from "@/lib/partnerCatalogue";
 import { trackPartnerClick } from "@/lib/partnerTracking";
 
