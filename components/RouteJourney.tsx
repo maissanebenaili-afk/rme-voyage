@@ -17,7 +17,7 @@ export default function RouteJourney() {
   if (!legs || legs.length === 0) return null;
 
   return (
-    <section aria-label="Étapes du trajet" className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <section aria-label="Étapes du trajet" className="mt-4 rounded-2xl border border-spring-200 bg-spring-50 p-4 shadow-sm sm:p-5">
       <div className="flex flex-wrap items-center gap-x-1.5 gap-y-3">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0f1f3d] px-3 py-1.5 text-xs font-black text-white">
           <MapPin size={13} /> {legs[0].from}

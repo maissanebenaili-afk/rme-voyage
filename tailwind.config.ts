@@ -52,7 +52,7 @@ const config: Config = {
         // Atlas — Morocco green (flag pentagram / mint souks), used sparingly
         // as a warm accent so the app doesn't read as an all-white/all-blue
         // dashboard — pale on reading surfaces, fuller on brand moments
-        // (splash screen) only.
+        // (splash screen) only. Darkened for visual impact.
         atlas: {
           50: "#eef6f1",
           100: "#d9ecdf",
@@ -61,9 +61,9 @@ const config: Config = {
           400: "#4f9c72",
           500: "#237a54", // brand accent
           600: "#186745",
-          700: "#125239",
-          800: "#0d3e2c",
-          900: "#092c20",
+          700: "#0d3e2c", // darker, elevated from 800
+          800: "#092c20",
+          900: "#051a15",
         },
         // Jacaranda — Marrakech's purple-flowering trees, a second gentle
         // accent alongside Atlas green, used the same way: pale on reading
@@ -79,6 +79,19 @@ const config: Config = {
           700: "#4c336f",
           800: "#382753",
           900: "#271c3a",
+        },
+        // Spring — light sky blue for itinerary/journey sections
+        spring: {
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          200: "#bae6fd",
+          300: "#7dd3fc",
+          400: "#38bdf8",
+          500: "#0ea5e9",
+          600: "#0284c7",
+          700: "#0369a1",
+          800: "#075985",
+          900: "#0c3d66",
         },
         // Sable / neutrals — clean cool slate
         sable: {
