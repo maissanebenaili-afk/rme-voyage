@@ -24,16 +24,16 @@ describe("Homepage branding", () => {
     expect(screen.getAllByText(/RME/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Voyage/).length).toBeGreaterThan(0);
 
-    // Hero headline introduced by the investor redesign.
+    // Hero headline introduced by the product-first redesign.
     expect(
       screen.getByRole("heading", {
-        name: /La plateforme des.*5 millions de MRE/i,
+        name: /La route vers le Maroc.*autrement/i,
       }),
     ).toBeTruthy();
 
     // Hero subtext describing the value proposition.
     expect(
-      screen.getByText(/itinéraire, transfert d'argent, prières, Qibla et services/i),
+      screen.getByText(/itinéraire, ferry, budget et repères utiles/i),
     ).toBeTruthy();
 
     // Legacy product name must not resurface.

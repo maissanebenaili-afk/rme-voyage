@@ -43,6 +43,8 @@ import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
+import RoutePulse from '@/components/RoutePulse';
+import { pulseSnapshotDemo } from '@/lib/data/pulse-snapshot-demo';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -57,6 +59,15 @@ const stats = [
   { value: '15+', label: 'Outils intégrés', icon: TrendingUp },
 ];
 
+const liveTicker = [
+  '🇲🇦 Maroc · Actualités et informations utiles',
+  '🚗 Routes · Trafic, travaux et perturbations',
+  '⛴️ Ferries · Traversées Europe ↔ Maroc',
+  '🇫🇷 France · Informations pratiques pour les MRE',
+  '⚽ Sport · Résultats et rendez-vous',
+  '🌍 International · Les informations à retenir',
+];
+
 const features = [
   { icon: RouteIcon, title: 'Recherche de trajet', text: 'Trouvez le meilleur itinéraire Europe ↔ Maroc en un clic.' },
   { icon: Wallet, title: 'Calculateur de budget', text: 'Estimez carburant, péages, ferry et coût total.' },
@@ -69,101 +80,143 @@ const features = [
 export default function Home() {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b]">
-      {/* Hero Section */}
-      <section className="relative isolate overflow-hidden bg-[#0f1f3d] text-white">
-        {/* Background decorations */}
-        <div className="absolute -right-20 -top-24 -z-10 h-96 w-96 rounded-full bg-[#f59e0b]/20 blur-3xl" />
-        <div className="absolute -bottom-36 left-1/4 -z-10 h-72 w-72 rounded-full bg-[#38bdf8]/15 blur-3xl" />
-        <div className="absolute right-1/4 top-1/3 -z-10 h-64 w-64 rounded-full bg-[#d9824b]/10 blur-3xl" />
+      {/* Hero — product-first, visual and mobile-first */}
+      <section className="relative isolate overflow-hidden bg-[#07152f] text-white">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_20%,rgba(245,158,11,.22),transparent_28%),radial-gradient(circle_at_12%_70%,rgba(14,165,233,.16),transparent_30%)]" />
+        <div className="absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-[#f59e0b]/70 to-transparent" />
 
-        {/* Navigation */}
-        <nav className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-5 sm:px-8 sm:py-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2 text-base font-black tracking-tight sm:text-lg">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d] sm:h-10 sm:w-10">R</span>
-            <span className="whitespace-nowrap">RME <span className="font-medium text-[#fde68a]">Voyage</span></span>
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] font-black text-[#07152f] shadow-lg shadow-[#f59e0b]/20">R</span>
+            <span className="text-base font-black tracking-tight sm:text-lg">RME <span className="font-medium text-[#fde68a]">Voyage</span></span>
           </Link>
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-2">
+            <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white sm:block">Guide</Link>
+            <Link href="/decouvrir" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white sm:block">Découvrir</Link>
             <LanguageSwitcher />
-            <Link href="/guide" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Le guide</Link>
-            <Link href="/decouvrir" className="hidden text-sm font-bold text-white/80 hover:text-white sm:inline">Découvrir</Link>
-            <Link href="/pro" className="hidden text-sm font-bold text-[#fde68a] hover:text-white sm:inline">Pro ↗</Link>
-            <Link
-              href="/boutique"
-              className="group flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#c9903a]/50 bg-gradient-to-r from-[#c9903a]/25 to-[#f59e0b]/15 px-3 py-2 text-xs font-extrabold text-[#fde68a] transition hover:border-[#f59e0b] hover:from-[#f59e0b] hover:to-[#fbbf24] hover:text-[#0f1f3d] sm:px-4 sm:text-sm"
-            >
-              <Sparkles size={13} className="transition group-hover:rotate-12" />
-              Boutique
-            </Link>
-            <a href="#planifier" className="shrink-0 whitespace-nowrap rounded-full bg-white px-3 py-2 text-xs font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a] sm:px-4 sm:text-sm">Planifier</a>
+            <a href="#planifier" className="rounded-full bg-white px-4 py-2 text-xs font-black text-[#07152f] transition hover:bg-[#fde68a] sm:text-sm">Planifier</a>
           </div>
         </nav>
 
-        {/* Hero content */}
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-12 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:pb-28 lg:pt-20">
-          <div className="animate-fade-up">
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#f59e0b]/30 bg-[#f59e0b]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[.16em] text-[#fde68a]">
-              <TrendingUp size={14} /> MRE · Transferts · Mobilité
-            </p>
-            <h1 className="mt-6 max-w-3xl text-5xl font-display font-semibold leading-[.96] tracking-tight sm:text-7xl">
-              La plateforme des <span className="gradient-text-gold">5 millions de MRE.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-white/75">
-              Itinéraire, transfert d'argent, prières, Qibla et services — tout ce qu'il faut pour voyager sereinement entre l'Europe et le Maroc.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] shadow-lg shadow-black/20 transition hover:bg-[#fde68a]">
-                Planifier mon voyage <ArrowRight size={18} />
-              </a>
-              <a href="#transfert" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
-                Comparer les transferts
-              </a>
+        <div className="mx-auto max-w-7xl px-4 pb-10 pt-7 sm:px-8 sm:pb-16 sm:pt-12">
+          <div className="grid gap-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:gap-12">
+            <div className="animate-fade-up">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.06] px-3 py-1.5 text-xs font-extrabold text-[#fde68a]">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-[#22c55e]" />
+                Votre copilote Europe ↔ Maroc
+              </div>
+              <h1 className="mt-5 max-w-xl text-5xl font-display font-semibold leading-[.94] tracking-tight sm:text-7xl">
+                La route vers le Maroc, <span className="gradient-text-gold">autrement.</span>
+              </h1>
+              <p className="mt-5 max-w-lg text-base leading-7 text-white/70 sm:text-lg">
+                Itinéraire, ferry, budget et repères utiles réunis dans une expérience pensée comme une vraie application de voyage.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-2 text-xs font-bold text-white/70">
+                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">🗺️ Route</span>
+                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">⛴️ Ferry</span>
+                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">💶 Budget</span>
+                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">🕌 Repères</span>
+              </div>
+
+              <div className="mt-7 flex items-center gap-3 text-sm text-white/55">
+                <BadgeCheck size={18} className="text-[#fcd34d]" />
+                Gratuit · sans inscription · pensé mobile
+              </div>
             </div>
-            <div className="mt-10 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold text-white/70">
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Gratuit, sans inscription</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> 15+ outils intégrés</span>
-              <span className="inline-flex items-center gap-2"><BadgeCheck size={17} className="text-[#fcd34d]" /> Taux de change indicatif</span>
+
+            {/* App preview — the product is the hero, not a marketing illustration */}
+            <div className="relative mx-auto w-full max-w-2xl animate-scale-in">
+              <div className="absolute -inset-5 -z-10 rounded-[2.5rem] bg-[#f59e0b]/10 blur-2xl" />
+              <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#f7fafc] shadow-2xl shadow-black/40">
+                <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-5">
+                  <div className="flex items-center gap-2">
+                    <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#07152f] text-xs font-black text-[#f59e0b]">R</span>
+                    <div>
+                      <p className="text-xs font-black text-[#07152f]">RME Voyage</p>
+                      <p className="text-[10px] text-slate-500">Itinéraire intelligent</p>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-extrabold text-emerald-700">PRÊT À PARTIR</span>
+                </div>
+
+                <div className="relative min-h-[330px] overflow-hidden bg-[#dceaf0]">
+                  <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(rgba(255,255,255,.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.7)_1px,transparent_1px)] [background-size:34px_34px]" />
+                  <div className="absolute left-[8%] top-[18%] h-28 w-40 rotate-[-8deg] rounded-[45%] bg-[#f8fafc] shadow-sm" />
+                  <div className="absolute left-[32%] top-[35%] h-40 w-52 rotate-[9deg] rounded-[45%] bg-[#f8fafc] shadow-sm" />
+                  <div className="absolute right-[5%] bottom-[2%] h-48 w-56 rotate-[-12deg] rounded-[45%] bg-[#f8fafc] shadow-sm" />
+                  <div className="absolute left-[15%] top-[31%] h-1 w-[63%] rotate-[18deg] origin-left bg-[#07152f] shadow-[0_0_0_3px_rgba(245,158,11,.35)]" />
+                  <div className="absolute left-[49%] top-[51%] flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-[#f59e0b] text-[#07152f] shadow-lg">
+                    <Ship size={15} />
+                  </div>
+                  <div className="absolute left-[11%] top-[27%] h-3.5 w-3.5 rounded-full border-2 border-white bg-[#07152f] shadow-md" />
+                  <div className="absolute right-[9%] bottom-[13%] h-3.5 w-3.5 rounded-full border-2 border-white bg-[#07152f] shadow-md" />
+
+                  <div className="absolute left-4 top-4 rounded-2xl border border-white/70 bg-white/90 p-3 shadow-lg backdrop-blur sm:left-5 sm:top-5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Départ</p>
+                    <p className="mt-0.5 text-sm font-black text-[#07152f]">Paris</p>
+                  </div>
+                  <div className="absolute right-4 bottom-4 rounded-2xl border border-white/70 bg-white/90 p-3 shadow-lg backdrop-blur sm:right-5 sm:bottom-5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Arrivée</p>
+                    <p className="mt-0.5 text-sm font-black text-[#07152f]">Marrakech</p>
+                  </div>
+
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/80 bg-[#07152f]/95 px-4 py-2 text-xs font-bold text-white shadow-xl backdrop-blur">
+                    🇫🇷 Paris → ⛴️ Tanger → 🇲🇦 Marrakech
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-px border-t border-slate-200 bg-slate-200">
+                  <div className="bg-white p-3 sm:p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Distance</p>
+                    <p className="mt-1 text-lg font-black text-[#07152f]">≈ 2 500 km</p>
+                  </div>
+                  <div className="bg-white p-3 sm:p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Étapes</p>
+                    <p className="mt-1 text-lg font-black text-[#07152f]">Route + ferry</p>
+                  </div>
+                  <div className="bg-white p-3 sm:p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Budget</p>
+                    <p className="mt-1 text-lg font-black text-[#07152f]">Calculé</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Hero card */}
-          <div className="relative mx-auto w-full max-w-md animate-scale-in delay-300">
-            <div className="absolute inset-0 rotate-3 rounded-[2.25rem] bg-[#f59e0b]" />
-            <div className="relative rounded-[2.25rem] border border-white/10 bg-[#152848] p-7 shadow-2xl sm:p-9">
-              <p className="text-sm font-bold text-[#fde68a]">Votre carnet de voyage</p>
-              <h2 className="mt-3 text-3xl font-display font-semibold leading-tight">Un parcours simple. Des décisions plus sereines.</h2>
-              <div className="mt-8 space-y-3">
-                <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#fde68a] font-black text-[#0f1f3d]">1</span>
-                  <div><p className="text-xs text-white/60">Avant le départ</p><p className="font-bold">Itinéraire et budget</p></div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              { icon: RouteIcon, title: 'Choisir sa route', text: 'Europe → Maroc, avec les vraies étapes.' },
+              { icon: Wallet, title: 'Voir le coût', text: 'Carburant, ferry et hypothèses visibles.' },
+              { icon: Sparkles, title: 'Continuer le voyage', text: 'Météo, prière, services et conseils.' },
+            ].map(({ icon: Icon, title, text }) => (
+              <a key={title} href="#planifier" className="group rounded-2xl border border-white/10 bg-white/[.045] p-4 transition hover:-translate-y-0.5 hover:bg-white/[.08]">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-[#fde68a]"><Icon size={17} /></span>
+                  <div>
+                    <p className="text-sm font-extrabold text-white">{title}</p>
+                    <p className="mt-0.5 text-xs text-white/55">{text}</p>
+                  </div>
+                  <ArrowRight size={15} className="ml-auto text-white/30 transition group-hover:translate-x-1 group-hover:text-[#f59e0b]" />
                 </div>
-                <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#60a5fa] font-black text-[#0f1f3d]">2</span>
-                  <div><p className="text-xs text-white/60">Sur la route</p><p className="font-bold">Prières, Qibla et services</p></div>
-                </div>
-                <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#d9824b] font-black text-white">3</span>
-                  <div><p className="text-xs text-white/60">À l'arrivée</p><p className="font-bold">Checklist et conseils</p></div>
-                </div>
-              </div>
-              <p className="mt-7 border-t border-white/10 pt-5 text-sm leading-6 text-white/65">
-                Pensé mobile, lisible et utile, quel que soit votre point de départ.
-              </p>
-            </div>
+              </a>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Stats bar */}
-        <div className="border-t border-white/10 bg-black/20">
-          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-5 py-6 sm:px-8 md:grid-cols-4">
-            {stats.map(({ value, label, icon: Icon }) => (
-              <div key={label} className="flex items-center gap-3">
-                <Icon size={24} className="text-[#f5cd93]" />
-                <div>
-                  <div className="text-xl font-black text-white">{value}</div>
-                  <div className="text-xs text-white/60">{label}</div>
-                </div>
-              </div>
-            ))}
+      {/* RME Live — compact, useful, and intentionally secondary to the journey */ }
+      <section aria-label="RME Live" className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2.5 sm:px-8">
+          <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700">
+            🔴 RME Live
+          </span>
+          <div className="min-w-0 overflow-hidden">
+            <div className="flex min-w-max animate-[marquee_32s_linear_infinite] gap-8 text-xs font-semibold text-slate-600">
+              {[...liveTicker, ...liveTicker].map((item, index) => (
+                <span key={index} className="whitespace-nowrap">{item}</span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -223,6 +276,13 @@ export default function Home() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* RME Route Pulse — methodology demo, not live telemetry */}
+      <section className="bg-[#f8fafc] py-16">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <RoutePulse snapshot={pulseSnapshotDemo} />
         </div>
       </section>
 
@@ -369,9 +429,18 @@ export default function Home() {
             <FaicalWidget />
           </div>
 
-          {/* TV Gratuite */}
-          <div className="mt-6">
-            <TVWidget />
+          {/* RME TV — discover official/public broadcasts without pretending to host rights-restricted streams */}
+          <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[.16em] text-[#b45309]">RME TV</p>
+                <h3 className="mt-1 text-2xl font-black tracking-tight text-[#0f1f3d]">Télévision, sport et direct au même endroit.</h3>
+                <p className="mt-1 text-sm leading-6 text-slate-500">Retrouvez les chaînes et diffusions publiques ou officielles, sans reproduire les flux protégés.</p>
+              </div>
+            </div>
+            <div className="p-4 sm:p-5">
+              <TVWidget />
+            </div>
           </div>
         </div>
       </section>
