@@ -6,7 +6,11 @@ import {
   isValidIsoTimestamp,
   isValidTravelDate,
 } from "../travelStorage.migrations";
-import { TRAVEL_TRAVEL_STORAGE_KEY, TRAVEL_STORAGE_TRAVEL_STORAGE_BACKUP_KEY, useTravelStorage } from "../useTravelStorage";
+import {
+  TRAVEL_STORAGE_BACKUP_KEY,
+  TRAVEL_STORAGE_KEY,
+  useTravelStorage,
+} from "../useTravelStorage";
 
 const validPayload = {
   version: 1,
