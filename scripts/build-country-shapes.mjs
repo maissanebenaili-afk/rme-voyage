@@ -18,10 +18,9 @@ const COUNTRIES = {
   '372': 'IE', '380': 'IT', '428': 'LV', '438': 'LI', '440': 'LT', '442': 'LU', '470': 'MT',
   '492': 'MC', '504': 'MA', '528': 'NL', '578': 'NO', '616': 'PL', '620': 'PT', '642': 'RO',
   '674': 'SM', '703': 'SK', '705': 'SI', '724': 'ES', '752': 'SE', '756': 'CH', '826': 'GB',
-  // Natural Earth isole le Sahara occidental (732). Les routes y sont
-  // administrées par le Maroc et le carburant y est vendu au prix marocain :
-  // pour la ventilation des coûts, la zone est rattachée à MA.
-  '732': 'MA',
+  // Natural Earth code 732 = Western Sahara. Keep it geographically distinct
+  // from Morocco; pricing can use an explicit reference-price rule later.
+  '732': 'EH',
 };
 
 const input = process.argv[2] ?? SOURCE_URL;
