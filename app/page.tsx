@@ -382,7 +382,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Monétisation & transferts — placés après le contenu voyage et les services, avant la sortie de page. */}
+      {/* Monétisation & transferts — dernière étape commerciale, après voyage, outils et services. */}
       {/* Remittance Section — hero product, investor highlight */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
