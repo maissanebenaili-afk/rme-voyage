@@ -80,47 +80,50 @@ const features = [
 export default function Home() {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f8fafc] text-[#1e293b]">
-      {/* Hero — product-first, visual and mobile-first */}
-      <section className="relative isolate overflow-hidden bg-[#07152f] text-white">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_20%,rgba(245,158,11,.22),transparent_28%),radial-gradient(circle_at_12%_70%,rgba(14,165,233,.16),transparent_30%)]" />
-        <div className="absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-[#f59e0b]/70 to-transparent" />
+      {/* Hero — product-first, visual and mobile-first. Light background, dark
+          text: easier to read than light-on-dark for low-vision and older
+          users (glare/halation from bright text on near-black is a known
+          legibility problem, not just a contrast-ratio number). */}
+      <section className="relative isolate overflow-hidden bg-[#f8fafc] text-[#0f1f3d]">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_20%,rgba(245,158,11,.10),transparent_28%),radial-gradient(circle_at_12%_70%,rgba(14,165,233,.08),transparent_30%)]" />
+        <div className="absolute inset-x-0 top-0 -z-10 h-1 bg-gradient-to-r from-transparent via-[#f59e0b] to-transparent" />
 
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] font-black text-[#07152f] shadow-lg shadow-[#f59e0b]/20">R</span>
-            <span className="text-base font-black tracking-tight sm:text-lg">RME <span className="font-medium text-[#fde68a]">Voyage</span></span>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] font-black text-[#0f1f3d] shadow-lg shadow-[#f59e0b]/20">R</span>
+            <span className="text-base font-black tracking-tight sm:text-lg">RME <span className="font-medium text-[#b45309]">Voyage</span></span>
           </Link>
           <div className="flex items-center gap-2">
-            <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white sm:block">Guide</Link>
-            <Link href="/decouvrir" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/70 transition hover:bg-white/10 hover:text-white sm:block">Découvrir</Link>
+            <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-[#334155] transition hover:bg-[#0f1f3d]/5 hover:text-[#0f1f3d] sm:block">Guide</Link>
+            <Link href="/decouvrir" className="hidden rounded-full px-3 py-2 text-sm font-bold text-[#334155] transition hover:bg-[#0f1f3d]/5 hover:text-[#0f1f3d] sm:block">Découvrir</Link>
             <LanguageSwitcher />
-            <a href="#planifier" className="rounded-full bg-white px-4 py-2 text-xs font-black text-[#07152f] transition hover:bg-[#fde68a] sm:text-sm">Planifier</a>
+            <a href="#planifier" className="rounded-full bg-[#0f1f3d] px-4 py-2 text-xs font-black text-white transition hover:bg-[#1e3a5f] sm:text-sm">Planifier</a>
           </div>
         </nav>
 
         <div className="mx-auto max-w-7xl px-4 pb-10 pt-7 sm:px-8 sm:pb-16 sm:pt-12">
           <div className="grid gap-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:gap-12">
             <div className="animate-fade-up">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.06] px-3 py-1.5 text-xs font-extrabold text-[#fde68a]">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-[#22c55e]" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-extrabold text-[#92400e]">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-[#16a34a]" />
                 Votre copilote Europe ↔ Maroc
               </div>
               <h1 className="mt-5 max-w-xl text-5xl font-display font-semibold leading-[.94] tracking-tight sm:text-7xl">
                 La route vers le Maroc, <span className="gradient-text-gold">autrement.</span>
               </h1>
-              <p className="mt-5 max-w-lg text-base leading-7 text-white/70 sm:text-lg">
+              <p className="mt-5 max-w-lg text-base leading-7 text-[#334155] sm:text-lg">
                 Itinéraire, ferry, budget et repères utiles réunis dans une expérience pensée comme une vraie application de voyage.
               </p>
 
-              <div className="mt-7 flex flex-wrap gap-2 text-xs font-bold text-white/70">
-                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">🗺️ Route</span>
-                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">⛴️ Ferry</span>
-                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">💶 Budget</span>
-                <span className="rounded-full border border-white/10 bg-white/[.05] px-3 py-2">🕌 Repères</span>
+              <div className="mt-7 flex flex-wrap gap-2 text-xs font-bold text-[#334155]">
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">🗺️ Route</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">⛴️ Ferry</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">💶 Budget</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">🕌 Repères</span>
               </div>
 
-              <div className="mt-7 flex items-center gap-3 text-sm text-white/55">
-                <BadgeCheck size={18} className="text-[#fcd34d]" />
+              <div className="mt-7 flex items-center gap-3 text-sm text-[#334155]">
+                <BadgeCheck size={18} className="text-[#b45309]" />
                 Gratuit · sans inscription · pensé mobile
               </div>
             </div>
@@ -128,7 +131,7 @@ export default function Home() {
             {/* App preview — the product is the hero, not a marketing illustration */}
             <div className="relative mx-auto w-full max-w-2xl animate-scale-in">
               <div className="absolute -inset-5 -z-10 rounded-[2.5rem] bg-[#f59e0b]/10 blur-2xl" />
-              <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#f7fafc] shadow-2xl shadow-black/40">
+              <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[#f7fafc] shadow-2xl shadow-slate-300/60">
                 <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-5">
                   <div className="flex items-center gap-2">
                     <span className="grid h-8 w-8 place-items-center rounded-xl bg-[#07152f] text-xs font-black text-[#f59e0b]">R</span>
@@ -190,14 +193,14 @@ export default function Home() {
               { icon: Wallet, title: 'Voir le coût', text: 'Carburant, ferry et hypothèses visibles.' },
               { icon: Sparkles, title: 'Continuer le voyage', text: 'Météo, prière, services et conseils.' },
             ].map(({ icon: Icon, title, text }) => (
-              <a key={title} href="#planifier" className="group rounded-2xl border border-white/10 bg-white/[.045] p-4 transition hover:-translate-y-0.5 hover:bg-white/[.08]">
+              <a key={title} href="#planifier" className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-center gap-3">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-[#fde68a]"><Icon size={17} /></span>
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-amber-50 text-[#b45309]"><Icon size={17} /></span>
                   <div>
-                    <p className="text-sm font-extrabold text-white">{title}</p>
-                    <p className="mt-0.5 text-xs text-white/55">{text}</p>
+                    <p className="text-sm font-extrabold text-[#0f1f3d]">{title}</p>
+                    <p className="mt-0.5 text-xs text-[#64748b]">{text}</p>
                   </div>
-                  <ArrowRight size={15} className="ml-auto text-white/30 transition group-hover:translate-x-1 group-hover:text-[#f59e0b]" />
+                  <ArrowRight size={15} className="ml-auto text-slate-300 transition group-hover:translate-x-1 group-hover:text-[#f59e0b]" />
                 </div>
               </a>
             ))}
@@ -242,7 +245,7 @@ export default function Home() {
       </section>
 
       {/* Hadak AI Section */}
-      <section className="bg-[#0f1f3d] py-12">
+      <section className="border-y border-amber-100 bg-amber-50/50 py-12">
         <div className="mx-auto max-w-4xl px-5 sm:px-8">
           <div className="flex flex-col items-center text-center gap-4">
             <div className="flex items-center gap-3">
@@ -250,11 +253,11 @@ export default function Home() {
                 <Sparkles size={22} className="text-[#0f1f3d]" />
               </div>
               <div className="text-left">
-                <p className="text-xl font-extrabold text-white tracking-tight">Hadak AI</p>
-                <p className="text-xs text-[#fde68a] font-semibold">Ton assistant voyage MRE</p>
+                <p className="text-xl font-extrabold text-[#0f1f3d] tracking-tight">Hadak AI</p>
+                <p className="text-xs text-[#92400e] font-semibold">Ton assistant voyage MRE</p>
               </div>
             </div>
-            <p className="text-white/70 text-base max-w-lg">
+            <p className="text-[#334155] text-base max-w-lg">
               Dis-lui où tu veux aller — il prépare tout : météo, prières, change, ferry, documents.
             </p>
             <div className="flex flex-wrap justify-center gap-2.5 mt-1">
@@ -269,7 +272,7 @@ export default function Home() {
                 <button
                   key={msg}
                   onClick={() => window.dispatchEvent(new CustomEvent('hadak:open-with-message', { detail: msg }))}
-                  className="rounded-full border border-[#f59e0b]/40 bg-[#f59e0b]/10 px-4 py-2 text-sm font-semibold text-[#fde68a] transition hover:bg-[#f59e0b]/20 hover:border-[#f59e0b]/70"
+                  className="rounded-full border border-amber-300 bg-white px-4 py-2 text-sm font-semibold text-[#92400e] transition hover:bg-amber-100 hover:border-amber-400"
                 >
                   {label}
                 </button>
@@ -363,19 +366,19 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-[#0f1f3d] py-20">
+      <section className="border-y border-slate-200 bg-white py-20">
         <div className="mx-auto max-w-4xl px-5 text-center sm:px-8">
-          <h2 className="text-4xl font-display font-semibold tracking-tight text-white sm:text-5xl">
+          <h2 className="text-4xl font-display font-semibold tracking-tight text-[#0f1f3d] sm:text-5xl">
             Partez du bon pied. Préparez maintenant.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-white/70">
+          <p className="mx-auto mt-4 max-w-xl text-lg text-[#334155]">
             Gratuit, sans inscription. Tous les outils essentiels pour voyager entre l'Europe et le Maroc.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a]">
               Tester l'application <ArrowRight size={18} />
             </a>
-            <Link href="/guide" className="rounded-full border border-white/20 px-6 py-3.5 font-bold text-white transition hover:bg-white/10">
+            <Link href="/guide" className="rounded-full border border-slate-300 px-6 py-3.5 font-bold text-[#0f1f3d] transition hover:bg-slate-50">
               Voir le guide
             </Link>
           </div>
@@ -488,30 +491,30 @@ export default function Home() {
       <NewsletterSection />
 
       {/* Footer */}
-      <footer className="bg-[#080f28] px-5 py-12 text-white/65">
+      <footer className="border-t border-slate-200 bg-slate-50 px-5 py-12 text-[#475569]">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
-              <div className="flex items-center gap-2 text-lg font-black text-white">
+              <div className="flex items-center gap-2 text-lg font-black text-[#0f1f3d]">
                 <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d]">R</span>
                 RME Voyage
               </div>
               <p className="mt-3 text-sm">Votre compagnon de route entre l'Europe, le Maroc et les communautés du monde.</p>
             </div>
             <div>
-              <h3 className="font-bold text-white">Navigation</h3>
+              <h3 className="font-bold text-[#0f1f3d]">Navigation</h3>
               <ul className="mt-3 space-y-2 text-sm">
-                <li><Link href="/" className="hover:text-white">Accueil</Link></li>
-                <li><Link href="/guide" className="hover:text-white">Guide</Link></li>
-                <li><Link href="/decouvrir" className="hover:text-white">Découvrir</Link></li>
-                <li><Link href="/boutique" className="hover:text-white">Boutique ✨</Link></li>
-                <li><Link href="/telecharger" className="hover:text-white">Télécharger</Link></li>
-                <li><Link href="/soutenir" className="hover:text-white">Soutenir le projet 💛</Link></li>
-                <li><a href="/rss.xml" className="hover:text-white">Flux RSS</a></li>
+                <li><Link href="/" className="hover:text-[#0f1f3d]">Accueil</Link></li>
+                <li><Link href="/guide" className="hover:text-[#0f1f3d]">Guide</Link></li>
+                <li><Link href="/decouvrir" className="hover:text-[#0f1f3d]">Découvrir</Link></li>
+                <li><Link href="/boutique" className="hover:text-[#0f1f3d]">Boutique ✨</Link></li>
+                <li><Link href="/telecharger" className="hover:text-[#0f1f3d]">Télécharger</Link></li>
+                <li><Link href="/soutenir" className="hover:text-[#0f1f3d]">Soutenir le projet 💛</Link></li>
+                <li><a href="/rss.xml" className="hover:text-[#0f1f3d]">Flux RSS</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-white">Fonctionnalités</h3>
+              <h3 className="font-bold text-[#0f1f3d]">Fonctionnalités</h3>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>Comparateur Transferts EUR→MAD</li>
                 <li>Recherche de trajet</li>
@@ -529,20 +532,20 @@ export default function Home() {
                 <li>Assistant Hadak IA</li>
                 <li>Pronos de Faical ⚽</li>
                 <li>TV Gratuite — 20+ chaînes</li>
-                <li><Link href="/marwa-caftan" className="hover:text-white">Marwa Caftan — Location & Vente 👗</Link></li>
+                <li><Link href="/marwa-caftan" className="hover:text-[#0f1f3d]">Marwa Caftan — Location & Vente 👗</Link></li>
                 <li>Traiteurs · Mobilité · Garages</li>
                 <li>Colis &amp; Groupage Maroc 📦</li>
-                <li><Link href="/belisamae" className="hover:text-white">Belisamae — Bien-être 🌿</Link></li>
-                <li><Link href="/afarah-nassim" className="hover:text-white">Afarah Nassim — Traiteur 🍽️</Link></li>
+                <li><Link href="/belisamae" className="hover:text-[#0f1f3d]">Belisamae — Bien-être 🌿</Link></li>
+                <li><Link href="/afarah-nassim" className="hover:text-[#0f1f3d]">Afarah Nassim — Traiteur 🍽️</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-white">À propos</h3>
+              <h3 className="font-bold text-[#0f1f3d]">À propos</h3>
               <p className="mt-3 text-sm">Un projet Nova Presta — SAS de conseil en gestion et services aux entreprises.</p>
               <p className="mt-2 text-xs">MVP. Les données temps réel nécessitent des sources vérifiées.</p>
             </div>
           </div>
-          <div className="mt-8 border-t border-white/10 pt-6 text-center text-xs">
+          <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs">
             © 2026 RME Voyage — Nova Presta. Tous droits réservés.
           </div>
         </div>
