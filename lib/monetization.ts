@@ -55,6 +55,64 @@ export interface MonetizationEstimate {
   reason?: string;
 }
 
+export interface MeasuredFunnel {
+  clicks: number;
+  bookings: number;
+  observedBasketValue?: number;
+}
+
+/**
+ * Binds measured funnel data to a commercial opportunity.
+ * Conversion is derived only from observed clicks/bookings; no forecast is
+ * created when the denominator or commercial terms are unavailable.
+ */
+export function estimateFromMeasuredFunnel(
+  opportunity: MonetizationOpportunity,
+  funnel: MeasuredFunnel,
+): MonetizationEstimate {
+  if (
+    !Number.isFinite(funnel.clicks) ||
+    !Number.isFinite(funnel.bookings) ||
+    funnel.clicks <= 0 ||
+    funnel.bookings < 0 ||
+    funnel.bookings > funnel.clicks
+  ) {
+    return {
+      opportunityId: opportunity.id,
+      expectedValue: null,
+      reason: 'invalid_funnel_measurement',
+    };
+  }
+
+  if (
+    funnel.observedBasketValue != null &&
+    (!Number.isFinite(funnel.observedBasketValue) ||
+      funnel.observedBasketValue < 0)
+  ) {
+    return {
+      opportunityId: opportunity.id,
+      expectedValue: null,
+      reason: 'invalid_basket_measurement',
+    };
+  }
+
+  const basketValue = funnel.observedBasketValue ?? opportunity.basketValue;
+  if (opportunity.commissionRate == null || basketValue == null) {
+    return {
+      opportunityId: opportunity.id,
+      expectedValue: null,
+      reason: 'insufficient_verified_measurements',
+    };
+  }
+
+  const conversionProbability = funnel.bookings / funnel.clicks;
+  return estimateExpectedValue({
+    ...opportunity,
+    basketValue,
+    conversionProbability,
+  });
+}
+
 /**
  * Expected value is deliberately conservative:
  * rate × basket × measured conversion probability.
