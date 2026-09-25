@@ -58,6 +58,15 @@ const stats = [
   { value: '15+', label: 'Outils intégrés', icon: TrendingUp },
 ];
 
+const liveTicker = [
+  '🇲🇦 Maroc · Actualités et informations utiles',
+  '🚗 Routes · Trafic, travaux et perturbations',
+  '⛴️ Ferries · Traversées Europe ↔ Maroc',
+  '🇫🇷 France · Informations pratiques pour les MRE',
+  '⚽ Sport · Résultats et rendez-vous',
+  '🌍 International · Les informations à retenir',
+];
+
 const features = [
   { icon: RouteIcon, title: 'Recherche de trajet', text: 'Trouvez le meilleur itinéraire Europe ↔ Maroc en un clic.' },
   { icon: Wallet, title: 'Calculateur de budget', text: 'Estimez carburant, péages, ferry et coût total.' },
@@ -192,6 +201,25 @@ export default function Home() {
               </a>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* RME Live — compact, useful, and intentionally secondary to the journey */ }
+      <section aria-label="RME Live" className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2.5 sm:px-8">
+          <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700">
+            🔴 RME Live
+          </span>
+          <div className="min-w-0 overflow-hidden">
+            <div className="flex min-w-max animate-[marquee_32s_linear_infinite] gap-8 text-xs font-semibold text-slate-600">
+              {[...liveTicker, ...liveTicker].map((item, index) => (
+                <span key={index} className="whitespace-nowrap">{item}</span>
+              ))}
+            </div>
+          </div>
+          <Link href="/actualites" className="hidden shrink-0 text-xs font-extrabold text-sky-700 sm:block">
+            Tout voir →
+          </Link>
         </div>
       </section>
 
@@ -397,9 +425,21 @@ export default function Home() {
             <FaicalWidget />
           </div>
 
-          {/* TV Gratuite */}
-          <div className="mt-6">
-            <TVWidget />
+          {/* RME TV — discover official/public broadcasts without pretending to host rights-restricted streams */}
+          <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[.16em] text-[#b45309]">RME TV</p>
+                <h3 className="mt-1 text-2xl font-black tracking-tight text-[#0f1f3d]">Télévision, sport et direct au même endroit.</h3>
+                <p className="mt-1 text-sm leading-6 text-slate-500">Retrouvez les chaînes et diffusions publiques ou officielles, sans reproduire les flux protégés.</p>
+              </div>
+              <Link href="/television" className="shrink-0 rounded-full bg-[#0f1f3d] px-4 py-2 text-xs font-extrabold text-white hover:bg-[#1e3a5f]">
+                Voir RME TV →
+              </Link>
+            </div>
+            <div className="p-4 sm:p-5">
+              <TVWidget />
+            </div>
           </div>
         </div>
       </section>
