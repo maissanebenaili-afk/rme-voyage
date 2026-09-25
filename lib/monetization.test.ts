@@ -1,5 +1,6 @@
 import {
   estimateExpectedValue,
+  estimateFromMeasuredFunnel,
   monetizationCatalogue,
   selectOpportunities,
 } from './monetization';
@@ -21,6 +22,38 @@ describe('monetization opportunity engine', () => {
     });
 
     expect(result.expectedValue).toBe(2);
+  });
+
+  it('binds measured clicks and bookings without inventing a forecast', () => {
+    const result = estimateFromMeasuredFunnel(
+      {
+        ...monetizationCatalogue[0],
+        commissionRate: 0.05,
+      },
+      {
+        clicks: 100,
+        bookings: 12,
+        observedBasketValue: 400,
+      },
+    );
+
+    expect(result.expectedValue).toBe(2.4);
+  });
+
+  it('returns UNKNOWN when measured funnel data is invalid', () => {
+    const result = estimateFromMeasuredFunnel(
+      {
+        ...monetizationCatalogue[0],
+        commissionRate: 0.05,
+      },
+      {
+        clicks: 0,
+        bookings: 1,
+      },
+    );
+
+    expect(result.expectedValue).toBeNull();
+    expect(result.reason).toBe('invalid_funnel_measurement');
   });
 
   it('rejects invalid conversion probabilities', () => {
