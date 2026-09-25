@@ -241,4 +241,11 @@ describe('RouteSearch', () => {
     await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'error'))
     expect(screen.getByTestId('map-mock')).toHaveAttribute('data-error', 'Destination introuvable : Nullepart')
   })
+
+  it('offers the route calculation in "Voiture + ferry" mode instead of a "coming soon" notice', () => {
+    render(<RouteSearch />)
+    fireEvent.change(screen.getByLabelText('Mode de transport'), { target: { value: 'car-ferry' } })
+    expect(screen.getByRole('button', { name: /Calculer l.itinéraire/i })).toBeInTheDocument()
+    expect(screen.queryByText(/arrive bientôt/)).not.toBeInTheDocument()
+  })
 })

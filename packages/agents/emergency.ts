@@ -149,7 +149,8 @@ export class EmergencyAgent {
   }
 
   private formatCriticalResponse(lang: string, location?: string, country: string = 'Morocco', numbers?: any): string {
-    const nums = numbers || { police: '19', ambulance: '15', fire: '10' };
+    // Maroc, source France Diplomatie (lib/data/emergencyMorocco.ts) : pompiers = 15, pas 10.
+    const nums = numbers || { police: '19', ambulance: '15', fire: '15' };
     const template = (prefix: string, labels: string[]) => `${prefix}
 ⚠️ Location: ${location || 'Unknown'} (${country})
 🚔 Police: ${nums.police}

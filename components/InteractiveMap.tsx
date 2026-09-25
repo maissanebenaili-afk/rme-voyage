@@ -76,7 +76,7 @@ export default function InteractiveMap({
 
       {!hasRoute && status !== "loading" && status !== "error" && (
         <div className="mt-4 flex min-h-40 items-center rounded-2xl bg-sable-100 p-5 text-sm text-sable-700">
-          Renseignez un départ et une destination pour afficher un itinéraire vérifié.
+          Renseignez un départ et une destination pour afficher l’itinéraire calculé (OpenStreetMap).
         </div>
       )}
 
