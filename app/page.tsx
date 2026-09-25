@@ -214,30 +214,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Remittance Section — hero product, investor highlight */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Produit phare</p>
-            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">
-              Comparer les transferts EUR → MAD.
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-[#475569]">
-              5 millions de MRE envoient <strong>€4,8 milliards par an</strong> vers le Maroc.
-              RME Voyage fournit un taux de change indicatif et des estimations de coûts. Certains liens vers des prestataires peuvent être affiliés.
-            </p>
-          </div>
-          <RemittanceComparator />
-        </div>
-      </section>
-
-      {/* Affiliate Comparison — one neutral marketplace layer for every travel vertical */}
-      <section className="bg-slate-50 py-12">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <PartnerComparison partners={getPartnerCatalogue()} />
-        </div>
-      </section>
-
       {/* Spiritual & Services Section — léger violet Jacaranda, comme le vert
           Atlas plus haut : une section de plus qui se repère d'un regard. */}
       <section className="bg-jacaranda-50 py-20">
@@ -405,6 +381,33 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Monétisation & transferts — placés après le contenu voyage et les services, avant la sortie de page. */}
+      {/* Remittance Section — hero product, investor highlight */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Produit phare</p>
+            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">
+              Comparer les transferts EUR → MAD.
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-[#475569]">
+              5 millions de MRE envoient <strong>€4,8 milliards par an</strong> vers le Maroc.
+              RME Voyage fournit un taux de change indicatif et des estimations de coûts. Certains liens vers des prestataires peuvent être affiliés.
+            </p>
+          </div>
+          <RemittanceComparator />
+        </div>
+      </section>
+
+
+      {/* Affiliate Comparison — one neutral marketplace layer for every travel vertical */}
+      <section className="bg-slate-50 py-12">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <PartnerComparison partners={getPartnerCatalogue()} />
+        </div>
+      </section>
+
 
       <BookBanner />
 
