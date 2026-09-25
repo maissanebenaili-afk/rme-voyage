@@ -110,6 +110,28 @@ describe("useTravelStorage", () => {
     expect(result.current.travel.modeTransport).toBe("plane");
   });
 
+  test("filters undefined values from nested villes", async () => {
+    const { result } = renderHook(() => useTravelStorage());
+    await waitFor(() => expect(result.current.isHydrated).toBe(true));
+
+    act(() => {
+      result.current.updateTravel({
+        villes: { depart: "Paris", arrivee: "Tanger" },
+      });
+    });
+
+    act(() => {
+      result.current.updateTravel({
+        villes: { depart: undefined },
+      });
+    });
+
+    expect(result.current.travel.villes).toEqual({
+      depart: "Paris",
+      arrivee: "Tanger",
+    });
+  });
+
   test("updateTravel merges nested villes and preferences", async () => {
     const { result } = renderHook(() => useTravelStorage());
     await waitFor(() => expect(result.current.isHydrated).toBe(true));
