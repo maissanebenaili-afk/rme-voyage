@@ -41,6 +41,9 @@ const OSRM = "https://router.project-osrm.org";
 /** Au-delà, le point demandé n'est pas desservi par le réseau routier trouvé. */
 const MAX_SNAP_METERS = 10_000;
 
+const EMBARK = "Port d'embarquement";
+const DISEMBARK = "Port de débarquement";
+
 /** En deçà, départ et arrivée géocodés désignent le même lieu. */
 const SAME_PLACE_METERS = 1_000;
 
@@ -134,12 +137,6 @@ async function osrmTable(sources: LonLat[], destinations: LonLat[]): Promise<(nu
   return data.distances;
 }
 
-/** « Portsmouth (UK) - Cherbourg (F) » → ports de départ et d'arrivée, si lisibles. */
-function ferryPorts(name: string): [string, string] {
-  const parts = name.split(/\s+[-–]\s+/);
-  return parts.length === 2 ? [parts[0], parts[1]] : [name || "Traversée maritime", ""];
-}
-
 /**
  * Découpe un itinéraire OSRM en tronçons routiers et traversées. Distance et
  * durée routières excluent les ferries empruntés par OSRM.
@@ -168,17 +165,19 @@ function legsFromRoad(from: string, to: string, road: OsrmRoad): { legs: RouteLe
 
   for (const step of steps) {
     if (step.mode === "ferry") {
-      const [departure, arrival] = ferryPorts(step.name);
-      flush(departure);
+      // Le nom OSM d'une ligne (« Barcelona – Alcúdia ») ne dit pas dans quel
+      // sens elle est parcourue : on garde le nom tel quel, sans en déduire
+      // un port de départ ou d'arrivée.
+      flush(EMBARK);
       const ferry: FerryLeg = {
         kind: "ferry",
-        from: departure,
-        to: arrival,
+        from: step.name || "Traversée maritime",
+        to: "",
         distanceMeters: Math.round(step.distance),
         measured: "route",
       };
       legs.push(ferry);
-      chunk = { from: arrival || departure, coordinates: [], meters: 0, seconds: 0 };
+      chunk = { from: DISEMBARK, coordinates: [], meters: 0, seconds: 0 };
     } else {
       chunk.coordinates.push(...step.coordinates);
       chunk.meters += step.distance;

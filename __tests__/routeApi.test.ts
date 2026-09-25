@@ -177,11 +177,12 @@ describe("GET /api/route", () => {
 
     expect(response.status).toBe(200);
     expect(data.legs.map((leg: { kind: string }) => leg.kind)).toEqual(["road", "ferry", "road"]);
+    // Le nom de ligne est gardé tel quel : il ne dit pas le sens (depuis Palma on embarque à Alcúdia).
     expect(data.legs[1]).toEqual({
-      kind: "ferry", from: "Barcelona", to: "Alcúdia", distanceMeters: 200_900, measured: "route",
+      kind: "ferry", from: "Barcelona – Alcúdia", to: "", distanceMeters: 200_900, measured: "route",
     });
-    expect(data.legs[0]).toMatchObject({ from: "Palma", to: "Barcelona" });
-    expect(data.legs[2]).toMatchObject({ from: "Alcúdia", to: "Madrid" });
+    expect(data.legs[0]).toMatchObject({ from: "Palma", to: "Port d'embarquement" });
+    expect(data.legs[2]).toMatchObject({ from: "Port de débarquement", to: "Madrid" });
     // Distance et durée routières : sans les 200,9 km ni les 6 h 30 de mer.
     expect(data.distanceMeters).toBe(680_000);
     expect(data.durationSeconds).toBe(25_000);
