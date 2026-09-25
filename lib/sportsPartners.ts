@@ -56,7 +56,7 @@ export function getSportsPartners(): SportsPartner[] {
       id: partner.id,
       name: partner.name,
       url: affiliateUrl ?? partner.publicUrl,
-      affiliateUrl,
+      affiliateUrl: affiliateUrl ?? undefined,
       status: affiliateUrl ? 'active' : 'pending',
     };
   });
