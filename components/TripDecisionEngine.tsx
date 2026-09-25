@@ -8,6 +8,8 @@ import { computeFuelByCountry, hasFerry, type FuelType } from '@/lib/fuelByCount
 import { useRouteDistance } from '@/lib/hooks/useRouteDistance';
 import { trackFunnelEvent } from '@/lib/partnerTracking';
 import { computeTripEconomics, type TripMode } from '@/lib/tripEconomics';
+import { formatDuration } from '@/lib/routePages';
+import { useCountUp } from '@/lib/hooks/useCountUp';
 
 const MODE_LABELS: Record<TripMode, string> = {
   car: 'la voiture seule',
@@ -85,6 +87,7 @@ export default function TripDecisionEngine() {
       }),
     [distance, consumption, fuelPrice, tolls, ferry, travelers, flightPerPerson, mode, byCountry]
   );
+  const animatedSelected = useCountUp(result.selected);
 
   return (
     <section className="overflow-hidden rounded-[2rem] border border-[#dbe4ef] bg-white shadow-sm" aria-labelledby="reality-check-title">
@@ -100,14 +103,23 @@ export default function TripDecisionEngine() {
           </div>
         </div>
 
+        {/* Reality Check : chaque mode montre son prix (et sa durée mesurée, si
+            un itinéraire réel a été calculé) au lieu d'un simple sélecteur —
+            comparer doit se voir, pas se déduire. Aucune durée n'est affichée
+            pour l'avion : aucune source réelle de temps de vol n'existe ici. */}
         <div className="mt-6 grid grid-cols-3 gap-2">
           {([
-            ['car', 'Voiture', Car],
-            ['mixed', 'Voiture + ferry', Ship],
-            ['flight', 'Avion', Plane],
-          ] as const).map(([value, label, Icon]) => (
+            ['car', 'Voiture', Car, result.carTrip],
+            ['mixed', 'Voiture + ferry', Ship, result.mixedTrip],
+            ['flight', 'Avion', Plane, result.flightTrip],
+          ] as const).map(([value, label, Icon, price]) => (
             <button key={value} type="button" onClick={() => { setMode(value); markUsed(); }} className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`} aria-pressed={mode === value}>
-              <Icon size={17} className="mb-2" />{label}
+              <Icon size={17} className="mb-2" />
+              <span className="block">{label}</span>
+              <span className={`mt-1 block text-base font-black ${mode === value ? 'text-[#0f1f3d]' : 'text-[#fde68a]'}`}>{eur(price)}</span>
+              {value === result.roadMode && route && (
+                <span className={`block text-xs font-semibold ${mode === value ? 'text-[#0f1f3d]/70' : 'text-white/60'}`}>≈ {formatDuration(route.durationSeconds)}</span>
+              )}
             </button>
           ))}
         </div>
@@ -145,11 +157,11 @@ export default function TripDecisionEngine() {
           <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]"><ShieldCheck size={17} className="text-[#b45309]" />Votre estimation</div>
           <div className="mt-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">Budget direct · aller simple</p>
-            <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d]">{eur(result.selected)}</p>
+            <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d] tabular-nums">{eur(animatedSelected)}</p>
             <p className="mt-2 text-sm text-[#64748b]">≈ {eur(result.perPerson)} / personne · marge indicative : jusqu’à {eur(result.high)}</p>
             <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? 'Ce scénario est le moins cher selon vos hypothèses.' : `+${eur(result.deltaVsCheapest)} par rapport à ${MODE_LABELS[result.cheapestMode]}.`}</p>
           </div>
-          <div className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
+          <div data-testid="scenario-breakdown" className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>Carburant</span><strong>{eur(result.fuel)}</strong></div>
             {routeNeedsFerry !== true && <div className="flex justify-between"><span>Voiture (sans ferry)</span><strong>{eur(result.carTrip)}</strong></div>}
             {routeNeedsFerry !== false && <div className="flex justify-between"><span>Voiture + ferry</span><strong>{eur(result.mixedTrip)}</strong></div>}

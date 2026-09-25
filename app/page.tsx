@@ -21,6 +21,7 @@ import {
   Banknote,
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
+import RouteJourney from '@/components/RouteJourney';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -112,6 +113,7 @@ export default function Home() {
 
           <div className="mt-6 animate-scale-in">
             <RouteSearch />
+            <RouteJourney />
           </div>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-bold text-[#475569]">
