@@ -44,6 +44,8 @@ import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
+import RoutePulse from '@/components/RoutePulse';
+import { pulseSnapshotDemo } from '@/lib/data/pulse-snapshot-demo';
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
@@ -278,6 +280,13 @@ export default function Home() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* RME Route Pulse — methodology demo, not live telemetry */}
+      <section className="bg-[#f8fafc] py-16">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <RoutePulse snapshot={pulseSnapshotDemo} />
         </div>
       </section>
 
