@@ -88,8 +88,9 @@ export default function Home() {
           have to read before you can act. Muted blue-gray surface with just
           a whisper of warm horizon tone at the base — navy carries the
           structure (nav, borders, headings), not a bright full-bleed wash. */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#eef1f6] via-[#eceef2] to-[#e6dfc9] text-[#0f1f3d]">
+      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#eef6f1] via-[#eef1ec] to-[#e6dfc9] text-[#0f1f3d]">
         <div className="absolute -top-24 right-[-10%] -z-10 h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,.14),transparent_70%)] blur-2xl" />
+        <div className="absolute -bottom-16 left-[-8%] -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(35,122,84,.14),transparent_70%)] blur-2xl" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-16 bg-gradient-to-t from-[#f59e0b]/10 to-transparent" />
 
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
@@ -127,8 +128,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. */}
-      <section className="border-b border-slate-200 bg-[#f5f7fa] py-10">
+      {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
+          Atlas pâle plutôt que gris neutre : une section qu'on identifie
+          d'un coup d'œil, un peu de couleur au lieu du "tout blanc". */}
+      <section className="border-b border-slate-200 bg-atlas-50 py-10">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <TripDecisionEngine />
         </div>

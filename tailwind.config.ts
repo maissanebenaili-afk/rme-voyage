@@ -49,6 +49,22 @@ const config: Config = {
           800: "#92400e",
           900: "#78350f",
         },
+        // Atlas — Morocco green (flag pentagram / mint souks), used sparingly
+        // as a warm accent so the app doesn't read as an all-white/all-blue
+        // dashboard — pale on reading surfaces, fuller on brand moments
+        // (splash screen) only.
+        atlas: {
+          50: "#eef6f1",
+          100: "#d9ecdf",
+          200: "#b3d9c0",
+          300: "#82bd98",
+          400: "#4f9c72",
+          500: "#237a54", // brand accent
+          600: "#186745",
+          700: "#125239",
+          800: "#0d3e2c",
+          900: "#092c20",
+        },
         // Sable / neutrals — clean cool slate
         sable: {
           50: "#f0f9ff",

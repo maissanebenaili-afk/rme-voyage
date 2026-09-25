@@ -13,6 +13,11 @@ const HOLD_MS = 550;
  * contente de la recouvrir puis de disparaître. Respecte
  * prefers-reduced-motion (pas affiché du tout) et n'affecte pas le clavier
  * (rien de focusable dessous, aria-hidden).
+ *
+ * Fond plein vert Atlas (identité de marque, à la Waze) plutôt que la
+ * palette pâle du reste du site : c'est un instant de marque, pas du
+ * contenu à lire — un aplat de couleur franche n'y pose pas le même
+ * problème de fatigue visuelle qu'un paragraphe sur fond sombre.
  */
 export default function SplashScreen() {
   const [visible, setVisible] = useState(false);
@@ -47,7 +52,7 @@ export default function SplashScreen() {
       {visible && (
         <motion.div
           aria-hidden="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#eef1f6]"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-atlas-600"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
@@ -58,11 +63,11 @@ export default function SplashScreen() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="flex flex-col items-center gap-3"
           >
-            <span className="grid h-16 w-16 place-items-center rounded-3xl bg-[#0f1f3d] text-2xl font-black text-[#f59e0b] shadow-xl shadow-[#0f1f3d]/15">
+            <span className="grid h-16 w-16 place-items-center rounded-3xl bg-white text-2xl font-black text-atlas-600 shadow-xl shadow-black/20">
               R
             </span>
-            <span className="text-lg font-black tracking-tight text-[#0f1f3d]">
-              RME <span className="font-medium text-[#b45309]">Voyage</span>
+            <span className="text-lg font-black tracking-tight text-white">
+              RME <span className="font-medium text-[#fde68a]">Voyage</span>
             </span>
           </motion.div>
         </motion.div>
