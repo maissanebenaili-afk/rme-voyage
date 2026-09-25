@@ -2,10 +2,13 @@ import { MetadataRoute } from 'next';
 import { siteUrl } from '@/lib/siteUrl';
 import { CAFTANS } from '@/lib/caftans';
 import { PROPERTIES } from '@/lib/properties';
+import { ROUTE_PAGES } from '@/lib/routePages';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = siteUrl;
-  const lastModified = new Date();
+  // Date réelle de la dernière mise à jour connue des données. `new Date()`
+  // annonçait à chaque build que tout le site venait de changer.
+  const lastModified = new Date(`${ROUTE_PAGES.generatedAt}T00:00:00Z`);
 
   return [
     {
@@ -68,6 +71,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/trajet`,
+      lastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    ...ROUTE_PAGES.routes.map(route => ({
+      url: `${baseUrl}/trajet/${route.slug}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
     ...CAFTANS.map(c => ({
       url: `${baseUrl}/marwa-caftan/${c.id}`,
       lastModified,
