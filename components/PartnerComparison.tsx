@@ -46,7 +46,7 @@ export default function PartnerComparison({ partners }: { partners: PartnerCatal
               rel={active ? "sponsored noopener noreferrer" : "noopener noreferrer"}
               onClick={() => trackPartnerClick({
                 partner: partner.name,
-                product: partner.category,
+                product: (["ferry", "flight", "transfer", "hotel", "car_rental"] as const).includes(partner.category as "ferry" | "flight" | "transfer" | "hotel" | "car_rental") ? partner.category as "ferry" | "flight" | "transfer" | "hotel" | "car_rental" : "other",
                 placement: "partner_comparison",
                 page: window.location.pathname,
                 context: { affiliate_active: active },
