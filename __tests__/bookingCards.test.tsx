@@ -55,3 +55,29 @@ describe('Comparison journey', () => {
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
   });
 });
+
+describe('Provider attribution — the click must be tracked to whichever partner is actually configured', () => {
+  it('tracks "gnv" (not the old hard-coded "direct_ferries") when GNV is the configured provider', async () => {
+    global.fetch = jest.fn((input: RequestInfo | URL) => {
+      const url = new URL(input.toString(), 'https://rme.test');
+      const type = url.searchParams.get('type');
+      return Promise.resolve({
+        ok: true,
+        json: async () =>
+          type === 'ferry'
+            ? { configured: true, affiliateUrl: 'https://www.gnv.it/fr/booking?ref=approved', provider: 'gnv' }
+            : { configured: false, affiliateUrl: null, provider: null },
+      });
+    }) as unknown as typeof fetch;
+
+    render(<BookingCards origin="Paris" destination="Tanger" />);
+    const link = await screen.findByTestId('compare-ferry');
+    await waitFor(() => expect(link).toHaveAttribute('href', 'https://www.gnv.it/fr/booking?ref=approved'));
+
+    const va = jest.fn();
+    ;(window as Window & { va?: jest.Mock }).va = va;
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    expect(va).toHaveBeenCalledWith('event', expect.objectContaining({ name: 'partner_click', data: expect.objectContaining({ partner: 'gnv' }) }));
+    delete (window as Window & { va?: jest.Mock }).va;
+  });
+});

@@ -13,8 +13,10 @@ type Props = {
   crossing?: string;
 };
 
+type ConfiguredPartner = { url: string; provider: string };
+
 export default function BookingCards({ origin, destination, date, crossing }: Props) {
-  const [partners, setPartners] = useState<Partial<Record<BookingType, string>>>({});
+  const [partners, setPartners] = useState<Partial<Record<BookingType, ConfiguredPartner>>>({});
   // Trajet tel qu'il est au montage de la section : le lien partenaire vient
   // du tableau de bord et ne dépend pas du trajet, l'appel ne doit donc pas
   // repartir à chaque frappe.
@@ -39,7 +41,8 @@ export default function BookingCards({ origin, destination, date, crossing }: Pr
         const data = await response.json();
         const url = data.configured && verifiedPartnerUrl(data.affiliateUrl, type);
         if (url && !controller.signal.aborted) {
-          setPartners((current) => ({ ...current, [type]: url }));
+          const provider = typeof data.provider === 'string' && data.provider ? data.provider : 'unknown';
+          setPartners((current) => ({ ...current, [type]: { url, provider } }));
         }
       } catch {
         // An unavailable partner service must never block an ordinary link.
@@ -71,10 +74,10 @@ export default function BookingCards({ origin, destination, date, crossing }: Pr
           const Icon = type === 'ferry' ? Ship : Plane;
           const partner = partners[type];
           return (
-            <a key={type} href={partner || comparisonFallbacks[type]} target="_blank"
+            <a key={type} href={partner?.url || comparisonFallbacks[type]} target="_blank"
               rel={partner ? 'sponsored noopener noreferrer' : 'noopener noreferrer'}
               onClick={() => trackPartnerClick({
-                partner: partner ? (type === 'ferry' ? 'direct_ferries' : 'flight_partner') : (type === 'ferry' ? 'direct_ferries_public' : 'skyscanner_public'),
+                partner: partner ? partner.provider : (type === 'ferry' ? 'direct_ferries_public' : 'skyscanner_public'),
                 product: type,
                 placement: 'booking_cards',
                 page: window.location.pathname,

@@ -181,12 +181,24 @@ export default function AffiliatesPage() {
           </div>
         </div>
 
-        {/* Revenue estimate */}
-        <div className="mb-12 grid gap-4 sm:grid-cols-3">
+        {/* Revenue estimate — purely illustrative: no click, conversion or
+            revenue figure here comes from a measurement. Doctrine :
+            aucun chiffre commercial non vérifié ne doit être présenté comme
+            une donnée opérationnelle (voir MONETISATION.md). */}
+        <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" />
+          <span>
+            <strong>Simulation illustrative, pas une donnée mesurée.</strong> Les montants ci-dessous supposent un
+            volume de clics et un taux de conversion hypothétiques ; aucun clic, aucune commission ni aucun revenu
+            réel n&apos;est encore mesuré par RME Voyage. Ne pas les utiliser pour une décision commerciale avant
+            d&apos;avoir des chiffres réellement observés (<code className="font-mono">partner_click</code> côté
+            analytics, puis un relevé de commission côté partenaire).
+          </span>
+        </div>
+        <div className="mb-12 grid gap-4 sm:grid-cols-2">
           {[
-            { label: 'Si 100 clics/mois Wise', value: '~€1 000–2 500/mois', note: 'Taux de conversion 10–25%' },
-            { label: 'Si 50 billets ferry/mois', value: '~€750–2 000/mois', note: 'Billet moyen famille €150–400' },
-            { label: 'Si 3 clients B2B/an', value: '~€1 470–5 970/an', note: 'Récurrent, zéro support' },
+            { label: 'Si 100 clics/mois Wise', value: '~€1 000–2 500/mois', note: 'Hypothèse : conversion 10–25%, non mesurée' },
+            { label: 'Si 50 billets ferry/mois', value: '~€750–2 000/mois', note: 'Hypothèse : billet moyen famille €150–400, non mesuré' },
           ].map(({ label, value, note }) => (
             <div key={label} className="premium-card rounded-xl p-5">
               <Banknote size={20} className="text-[#0369a1]" />
@@ -223,7 +235,7 @@ export default function AffiliatesPage() {
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-lg bg-[#f8fafc] p-3">
-                    <p className="text-xs text-[#5a716c]">Commission</p>
+                    <p className="text-xs text-[#5a716c]">Commission (à confirmer à l&apos;inscription)</p>
                     <p className="mt-0.5 text-sm font-bold">{prog.commission}</p>
                   </div>
                   <div className="rounded-lg bg-[#f8fafc] p-3">
