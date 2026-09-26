@@ -23,6 +23,7 @@ import {
 import RouteSearch from '@/components/RouteSearch';
 import RouteJourney from '@/components/RouteJourney';
 import SplashScreen from '@/components/SplashScreen';
+import TravelHub from '@/components/TravelHub';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -131,10 +132,12 @@ export default function Home() {
         </div>
       </section>
 
+      <TravelHub />
+
       {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
           Atlas pâle plutôt que gris neutre : une section qu'on identifie
           d'un coup d'œil, un peu de couleur au lieu du "tout blanc". */}
-      <section className="border-b border-slate-200 bg-atlas-100 py-10">
+      <section id="route" className="scroll-mt-4 border-b border-slate-200 bg-atlas-100 py-10">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <TripDecisionEngine />
         </div>
@@ -216,7 +219,7 @@ export default function Home() {
 
       {/* Spiritual & Services Section — léger violet Jacaranda, comme le vert
           Atlas plus haut : une section de plus qui se repère d'un regard. */}
-      <section className="bg-jacaranda-50 py-20">
+      <section id="maroc" className="scroll-mt-4 bg-jacaranda-50 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <div className="mb-10 max-w-2xl">
             <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">En route</p>
@@ -233,7 +236,9 @@ export default function Home() {
             <CurrencyConverter />
             <NewsFeed />
             <ServicesMap />
-            <TravelChecklist />
+            <div id="preparer" className="scroll-mt-4">
+              <TravelChecklist />
+            </div>
           </div>
         </div>
       </section>
@@ -322,7 +327,7 @@ export default function Home() {
           </div>
 
           {/* RME Sport — unified match hub */}
-          <div className="mt-6"><SportsHub /></div>
+          <div id="sport-tv" className="mt-6 scroll-mt-4"><SportsHub /></div>
 
           {/* Faical Football Picks */}
           <div className="mt-6">
@@ -346,7 +351,7 @@ export default function Home() {
       </section>
 
       {/* Boutiques & Services Section */}
-      <section className="py-16 bg-white">
+      <section id="services" className="scroll-mt-4 py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-[#b45309]">Boutiques & Services</p>
