@@ -1,50 +1,38 @@
 import { NextResponse } from 'next/server';
-import { isSupabaseConfigured } from '../../../packages/utils/supabase';
+import { getProviderHealth, isFreeOnly } from '@/lib/hadakAiRouter';
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 60;
 export const runtime = 'edge';
 
+/**
+ * Non-sensitive operational health.
+ * Never return keys, tokens, Authorization headers, raw upstream errors,
+ * request payloads, or PII.
+ */
 export async function GET() {
   try {
-    // Comprehensive health checks (Edge Runtime compatible)
-    const checks = {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      services: {
-        database: {
-          supabase: isSupabaseConfigured() ? 'configured' : 'not_configured',
-        },
-        apis: {
-          aladhan: 'available', // Free, always available
-          openweathermap: process.env.OPENWEATHERMAP_API_KEY ? 'configured' : 'not_configured',
-          exchangerate: 'available', // Free tier available
-        },
-        auth: {
-          openai: process.env.OPENAI_API_KEY ? 'configured' : 'not_configured',
-        },
-      },
-      endpoints: {
-        trips: 'GET/POST/PUT/DELETE /api/trips',
-        tips: 'GET/POST /api/tips',
-        health: 'GET /api/health',
-      },
-    };
+    const providerHealth = getProviderHealth();
+    const providers = Object.fromEntries(
+      Object.entries(providerHealth).map(([id, state]) => [id, {
+        state: state.state,
+        cooldown: state.cooldown_until !== null,
+      }]),
+    );
 
-    return NextResponse.json(checks, {
-      status: 200,
-      headers: {
-        'Cache-Control': 'public, max-age=60, s-maxage=60',
+    return NextResponse.json({
+      status: 'healthy',
+      ai_router: {
+        free_only: isFreeOnly(),
+        providers,
       },
+    }, {
+      status: 200,
+      headers: { 'Cache-Control': 'public, max-age=60, s-maxage=60' },
     });
   } catch {
-    console.error('[Health API] Error');
     return NextResponse.json(
-      {
-        status: 'error',
-        timestamp: new Date().toISOString(),
-        error: 'Health check failed',
-      },
-      { status: 500 }
+      { status: 'error' },
+      { status: 500 },
     );
   }
 }
