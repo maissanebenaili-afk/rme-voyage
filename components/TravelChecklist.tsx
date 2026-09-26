@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, Plus, Trash2, Plane, Ship, Car, FileText, Shield } from "lucide-react";
+import { useTravelStorage } from "@/lib/travel/useTravelStorage";
 
 type ChecklistItem = {
   id: string;
@@ -34,16 +35,40 @@ const categoryLabels: Record<string, { label: string; color: string }> = {
   logistique: { label: "Logistique", color: "text-amber-700 bg-amber-50" },
 };
 
+// Default items are saved in the shared travel store under this prefix, so
+// checklistProgress can later hold other lists (e.g. "pck:") side by side.
+// Custom items have no stored label in TravelDataV1: they stay session-only.
+export const CHECKLIST_PREFIX = "chk:";
+const defaultIds = new Set(defaultItems.map((item) => item.id));
+
 export default function TravelChecklist() {
-  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const { travel, updateTravel } = useTravelStorage();
+  const [customChecked, setCustomChecked] = useState<Set<string>>(new Set());
   const [customItems, setCustomItems] = useState<ChecklistItem[]>([]);
   const [newItem, setNewItem] = useState("");
+
+  const checked = useMemo(() => {
+    const saved = travel.checklistProgress
+      .filter((key) => key.startsWith(CHECKLIST_PREFIX))
+      .map((key) => key.slice(CHECKLIST_PREFIX.length))
+      .filter((id) => defaultIds.has(id));
+    return new Set([...saved, ...customChecked]);
+  }, [travel.checklistProgress, customChecked]);
 
   const allItems = [...defaultItems, ...customItems];
   const progress = Math.round((checked.size / allItems.length) * 100);
 
   function toggle(id: string) {
-    setChecked((prev) => {
+    if (defaultIds.has(id)) {
+      const key = `${CHECKLIST_PREFIX}${id}`;
+      updateTravel((prev) => ({
+        checklistProgress: prev.checklistProgress.includes(key)
+          ? prev.checklistProgress.filter((entry) => entry !== key)
+          : [...prev.checklistProgress, key],
+      }));
+      return;
+    }
+    setCustomChecked((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -91,7 +116,10 @@ export default function TravelChecklist() {
               }`}
             >
               <button
+                type="button"
                 onClick={() => toggle(item.id)}
+                aria-pressed={isChecked}
+                aria-label={item.label}
                 className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg border-2 transition-all ${
                   isChecked
                     ? "border-emerald-600 bg-emerald-600 text-white"
@@ -127,7 +155,9 @@ export default function TravelChecklist() {
           className="flex-1 rounded-xl border p-2.5 text-sm"
         />
         <button
+          type="button"
           onClick={addItem}
+          aria-label="Ajouter l'élément"
           className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700"
         >
           <Plus size={18} />
