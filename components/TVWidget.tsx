@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { Tv, Radio, ExternalLink, Signal, MapPin } from 'lucide-react';
 
 type Channel = {
@@ -63,6 +65,7 @@ function ChannelCard({ ch }: { ch: Channel }) {
       href={ch.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={(event) => void openExternal(ch.url, event)}
       className="group flex items-center gap-3 rounded-2xl border border-[#e2e8f0] bg-white p-3.5 transition hover:border-[#f59e0b]/50 hover:shadow-md hover:shadow-[#f59e0b]/5"
     >
       <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#f8fafc] text-xl border border-[#e2e8f0] group-hover:bg-[#fef3c7]">
@@ -91,6 +94,17 @@ function ChannelCard({ ch }: { ch: Channel }) {
 
 export default function TVWidget() {
   const [tab, setTab] = useState<TabKey>('sport');
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  const openExternal = async (url: string, event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isNativeApp) return;
+    event.preventDefault();
+    await Browser.open({ url });
+  };
+
+  useEffect(() => {
+    setIsNativeApp(Capacitor.isNativePlatform());
+  }, []);
   const showTonight = isTonightMatchDay();
 
   return (
