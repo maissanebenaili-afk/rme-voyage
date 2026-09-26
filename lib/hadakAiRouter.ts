@@ -42,7 +42,7 @@ type Provider = {
   id: string;
   freeTier: boolean;
   baseUrl: string;
-  model: string;
+  model: string | string[];
   kind: 'openai-compatible' | 'anthropic';
   getKey: () => string | undefined;
 };
@@ -88,7 +88,7 @@ function providers(): Provider[] {
       id: 'groq',
       freeTier: true,
       baseUrl: 'https://api.groq.com/openai/v1',
-      model: 'llama-3.3-70b-versatile',
+      model: ['llama-3.3-70b-versatile', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant'],
       kind: 'openai-compatible',
       getKey: () => process.env.GROQ_API_KEY,
     },
@@ -96,7 +96,7 @@ function providers(): Provider[] {
       id: 'gemini',
       freeTier: true,
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-      model: 'gemini-3.8-flash',
+      model: ['gemini-3.8-flash', 'gemini-flash-latest'],
       kind: 'openai-compatible',
       getKey: () => process.env.GEMINI_API_KEY,
     },
@@ -222,48 +222,58 @@ async function callProvider(provider: Provider, systemPrompt: string, message: s
   const key = provider.getKey();
   if (!key) return { text: null, state: 'DISABLED' };
 
-  try {
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    let body: string;
-    let url: string;
+  const models = Array.isArray(provider.model) ? provider.model : [provider.model];
+  let lastState: ProviderState = 'PROVIDER_ERROR';
 
-    if (provider.kind === 'anthropic') {
-      url = provider.baseUrl + '/messages';
-      headers['x-api-key'] = key;
-      headers['anthropic-version'] = '2023-06-01';
-      body = JSON.stringify({
-        model: provider.model,
-        max_tokens: 512,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: message }],
-      });
-    } else {
-      url = provider.baseUrl + '/chat/completions';
-      headers.Authorization = `Bearer ${key}`;
-      body = JSON.stringify({
-        model: provider.model,
-        max_tokens: 512,
-        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }],
-      });
+  for (const model of models) {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      let body: string;
+      let url: string;
+
+      if (provider.kind === 'anthropic') {
+        url = provider.baseUrl + '/messages';
+        headers['x-api-key'] = key;
+        headers['anthropic-version'] = '2023-06-01';
+        body = JSON.stringify({
+          model,
+          max_tokens: 512,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: message }],
+        });
+      } else {
+        url = provider.baseUrl + '/chat/completions';
+        headers.Authorization = `Bearer ${key}`;
+        body = JSON.stringify({
+          model,
+          max_tokens: 512,
+          messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }],
+        });
+      }
+
+      const response = await fetchWithTimeout(url, { method: 'POST', headers, body });
+      if (!response.ok) {
+        lastState = classifyStatus(response.status);
+        continue;
+      }
+
+      const data = await response.json() as {
+        choices?: Array<{ message?: { content?: string } }>;
+        content?: Array<{ type?: string; text?: string }>;
+      };
+
+      const text = provider.kind === 'anthropic'
+        ? data.content?.find((block) => block.type === 'text')?.text ?? null
+        : data.choices?.[0]?.message?.content ?? null;
+
+      if (text) return { text };
+      lastState = 'DEGRADED';
+    } catch (error) {
+      lastState = error instanceof Error && error.name === 'AbortError' ? 'TIMEOUT' : 'PROVIDER_ERROR';
     }
-
-    const response = await fetchWithTimeout(url, { method: 'POST', headers, body });
-    if (!response.ok) return { text: null, state: classifyStatus(response.status) };
-
-    const data = await response.json() as {
-      choices?: Array<{ message?: { content?: string } }>;
-      content?: Array<{ type?: string; text?: string }>;
-    };
-
-    const text = provider.kind === 'anthropic'
-      ? data.content?.find((block) => block.type === 'text')?.text ?? null
-      : data.choices?.[0]?.message?.content ?? null;
-
-    return { text };
-  } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') return { text: null, state: 'TIMEOUT' };
-    return { text: null, state: 'PROVIDER_ERROR' };
   }
+
+  return { text: null, state: lastState };
 }
 
 export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> {
