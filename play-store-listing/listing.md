@@ -1,10 +1,10 @@
 # Google Play Store Listing - RME Voyage
 
 ## App Details
-- **Package ID**: com.mreroute.app
+- **Package ID**: com.rmevoyage.app (identique à `capacitor.config.ts` ; définitif après le premier envoi)
 - **App Name**: RME Voyage
 - **Category**: Travel & Local
-- **Content Rating**: Everyone
+- **Content Rating**: à obtenir via le questionnaire IARC de la Play Console (voir `data-safety.md` pour le public cible)
 - **Price**: Free
 
 ## Short Description (80 chars max)
@@ -29,16 +29,16 @@ FONCTIONNALITÉS PRINCIPALES:
 
 • Convertisseur de devises - EUR, MAD, USD, GBP et plus. Conversion instantanée.
 
-• Assistant IA en Darija - Posez vos questions en darija, français, arabe, anglais ou espagnol. Réponses instantanées sur les itinéraires, prières, ferry, documents, urgences et plus.
+• Assistant Hadak - Posez vos questions en darija, français, arabe, anglais ou espagnol. Réponses rapides sur les itinéraires, prières, ferry, documents, urgences et plus. Certaines réponses sont générées par IA : vérifiez les informations importantes, et signalez une réponse d'un simple bouton.
 
-5 LANGUES DISPONIBLES:
+ASSISTANT EN 5 LANGUES (interface en français) :
 - Français
 - English
 - العربية
 - Español
 - الدارجة (Darija marocaine)
 
-L'application est gratuite et sans publicité. Les liens partenaires sont clairement signalés.
+L'application est gratuite et fonctionne sans compte. Les liens partenaires sont clairement signalés.
 
 RME Voyage - Parce que le voyage commence bien avant le départ.
 
@@ -54,8 +54,9 @@ voyage, maroc, MRE, RME, prière, qibla, itinéraire, ferry, darija, diaspora
 6. Currency converter
 
 ## Build Instructions
-1. Install Android SDK (via Android Studio or command-line tools)
-2. Run: npx cap add android
-3. Run: npx cap sync
-4. Run: cd android && ./gradlew bundleRelease
-5. Upload AAB to Google Play Console
+Voir `CAPACITOR_BUILD.md` (source à jour pour la construction de l'AAB).
+
+## Déclarations liées
+- Politique de confidentialité : https://rme-route.vercel.app/api/legal/privacy
+- Formulaire « Sécurité des données » : `data-safety.md`
+- Chaque promesse ci-dessus correspond à une fonction présente dans l'app (vérifié le 26/09/2026) : itinéraire + carte (RouteSearch), prières et Qibla (PrayerWidget, QiblaCompass), coûts carburant/péages/ferry (TripDecisionEngine, FuelByCountryPanel), checklist (TravelChecklist), convertisseur (CurrencyConverter), assistant (HadakAI).
