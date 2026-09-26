@@ -1,6 +1,6 @@
 "use client";
 
-
+import { useEffect, useState } from "react";
 import { Car, Hotel, Luggage, Plane, ShieldCheck, Ship, Smartphone, Sparkles, Wallet } from "lucide-react";
 import type { PartnerCatalogueEntry, PartnerCategory } from "@/lib/partnerCatalogue";
 import { trackPartnerClick } from "@/lib/partnerTracking";
@@ -17,7 +17,22 @@ const categoryMeta: Record<PartnerCategory, { label: string; icon: typeof Ship }
   insurance: { label: "Assurance", icon: ShieldCheck },
 };
 
-export default function PartnerComparison({ partners }: { partners: PartnerCatalogueEntry[] }) {
+export default function PartnerComparison({ partners: initialPartners }: { partners: PartnerCatalogueEntry[] }) {
+  const [partners, setPartners] = useState(initialPartners);
+
+  // Affiliate URLs live in server-only env vars: the browser cannot read them,
+  // so the configured catalogue comes from the server route.
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/partners", { signal: controller.signal, cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { partners?: unknown } | null) => {
+        if (Array.isArray(data?.partners)) setPartners(data.partners as PartnerCatalogueEntry[]);
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
+
   if (!partners.length) return null;
 
   return (

@@ -53,6 +53,19 @@ const PROVIDERS = [
   },
 ] as const;
 
+// Tracking links come from partner networks whose hosts vary, so only the
+// URL shape is enforced here: https, no credentials, no custom port.
+function configuredAffiliateUrl(value: string | undefined): string | null {
+  if (!value?.trim()) return null;
+  try {
+    const url = new URL(value.trim());
+    if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 
@@ -85,8 +98,8 @@ export async function GET(request: NextRequest) {
   const results = PROVIDERS.map((p) => {
     const netSent = amount - p.fee;
     const received = netSent > 0 ? netSent * midRate * (1 - p.spread) : 0;
-    const affiliateBase = process.env[p.affiliateEnvKey];
-    const isAffiliate = Boolean(affiliateBase);
+    const affiliateBase = configuredAffiliateUrl(process.env[p.affiliateEnvKey]);
+    const isAffiliate = affiliateBase !== null;
     // Use an approved partner URL when configured; otherwise use a public pre-filled link.
     const affiliateUrl = affiliateBase ?? p.deepLinkFn(amount);
     return {
