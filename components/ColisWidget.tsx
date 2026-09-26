@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { Package, Phone, MapPin, Star, Truck, Calculator } from 'lucide-react';
+import { contactMailto } from '@/lib/contact';
+
+const joinMailto = contactMailto('Inscription annuaire Colis & Groupage');
 
 type Transporteur = {
   name: string;
@@ -128,12 +131,14 @@ export default function ColisWidget() {
               Envoyez vos affaires au bled sans prendre la route
             </p>
           </div>
-          <a
-            href="mailto:pro@rme-voyage.com?subject=Inscription%20annuaire%20Colis%20%26%20Groupage"
-            className="ml-auto hidden whitespace-nowrap rounded-full border border-[#c9903a]/40 bg-[#c9903a]/10 px-3 py-1.5 text-[11px] font-bold text-[#c9903a] transition hover:bg-[#c9903a]/20 sm:block"
-          >
-            + Rejoindre
-          </a>
+          {joinMailto && (
+            <a
+              href={joinMailto}
+              className="ml-auto hidden whitespace-nowrap rounded-full border border-[#c9903a]/40 bg-[#c9903a]/10 px-3 py-1.5 text-[11px] font-bold text-[#c9903a] transition hover:bg-[#c9903a]/20 sm:block"
+            >
+              + Rejoindre
+            </a>
+          )}
         </div>
       </div>
 
@@ -166,12 +171,14 @@ export default function ColisWidget() {
         ))}
       </div>
 
-      <p className="flex items-center justify-center gap-1.5 px-5 pb-4 text-center text-[10px] text-[#94a3b8]">
-        <Truck size={10} /> Transporteur ?{' '}
-        <a href="mailto:pro@rme-voyage.com" className="text-[#c9903a] hover:underline">
-          Rejoignez l&apos;annuaire
-        </a>
-      </p>
+      {joinMailto && (
+        <p className="flex items-center justify-center gap-1.5 px-5 pb-4 text-center text-[10px] text-[#94a3b8]">
+          <Truck size={10} /> Transporteur ?{' '}
+          <a href={joinMailto} className="text-[#c9903a] hover:underline">
+            Rejoignez l&apos;annuaire
+          </a>
+        </p>
+      )}
     </div>
   );
 }
