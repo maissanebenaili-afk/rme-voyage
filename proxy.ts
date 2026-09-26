@@ -33,7 +33,7 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, ro
 // par IP en cas d'abus/boucle client.
 const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services', '/api/support', '/api/tips'];
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/newsletter', '/api/partners', '/api/prayer', '/api/remittance', '/api/route', '/api/services', '/api/support', '/api/tips'];
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak', '/api/faical'];
 
 function getClientKey(request: NextRequest): string {
