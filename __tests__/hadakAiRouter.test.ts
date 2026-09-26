@@ -9,7 +9,7 @@ const realEnv = process.env;
 
 function setEnv(values: Record<string, string | undefined>) {
   process.env = { ...realEnv };
-  for (const key of ['AI_ROUTER_FREE_ONLY', 'GROQ_API_KEY', 'GEMINI_API_KEY', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY']) {
+  for (const key of ['AI_ROUTER_FREE_ONLY', 'GROQ_API_KEY', 'GEMINI_API_KEY', 'OPENROUTER_API_KEY', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY']) {
     delete process.env[key];
   }
   for (const [key, value] of Object.entries(values)) {
@@ -17,8 +17,8 @@ function setEnv(values: Record<string, string | undefined>) {
   }
 }
 
-function mockJson(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+function mockJson(body: unknown, status = 200, headers: Record<string, string> = {}) {
+  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...headers } });
 }
 
 function post(message: string, lang = 'fr') {
@@ -38,11 +38,12 @@ beforeEach(() => {
   setEnv({});
 });
 afterEach(() => {
+  jest.useRealTimers();
   global.fetch = realFetch;
   process.env = realEnv;
 });
 
-describe('LOT A+ — 19 mandatory routing invariants', () => {
+describe('LOT B — resilience and routing invariants', () => {
   it('1. FREE_ONLY blocks OpenAI', async () => {
     setEnv({ AI_ROUTER_FREE_ONLY: 'true', GROQ_API_KEY: 'groq-test', OPENAI_API_KEY: 'openai-test' });
     const urls: string[] = [];
@@ -125,7 +126,37 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(getProviderHealth().groq.cooldown_until).not.toBeNull();
   });
 
-  it('9. deterministic time resolution happens before any LLM', async () => {
+  it('9. 429 cooldown grows exponentially after repeated rate limits', async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-09-26T12:00:00.000Z'));
+    setEnv({ GROQ_API_KEY: 'g' });
+    global.fetch = jest.fn(async () => mockJson({}, 429)) as unknown as typeof fetch;
+
+    await routeHadakAI({ message: 'one', systemPrompt: 'answer' });
+    const first = getProviderHealth().groq.cooldown_until;
+    expect(first).toBe(Date.now() + 30_000);
+
+    jest.advanceTimersByTime(30_000);
+    await routeHadakAI({ message: 'two', systemPrompt: 'answer' });
+    const second = getProviderHealth().groq.cooldown_until;
+    expect(second).toBe(Date.now() + 60_000);
+
+    jest.useRealTimers();
+  });
+
+  it('10. 429 honors a valid Retry-After delay', async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-09-26T12:00:00.000Z'));
+    setEnv({ GROQ_API_KEY: 'g' });
+    global.fetch = jest.fn(async () => mockJson({}, 429, { 'retry-after': '45' })) as unknown as typeof fetch;
+
+    await routeHadakAI({ message: 'rate limited', systemPrompt: 'answer' });
+    expect(getProviderHealth().groq.cooldown_until).toBe(Date.now() + 45_000);
+
+    jest.useRealTimers();
+  });
+
+  it('11. deterministic time resolution happens before any LLM', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     const fetchMock = jest.fn(async () => {
       throw new Error('LLM must not be called');
@@ -137,7 +168,19 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('10. cached football answers avoid a second LLM call', async () => {
+  it('12. OpenRouter free fallback is eligible when earlier free providers are unavailable', async () => {
+    setEnv({ AI_ROUTER_FREE_ONLY: 'true', OPENROUTER_API_KEY: 'openrouter-test' });
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      expect(hostname(input)).toBe('openrouter.ai');
+      return mockJson({ choices: [{ message: { content: 'openrouter free response' } }] });
+    }) as unknown as typeof fetch;
+
+    const result = await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
+    expect(result.provider).toBe('openrouter');
+    expect(result.resolutionType).toBe('FREE_PROVIDER');
+  });
+
+  it('13. cached football answers avoid a second LLM call', async () => {
     setEnv({ OPENAI_API_KEY: 'o' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       const url = input.toString();
@@ -153,7 +196,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(fetchMock.mock.calls.length).toBe(callsAfterFirst);
   });
 
-  it('11. all providers unavailable reaches the offline fallback', async () => {
+  it('14. all providers unavailable reaches the offline fallback', async () => {
     setEnv({ GROQ_API_KEY: 'g', OPENAI_API_KEY: 'o', ANTHROPIC_API_KEY: 'a' });
     global.fetch = jest.fn(async () => mockJson({}, 503)) as unknown as typeof fetch;
     const result = await routeHadakAI({ message: 'generic', systemPrompt: 'answer' });
@@ -161,7 +204,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(result.resolutionType).toBe('OFFLINE_FALLBACK');
   });
 
-  it('12. logs/ledger contain no API key values', async () => {
+  it('15. logs/ledger contain no API key values', async () => {
     const secret = 'TEST_SECRET_SHOULD_NEVER_APPEAR';
     setEnv({ GROQ_API_KEY: secret });
     global.fetch = jest.fn(async () => mockJson({}, 503)) as unknown as typeof fetch;
@@ -170,7 +213,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(serialized).not.toContain(secret);
   });
 
-  it('13. football regression still returns a named-team answer through the router', async () => {
+  it('16. football regression still returns a named-team answer through the router', async () => {
     setEnv({ OPENAI_API_KEY: 'o' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       if (hostname(input) === 'api.openai.com') return mockJson({ choices: [{ message: { content: 'football answer' } }] });
@@ -181,7 +224,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(body.response).toBe('football answer');
   });
 
-  it('14. ferry regression remains deterministic', async () => {
+  it('17. ferry regression remains deterministic', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     global.fetch = jest.fn(async () => { throw new Error('LLM must not be called'); }) as unknown as typeof fetch;
     const response = await post('Quel ferry pour rentrer au Maroc ?');
@@ -190,14 +233,14 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(body.response).toMatch(/Ferries pour les MRE/);
   });
 
-  it('15. clock regression remains deterministic', async () => {
+  it('18. clock regression remains deterministic', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     global.fetch = jest.fn(async () => { throw new Error('LLM must not be called'); }) as unknown as typeof fetch;
     const response = await post('quelle heure est-il au Maroc');
     expect((await response.json()).response).toMatch(/Il est actuellement/);
   });
 
-  it('16. weather regression uses external data before LLM', async () => {
+  it('19. weather regression uses external data before LLM', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       if (hostname(input) === 'api.open-meteo.com') {
@@ -212,7 +255,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(body.response).toContain('22°C');
   });
 
-  it('17. currency regression uses external data before LLM', async () => {
+  it('20. currency regression uses external data before LLM', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       if (hostname(input) === 'open.er-api.com') return mockJson({ rates: { MAD: 11, GBP: 0.85, CHF: 0.95, USD: 1.1 } });
@@ -225,7 +268,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(body.response).toContain('11.00 MAD');
   });
 
-  it('18. generic questions reach the AI router', async () => {
+  it('21. generic questions reach the AI router', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       if (new URL(input.toString()).hostname === 'api.groq.com') return mockJson({ choices: [{ message: { content: 'generic answer' } }] });
@@ -237,7 +280,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(body.response).toBe('generic answer');
   });
 
-  it('19. successful provider resets failures and becomes AVAILABLE', async () => {
+  it('22. successful provider resets failures and becomes AVAILABLE', async () => {
     setEnv({ GROQ_API_KEY: 'g', OPENAI_API_KEY: 'o' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) =>
       input.toString().includes('groq') ? mockJson({}, 503) : mockJson({ choices: [{ message: { content: 'ok' } }] }),

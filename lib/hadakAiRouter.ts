@@ -1,5 +1,5 @@
 /**
- * Hadak AI Router — Lot A+
+ * Hadak AI Router — Lot B
  *
  * Scope: provider routing only. No UI, partner, monetisation, or persistence.
  * Serverless note: circuit state is instance-local; inter-instance coherence
@@ -66,7 +66,8 @@ type RouteResult = {
   requestId: string;
 };
 
-const COOLDOWN_MS = 30_000;
+const BASE_COOLDOWN_MS = 30_000;
+const MAX_COOLDOWN_MS = 5 * 60_000;
 const FAILURE_THRESHOLD = 2;
 const REQUEST_TIMEOUT_MS = 8_000;
 const LEDGER_MAX_ENTRIES = 256;
@@ -88,7 +89,9 @@ function providers(): Provider[] {
       id: 'groq',
       freeTier: true,
       baseUrl: 'https://api.groq.com/openai/v1',
-      model: ['llama-3.3-70b-versatile', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant'],
+      // gpt-oss-20b is listed in Groq's Free Plan Limits (2026-09-26). The others
+      // stay as fallbacks: this account got a 404 on a documented Groq model.
+      model: ['openai/gpt-oss-20b', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
       kind: 'openai-compatible',
       getKey: () => process.env.GROQ_API_KEY,
     },
@@ -96,9 +99,20 @@ function providers(): Provider[] {
       id: 'gemini',
       freeTier: true,
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-      model: ['gemini-3.8-flash', 'gemini-flash-latest'],
+      // gemini-3.8-flash is the model Google's API named for this key and it
+      // answered in production; the documented free-tier models follow it.
+      model: ['gemini-3.8-flash', 'gemini-3-flash-preview', 'gemini-3.1-flash-lite'],
       kind: 'openai-compatible',
       getKey: () => process.env.GEMINI_API_KEY,
+    },
+    {
+      // Verified 2026-09-26: OpenRouter free-model router is $0, with a free-account daily request cap.
+      id: 'openrouter',
+      freeTier: true,
+      baseUrl: 'https://openrouter.ai/api/v1',
+      model: 'openrouter/free',
+      kind: 'openai-compatible',
+      getKey: () => process.env.OPENROUTER_API_KEY,
     },
     {
       id: 'openai',
@@ -173,17 +187,23 @@ function classifyStatus(status: number): ProviderState {
   return 'DEGRADED';
 }
 
-function markFailure(id: string, state: ProviderState): void {
+function exponentialCooldownMs(failures: number): number {
+  return Math.min(BASE_COOLDOWN_MS * 2 ** Math.max(0, failures - 1), MAX_COOLDOWN_MS);
+}
+
+function markFailure(id: string, state: ProviderState, retryAfterMs = 0): void {
   const r = runtimeFor(id);
   r.state = state;
   r.failures += 1;
+  const cooldownMs = Math.max(exponentialCooldownMs(r.failures), retryAfterMs);
+
   if (state === 'RATE_LIMITED' || state === 'QUOTA_EXHAUSTED' || state === 'AUTH_ERROR') {
-    r.cooldownUntil = Date.now() + COOLDOWN_MS;
+    r.cooldownUntil = Date.now() + cooldownMs;
     return;
   }
   if (r.failures >= FAILURE_THRESHOLD) {
     r.state = 'CIRCUIT_OPEN';
-    r.cooldownUntil = Date.now() + COOLDOWN_MS;
+    r.cooldownUntil = Date.now() + cooldownMs;
   }
 }
 
@@ -218,7 +238,28 @@ async function fetchWithTimeout(url: string, init: RequestInit): Promise<Respons
   }
 }
 
-async function callProvider(provider: Provider, systemPrompt: string, message: string): Promise<{ text: string | null; state?: ProviderState }> {
+function parseRetryAfterMs(response: Response): number {
+  const raw = response.headers.get('retry-after');
+  if (!raw) return 0;
+
+  const seconds = Number(raw);
+  if (Number.isFinite(seconds) && seconds >= 0) {
+    return seconds * 1000;
+  }
+
+  const retryAt = Date.parse(raw);
+  if (!Number.isNaN(retryAt)) {
+    return Math.max(0, retryAt - Date.now());
+  }
+
+  return 0;
+}
+
+async function callProvider(
+  provider: Provider,
+  systemPrompt: string,
+  message: string,
+): Promise<{ text: string | null; state?: ProviderState; retryAfterMs?: number }> {
   const key = provider.getKey();
   if (!key) return { text: null, state: 'DISABLED' };
 
@@ -254,6 +295,12 @@ async function callProvider(provider: Provider, systemPrompt: string, message: s
       const response = await fetchWithTimeout(url, { method: 'POST', headers, body });
       if (!response.ok) {
         lastState = classifyStatus(response.status);
+        if (response.status === 429) {
+          return { text: null, state: lastState, retryAfterMs: parseRetryAfterMs(response) };
+        }
+        if (response.status === 401 || response.status === 403) {
+          return { text: null, state: lastState };
+        }
         continue;
       }
 
@@ -298,7 +345,7 @@ export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> 
     }
 
     const failure = result.state ?? 'PROVIDER_ERROR';
-    markFailure(provider.id, failure);
+    markFailure(provider.id, failure, result.retryAfterMs);
     appendLedger({
       request_id: id,
       provider: provider.id,
