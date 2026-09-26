@@ -29,6 +29,9 @@ function post(message: string, lang = 'fr') {
   }));
 }
 
+function hostname(input: RequestInfo | URL): string {
+  return new URL(input.toString()).hostname;
+}
 beforeEach(() => {
   resetRouterForTests();
   resetFootballCacheForTests();
@@ -45,7 +48,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     const urls: string[] = [];
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       urls.push(input.toString());
-      if (input.toString().includes('api.groq.com')) return mockJson({ choices: [{ message: { content: 'groq ok' } }] });
+      if (hostname(input) === 'api.groq.com') return mockJson({ choices: [{ message: { content: 'groq ok' } }] });
       throw new Error('paid provider must not be called');
     }) as unknown as typeof fetch;
     const result = await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
@@ -76,7 +79,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
   it('4. 429 moves to the next provider and records RATE_LIMITED', async () => {
     setEnv({ GROQ_API_KEY: 'g', OPENAI_API_KEY: 'o' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) =>
-      input.toString().includes('groq') ? mockJson({}, 429) : mockJson({ choices: [{ message: { content: 'openai ok' } }] }),
+      hostname(input) === 'api.groq.com' ? mockJson({}, 429) : mockJson({ choices: [{ message: { content: 'openai ok' } }] }),
     ) as unknown as typeof fetch;
     const result = await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
     expect(result.provider).toBe('openai');
@@ -138,7 +141,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     setEnv({ OPENAI_API_KEY: 'o' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       const url = input.toString();
-      if (url.includes('openai.com')) return mockJson({ choices: [{ message: { content: 'cached candidate' } }] });
+      if (new URL(url).hostname === 'api.openai.com') return mockJson({ choices: [{ message: { content: 'cached candidate' } }] });
       return new Response('', { status: 503 });
     });
     global.fetch = fetchMock as unknown as typeof fetch;
@@ -170,7 +173,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
   it('13. football regression still returns a named-team answer through the router', async () => {
     setEnv({ OPENAI_API_KEY: 'o' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
-      if (input.toString().includes('api.openai.com')) return mockJson({ choices: [{ message: { content: 'football answer' } }] });
+      if (hostname(input) === 'api.openai.com') return mockJson({ choices: [{ message: { content: 'football answer' } }] });
       return new Response('', { status: 503 });
     }) as unknown as typeof fetch;
     const response = await post('Wydad ou Raja ce soir ?', 'da');
@@ -197,7 +200,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
   it('16. weather regression uses external data before LLM', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
-      if (input.toString().includes('open-meteo.com')) {
+      if (hostname(input) === 'api.open-meteo.com') {
         return mockJson({ current: { temperature_2m: 22, weather_code: 0, wind_speed_10m: 5 } });
       }
       throw new Error('LLM must not be called');
@@ -212,7 +215,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
   it('17. currency regression uses external data before LLM', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
-      if (input.toString().includes('open.er-api.com')) return mockJson({ rates: { MAD: 11, GBP: 0.85, CHF: 0.95, USD: 1.1 } });
+      if (hostname(input) === 'open.er-api.com') return mockJson({ rates: { MAD: 11, GBP: 0.85, CHF: 0.95, USD: 1.1 } });
       throw new Error('LLM must not be called');
     });
     global.fetch = fetchMock as unknown as typeof fetch;
