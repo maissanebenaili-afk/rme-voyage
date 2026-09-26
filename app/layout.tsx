@@ -12,9 +12,13 @@ import { siteUrl } from '@/lib/siteUrl';
 
 // Fallback fonts (kept for RTL Arabic + safety net); primary display/body
 // identity fonts (Boska + General Sans) load via Fontshare <link> below.
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+// Seule la police principale est préchargée. Inter n'est utilisée qu'à un
+// endroit et Amiri seulement pour le texte arabe : les précharger sur chaque
+// page coûtait ~250 Ko de téléchargement inutile. Elles restent disponibles
+// et se chargent dès qu'un texte les utilise.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap', preload: false });
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', display: 'swap', weight: ['400', '500', '600', '700', '800'] });
-const amiri = Amiri({ subsets: ['arabic', 'latin'], variable: '--font-amiri', display: 'swap', weight: ['400', '700'] });
+const amiri = Amiri({ subsets: ['arabic', 'latin'], variable: '--font-amiri', display: 'swap', weight: ['400', '700'], preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
