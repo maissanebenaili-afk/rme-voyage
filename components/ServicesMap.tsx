@@ -112,7 +112,7 @@ export default function ServicesMap() {
           type="button"
           onClick={search}
           disabled={status === "loading" || !place.trim()}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "loading" ? <LoaderCircle size={16} className="animate-spin" /> : <Search size={16} />}
           {status === "loading" ? "Recherche…" : "Rechercher"}

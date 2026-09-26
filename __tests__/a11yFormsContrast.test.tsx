@@ -24,7 +24,8 @@ describe("form fields are announced by screen readers", () => {
   );
 });
 
-// White text on the brand gold (#c9903a, 2.8:1) or WhatsApp green (#25d366, 2.0:1)
+// White text on the brand gold (#c9903a, 2.8:1), WhatsApp green (#25d366, 2.0:1)
+// or emerald-600 (3.8:1)
 // fails WCAG AA; buttons and badges on those colours use the navy text instead.
 describe("no white text on gold or WhatsApp-green backgrounds", () => {
   const skip = /SportsHub|FaicalWidget|TVWidget|__tests__/;
@@ -35,7 +36,7 @@ describe("no white text on gold or WhatsApp-green backgrounds", () => {
   test.each(files)("%s", (file) => {
     const source = readFileSync(join(root, file), "utf8");
     const offending = (source.match(/"[^"\n]*"|'[^'\n]*'|`[^`]*`/g) ?? []).filter(
-      (s) => /(?<![\w:/-])bg-\[#(c9903a|25d366)\](?!\/)/.test(s) && /(?<![\w:/-])text-white(?![\w/-])/.test(s),
+      (s) => /(?<![\w:/-])(bg-\[#(c9903a|25d366)\]|bg-emerald-600)(?!\/)/.test(s) && /(?<![\w:/-])text-white(?![\w/-])/.test(s),
     );
     expect(offending).toEqual([]);
   });
