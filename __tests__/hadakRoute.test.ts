@@ -112,3 +112,36 @@ describe('POST /api/hadak — documents vs ferry', () => {
     expect(text).toMatch(/Ferries pour les MRE/)
   })
 })
+
+// Every case below was answered wrongly in production on 2026-09-26: the first
+// matching keyword won even when it was only a place name or a clock word.
+describe('POST /api/hadak — subject beats weak keywords', () => {
+  const originalFetch = global.fetch
+  const originalEnv = process.env
+  beforeEach(() => {
+    process.env = Object.fromEntries(Object.entries(originalEnv).filter(([k, v]) => !/ANTHROPIC|GROQ|OPENAI/i.test(k) && !v?.startsWith('sk-ant-') && !v?.startsWith('gsk_'))) as NodeJS.ProcessEnv
+    global.fetch = jest.fn(async () => {
+      throw new Error('offline')
+    }) as unknown as typeof fetch
+  })
+  afterEach(() => {
+    global.fetch = originalFetch
+    process.env = originalEnv
+  })
+
+  async function ask(message: string, lang = 'fr') {
+    const response = await post({ message, lang })
+    return (await response.json()).response as string
+  }
+
+  it.each([
+    ['Barcelona contre le Real ce soir, qui va gagner ?', /Football marocain/],
+    ['Quelle heure part le ferry de Tarifa ?', /Ferries pour les MRE/],
+    ['Quel ferry pour Barcelona ?', /Ferries pour les MRE/],
+    ['Quelle heure est-il au Maroc ?', /Il est actuellement/],
+    ['Can you tell me what time it is in Morocco?', /Il est actuellement/],
+    ['Qui va gagner la CAN 2027 ?', /Football marocain/],
+  ])('%s', async (question, expected) => {
+    expect(await ask(question)).toMatch(expected)
+  })
+})

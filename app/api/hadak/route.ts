@@ -238,15 +238,14 @@ function detectIntent(msg: string): Intent {
   // prayer word must win, or the app answers the clock instead of the
   // prayer times it was actually asked for.
   if (/\b(priere|salat|prayer|salawat|fajr|dhuhr|asr|maghrib|isha|صلاة|موعد الصلاة|adhan|azan|imsakiyya|horaire.*(priere|salat)|quando.*(priere|salat))\b/.test(m)) return 'prayer';
-  // Time
-  if (/\b(heure|time|wa9t|وقت|maintenant|en ce moment|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
   // Explicit document words — checked before "ferry": "quels documents pour
   // passer à Tanger Med" names a port but asks about papers. Only unambiguous
   // document words here; "rentrer/entrer" stay in the later docs rule so
   // "quel ferry pour rentrer au Maroc" still gets the ferry answer.
   if (/\b(documents?|passeport|passport|visa|papiers?|watha2iq|carte.*(nationale|identite)|laissez.passer)\b/.test(m)) return 'docs';
-  // Ferry
-  if (/\b(ferry|bateau|traversee|boat|algeciras|tanger med|tarifa|barcelona|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
+  // Ferry — "barcelona" is not listed: alone it names the football club far
+  // more often; "ferry Barcelona → Nador" still matches on "ferry".
+  if (/\b(ferry|bateau|traversee|boat|algeciras|tanger med|tarifa|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
   // Documents
   if (/\b(document|passeport|passport|cin|visa|permis|papier|watha2iq|carte.*(nationale|identite)|laissez.passer|required.*enter|rentrer|entrer)\b/.test(m)) return 'docs';
   // Currency
@@ -258,7 +257,11 @@ function detectIntent(msg: string): Intent {
   // Fuel
   if (/\b(carburant|essence|gasoil|diesel|fuel|station.service|litre|petrole|estacion|benzina)\b/.test(m)) return 'fuel';
   // Football
-  if (/\b(foot|football|kora|lkora|ballon|wydad|raja|ittihad|difaa|renaissance|fus|botola|botola pro|caf|can|lions de l.atlas|lions atlas|equipe nationale|pronostic|qui va gagner|gagner ce soir|match.*ce soir|men 3ndo lhaq|ghayrbe7|man city|real madrid|barcelona|psg|premier league|champions league|ligue 1|liga)\b/.test(m)) return 'football';
+  if (/\b(foot|football|kora|lkora|ballon|wydad|raja|ittihad|difaa|renaissance|fus|botola|botola pro|caf|la can|can 20\d\d|coupe d.afrique|lions de l.atlas|lions atlas|equipe nationale|pronostic|qui va gagner|gagner ce soir|match.*ce soir|men 3ndo lhaq|ghayrbe7|man city|real madrid|barcelona|psg|premier league|champions league|ligue 1|liga)\b/.test(m)) return 'football';
+  // Time — checked last: "heure/time/maintenant" also appear in questions on
+  // another subject ("quelle heure part le ferry", "match ce soir à quelle
+  // heure"). The clock only answers when no subject was recognised.
+  if (/\b(heure|time|wa9t|وقت|maintenant|en ce moment|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
   return 'generic';
 }
 
