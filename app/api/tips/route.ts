@@ -3,6 +3,10 @@ import { supabase, isSupabaseConfigured, type CommunityTip } from '../../../pack
 
 export const runtime = 'edge';
 
+const MAX_LOCATION_CHARS = 100;
+const MAX_CATEGORY_CHARS = 40;
+const MAX_CONTENT_CHARS = 1000;
+
 // Mock community tips data (fallback when Supabase is not configured)
 const mockTips = {
   Marrakech: [
@@ -138,16 +142,20 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const location = body.location as string;
-    const category = (body.category as string) || 'general';
-    const content = body.content as string;
-    const userId = body.userId as string;
+    const location = typeof body.location === 'string' ? body.location.trim() : '';
+    const category = typeof body.category === 'string' && body.category.trim() ? body.category.trim() : 'general';
+    const content = typeof body.content === 'string' ? body.content.trim() : '';
+    // Identity comes from the session verified by the proxy, never from the body.
+    const userId = req.headers.get('x-user-id') ?? '';
 
-    if (!location || !content || !userId) {
-      return NextResponse.json(
-        { error: 'Location, content, and userId are required' },
-        { status: 400 }
-      );
+    if (!location || !content) {
+      return NextResponse.json({ error: 'Location and content are required' }, { status: 400 });
+    }
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized: sign in required' }, { status: 401 });
+    }
+    if (location.length > MAX_LOCATION_CHARS || category.length > MAX_CATEGORY_CHARS || content.length > MAX_CONTENT_CHARS) {
+      return NextResponse.json({ error: 'Tip too long' }, { status: 413 });
     }
 
     const newTip = {

@@ -163,6 +163,29 @@ describe("proxy + Supabase session refresh", () => {
     expect(response.status).toBe(503);
   });
 
+  it("closes /api/tips in production when Supabase is not configured (placeholder content)", async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    (process.env as Record<string, string>).NODE_ENV = "production";
+
+    expect((await proxy(buildRequest("/api/tips?location=Marrakech"))).status).toBe(503);
+    expect((await proxy(buildRequest("/api/tips", { method: "POST" }))).status).toBe(503);
+  });
+
+  it("requires a verified session to publish a tip when Supabase is configured", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+
+    mockClaimsSub = null;
+    const anonymous = await proxy(buildRequest("/api/tips", { method: "POST", headers: { "x-user-id": "victim-user-000" } }));
+    expect(anonymous.status).toBe(401);
+
+    expect((await proxy(buildRequest("/api/tips?location=Tanger"))).status).toBe(200);
+
+    mockClaimsSub = "real-user-123";
+    expect((await proxy(buildRequest("/api/tips", { method: "POST" }))).status).toBe(200);
+  });
+
   it("keeps the mock-data /api/trips header check outside production", async () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
