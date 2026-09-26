@@ -89,9 +89,9 @@ function providers(): Provider[] {
       id: 'groq',
       freeTier: true,
       baseUrl: 'https://api.groq.com/openai/v1',
-      // Verified 2026-09-26 against Groq's Free Plan Limits and API reference.
-      // Keep only a model explicitly listed in the free-plan evidence.
-      model: 'openai/gpt-oss-20b',
+      // gpt-oss-20b is listed in Groq's Free Plan Limits (2026-09-26). The others
+      // stay as fallbacks: this account got a 404 on a documented Groq model.
+      model: ['openai/gpt-oss-20b', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
       kind: 'openai-compatible',
       getKey: () => process.env.GROQ_API_KEY,
     },
@@ -99,8 +99,9 @@ function providers(): Provider[] {
       id: 'gemini',
       freeTier: true,
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-      // Verified 2026-09-26 against Google's Gemini pricing/model docs.
-      model: ['gemini-3-flash-preview', 'gemini-3.1-flash-lite'],
+      // gemini-3.8-flash is the model Google's API named for this key and it
+      // answered in production; the documented free-tier models follow it.
+      model: ['gemini-3.8-flash', 'gemini-3-flash-preview', 'gemini-3.1-flash-lite'],
       kind: 'openai-compatible',
       getKey: () => process.env.GEMINI_API_KEY,
     },
