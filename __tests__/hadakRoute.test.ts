@@ -2,7 +2,7 @@
 import { NextRequest } from 'next/server'
 import { POST } from '../app/api/hadak/route'
 import { resetFootballCacheForTests } from '../lib/hadakFootballCache'
-import { resetRouterForTests } from '../lib/hadakAiRouter'
+import { getLedgerSnapshot, resetRouterForTests } from '../lib/hadakAiRouter'
 
 function post(body: unknown) {
   return POST(
@@ -172,6 +172,7 @@ describe('POST /api/hadak — football without Anthropic key', () => {
     const response = await post({ message: 'Wydad ou Raja ce soir ?', lang: 'fr' })
     const data = await response.json()
     expect(data.response).toBe('Match serré, léger avantage au Wydad.')
-    expect(data.source).toBe('openai')
+    expect(data.source).toBe('local')
+    expect(getLedgerSnapshot().some((entry) => entry.provider === 'openai' && entry.resolution_type === 'PAID_PROVIDER')).toBe(true)
   })
 })
