@@ -112,6 +112,12 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
     'moghreb tetouan', 'mouloudia oujda', 'man city', 'real madrid', 'barcelona', 'psg'];
   const mentioned = TEAM_QUERIES.filter(t => msgLower.includes(t.split(' ')[0]));
 
+  // Cache must short-circuit before any external football-data calls.
+  // A cached answer is already sufficient to answer the same team/language question.
+  const cacheKey = footballCacheKey(lang, mentioned);
+  const cached = mentioned.length > 0 ? getCachedFootballAnswer(cacheKey) : null;
+  if (cached) return cached;
+
   // --- Form data for mentioned teams ---
   let formData = '';
   for (const teamQuery of mentioned.slice(0, 2)) {
@@ -160,10 +166,6 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
   } catch { /* ignore */ }
 
   // --- AI prediction through the shared router ---
-  const cacheKey = footballCacheKey(lang, mentioned);
-  const cached = mentioned.length > 0 ? getCachedFootballAnswer(cacheKey) : null;
-  if (cached) return cached;
-
   if (mentioned.length > 0) {
     const langLabel = lang === 'da' ? 'darija marocaine' : lang === 'ar' ? 'arabe' : lang === 'es' ? 'espagnol' : lang === 'en' ? 'anglais' : 'français';
     const context = [
