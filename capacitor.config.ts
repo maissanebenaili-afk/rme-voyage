@@ -3,10 +3,13 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "com.rmevoyage.app",
   appName: "RME Voyage",
-  webDir: ".next/standalone/public",
+  webDir: "public",
   server: {
+    url: "https://rme-route.vercel.app",
+    cleartext: false,
     androidScheme: "https",
     iosScheme: "capacitor",
+    allowNavigation: ["rme-route.vercel.app"],
   },
   plugins: {
     SplashScreen: {
@@ -19,9 +22,6 @@ const config: CapacitorConfig = {
     },
     Geolocation: {
       permissions: ["location"],
-    },
-    PushNotifications: {
-      presentationOptions: ["badge", "sound", "alert"],
     },
   },
 };

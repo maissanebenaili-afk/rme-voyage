@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { FALLBACK_ANALYSIS_SOURCES, getSportsPartners } from '@/lib/sportsPartners';
 import { Trophy, Zap, ExternalLink, ShieldCheck } from 'lucide-react';
 
@@ -160,9 +162,17 @@ export default function FaicalWidget() {
   const [loading, setLoading] = useState(true);
   // Détecté après hydratation : lire navigator au premier rendu casse le SSR.
   const [lang, setLang] = useState<Lang>('fr');
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  const openExternal = async (url: string, event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isNativeApp) return;
+    event.preventDefault();
+    await Browser.open({ url });
+  };
 
   useEffect(() => {
     setLang(detectLang());
+    setIsNativeApp(Capacitor.isNativePlatform());
   }, []);
   const labels = LABELS[lang];
 
@@ -224,7 +234,7 @@ export default function FaicalWidget() {
               <p className="mt-1 text-xs leading-5 text-white/50">Si Faical ne publie rien, RME garde des portes de sortie vers d'autres sources de pronostics et statistiques.</p>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 {FALLBACK_ANALYSIS_SOURCES.map((source) => (
-                  <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
+                  <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" onClick={(event) => void openExternal(source.url, event)} className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
                     <ExternalLink size={13} className="shrink-0 text-[#f59e0b]" />
                     <span>{source.name}</span>
                   </a>
@@ -238,7 +248,7 @@ export default function FaicalWidget() {
           <MatchCard key={pick.id} pick={pick} lang={lang} labels={labels} />
         ))}
 
-        <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-4">
+        {!isNativeApp && <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-4">
           <div className="flex items-start gap-2">
             <ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#f59e0b]" />
             <div>
@@ -248,13 +258,13 @@ export default function FaicalWidget() {
           </div>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {getSportsPartners().map((partner) => (
-              <a key={partner.id} href={partner.url} target="_blank" rel={partner.affiliateUrl ? 'sponsored noopener noreferrer' : 'noopener noreferrer'} className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
+              <a key={partner.id} href={partner.url} target="_blank" rel={partner.affiliateUrl ? 'sponsored noopener noreferrer' : 'noopener noreferrer'} onClick={(event) => void openExternal(partner.url, event)} className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
                 <span>{partner.name}</span>
                 <span className="text-[9px] font-black uppercase tracking-wide text-[#fde68a]">{partner.status === 'active' ? 'Partenaire' : 'Voir le site'}</span>
               </a>
             ))}
           </div>
-        </div>
+        </div>}
       </div>
 
       <p className="relative mt-5 text-center text-[11px] text-white/40">

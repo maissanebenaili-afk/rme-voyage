@@ -1,7 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
+import { Share } from '@capacitor/share';
 import SportsHub from '@/components/SportsHub';
 
+jest.mock('@capacitor/browser', () => ({ Browser: { open: jest.fn() } }));
+jest.mock('@capacitor/share', () => ({ Share: { share: jest.fn() } }));
 jest.mock('@capacitor/core', () => ({
   Capacitor: { isNativePlatform: jest.fn() },
 }));
@@ -13,6 +17,12 @@ describe('SportsHub mobile safety', () => {
     nativePlatform.mockReturnValue(true);
   });
 
+  it('does not render native share in the web app', () => {
+    nativePlatform.mockReturnValue(false);
+    render(<SportsHub />);
+    expect(screen.queryByRole('button', { name: 'Partager' })).not.toBeInTheDocument();
+  });
+
   it('does not render sports betting operators in the native app', () => {
     render(<SportsHub />);
 
@@ -21,5 +31,25 @@ describe('SportsHub mobile safety', () => {
     expect(screen.queryByText('Betclic')).not.toBeInTheDocument();
     expect(screen.queryByText('Winamax')).not.toBeInTheDocument();
     expect(screen.queryByText('bet365')).not.toBeInTheDocument();
+  });
+});
+
+
+describe('SportsHub native integrations', () => {
+  beforeEach(() => {
+    nativePlatform.mockReturnValue(true);
+    jest.clearAllMocks();
+  });
+
+  it('opens a broadcaster in the Capacitor browser instead of the webview', () => {
+    render(<SportsHub />);
+    fireEvent.click(screen.getByText('Arryadia TNT'));
+    expect(Browser.open).toHaveBeenCalledWith({ url: 'https://www.snrt.ma/fr/arryadia' });
+  });
+
+  it('uses the native share sheet', () => {
+    render(<SportsHub />);
+    fireEvent.click(screen.getByRole('button', { name: 'Partager' }));
+    expect(Share.share).toHaveBeenCalled();
   });
 });
