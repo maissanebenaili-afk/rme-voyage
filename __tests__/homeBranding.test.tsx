@@ -17,6 +17,15 @@ jest.mock("@/components/MouniaWidget", () => function MouniaWidgetMock() { retur
 jest.mock("@/components/ColisWidget", () => function ColisWidgetMock() { return <div>ColisWidget</div>; });
 
 describe("Homepage branding", () => {
+  // jsdom has no fetch; the partner comparator falls back to its public links.
+  const originalFetch = global.fetch;
+  beforeEach(() => {
+    global.fetch = jest.fn().mockRejectedValue(new Error("offline")) as unknown as typeof fetch;
+  });
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
   it("shows RME Voyage positioning and promise", () => {
     render(<Home />);
 
