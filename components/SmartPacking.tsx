@@ -407,7 +407,7 @@ export default function SmartPacking() {
             <Luggage size={26} color={THEME.darkGreen} strokeWidth={2.2} />
           </div>
           <div>
-            <h1
+            <h2
               style={{
                 margin: 0,
                 fontSize: 24,
@@ -417,7 +417,7 @@ export default function SmartPacking() {
               }}
             >
               Liste de bagages intelligente
-            </h1>
+            </h2>
             <p
               style={{
                 margin: '4px 0 0',

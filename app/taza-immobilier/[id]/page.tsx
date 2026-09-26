@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
 import { PROPERTIES, getProperty, similarProperties, PROPERTY_TYPES } from '@/lib/properties';
+import { defaultOgImage } from '@/lib/seo';
 
 export async function generateStaticParams() {
   return PROPERTIES.map(p => ({ id: p.id }));
@@ -26,10 +27,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: property.title,
     description: property.description,
+    alternates: { canonical: `/taza-immobilier/${property.id}` },
     openGraph: {
       title: property.title,
       description: property.description,
-      type: 'website',
+      type: 'website', images: [defaultOgImage],
     },
   };
 }
