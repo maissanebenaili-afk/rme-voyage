@@ -40,4 +40,17 @@ describe("Homepage branding", () => {
     // Legacy product name must not resurface.
     expect(screen.queryByText(/MRE Route/i)).toBeNull();
   });
+
+  it("hub links land on existing sections, and the existing modules are all still there", () => {
+    const { container } = render(<Home />);
+
+    for (const anchor of ["planifier", "preparer", "route", "maroc", "sport-tv", "services"]) {
+      expect(container.querySelectorAll(`#${anchor}`)).toHaveLength(1);
+    }
+    expect(container.querySelector("#preparer")).toHaveTextContent(/Checklist voyage/i);
+    expect(screen.getByText("Liste de bagages intelligente")).toBeInTheDocument();
+    expect(container.querySelector("#sport-tv")).toHaveTextContent("Le match, les chaînes, les analyses.");
+    expect(container.querySelector("#services")).toHaveTextContent("MarwaCaftanWidget");
+    expect(screen.getByText("TVWidget")).toBeInTheDocument();
+  });
 });
