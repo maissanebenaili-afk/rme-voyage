@@ -763,7 +763,7 @@ export default function SmartPacking() {
                 margin: '0 auto',
                 fontSize: 14,
                 color: THEME.darkGreen,
-                opacity: 0.55,
+                opacity: 0.75,
                 maxWidth: 400,
                 lineHeight: 1.6,
               }}
@@ -951,7 +951,7 @@ export default function SmartPacking() {
                         style={{
                           fontSize: 11,
                           color: THEME.darkGreen,
-                          opacity: 0.5,
+                          opacity: 0.75,
                           marginTop: 1,
                         }}
                       >
@@ -1026,7 +1026,7 @@ export default function SmartPacking() {
                               padding: '3px 8px',
                               borderRadius: 6,
                               background: `${THEME.gold}22`,
-                              color: '#b8862e',
+                              color: '#92400e',
                               fontSize: 10,
                               fontWeight: 700,
                               textTransform: 'uppercase',
@@ -1193,7 +1193,7 @@ export default function SmartPacking() {
           fontSize: 11,
           fontWeight: 600,
           color: THEME.darkGreen,
-          opacity: 0.5,
+          opacity: 0.75,
         }}
       >
         <Sparkles size={12} />
