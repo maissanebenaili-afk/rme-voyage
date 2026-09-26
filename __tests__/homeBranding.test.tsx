@@ -65,4 +65,10 @@ describe("Homepage branding", () => {
     expect(container.querySelector("#services")).toHaveTextContent("MarwaCaftanWidget");
     expect(screen.getByText("TVWidget")).toBeInTheDocument();
   });
+
+  it("links the privacy policy and terms from every home page visit (store requirement)", () => {
+    render(<Home />);
+    expect(screen.getByRole("link", { name: "Confidentialité" })).toHaveAttribute("href", "/api/legal/privacy");
+    expect(screen.getByRole("link", { name: /Conditions d.utilisation/ })).toHaveAttribute("href", "/api/legal/terms");
+  });
 });
