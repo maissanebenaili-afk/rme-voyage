@@ -99,6 +99,7 @@ async function runScenario(name, scenario) {
   const latencies = [];
   const okLatencies = [];
   const statusCounts = {};
+  const cacheCounts = {};
   let completed = 0;
   let okResponses = 0;
   let rateLimited = 0;
@@ -120,7 +121,11 @@ async function runScenario(name, scenario) {
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(url, endpoint === "health"
+      // /api/health is CDN-cached for 60 s: a unique query string per request
+      // makes every request reach the function instead of the edge cache.
+      const requestUrl = new URL(url);
+      if (endpoint === "health") requestUrl.searchParams.set("lc", `${Date.now()}-${index}`);
+      const response = await fetch(requestUrl, endpoint === "health"
         ? { method: "GET", signal: controller.signal }
         : {
             method: "POST",
@@ -133,6 +138,8 @@ async function runScenario(name, scenario) {
       latencies.push(latency);
       completed += 1;
       statusCounts[response.status] = (statusCounts[response.status] ?? 0) + 1;
+      const cache = response.headers.get("x-vercel-cache") ?? "none";
+      cacheCounts[cache] = (cacheCounts[cache] ?? 0) + 1;
 
       if (response.status === 429) {
         rateLimited += 1;
@@ -198,6 +205,7 @@ async function runScenario(name, scenario) {
     rate_limited: rateLimited,
     http_errors: httpErrors,
     status_counts: statusCounts,
+    cache_counts: cacheCounts,
     timeouts,
     fallback_responses: fallbackResponses,
     provider_responses: providerResponses,
@@ -226,6 +234,7 @@ const report = {
     "fallback/provider counts are application response observations.",
     "rate_limited counts HTTP 429 from the app's own limiter (8/min/IP on /api/hadak); they are not capacity errors.",
     "p50/p95/p99 cover every response including 429; ok_p* cover successful responses only.",
+    "cache_counts is the x-vercel-cache header per response; HIT means the edge cache answered, not the function.",
     "server CPU/memory are not measurable from this client harness.",
     "No 10K-readiness conclusion is produced by this script.",
   ],
