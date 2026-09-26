@@ -188,6 +188,14 @@ export async function proxy(request: NextRequest) {
       if (!sessionUserId) {
         return NextResponse.json({ error: 'Unauthorized: sign in required' }, { status: 401 });
       }
+    } else if (process.env.NODE_ENV === 'production') {
+      // Mock-data mode trusts a client-supplied X-User-ID: acceptable for local
+      // development only. A deployed site without Supabase has no real identity,
+      // so the endpoint is closed rather than open to forged ids.
+      return NextResponse.json(
+        { error: 'Trips API unavailable: account storage is not configured' },
+        { status: 503 }
+      );
     } else {
       const userId = request.headers.get('x-user-id');
       if (!userId || userId.length < 10) {
