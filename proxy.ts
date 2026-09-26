@@ -33,7 +33,7 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, ro
 // par IP en cas d'abus/boucle client.
 const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services', '/api/support'];
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/prayer', '/api/route', '/api/services', '/api/support', '/api/tips'];
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak', '/api/faical'];
 
 function getClientKey(request: NextRequest): string {
@@ -204,6 +204,21 @@ export async function proxy(request: NextRequest) {
           { status: 401 }
         );
       }
+    }
+  }
+
+  // Community tips: same rule as trips for a deployed site without Supabase
+  // (the mock data is placeholder content, not real community tips), and
+  // publishing requires a verified session when Supabase is configured.
+  if (pathname.startsWith('/api/tips')) {
+    if (!supabaseConfigured && process.env.NODE_ENV === 'production') {
+      return NextResponse.json(
+        { error: 'Tips API unavailable: community storage is not configured' },
+        { status: 503 }
+      );
+    }
+    if (supabaseConfigured && request.method === 'POST' && !sessionUserId) {
+      return NextResponse.json({ error: 'Unauthorized: sign in required' }, { status: 401 });
     }
   }
 
