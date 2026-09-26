@@ -48,6 +48,9 @@ describe("Homepage branding", () => {
 
     // Legacy product name must not resurface.
     expect(screen.queryByText(/MRE Route/i)).toBeNull();
+
+    // SmartPacking uses fixed rules, not an AI model.
+    expect(screen.queryByText(/Smart Packing IA/i)).toBeNull();
   });
 
   it("hub links land on existing sections, and the existing modules are all still there", () => {

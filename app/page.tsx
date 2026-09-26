@@ -457,7 +457,7 @@ export default function Home() {
                 <li>SOS Ambassades</li>
                 <li>Calendrier Marocain</li>
                 <li>Calculateur Zakat</li>
-                <li>Smart Packing IA</li>
+                <li>Smart Packing</li>
                 <li>Assistant Hadak IA</li>
                 <li>Pronos de Faical ⚽</li>
                 <li>TV Gratuite — 20+ chaînes</li>
