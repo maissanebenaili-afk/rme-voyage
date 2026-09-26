@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { siteUrl } from '@/lib/siteUrl';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -138,7 +139,7 @@ const innovations = [
 
 export default function JuryPack() {
   const [showQr, setShowQr] = useState(false);
-  const appUrl = 'https://rme-voyage-app.pplx.app';
+  const appUrl = siteUrl;
   const marketingUrl = 'https://rme-voyage.pplx.app';
 
   return (
