@@ -240,6 +240,11 @@ function detectIntent(msg: string): Intent {
   if (/\b(priere|salat|prayer|salawat|fajr|dhuhr|asr|maghrib|isha|صلاة|موعد الصلاة|adhan|azan|imsakiyya|horaire.*(priere|salat)|quando.*(priere|salat))\b/.test(m)) return 'prayer';
   // Time
   if (/\b(heure|time|wa9t|وقت|maintenant|en ce moment|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
+  // Explicit document words — checked before "ferry": "quels documents pour
+  // passer à Tanger Med" names a port but asks about papers. Only unambiguous
+  // document words here; "rentrer/entrer" stay in the later docs rule so
+  // "quel ferry pour rentrer au Maroc" still gets the ferry answer.
+  if (/\b(documents?|passeport|passport|visa|papiers?|watha2iq|carte.*(nationale|identite)|laissez.passer)\b/.test(m)) return 'docs';
   // Ferry
   if (/\b(ferry|bateau|traversee|boat|algeciras|tanger med|tarifa|barcelona|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
   // Documents
