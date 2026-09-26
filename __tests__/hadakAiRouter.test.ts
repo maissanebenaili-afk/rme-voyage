@@ -65,7 +65,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
       throw new Error('paid provider must not be called');
     }) as unknown as typeof fetch;
     await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
-    expect(urls.some((u) => u.includes('api.anthropic.com'))).toBe(false);
+    expect(urls.some((u) => new URL(u).hostname === 'api.anthropic.com')).toBe(false);
   });
 
   it('3. uses the configured free provider', async () => {
@@ -101,7 +101,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
   it('6. 5xx moves to the next provider', async () => {
     setEnv({ GROQ_API_KEY: 'g', OPENAI_API_KEY: 'o' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) =>
-      input.toString().includes('groq') ? mockJson({}, 503) : mockJson({ choices: [{ message: { content: 'openai ok' } }] }),
+      new URL(input.toString()).hostname === 'api.groq.com' ? mockJson({}, 503) : mockJson({ choices: [{ message: { content: 'openai ok' } }] }),
     ) as unknown as typeof fetch;
     expect((await routeHadakAI({ message: 'question', systemPrompt: 'answer' })).provider).toBe('openai');
   });
