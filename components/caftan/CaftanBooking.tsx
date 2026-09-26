@@ -53,10 +53,10 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
       <div className="mt-5 space-y-1 overflow-hidden rounded-2xl bg-gradient-to-br from-[#fef3c7]/40 to-[#fde68a]/20 p-4">
         <div className="flex items-end gap-2">
           <span className="font-display text-4xl font-semibold text-[#c9903a]">{prix} €</span>
-          {mode === 'location' && <span className="pb-1.5 text-sm font-semibold text-[#94a3b8]">/ semaine</span>}
+          {mode === 'location' && <span className="pb-1.5 text-sm font-semibold text-[#475569]">/ semaine</span>}
         </div>
         {mode === 'location' && (
-          <p className="text-xs text-[#94a3b8]">Caution {caftan.caution} € · restituée au retour</p>
+          <p className="text-xs text-[#475569]">Caution {caftan.caution} € · restituée au retour</p>
         )}
       </div>
 

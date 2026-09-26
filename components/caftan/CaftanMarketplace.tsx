@@ -137,7 +137,7 @@ export default function CaftanMarketplace() {
               </button>
             )}
 
-            <p className="mt-2.5 text-center text-[11px] leading-4 text-[#94a3b8]">
+            <p className="mt-2.5 text-center text-[11px] leading-4 text-[#475569]">
               Votre annonce part sur WhatsApp. Marwa vous répond sous 24 h et la met en ligne après
               validation. Aucune donnée n&apos;est enregistrée sur ce site.
             </p>

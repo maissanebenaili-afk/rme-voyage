@@ -70,7 +70,7 @@ export default function CaftanGallery({ caftan }: { caftan: Caftan }) {
       </div>
 
       {isIllustration(caftan) && (
-        <p className="mt-4 text-[11px] leading-4 text-[#94a3b8] opacity-90 transition-opacity duration-300">
+        <p className="mt-4 text-[11px] leading-4 text-[#475569] transition-opacity duration-300">
           Les visuels sont des illustrations du modèle. Demandez les photos réelles à Marwa avant de réserver.
         </p>
       )}
