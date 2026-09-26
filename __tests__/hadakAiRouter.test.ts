@@ -226,7 +226,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
       if (input.toString().includes('api.groq.com')) return mockJson({ choices: [{ message: { content: 'generic answer' } }] });
       throw new Error('unexpected upstream');
     }) as unknown as typeof fetch;
-    const response = await post('Explique-moi comment préparer mon voyage.');
+    const response = await post('Donne-moi une idée originale.');
     const body = await response.json();
     expect(body.source).toBe('groq');
     expect(body.response).toBe('generic answer');
