@@ -410,15 +410,32 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
   return null;
 }
 
-// ── Paid provider helpers ──────────────────────────────────────────────────
+// ── LLM provider helpers ───────────────────────────────────────────────────
+// A provider that hangs must not use up the whole function budget: the next one gets its turn.
+const LLM_TIMEOUT_MS = 8_000;
+
+// Groq retires models without notice and a new account may not see all of them,
+// so each free provider lists several; the first one that answers wins.
+const GROQ_MODELS = ['llama-3.3-70b-versatile', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant'];
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-flash-latest'];
+
+async function firstAnswer(baseUrl: string, models: string[], apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
+  for (const model of models) {
+    const text = await callOpenAICompatible(baseUrl, model, apiKey, systemPrompt, message, providerName);
+    if (text) return text;
+  }
+  return null;
+}
+
 async function callOpenAICompatible(baseUrl: string, model: string, apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
   try {
     const res = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({ model, max_tokens: 512, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }] }),
+      signal: AbortSignal.timeout(LLM_TIMEOUT_MS),
     });
-    if (!res.ok) { console.error(`[hadak] ${providerName} error ${res.status}`); return null; }
+    if (!res.ok) { console.error(`[hadak] ${providerName} ${model} error ${res.status}`); return null; }
     const data = (await res.json()) as OpenAICompatibleResponse;
     return data.choices?.[0]?.message?.content ?? null;
   } catch (e) { console.error(`[hadak] ${providerName} failed:`, e); return null; }
@@ -474,18 +491,25 @@ export async function POST(req: NextRequest) {
     // 2. Groq — free tier, no CC, OpenAI-compatible
     const groqKey = process.env.GROQ_API_KEY || findEnvKey(/^GROQ.API.KEY$/i) || findEnvValue('gsk_');
     if (groqKey) {
-      const text = await callOpenAICompatible('https://api.groq.com/openai/v1', 'llama-3.1-8b-instant', groqKey, systemPrompt, message, 'Groq');
+      const text = await firstAnswer('https://api.groq.com/openai/v1', GROQ_MODELS, groqKey, systemPrompt, message, 'Groq');
       if (text) return NextResponse.json({ response: text, fallback: false, source: 'groq' });
     }
 
-    // 3. OpenAI
+    // 3. Google Gemini — free tier, OpenAI-compatible endpoint
+    const geminiKey = process.env.GEMINI_API_KEY || findEnvKey(/^GEMINI.API.KEY$/i);
+    if (geminiKey) {
+      const text = await firstAnswer('https://generativelanguage.googleapis.com/v1beta/openai', GEMINI_MODELS, geminiKey, systemPrompt, message, 'Gemini');
+      if (text) return NextResponse.json({ response: text, fallback: false, source: 'gemini' });
+    }
+
+    // 4. OpenAI
     const openaiKey = process.env.OPENAI_API_KEY || findEnvKey(/^OPENAI.API.KEY$/i);
     if (openaiKey) {
       const text = await callOpenAICompatible('https://api.openai.com/v1', 'gpt-4o-mini', openaiKey, systemPrompt, message, 'OpenAI');
       if (text) return NextResponse.json({ response: text, fallback: false, source: 'openai' });
     }
 
-    // 4. Anthropic
+    // 5. Anthropic
     const anthropicKey = process.env.ANTHROPIC_API_KEY || findEnvKey(/^ANTHROPIC.API.(KEY|CL[EÉeé])/i) || findEnvValue('sk-ant-');
     if (anthropicKey) {
       const text = await callAnthropic(anthropicKey, systemPrompt, message);
