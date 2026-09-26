@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
+import { cacheFootballAnswer, footballCacheKey, getCachedFootballAnswer } from '@/lib/hadakFootballCache';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type OpenAICompatibleResponse = {
@@ -176,6 +177,10 @@ async function handleFootball(msg: string, lang: string): Promise<string> {
   const anthropicKey = process.env.ANTHROPIC_API_KEY ||
     Object.entries(process.env).find(([k]) => /^ANTHROPIC.API.(KEY|CL[EÉeé])/i.test(k))?.[1] ||
     Object.values(process.env).find(v => v?.startsWith('sk-ant-'));
+  const cacheKey = footballCacheKey(lang, mentioned);
+  const cached = mentioned.length > 0 ? getCachedFootballAnswer(cacheKey) : null;
+  if (cached) return cached;
+
   if (anthropicKey && (formData || mentioned.length > 0)) {
     try {
       const langLabel = lang === 'da' ? 'darija marocaine' : lang === 'ar' ? 'arabe' : lang === 'es' ? 'espagnol' : lang === 'en' ? 'anglais' : 'français';
@@ -196,7 +201,10 @@ async function handleFootball(msg: string, lang: string): Promise<string> {
       if (apiRes.ok) {
         const data = await apiRes.json() as AnthropicResponse;
         const text = data.content?.find(b => b.type === 'text')?.text;
-        if (text) return text;
+        if (text) {
+          cacheFootballAnswer(cacheKey, text);
+          return text;
+        }
       }
     } catch { /* fall through */ }
   }
