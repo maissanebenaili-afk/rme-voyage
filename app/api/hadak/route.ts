@@ -4,6 +4,9 @@ import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { cacheFootballAnswer, footballCacheKey, getCachedFootballAnswer } from '@/lib/hadakFootballCache';
 import { routeHadakAI } from '@/lib/hadakAiRouter';
 
+type OpenAICompatibleResponse = { choices?: Array<{ message?: { content?: string } }> };
+type AnthropicResponse = { content?: Array<{ type: string; text?: string }> };
+
 type OpenMeteoResponse = {
   current?: {
     temperature_2m?: number;
@@ -384,6 +387,52 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
   return null;
 }
 
+
+// ── LLM provider helpers ───────────────────────────────────────────────────
+// A provider that hangs must not use up the whole function budget: the next one gets its turn.
+const LLM_TIMEOUT_MS = 8_000;
+
+// Groq retires models without notice and a new account may not see all of them,
+// so each free provider lists several; the first one that answers wins.
+const GROQ_MODELS = ['llama-3.3-70b-versatile', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant'];
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-flash-latest'];
+
+async function firstAnswer(baseUrl: string, models: string[], apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
+  for (const model of models) {
+    const text = await callOpenAICompatible(baseUrl, model, apiKey, systemPrompt, message, providerName);
+    if (text) return text;
+  }
+  return null;
+}
+
+async function callOpenAICompatible(baseUrl: string, model: string, apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({ model, max_tokens: 512, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }] }),
+      signal: AbortSignal.timeout(LLM_TIMEOUT_MS),
+    });
+    if (!res.ok) { console.error(`[hadak] ${providerName} ${model} error ${res.status}`); return null; }
+    const data = (await res.json()) as OpenAICompatibleResponse;
+    return data.choices?.[0]?.message?.content ?? null;
+  } catch (e) { console.error(`[hadak] ${providerName} failed:`, e); return null; }
+}
+
+async function callAnthropic(apiKey: string, systemPrompt: string, message: string): Promise<string | null> {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 512, system: systemPrompt, messages: [{ role: 'user', content: message }] }),
+    });
+    if (!res.ok) { console.error('[hadak] Anthropic error', res.status); return null; }
+    const data = (await res.json()) as AnthropicResponse;
+    return data.content?.find((b: { type: string; text?: string }) => b.type === 'text')?.text ?? null;
+  } catch (e) { console.error('[hadak] Anthropic failed:', e); return null; }
+}
+
+
 // ── System prompts ─────────────────────────────────────────────────────────
 /** Au-delà, la requête est refusée avant tout appel à un fournisseur LLM. */
 const MAX_MESSAGE_CHARS = 1_000;
@@ -418,15 +467,32 @@ export async function POST(req: NextRequest) {
     const local = await buildLocalResponse(message, lang, intent);
     if (local) return NextResponse.json({ response: local, fallback: false, source: 'local' });
 
-    // 2. Shared AI Router — provider registry, FREE_ONLY, circuit breaker and ledger.
-    const routed = await routeHadakAI({ message, systemPrompt });
-    if (routed.text) {
-      return NextResponse.json({
-        response: routed.text,
-        fallback: false,
-        source: routed.provider ?? 'router',
-        request_id: routed.requestId,
-      });
+    // 2. Groq — free tier, no CC, OpenAI-compatible
+    const groqKey = process.env.GROQ_API_KEY || findEnvKey(/^GROQ.API.KEY$/i) || findEnvValue('gsk_');
+    if (groqKey) {
+      const text = await firstAnswer('https://api.groq.com/openai/v1', GROQ_MODELS, groqKey, systemPrompt, message, 'Groq');
+      if (text) return NextResponse.json({ response: text, fallback: false, source: 'groq' });
+    }
+
+    // 3. Google Gemini — free tier, OpenAI-compatible endpoint
+    const geminiKey = process.env.GEMINI_API_KEY || findEnvKey(/^GEMINI.API.KEY$/i);
+    if (geminiKey) {
+      const text = await firstAnswer('https://generativelanguage.googleapis.com/v1beta/openai', GEMINI_MODELS, geminiKey, systemPrompt, message, 'Gemini');
+      if (text) return NextResponse.json({ response: text, fallback: false, source: 'gemini' });
+    }
+
+    // 4. OpenAI
+    const openaiKey = process.env.OPENAI_API_KEY || findEnvKey(/^OPENAI.API.KEY$/i);
+    if (openaiKey) {
+      const text = await callOpenAICompatible('https://api.openai.com/v1', 'gpt-4o-mini', openaiKey, systemPrompt, message, 'OpenAI');
+      if (text) return NextResponse.json({ response: text, fallback: false, source: 'openai' });
+    }
+
+    // 5. Anthropic
+    const anthropicKey = process.env.ANTHROPIC_API_KEY || findEnvKey(/^ANTHROPIC.API.(KEY|CL[EÉeé])/i) || findEnvValue('sk-ant-');
+    if (anthropicKey) {
+      const text = await callAnthropic(anthropicKey, systemPrompt, message);
+      if (text) return NextResponse.json({ response: text, fallback: false, source: 'anthropic' });
     }
 
     // No LLM available — return a helpful offline guide instead of an empty response
@@ -448,4 +514,15 @@ function buildOfflineFallback(lang: string, message: string): string {
     es: `No puedo responder a ${q || 'esa pregunta'} sin conexión LLM ahora mismo.\n\nPero respondo al instante sobre estos temas sin internet:\n• 🌤️ **Tiempo** — "¿qué tiempo hace en Agadir?"\n• 🕌 **Oraciones** — "horarios de oración en Fez"\n• 💶 **Cambio** — "¿cuánto vale 100€ en dírhams?"\n• ⏰ **Hora Marruecos** — "¿qué hora es en Marruecos?"\n• 🚢 **Ferry** — horarios y compañías\n• 📄 **Documentos** — pasaporte, visado, DNI\n• 📱 **SIM** — tarifas operadoras marroquíes\n• ⛽ **Combustible** — precios en gasolineras\n• ⚽ **Fútbol** — pronósticos Botola, Leones del Atlas`,
   };
   return topics[lang] ?? topics.fr;
+}
+
+// ── Env key search helpers ────────────────────────────────────────────────
+function findEnvKey(pattern: RegExp): string | undefined {
+  return Object.keys(process.env).find(k => pattern.test(k))
+    ? process.env[Object.keys(process.env).find(k => pattern.test(k))!] as string | undefined
+    : undefined;
+}
+
+function findEnvValue(prefix: string): string | undefined {
+  return Object.values(process.env).find((v): v is string => typeof v === 'string' && v.startsWith(prefix));
 }

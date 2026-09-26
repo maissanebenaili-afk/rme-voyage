@@ -53,7 +53,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     }) as unknown as typeof fetch;
     const result = await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
     expect(result.provider).toBe('groq');
-    expect(urls.some((u) => u.includes('api.openai.com'))).toBe(false);
+    expect(urls.some((u) => hostname(u) === 'api.openai.com')).toBe(false);
   });
 
   it('2. FREE_ONLY blocks Anthropic', async () => {
@@ -61,11 +61,11 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     const urls: string[] = [];
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       urls.push(input.toString());
-      if (input.toString().includes('api.groq.com')) return mockJson({ choices: [{ message: { content: 'groq ok' } }] });
+      if (hostname(input) === 'api.groq.com') return mockJson({ choices: [{ message: { content: 'groq ok' } }] });
       throw new Error('paid provider must not be called');
     }) as unknown as typeof fetch;
     await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
-    expect(urls.some((u) => u.includes('api.anthropic.com'))).toBe(false);
+    expect(urls.some((u) => hostname(u) === 'api.anthropic.com')).toBe(false);
   });
 
   it('3. uses the configured free provider', async () => {
@@ -228,7 +228,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
   it('18. generic questions reach the AI router', async () => {
     setEnv({ GROQ_API_KEY: 'g' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
-      if (input.toString().includes('api.groq.com')) return mockJson({ choices: [{ message: { content: 'generic answer' } }] });
+      if (hostname(input) === 'api.groq.com') return mockJson({ choices: [{ message: { content: 'generic answer' } }] });
       throw new Error('unexpected upstream');
     }) as unknown as typeof fetch;
     const response = await post('Donne-moi une idée originale.');

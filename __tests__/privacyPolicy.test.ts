@@ -15,7 +15,7 @@ describe("privacy policy matches the app", () => {
 
   test("lists each AI provider Hadak can call", () => {
     const hadak = read("app/api/hadak/route.ts");
-    const providers = { "api.groq.com": "Groq", "api.openai.com": "OpenAI", "api.anthropic.com": "Anthropic" };
+    const providers = { "api.groq.com": "Groq", "generativelanguage.googleapis.com": "Google Gemini", "api.openai.com": "OpenAI", "api.anthropic.com": "Anthropic" };
     for (const [host, name] of Object.entries(providers)) {
       if (hadak.includes(host)) expect(policy).toContain(name);
     }
