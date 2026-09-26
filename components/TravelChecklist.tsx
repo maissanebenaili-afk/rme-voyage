@@ -122,7 +122,7 @@ export default function TravelChecklist() {
                 aria-label={item.label}
                 className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg border-2 transition-all ${
                   isChecked
-                    ? "border-emerald-600 bg-emerald-600 text-white"
+                    ? "border-emerald-700 bg-emerald-700 text-white"
                     : "border-slate-300 text-transparent hover:border-emerald-400"
                 }`}
               >
@@ -158,7 +158,7 @@ export default function TravelChecklist() {
           type="button"
           onClick={addItem}
           aria-label="Ajouter l'élément"
-          className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700"
+          className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-700 text-white transition hover:bg-emerald-800"
         >
           <Plus size={18} />
         </button>

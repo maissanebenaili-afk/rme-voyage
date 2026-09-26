@@ -79,7 +79,7 @@ export default function CurrencyConverter() {
         </div>
         <button
           onClick={swap}
-          className="mb-1 grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700"
+          className="mb-1 grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-emerald-700 text-white transition hover:bg-emerald-800"
           aria-label="Inverser"
         >
           <ArrowRightLeft size={18} />

@@ -242,7 +242,7 @@ export default function RouteSearch() {
               type="button"
               onClick={calculateRoute}
               disabled={routeStatus === "loading"}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RouteIcon size={16} />
               {routeStatus === "loading" ? "Calcul en cours…" : "Calculer l'itinéraire"}

@@ -111,7 +111,7 @@ export default function PrayerWidget() {
             <div
               key={name}
               className={`rounded-xl p-2 transition-colors ${
-                isNext ? "bg-emerald-600 text-white" : "bg-slate-50"
+                isNext ? "bg-emerald-700 text-white" : "bg-slate-50"
               }`}
             >
               <div className={`text-xs ${isNext ? "text-white/80" : "text-slate-500"}`}>
