@@ -32,6 +32,9 @@ export type LedgerEntry = {
   latency_ms: number;
   tokens_estimated: number;
   estimated_cost: number;
+  actual_cost?: number;
+  benchmark_cost?: number;
+  estimated_cost_avoided?: number;
   error_class?: string;
 };
 
@@ -157,6 +160,7 @@ function classifyStatus(status: number): ProviderState {
   if (status === 401 || status === 403) return 'AUTH_ERROR';
   if (status === 408 || status === 504) return 'TIMEOUT';
   if (status === 429) return 'RATE_LIMITED';
+  if (status === 402) return 'QUOTA_EXHAUSTED';
   if (status >= 500) return 'PROVIDER_ERROR';
   return 'DEGRADED';
 }
@@ -165,11 +169,14 @@ function markFailure(id: string, state: ProviderState): void {
   const r = runtimeFor(id);
   r.state = state;
   r.failures += 1;
-  if (r.failures >= FAILURE_THRESHOLD && state !== 'AUTH_ERROR') {
+  if (state === 'RATE_LIMITED' || state === 'QUOTA_EXHAUSTED' || state === 'AUTH_ERROR') {
+    r.cooldownUntil = Date.now() + COOLDOWN_MS;
+    return;
+  }
+  if (r.failures >= FAILURE_THRESHOLD) {
     r.state = 'CIRCUIT_OPEN';
     r.cooldownUntil = Date.now() + COOLDOWN_MS;
   }
-  if (state === 'AUTH_ERROR') r.cooldownUntil = Date.now() + COOLDOWN_MS;
 }
 
 function markSuccess(id: string): void {
