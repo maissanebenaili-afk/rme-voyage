@@ -153,6 +153,25 @@ describe("proxy + Supabase session refresh", () => {
     process.env = { ...saved };
   });
 
+  it("closes /api/trips in production when Supabase is not configured, even with a forged X-User-ID", async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    (process.env as Record<string, string>).NODE_ENV = "production";
+
+    const response = await proxy(buildRequest("/api/trips", { headers: { "x-user-id": "attacker-guess-123" } }));
+
+    expect(response.status).toBe(503);
+  });
+
+  it("keeps the mock-data /api/trips header check outside production", async () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    (process.env as Record<string, string>).NODE_ENV = "test";
+
+    expect((await proxy(buildRequest("/api/trips"))).status).toBe(401);
+    expect((await proxy(buildRequest("/api/trips", { headers: { "x-user-id": "local-dev-user-1" } }))).status).toBe(200);
+  });
+
   it("does not touch Supabase when it is not configured (mock-data mode)", async () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
