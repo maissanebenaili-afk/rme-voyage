@@ -5,7 +5,7 @@ describe('GET /api/health', () => {
   it('never advertises the removed /api/chat endpoint', async () => {
     const response = await GET()
     const body = await response.json()
-    expect(body.endpoints).not.toHaveProperty('chat')
+    expect(body.endpoints?.chat).toBeUndefined()
     expect(JSON.stringify(body)).not.toContain('/api/chat')
   })
   it('returns only aggregate provider state and no secret material', async () => {
