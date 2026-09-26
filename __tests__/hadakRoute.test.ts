@@ -1,6 +1,8 @@
 /** @jest-environment node */
 import { NextRequest } from 'next/server'
 import { POST } from '../app/api/hadak/route'
+import { resetFootballCacheForTests } from '../lib/hadakFootballCache'
+import { resetRouterForTests } from '../lib/hadakAiRouter'
 
 function post(body: unknown) {
   return POST(
@@ -152,6 +154,10 @@ describe('POST /api/hadak — subject beats weak keywords', () => {
 describe('POST /api/hadak — football without Anthropic key', () => {
   const originalFetch = global.fetch
   const originalEnv = process.env
+  beforeEach(() => {
+    resetFootballCacheForTests()
+    resetRouterForTests()
+  })
   afterEach(() => {
     global.fetch = originalFetch
     process.env = originalEnv
