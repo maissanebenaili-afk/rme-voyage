@@ -430,6 +430,7 @@ export default function HadakAI() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const handleSendRef = useRef<(text?: string) => void>(() => {});
 
   const isRtl = lang === 'ar';
 
@@ -491,8 +492,10 @@ export default function HadakAI() {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript;
       }
+      // Dictée terminée = question posée : on l'envoie directement, sans
+      // obliger à trouver le bouton d'envoi (utilisateurs 50+, dictée vocale).
       if (transcript.trim()) {
-        setInput(transcript.trim());
+        handleSendRef.current(transcript.trim());
       }
     };
 
@@ -614,6 +617,10 @@ export default function HadakAI() {
       setIsTyping(false);
     }
   };
+
+  useEffect(() => {
+    handleSendRef.current = handleSend;
+  });
 
   /* Listen for hadak:open-with-message from the page (placed after handleSend declaration) */
   useEffect(() => {
