@@ -426,7 +426,7 @@ export default function SmartPacking() {
                 fontWeight: 500,
               }}
             >
-              Bagages optimisés par IA pour vos voyages Europe ↔ Maroc
+              Une liste adaptée à votre voyage Europe ↔ Maroc
             </p>
           </div>
         </div>
@@ -768,7 +768,7 @@ export default function SmartPacking() {
                 lineHeight: 1.6,
               }}
             >
-              Choisissez votre type de voyage, sa durée et la saison — l'IA crée ensuite une
+              Choisissez votre type de voyage, sa durée et la saison — RME prépare ensuite une
               liste personnalisée avec documents, électronique, vêtements, articles spirituels
               et idées de cadeaux marocains.
             </p>
@@ -859,7 +859,7 @@ export default function SmartPacking() {
                     color: THEME.darkGreen,
                   }}
                 >
-                  {aiSuggesting ? 'Réflexion sur ce que vous pourriez avoir oublié...' : 'Suggestion IA'}
+                  {aiSuggesting ? 'Réflexion sur ce que vous pourriez avoir oublié...' : 'Oublis fréquents'}
                 </div>
                 <div
                   style={{
@@ -1035,7 +1035,7 @@ export default function SmartPacking() {
                             }}
                           >
                             <Sparkles size={9} />
-                            IA
+                            Suggéré
                           </span>
                         )}
                         {item.custom && (
