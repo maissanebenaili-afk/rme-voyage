@@ -25,17 +25,41 @@ export type ResolutionType =
   | 'EXTERNAL_DATA'
   | 'OFFLINE_FALLBACK';
 
+export type CostBasis = 'free_plan' | 'list_price_estimate' | 'none';
+
 export type LedgerEntry = {
   request_id: string;
   provider: string | null;
+  model?: string;
   resolution_type: ResolutionType;
   latency_ms: number;
-  tokens_estimated: number;
+  tokens_input: number;
+  tokens_output: number;
+  /** 'provider' = counted by the provider's `usage`; 'estimated' = characters / 4. */
+  tokens_source: 'provider' | 'estimated' | 'none';
+  /** USD. For a paid provider this is tokens × public list price, never an invoice. */
   estimated_cost: number;
+  /** USD, set only when the price is known for certain: 0 on a free plan. Absent means unknown. */
   actual_cost?: number;
-  benchmark_cost?: number;
-  estimated_cost_avoided?: number;
+  cost_basis: CostBasis;
   error_class?: string;
+};
+
+export type LedgerSummary = {
+  requests: number;
+  by_resolution: Partial<Record<ResolutionType, number>>;
+  answered_without_llm: number;
+  answered_without_llm_share: number | null;
+  provider_tokens: Record<string, { input: number; output: number }>;
+  estimated_cost_usd: number;
+  unknown_cost_entries: number;
+};
+
+// Public list prices in USD per 1M tokens, checked 2026-09-26 (OpenAI model page,
+// Anthropic pricing). Only used to estimate paid calls; blocked while AI_ROUTER_FREE_ONLY=true.
+const LIST_PRICE_PER_MTOK: Record<string, { input: number; output: number }> = {
+  'gpt-4o-mini': { input: 0.15, output: 0.6 },
+  'claude-haiku-4-5-20251001': { input: 1, output: 5 },
 };
 
 type Provider = {
@@ -145,13 +169,74 @@ function requestId(): string {
   return `hadak-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function estimateTokens(message: string, output: string): number {
-  return Math.ceil((message.length + output.length) / 4);
+type Usage = { input: number; output: number };
+
+function readUsage(data: unknown): Usage | null {
+  const usage = (data as { usage?: Record<string, unknown> } | null)?.usage;
+  if (!usage) return null;
+  const input = usage.prompt_tokens ?? usage.input_tokens;
+  const output = usage.completion_tokens ?? usage.output_tokens;
+  return typeof input === 'number' && typeof output === 'number' ? { input, output } : null;
 }
 
+function costFor(provider: Provider, model: string, tokens: Usage): Pick<LedgerEntry, 'estimated_cost' | 'actual_cost' | 'cost_basis'> {
+  if (provider.freeTier) return { estimated_cost: 0, actual_cost: 0, cost_basis: 'free_plan' };
+  const price = LIST_PRICE_PER_MTOK[model];
+  if (!price) return { estimated_cost: 0, cost_basis: 'none' };
+  const usd = (tokens.input * price.input + tokens.output * price.output) / 1_000_000;
+  return { estimated_cost: Number(usd.toFixed(6)), cost_basis: 'list_price_estimate' };
+}
+
+// One JSON line per resolution, readable in the Vercel runtime logs. It never
+// carries the question, the answer or a key.
 function appendLedger(entry: LedgerEntry): void {
   ledger.push(entry);
   if (ledger.length > LEDGER_MAX_ENTRIES) ledger.splice(0, ledger.length - LEDGER_MAX_ENTRIES);
+  console.info(`[hadak-ledger] ${JSON.stringify(entry)}`);
+}
+
+export function recordResolution(resolutionType: 'DETERMINISTIC_LOCAL' | 'CACHE' | 'EXTERNAL_DATA', latencyMs: number): void {
+  appendLedger({
+    request_id: requestId(),
+    provider: null,
+    resolution_type: resolutionType,
+    latency_ms: latencyMs,
+    tokens_input: 0,
+    tokens_output: 0,
+    tokens_source: 'none',
+    estimated_cost: 0,
+    actual_cost: 0,
+    cost_basis: 'none',
+  });
+}
+
+export function summarizeLedger(entries: readonly LedgerEntry[] = ledger): LedgerSummary {
+  const byResolution: Partial<Record<ResolutionType, number>> = {};
+  const providerTokens: Record<string, { input: number; output: number }> = {};
+  let estimated = 0;
+  let unknown = 0;
+  for (const entry of entries) {
+    byResolution[entry.resolution_type] = (byResolution[entry.resolution_type] ?? 0) + 1;
+    if (entry.provider && (entry.tokens_input || entry.tokens_output)) {
+      const t = (providerTokens[entry.provider] ??= { input: 0, output: 0 });
+      t.input += entry.tokens_input;
+      t.output += entry.tokens_output;
+    }
+    estimated += entry.estimated_cost;
+    if (entry.actual_cost === undefined && !entry.error_class && entry.resolution_type === 'PAID_PROVIDER') unknown += 1;
+  }
+  const withoutLlm = (byResolution.DETERMINISTIC_LOCAL ?? 0) + (byResolution.CACHE ?? 0) + (byResolution.EXTERNAL_DATA ?? 0);
+  // A request ends in exactly one answered or offline entry; provider failures before it are not requests.
+  const requests = entries.filter((e) => !e.error_class).length;
+  return {
+    requests,
+    by_resolution: byResolution,
+    answered_without_llm: withoutLlm,
+    answered_without_llm_share: requests === 0 ? null : Number((withoutLlm / requests).toFixed(4)),
+    provider_tokens: providerTokens,
+    estimated_cost_usd: Number(estimated.toFixed(6)),
+    unknown_cost_entries: unknown,
+  };
 }
 
 export function getLedgerSnapshot(): readonly LedgerEntry[] {
@@ -259,7 +344,7 @@ async function callProvider(
   provider: Provider,
   systemPrompt: string,
   message: string,
-): Promise<{ text: string | null; state?: ProviderState; retryAfterMs?: number }> {
+): Promise<{ text: string | null; state?: ProviderState; retryAfterMs?: number; model?: string; usage?: Usage | null }> {
   const key = provider.getKey();
   if (!key) return { text: null, state: 'DISABLED' };
 
@@ -313,7 +398,7 @@ async function callProvider(
         ? data.content?.find((block) => block.type === 'text')?.text ?? null
         : data.choices?.[0]?.message?.content ?? null;
 
-      if (text) return { text };
+      if (text) return { text, model, usage: readUsage(data) };
       lastState = 'DEGRADED';
     } catch (error) {
       lastState = error instanceof Error && error.name === 'AbortError' ? 'TIMEOUT' : 'PROVIDER_ERROR';
@@ -333,15 +418,23 @@ export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> 
     const result = await callProvider(provider, options.systemPrompt, options.message);
     if (result.text) {
       markSuccess(provider.id);
+      const model = result.model ?? (Array.isArray(provider.model) ? provider.model[0] : provider.model);
+      const tokens = result.usage ?? {
+        input: Math.ceil((options.systemPrompt.length + options.message.length) / 4),
+        output: Math.ceil(result.text.length / 4),
+      };
       appendLedger({
         request_id: id,
         provider: provider.id,
+        model,
         resolution_type: provider.freeTier ? 'FREE_PROVIDER' : 'PAID_PROVIDER',
         latency_ms: Date.now() - started,
-        tokens_estimated: estimateTokens(options.message, result.text),
-        estimated_cost: 0,
+        tokens_input: tokens.input,
+        tokens_output: tokens.output,
+        tokens_source: result.usage ? 'provider' : 'estimated',
+        ...costFor(provider, model, tokens),
       });
-      return { ...result, provider: provider.id, resolutionType: provider.freeTier ? 'FREE_PROVIDER' : 'PAID_PROVIDER', requestId: id };
+      return { text: result.text, provider: provider.id, resolutionType: provider.freeTier ? 'FREE_PROVIDER' : 'PAID_PROVIDER', requestId: id };
     }
 
     const failure = result.state ?? 'PROVIDER_ERROR';
@@ -351,8 +444,11 @@ export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> 
       provider: provider.id,
       resolution_type: provider.freeTier ? 'FREE_PROVIDER' : 'PAID_PROVIDER',
       latency_ms: Date.now() - started,
-      tokens_estimated: 0,
+      tokens_input: 0,
+      tokens_output: 0,
+      tokens_source: 'none',
       estimated_cost: 0,
+      cost_basis: 'none',
       error_class: failure,
     });
   }
@@ -362,8 +458,12 @@ export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> 
     provider: null,
     resolution_type: 'OFFLINE_FALLBACK',
     latency_ms: Date.now() - started,
-    tokens_estimated: 0,
+    tokens_input: 0,
+    tokens_output: 0,
+    tokens_source: 'none',
     estimated_cost: 0,
+    actual_cost: 0,
+    cost_basis: 'none',
   });
 
   return { text: null, provider: null, resolutionType: 'OFFLINE_FALLBACK', requestId: id };
