@@ -11,6 +11,8 @@ const post = (message: string) =>
     headers: { "content-type": "application/json" },
   }));
 
+const isAnthropic = (input: unknown) => new URL(String(input)).hostname === "api.anthropic.com";
+
 // A football prediction costs one paid Anthropic call; the same teams in the
 // same language must not trigger a second call within the hour.
 describe("Hadak football answers are cached", () => {
@@ -21,8 +23,7 @@ describe("Hadak football answers are cached", () => {
     resetFootballCacheForTests();
     process.env.ANTHROPIC_API_KEY = "sk-ant-test";
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
-      const url = String(input);
-      if (url.includes("api.anthropic.com")) {
+      if (isAnthropic(input)) {
         return new Response(JSON.stringify({ content: [{ type: "text", text: "Pronostic : Wydad favori." }] }), { status: 200 });
       }
       return new Response(JSON.stringify({ events: [], results: [] }), { status: 200 });
@@ -35,7 +36,7 @@ describe("Hadak football answers are cached", () => {
   });
 
   const anthropicCalls = () =>
-    (global.fetch as jest.Mock).mock.calls.filter(([u]) => String(u).includes("api.anthropic.com")).length;
+    (global.fetch as jest.Mock).mock.calls.filter(([u]) => isAnthropic(u)).length;
 
   it("asks Anthropic once for the same teams", async () => {
     const first = await (await post("Wydad ou Raja, qui va gagner le match ?")).json();
