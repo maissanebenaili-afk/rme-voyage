@@ -42,6 +42,45 @@ const CORRIDORS = [
   ['Madrid, Espagne', 'Tanger, Maroc'],
   ['Barcelone, Espagne', 'Nador, Maroc'],
   ['Genève, Suisse', 'Casablanca, Maroc'],
+  // Élargissement (pages d'atterrissage SEO) : grandes villes de la diaspora
+  // vers les villes d'arrivée les plus fréquentes, en particulier le Rif
+  // (Nador, Al Hoceïma) depuis la Belgique et les Pays-Bas.
+  ['Paris, France', 'Rabat, Maroc'],
+  ['Paris, France', 'Meknès, Maroc'],
+  ['Paris, France', 'Tétouan, Maroc'],
+  ['Paris, France', 'Al Hoceïma, Maroc'],
+  ['Paris, France', 'Taza, Maroc'],
+  ['Paris, France', 'Béni Mellal, Maroc'],
+  ['Lyon, France', 'Casablanca, Maroc'],
+  ['Lyon, France', 'Oujda, Maroc'],
+  ['Lyon, France', 'Nador, Maroc'],
+  ['Marseille, France', 'Tanger, Maroc'],
+  ['Marseille, France', 'Oujda, Maroc'],
+  ['Marseille, France', 'Casablanca, Maroc'],
+  ['Toulouse, France', 'Tanger, Maroc'],
+  ['Toulouse, France', 'Casablanca, Maroc'],
+  ['Bordeaux, France', 'Tanger, Maroc'],
+  ['Bordeaux, France', 'Agadir, Maroc'],
+  ['Montpellier, France', 'Nador, Maroc'],
+  ['Nice, France', 'Tanger, Maroc'],
+  ['Strasbourg, France', 'Tanger, Maroc'],
+  ['Nantes, France', 'Tanger, Maroc'],
+  ['Lille, France', 'Nador, Maroc'],
+  ['Bruxelles, Belgique', 'Al Hoceïma, Maroc'],
+  ['Bruxelles, Belgique', 'Casablanca, Maroc'],
+  ['Anvers, Belgique', 'Nador, Maroc'],
+  ['Liège, Belgique', 'Nador, Maroc'],
+  ['Rotterdam, Pays-Bas', 'Nador, Maroc'],
+  ['Rotterdam, Pays-Bas', 'Al Hoceïma, Maroc'],
+  ['Utrecht, Pays-Bas', 'Nador, Maroc'],
+  ['La Haye, Pays-Bas', 'Tanger, Maroc'],
+  ['Amsterdam, Pays-Bas', 'Al Hoceïma, Maroc'],
+  ['Cologne, Allemagne', 'Nador, Maroc'],
+  ['Francfort-sur-le-Main, Allemagne', 'Tanger, Maroc'],
+  ['Turin, Italie', 'Casablanca, Maroc'],
+  ['Bologne, Italie', 'Tanger, Maroc'],
+  ['Valence, Espagne', 'Oujda, Maroc'],
+  ['Madrid, Espagne', 'Casablanca, Maroc'],
 ];
 
 /** « Paris, France » → « paris ». */
@@ -89,7 +128,8 @@ for (const [origin, destination] of CORRIDORS) {
   }
   // Nominatim demande de ne pas enchaîner les requêtes : /api/route en fait
   // deux par appel, et son cache d'un jour ne couvre pas la première passe.
-  await sleep(1500);
+  // 2,1 s garde aussi le script sous la limite de 30 appels/min de proxy.ts.
+  await sleep(2100);
 }
 
 if (failures.length) {
