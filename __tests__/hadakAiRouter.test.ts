@@ -1,5 +1,6 @@
 /** @jest-environment node */
 import { routeHadakAI, getProviderHealth, getLedgerSnapshot, isFreeOnly, resetRouterForTests } from '../lib/hadakAiRouter';
+import { resetFootballCacheForTests } from '../lib/hadakFootballCache';
 import { POST } from '../app/api/hadak/route';
 import { NextRequest } from 'next/server';
 
@@ -30,6 +31,7 @@ function post(message: string, lang = 'fr') {
 
 beforeEach(() => {
   resetRouterForTests();
+  resetFootballCacheForTests();
   setEnv({});
 });
 afterEach(() => {
