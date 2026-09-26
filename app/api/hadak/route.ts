@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { cacheFootballAnswer, footballCacheKey, getCachedFootballAnswer } from '@/lib/hadakFootballCache';
+import { routeHadakAI } from '@/lib/hadakAiRouter';
 
-// ── Types ──────────────────────────────────────────────────────────────────
-type OpenAICompatibleResponse = {
-  choices?: Array<{ message?: { content?: string } }>;
-};
-type AnthropicResponse = {
-  content?: Array<{ type?: string; text?: string }>;
-};
 type OpenMeteoResponse = {
   current?: {
     temperature_2m?: number;
@@ -18,14 +12,6 @@ type OpenMeteoResponse = {
     relative_humidity_2m?: number;
   };
 };
-
-// ── Env helpers ────────────────────────────────────────────────────────────
-function findEnvKey(pattern: RegExp): string | undefined {
-  return Object.entries(process.env).find(([k]) => pattern.test(k))?.[1];
-}
-function findEnvValue(prefix: string): string | undefined {
-  return Object.values(process.env).find(v => v?.startsWith(prefix));
-}
 
 const WMO_CODE: Record<number, { fr: string; da: string; ar: string }> = {
   0:  { fr: 'ciel dégagé ☀️',       da: 'sma safiya ☀️',       ar: 'سماء صافية ☀️' },
@@ -173,40 +159,26 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
     }
   } catch { /* ignore */ }
 
-  // --- Try Claude for prediction ---
-  const anthropicKey = process.env.ANTHROPIC_API_KEY ||
-    Object.entries(process.env).find(([k]) => /^ANTHROPIC.API.(KEY|CL[EÉeé])/i.test(k))?.[1] ||
-    Object.values(process.env).find(v => v?.startsWith('sk-ant-'));
+  // --- AI prediction through the shared router ---
   const cacheKey = footballCacheKey(lang, mentioned);
   const cached = mentioned.length > 0 ? getCachedFootballAnswer(cacheKey) : null;
   if (cached) return cached;
 
-  if (anthropicKey && (formData || mentioned.length > 0)) {
-    try {
-      const langLabel = lang === 'da' ? 'darija marocaine' : lang === 'ar' ? 'arabe' : lang === 'es' ? 'espagnol' : lang === 'en' ? 'anglais' : 'français';
-      const context = [
-        nextMatchesText ? `Prochains matchs Botola Pro:\n${nextMatchesText}` : '',
-        formData ? `Forme récente:\n${formData}` : '',
-      ].filter(Boolean).join('\n\n');
-      const userContent = context ? `Données:\n${context}\n\nQuestion: ${msg}` : msg;
-      const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001', max_tokens: 350,
-          system: `Tu es un expert passionné de football marocain (Botola Pro, équipe nationale Lions de l'Atlas, CAF). Tu analyses les données de forme et donnes des pronostics argumentés. Réponds en ${langLabel}, 3-4 phrases maximum, direct et précis.`,
-          messages: [{ role: 'user', content: userContent }],
-        }),
-      });
-      if (apiRes.ok) {
-        const data = await apiRes.json() as AnthropicResponse;
-        const text = data.content?.find(b => b.type === 'text')?.text;
-        if (text) {
-          cacheFootballAnswer(cacheKey, text);
-          return text;
-        }
-      }
-    } catch { /* fall through */ }
+  if (mentioned.length > 0) {
+    const langLabel = lang === 'da' ? 'darija marocaine' : lang === 'ar' ? 'arabe' : lang === 'es' ? 'espagnol' : lang === 'en' ? 'anglais' : 'français';
+    const context = [
+      nextMatchesText ? `Prochains matchs Botola Pro:\n${nextMatchesText}` : '',
+      formData ? `Forme récente:\n${formData}` : '',
+    ].filter(Boolean).join('\n\n');
+    const userContent = context ? `Données:\n${context}\n\nQuestion: ${msg}` : msg;
+    const routed = await routeHadakAI({
+      message: userContent,
+      systemPrompt: `Tu es un expert passionné de football marocain (Botola Pro, équipe nationale Lions de l'Atlas, CAF). Tu analyses les données de forme et donnes des pronostics argumentés. Réponds en ${langLabel}, 3-4 phrases maximum, direct et précis.`,
+    });
+    if (routed.text) {
+      cacheFootballAnswer(cacheKey, routed.text);
+      return routed.text;
+    }
   }
 
   // A team was named but no prediction came back (no Anthropic key in
@@ -410,33 +382,6 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
   return null;
 }
 
-// ── Paid provider helpers ──────────────────────────────────────────────────
-async function callOpenAICompatible(baseUrl: string, model: string, apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
-  try {
-    const res = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({ model, max_tokens: 512, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }] }),
-    });
-    if (!res.ok) { console.error(`[hadak] ${providerName} error ${res.status}`); return null; }
-    const data = (await res.json()) as OpenAICompatibleResponse;
-    return data.choices?.[0]?.message?.content ?? null;
-  } catch (e) { console.error(`[hadak] ${providerName} failed:`, e); return null; }
-}
-
-async function callAnthropic(apiKey: string, systemPrompt: string, message: string): Promise<string | null> {
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 512, system: systemPrompt, messages: [{ role: 'user', content: message }] }),
-    });
-    if (!res.ok) { console.error('[hadak] Anthropic error', res.status); return null; }
-    const data = (await res.json()) as AnthropicResponse;
-    return data.content?.find(b => b.type === 'text')?.text ?? null;
-  } catch (e) { console.error('[hadak] Anthropic failed:', e); return null; }
-}
-
 // ── System prompts ─────────────────────────────────────────────────────────
 /** Au-delà, la requête est refusée avant tout appel à un fournisseur LLM. */
 const MAX_MESSAGE_CHARS = 1_000;
@@ -471,25 +416,15 @@ export async function POST(req: NextRequest) {
     const local = await buildLocalResponse(message, lang, intent);
     if (local) return NextResponse.json({ response: local, fallback: false, source: 'local' });
 
-    // 2. Groq — free tier, no CC, OpenAI-compatible
-    const groqKey = process.env.GROQ_API_KEY || findEnvKey(/^GROQ.API.KEY$/i) || findEnvValue('gsk_');
-    if (groqKey) {
-      const text = await callOpenAICompatible('https://api.groq.com/openai/v1', 'llama-3.1-8b-instant', groqKey, systemPrompt, message, 'Groq');
-      if (text) return NextResponse.json({ response: text, fallback: false, source: 'groq' });
-    }
-
-    // 3. OpenAI
-    const openaiKey = process.env.OPENAI_API_KEY || findEnvKey(/^OPENAI.API.KEY$/i);
-    if (openaiKey) {
-      const text = await callOpenAICompatible('https://api.openai.com/v1', 'gpt-4o-mini', openaiKey, systemPrompt, message, 'OpenAI');
-      if (text) return NextResponse.json({ response: text, fallback: false, source: 'openai' });
-    }
-
-    // 4. Anthropic
-    const anthropicKey = process.env.ANTHROPIC_API_KEY || findEnvKey(/^ANTHROPIC.API.(KEY|CL[EÉeé])/i) || findEnvValue('sk-ant-');
-    if (anthropicKey) {
-      const text = await callAnthropic(anthropicKey, systemPrompt, message);
-      if (text) return NextResponse.json({ response: text, fallback: false, source: 'anthropic' });
+    // 2. Shared AI Router — provider registry, FREE_ONLY, circuit breaker and ledger.
+    const routed = await routeHadakAI({ message, systemPrompt });
+    if (routed.text) {
+      return NextResponse.json({
+        response: routed.text,
+        fallback: false,
+        source: routed.provider ?? 'router',
+        request_id: routed.requestId,
+      });
     }
 
     // No LLM available — return a helpful offline guide instead of an empty response
