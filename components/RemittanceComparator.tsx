@@ -142,7 +142,7 @@ export default function RemittanceComparator() {
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-[#0f1f3d]">{p.name}</span>
                   {i === 0 && (
-                    <span className="text-xs font-medium bg-[#d4af37] text-white rounded-full px-2 py-0.5">
+                    <span className="text-xs font-medium bg-[#d4af37] text-[#0f1f3d] rounded-full px-2 py-0.5">
                       {t('remittanceBest')}
                     </span>
                   )}
