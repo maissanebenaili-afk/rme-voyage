@@ -38,11 +38,12 @@ beforeEach(() => {
   setEnv({});
 });
 afterEach(() => {
+  jest.useRealTimers();
   global.fetch = realFetch;
   process.env = realEnv;
 });
 
-describe('LOT A+ — 19 mandatory routing invariants', () => {
+describe('LOT B — resilience and routing invariants', () => {
   it('1. FREE_ONLY blocks OpenAI', async () => {
     setEnv({ AI_ROUTER_FREE_ONLY: 'true', GROQ_API_KEY: 'groq-test', OPENAI_API_KEY: 'openai-test' });
     const urls: string[] = [];
@@ -167,7 +168,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('13. OpenRouter free fallback is eligible when earlier free providers are unavailable', async () => {
+  it('12. OpenRouter free fallback is eligible when earlier free providers are unavailable', async () => {
     setEnv({ AI_ROUTER_FREE_ONLY: 'true', OPENROUTER_API_KEY: 'openrouter-test' });
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       expect(hostname(input)).toBe('openrouter.ai');
@@ -179,7 +180,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     expect(result.resolutionType).toBe('FREE_PROVIDER');
   });
 
-  it('14. cached football answers avoid a second LLM call', async () => {
+  it('13. cached football answers avoid a second LLM call', async () => {
     setEnv({ OPENAI_API_KEY: 'o' });
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       const url = input.toString();
