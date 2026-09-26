@@ -59,7 +59,7 @@ function isTonightMatchDay() {
   return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()) === '25/09/2026';
 }
 
-function ChannelCard({ ch }: { ch: Channel }) {
+function ChannelCard({ ch, openExternal }: { ch: Channel; openExternal: (url: string, event: React.MouseEvent<HTMLAnchorElement>) => void }) {
   return (
     <a
       href={ch.url}
@@ -156,7 +156,7 @@ export default function TVWidget() {
       {/* Channel grid */}
       <div className="p-4 grid gap-2.5 sm:grid-cols-2">
         {CHANNELS[tab].map((ch) => (
-          <ChannelCard key={ch.name + ch.url} ch={ch} />
+          <ChannelCard key={ch.name + ch.url} ch={ch} openExternal={openExternal} />
         ))}
       </div>
 
