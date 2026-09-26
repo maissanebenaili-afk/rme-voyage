@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { cacheFootballAnswer, footballCacheKey, getCachedFootballAnswer } from '@/lib/hadakFootballCache';
-import { routeHadakAI } from '@/lib/hadakAiRouter';
+import { recordResolution, routeHadakAI } from '@/lib/hadakAiRouter';
 import { moroccoTimeZone, moroccoUtcOffset } from '@/lib/moroccoTime';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -146,7 +146,10 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
   // Cache must short-circuit before any external football-data calls.
   const cacheKey = footballCacheKey(lang, mentioned);
   const cached = mentioned.length > 0 ? getCachedFootballAnswer(cacheKey) : null;
-  if (cached) return cached;
+  if (cached) {
+    recordResolution('CACHE', 0);
+    return cached;
+  }
 
   // --- Form data for mentioned teams ---
   let formData = '';
@@ -212,6 +215,8 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
   // production, or the call failed): let the general LLM chain answer the
   // actual question instead of replying "mention the team".
   if (mentioned.length > 0) return null;
+
+  recordResolution('DETERMINISTIC_LOCAL', 0);
 
   // --- Static fallback ---
   if (nextMatchesText) {
@@ -486,8 +491,16 @@ export async function POST(req: NextRequest) {
     const intent = detectIntent(message);
 
     // 1. Smart local responder — free, always available, real-time data
+    const localStarted = Date.now();
     const local = await buildLocalResponse(message, lang, intent);
-    if (local) return NextResponse.json({ response: local, fallback: false, source: 'local' });
+    if (local) {
+      // Football records its own resolution (cache, router or static text).
+      if (intent !== 'football') {
+        const usesLiveData = intent === 'weather' || intent === 'prayer' || intent === 'currency' || intent === 'trip' || intent === 'generic';
+        recordResolution(usesLiveData ? 'EXTERNAL_DATA' : 'DETERMINISTIC_LOCAL', Date.now() - localStarted);
+      }
+      return NextResponse.json({ response: local, fallback: false, source: 'local' });
+    }
 
     // 2. Shared AI Router — provider registry, FREE_ONLY, circuit breaker and ledger.
     const routed = await routeHadakAI({ message, systemPrompt });
