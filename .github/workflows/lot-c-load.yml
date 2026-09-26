@@ -1,0 +1,58 @@
+name: Lot C Load Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Base URL to test"
+        required: true
+        default: "https://rme-route.vercel.app"
+        type: string
+      scenario:
+        description: "Load scenario"
+        required: true
+        default: "100"
+        type: choice
+        options: ["100", "500", "1000", "5000", "all"]
+      query:
+        description: "Hadak query; default uses the deterministic/local path"
+        required: true
+        default: "quelle heure au Maroc"
+        type: string
+      lang:
+        description: "Response language"
+        required: true
+        default: "fr"
+        type: choice
+        options: ["fr", "da", "en", "ar", "es"]
+
+permissions:
+  contents: read
+
+jobs:
+  load:
+    name: Lot C — ${{ inputs.scenario }} requests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run load harness
+        run: |
+          node scripts/load-hadak.mjs \
+            --target="${{ inputs.target }}" \
+            --scenario="${{ inputs.scenario }}" \
+            --query="${{ inputs.query }}" \
+            --lang="${{ inputs.lang }}" \
+            --json > lot-c-load-report.json
+          cat lot-c-load-report.json
+      - name: Upload measurement
+        uses: actions/upload-artifact@v4
+        with:
+          name: lot-c-load-${{ inputs.scenario }}
+          path: lot-c-load-report.json
+          if-no-files-found: error
