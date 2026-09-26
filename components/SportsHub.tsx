@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { ExternalLink, Radio, Trophy, BarChart3, ShieldCheck } from 'lucide-react';
 import { FALLBACK_ANALYSIS_SOURCES, getSportsPartners } from '@/lib/sportsPartners';
 
@@ -21,8 +22,10 @@ const CHANNELS = [
 
 export default function SportsHub() {
   const [today, setToday] = useState(false);
+  const [isNativeApp, setIsNativeApp] = useState(false);
 
   useEffect(() => {
+    setIsNativeApp(Capacitor.isNativePlatform());
     const d = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     setToday(d === '25/09/2026');
   }, []);
@@ -69,15 +72,15 @@ export default function SportsHub() {
             <div className="mt-3 space-y-2">{FALLBACK_ANALYSIS_SOURCES.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">{source.name}<ExternalLink size={12} className="text-[#f59e0b]" /></a>)}</div>
           </div>
 
-          <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-5">
+          {!isNativeApp && <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-5">
             <div className="flex items-center gap-2"><Trophy size={16} className="text-[#f59e0b]" /><h3 className="text-sm font-black text-white">Opérateurs sportifs</h3></div>
             <p className="mt-2 text-xs leading-5 text-white/50">Les liens affiliés ne sont activés que lorsqu'une URL partenaire réelle est configurée.</p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">{getSportsPartners().map((partner) => <a key={partner.id} href={partner.url} target="_blank" rel={partner.affiliateUrl ? 'sponsored noopener noreferrer' : 'noopener noreferrer'} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">{partner.name}<span className="text-[9px] uppercase text-[#fde68a]">{partner.status === 'active' ? 'Partenaire' : 'Site'}</span></a>)}</div>
-          </div>
+          </div>}
         </aside>
       </div>
 
-      <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4"><ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#f59e0b]" /><p className="text-[10px] leading-4 text-white/40">RME ne reproduit pas les flux protégés. Les droits et la disponibilité varient selon le pays. Les liens de paris sportifs sont réservés aux adultes et le jeu comporte des risques.</p></div>
+      <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4"><ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#f59e0b]" /><p className="text-[10px] leading-4 text-white/40">RME ne reproduit pas les flux protégés. Les droits et la disponibilité varient selon le pays.{!isNativeApp && ' Les liens de paris sportifs sont réservés aux adultes et le jeu comporte des risques.'}</p></div>
     </section>
   );
 }
