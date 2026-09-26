@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import { Share } from '@capacitor/share';
@@ -34,18 +34,14 @@ describe('SportsHub native integrations', () => {
   });
 
   it('opens a broadcaster in the Capacitor browser instead of the webview', async () => {
-    const { userEvent } = await import('@testing-library/user-event');
-    const user = userEvent.setup();
     render(<SportsHub />);
-    await user.click(screen.getByText('Arryadia TNT'));
+    fireEvent.click(screen.getByText('Arryadia TNT'));
     expect(Browser.open).toHaveBeenCalledWith({ url: 'https://www.snrt.ma/fr/arryadia' });
   });
 
   it('uses the native share sheet', async () => {
-    const { userEvent } = await import('@testing-library/user-event');
-    const user = userEvent.setup();
     render(<SportsHub />);
-    await user.click(screen.getByRole('button', { name: 'Partager' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Partager' }));
     expect(Share.share).toHaveBeenCalled();
   });
 });
