@@ -4,6 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Phone, Globe, MapPin, Star, ExternalLink, Bike, ArrowRight } from 'lucide-react';
 import { MARWA_PHONE } from '@/lib/partners';
+import { contactMailto } from '@/lib/contact';
+
+const joinMailto = contactMailto('Rejoindre l\'annuaire Services Pro');
 
 type Business = {
   name: string;
@@ -134,12 +137,14 @@ export default function ServicesProWidget() {
               Traiteurs · Mobilité · Garages
             </p>
           </div>
-          <a
-            href="mailto:pro@rme-voyage.com"
-            className="ml-auto rounded-full border border-[#c9903a]/40 bg-[#c9903a]/10 px-3 py-1.5 text-[11px] font-bold text-[#c9903a] hover:bg-[#c9903a]/20 transition whitespace-nowrap"
-          >
-            + Rejoindre
-          </a>
+          {joinMailto && (
+            <a
+              href={joinMailto}
+              className="ml-auto rounded-full border border-[#c9903a]/40 bg-[#c9903a]/10 px-3 py-1.5 text-[11px] font-bold text-[#c9903a] hover:bg-[#c9903a]/20 transition whitespace-nowrap"
+            >
+              + Rejoindre
+            </a>
+          )}
         </div>
       </div>
 
@@ -167,13 +172,15 @@ export default function ServicesProWidget() {
         )}
       </div>
 
-      <p className="px-5 pb-4 text-center text-[10px] text-[#475569]">
-        Vous êtes professionnel ?{' '}
-        <a href="mailto:pro@rme-voyage.com" className="text-[#c9903a] hover:underline">
-          Rejoignez l'annuaire
-        </a>{' '}
-        — une fiche sera publiée après vérification.
-      </p>
+      {joinMailto && (
+        <p className="px-5 pb-4 text-center text-[10px] text-[#475569]">
+          Vous êtes professionnel ?{' '}
+          <a href={joinMailto} className="text-[#c9903a] hover:underline">
+            Rejoignez l'annuaire
+          </a>{' '}
+          — une fiche sera publiée après vérification.
+        </p>
+      )}
     </div>
   );
 }

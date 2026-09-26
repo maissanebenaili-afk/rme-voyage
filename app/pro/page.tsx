@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Building2, Users, Globe, Zap } from 'lucide-react';
+import { contactMailto } from '@/lib/contact';
+
+const proMailto = contactMailto('RME Voyage Pro — Demande d\'information');
 
 // This B2B offer is not yet built or commercially validated: no embeddable
 // widget, no Stripe billing, no analytics dashboard, no SLA exist in this
@@ -83,12 +86,16 @@ export default function ProPage() {
         <div className="mx-auto max-w-xl px-5">
           <h2 className="text-3xl font-display font-semibold">Intéressé·e par cette offre ?</h2>
           <p className="mt-3 text-white/70">On répond sous 24h. Pas de pitch, juste des réponses.</p>
-          <a
-            href="mailto:contact@rmevoyage.com?subject=RME%20Voyage%20Pro%20%E2%80%94%20Demande%20d%27information"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#f5cd93]"
-          >
-            Nous écrire <ArrowRight size={17} />
-          </a>
+          {proMailto ? (
+            <a
+              href={proMailto}
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#f5cd93]"
+            >
+              Nous écrire <ArrowRight size={17} />
+            </a>
+          ) : (
+            <p className="mt-6 font-semibold text-white/80">L&apos;adresse de contact sera publiée ici très bientôt.</p>
+          )}
         </div>
       </section>
 

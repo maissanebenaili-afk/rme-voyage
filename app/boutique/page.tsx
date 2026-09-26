@@ -8,6 +8,9 @@ import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
 import InspirationImage from '@/components/InspirationImage';
 import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
+import { contactMailto } from '@/lib/contact';
+
+const joinMailto = contactMailto('Rejoindre la Boutique RME Voyage');
 
 const RUBRIQUES = [
   { href: '#caftan', label: '👗 Caftans' },
@@ -182,12 +185,16 @@ export default function BoutiquePage() {
             Caftans, traiteur, transport, garage, bien-être : rejoignez l&apos;annuaire et touchez
             des voyageurs et familles MRE à la recherche de services adaptés.
           </p>
-          <a
-            href="mailto:pro@rme-voyage.com?subject=Rejoindre%20la%20Boutique%20RME%20Voyage"
-            className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a]"
-          >
-            Rejoindre l&apos;annuaire
-          </a>
+          {joinMailto ? (
+            <a
+              href={joinMailto}
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a]"
+            >
+              Rejoindre l&apos;annuaire
+            </a>
+          ) : (
+            <p className="mt-7 font-semibold text-white/80">Les inscriptions ouvrent très bientôt.</p>
+          )}
         </div>
       </section>
     </main>
