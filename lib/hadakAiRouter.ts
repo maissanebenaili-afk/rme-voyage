@@ -271,12 +271,12 @@ export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> 
       appendLedger({
         request_id: id,
         provider: provider.id,
-        resolution_type: isFreeOnly() ? 'FREE_PROVIDER' : 'PAID_PROVIDER',
+        resolution_type: provider.freeTier ? 'FREE_PROVIDER' : 'PAID_PROVIDER',
         latency_ms: Date.now() - started,
         tokens_estimated: estimateTokens(options.message, result.text),
-        estimated_cost: isFreeOnly() ? 0 : 0,
+        estimated_cost: 0,
       });
-      return { ...result, provider: provider.id, resolutionType: isFreeOnly() ? 'FREE_PROVIDER' : 'PAID_PROVIDER', requestId: id };
+      return { ...result, provider: provider.id, resolutionType: provider.freeTier ? 'FREE_PROVIDER' : 'PAID_PROVIDER', requestId: id };
     }
 
     const failure = result.state ?? 'PROVIDER_ERROR';
