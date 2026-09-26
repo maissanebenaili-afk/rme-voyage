@@ -142,9 +142,9 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
       return new Response('', { status: 503 });
     });
     global.fetch = fetchMock as unknown as typeof fetch;
-    const first = await post('Wydad ou Raja ce soir ?');
+    const first = await post('Wydad ou Raja ce soir ?', 'da');
     const callsAfterFirst = fetchMock.mock.calls.length;
-    const second = await post('Wydad ou Raja ce soir ?');
+    const second = await post('Wydad ou Raja ce soir ?', 'da');
     expect((await first.json()).response).toBe('cached candidate');
     expect((await second.json()).response).toBe('cached candidate');
     expect(fetchMock.mock.calls.length).toBe(callsAfterFirst);
@@ -173,7 +173,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
       if (input.toString().includes('api.openai.com')) return mockJson({ choices: [{ message: { content: 'football answer' } }] });
       return new Response('', { status: 503 });
     }) as unknown as typeof fetch;
-    const response = await post('Wydad ou Raja ce soir ?');
+    const response = await post('Wydad ou Raja ce soir ?', 'da');
     const body = await response.json();
     expect(body.response).toBe('football answer');
   });
