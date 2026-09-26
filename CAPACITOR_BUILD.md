@@ -1,206 +1,133 @@
-# 📱 Capacitor Build Guide — iOS & Android
+# RME Voyage — Préparation mobile & stores
 
-This guide explains how to build RME Voyage for App Store and Play Store.
+## État réel
 
-## Prerequisites
+RME Voyage est actuellement une application **Next.js + APIs server-side déployée sur Vercel**, avec une configuration Capacitor 7 préparatoire.
 
-### For iOS Build
-- Mac with Xcode (13+) installed
-- Apple Developer Account ($99/year)
-- CocoaPods (`brew install cocoapods`)
+Le dépôt ne contient pas encore les projets natifs `ios/` et `android/`. Ils ne doivent pas être générés ou publiés comme une simple étape mécanique tant que l'architecture mobile n'est pas validée.
 
-### For Android Build
-- Android Studio or Android SDK CLI
-- Java 11+
-- Signing key for Play Store
+### Point important
 
-### Both Platforms
-- Node.js 18+
-- `npx @capacitor/cli@latest`
+Le projet utilise des routes API Next.js (`/api/*`). Une exportation Next.js purement statique casserait cette architecture.
 
----
+La configuration actuelle de Capacitor pointe vers :
 
-## Build Process
+```
+.next/standalone/public
+```
 
-### 1. Build Next.js Production
-```bash
+mais `next.config.mjs` ne configure pas `output: "standalone"`. La commande `npm run cap:build` n'est donc **pas actuellement un pipeline mobile reproductible**.
+
+**Ne pas lancer `npx cap add ios` ou `npx cap add android` sur cette base en pensant obtenir un binaire de production.**
+
+## Architecture mobile cible à valider
+
+Avant de générer les projets natifs, nous devons choisir explicitement entre :
+
+1. **Web local embarqué + backend Vercel**
+   - le shell et les ressources nécessaires sont embarqués ;
+   - les fonctionnalités nécessitant le serveur utilisent les APIs RME ;
+   - nécessite une stratégie claire pour les assets Next.js et les mises à jour.
+
+2. **Client Capacitor avec backend distant RME**
+   - le backend reste sur Vercel ;
+   - les fonctions natives réellement utiles sont exposées via Capacitor ;
+   - nécessite une validation spécifique de l'expérience offline, du démarrage et des politiques des stores.
+
+Le choix doit préserver les APIs existantes et éviter une réécriture de l'application.
+
+## Capacitor
+
+Version actuellement déclarée dans le projet : Capacitor 7.
+
+Plugins déclarés :
+- Core
+- Geolocation
+- Splash Screen
+
+La configuration mentionne également les notifications, mais aucun pipeline natif complet de notifications n'est actuellement présent dans le dépôt. Ne pas présenter cette capacité comme disponible dans une fiche store avant validation sur appareil.
+
+## PWA
+
+La PWA est déjà présente :
+- manifest web ;
+- service worker ;
+- écran offline ;
+- installation navigateur.
+
+Le service worker évite explicitement de mettre en cache les APIs et les requêtes privées.
+
+## Pré-requis store
+
+### Apple
+
+Apple demande une application fonctionnelle et testée sur appareil. Les applications doivent apporter une expérience qui les distingue d'un simple site web reconditionné.
+
+RME devra donc démontrer ses fonctionnalités réellement adaptées au mobile : voyage personnel, outils de route, localisation lorsque l'utilisateur l'autorise, fonctionnement dégradé hors connexion et autres fonctions natives effectivement implémentées.
+
+### Google Play
+
+Google Play exige une application stable et fonctionnelle. Les applications principalement destinées à afficher un site web ou à générer du trafic d'affiliation peuvent être refusées.
+
+RME doit donc rester une **application de service de voyage**, et non une enveloppe de liens partenaires.
+
+À partir du 31 août 2026, les nouvelles applications et mises à jour Google Play doivent cibler Android 16 / API 36 ou supérieur.
+
+## Données et confidentialité
+
+Avant publication :
+- vérifier exactement les données réellement collectées ;
+- vérifier les SDK tiers ;
+- vérifier la géolocalisation ;
+- vérifier Analytics ;
+- vérifier les données envoyées aux APIs ;
+- préparer les déclarations Apple et Google à partir du comportement réel de l'application ;
+- vérifier le mécanisme de suppression de compte si un compte utilisateur est proposé.
+
+Ne jamais remplir les formulaires store à partir d'une ancienne documentation : ils doivent refléter la version effectivement publiée.
+
+## Pipeline de validation avant publication
+
+Le pipeline cible est :
+
+```
+typecheck
+lint
+tests
+build web
+audit sécurité
+test des APIs
+test PWA
+build natif
+test appareil réel
+test réseau faible / hors ligne
+test permissions
+test cold start
+test store metadata
+```
+
+Aucune publication ne doit être considérée prête avant ces contrôles.
+
+## Commandes actuelles
+
+Pour le web :
+
+```
+npm ci
+npm run typecheck
+npm run lint
+npm test
 npm run build
-npx cap sync
 ```
 
-This generates `.next/standalone/public` which Capacitor uses.
+Pour le mobile, aucune commande de production n'est déclarée valide tant que l'architecture Capacitor n'a pas été finalisée.
 
-### 2. iOS Build
+## À ne pas faire
 
-#### First time setup:
-```bash
-npx cap add ios
-```
+- Ne pas activer `output: "export"` uniquement pour satisfaire Capacitor.
+- Ne pas prétendre que `.next/standalone/public` est généré tant que `output: "standalone"` n'est pas configuré.
+- Ne pas générer `ios/` et `android/` sans stratégie de build et de signature.
+- Ne pas déclarer des fonctionnalités natives non testées.
+- Ne pas transformer RME en simple WebView d'affiliation.
 
-#### Build for simulator:
-```bash
-npx cap run ios
-# Opens Xcode simulator in browser
-```
-
-#### Build for device:
-```bash
-npx cap run ios
-# In Xcode: Select device + Scheme "App" + Run (Cmd+R)
-```
-
-#### Build for App Store:
-1. Open `ios/App/App.xcworkspace` in Xcode
-2. Select Generic iOS Device
-3. Product → Archive
-4. Distribute App → App Store Connect
-5. Fill metadata:
-   - Version: `1.0.0`
-   - Build: `1`
-   - Screenshots (see Assets section below)
-
-### 3. Android Build
-
-#### First time setup:
-```bash
-npx cap add android
-cd android
-./gradlew build
-```
-
-#### Build for Play Store:
-```bash
-cd android
-./gradlew bundleRelease
-```
-
-Sign with your Play Store key. Result: `android/app/build/outputs/bundle/release/app-release.aab`
-
----
-
-## App Store Assets
-
-Required for submission:
-
-### iOS (App Store)
-- **App Icon:** 1024×1024 PNG (no rounded corners)
-- **Screenshots:** 1242×2208 (6 max)
-  - iPhone 15 Pro Max dimensions
-  - Show key features: caftans, properties, travel planning
-- **Description:** ~180 chars
-- **Keywords:** "voyage, maroc, caftans, immobilier"
-- **Privacy Policy URL:** https://your-domain.com/api/legal/privacy
-- **Terms URL:** https://your-domain.com/api/legal/terms
-
-### Android (Play Store)
-- **App Icon:** 512×512 PNG
-- **Feature Graphic:** 1024×500 PNG (banner)
-- **Screenshots:** 1080×1920 (8 max)
-- **Description:** ~500 chars
-- **Privacy Policy URL:** Same as iOS
-- **Content Rating:** General (Travel app, no restricted content)
-
----
-
-## App Store Submission Steps
-
-### iOS
-1. App Store Connect → Create new app
-2. Fill app info:
-   - Bundle ID: `com.rmevoyage.app`
-   - App name: `RME Voyage`
-   - Primary category: Travel
-   - Secondary: Lifestyle
-3. Upload build (Xcode or Transporter)
-4. Fill metadata (screenshots, description, keywords)
-5. Add TestFlight testers (internal + external)
-6. Submit for review (typically 1-3 days)
-
-### Android
-1. Google Play Console → Create new app
-2. Fill store listing (screenshots, description)
-3. Upload signed APK/AAB
-4. Review content rating form
-5. Set pricing (free)
-6. Submit for review (typically 2-4 hours)
-
----
-
-## Environment Variables
-
-Make sure these are set in `.env.local`:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-NEXT_PUBLIC_API_BASE_URL=https://rme-voyage.app
-```
-
-Capacitor will use these when building the web view.
-
----
-
-## Testing Before Submission
-
-### Local Testing
-```bash
-npx cap run ios
-npx cap run android
-```
-
-Test on real devices (TestFlight for iOS, Google Play internal testing for Android).
-
-### Checklist
-- [ ] Login/signup works
-- [ ] Can view caftans without auth
-- [ ] Can book caftan (WhatsApp link works)
-- [ ] Can view properties without auth
-- [ ] Can book property (WhatsApp link works)
-- [ ] Location map works (if using geolocation)
-- [ ] App doesn't crash on cold start
-- [ ] Handles network errors gracefully
-
----
-
-## Troubleshooting
-
-### iOS Build Fails
-```bash
-# Clear cache
-rm -rf ios/Pods
-rm -rf ios/App/Podfile.lock
-npx cap sync ios
-```
-
-### Android Build Fails
-```bash
-# Clear cache
-cd android
-./gradlew clean
-./gradlew bundleRelease
-```
-
-### App Crashes on Launch
-- Check `.next/standalone/public` exists after `npm run build`
-- Verify `capacitor.config.ts` has correct `webDir`
-- Check browser console for JavaScript errors
-
----
-
-## CI/CD Integration
-
-To automate builds, see `.github/workflows/build-ios.yml` and `.github/workflows/build-android.yml` (not yet created, but Claude can set up).
-
----
-
-## Support
-
-For issues:
-- Capacitor docs: https://capacitorjs.com
-- App Store: https://developer.apple.com
-- Play Store: https://developer.android.com
-
----
-
-**Last updated:** 2026-09-20  
-**Maintained by:** Claude AI Partner
+**Statut : préparation mobile en audit — publication native non déclarée prête.**

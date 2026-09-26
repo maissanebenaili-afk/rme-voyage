@@ -1,130 +1,84 @@
-# RME Voyage — Guide de Déploiement
+# RME Voyage — Déploiement
 
-## ✅ Pré-requis vérifiés
+## Architecture actuelle
 
-### Code
-- [x] TypeScript strict activé
-- [x] Pas de secrets en client
-- [x] "use client" correctement placés
-- [x] Structure des routes cohérente
-- [x] Imports paths configurés (@/)
-- [x] Aucune console.log en production
+- **Web :** Next.js 16 + React 18
+- **Hébergement :** Vercel
+- **APIs :** routes server-side Next.js
+- **PWA :** manifest + service worker
+- **Mobile :** Capacitor 7 préparatoire, projets natifs non encore générés
+- **CI :** vérifications TypeScript / lint / tests / build selon le pipeline du dépôt
 
-### Dépendances
-- [x] Next.js 15.0 + React 19
-- [x] Capacitor 7.0 pour mobile
-- [x] Tailwind CSS + PostCSS configurés
-- [x] TypeScript 5.7
-- [x] Lucide React pour icônes
-- [x] Supabase JS (prêt pour integration)
-
-### Configuration
-- [x] manifest.webmanifest pour PWA
-- [x] capacitor.config.ts pour mobile
-- [x] .env.example documenté
-- [x] .gitignore complet
-- [x] tsconfig.json strict
-
-## 🚀 Build & Start
+## Vérification locale
 
 ```bash
-# Installation
-npm install
-
-# Development
-npm run dev      # http://localhost:3000
-
-# Production build
+npm ci
+npm run typecheck
+npm run lint
+npm test
 npm run build
-npm run start
-
-# Mobile (Capacitor)
-npm run cap:build
 ```
 
-## 🔐 Secrets & Env Vars
+## Production web
 
-**Ne jamais committer :**
-- `.env` (fichier local)
-- API keys, tokens, identifiants
-- Données personnelles
+Le déploiement production est effectué via Vercel.
 
-**Configuration requise en production :**
+Avant toute mise en production :
+- typecheck ;
+- lint ;
+- tests ;
+- build ;
+- contrôle des APIs sensibles ;
+- contrôle des erreurs runtime ;
+- contrôle des secrets et variables d'environnement.
+
+## Mobile / Capacitor
+
+**Attention : le script `npm run cap:build` n'est pas actuellement un pipeline de production mobile validé.**
+
+La raison est architecturale : l'application utilise des routes API Next.js et la configuration Capacitor pointe vers `.next/standalone/public`, alors que Next.js n'est pas configuré avec `output: "standalone"`.
+
+Les projets natifs `ios/` et `android/` ne sont pas encore présents dans le dépôt.
+
+La prochaine étape mobile est donc un **Architecture Gate** avant génération des plateformes natives.
+
+## PWA
+
+Le portail dispose déjà :
+- d'un manifest ;
+- d'un service worker ;
+- d'un fallback hors ligne ;
+- d'une stratégie qui ne met pas en cache les APIs.
+
+## Sécurité
+
+Les secrets ne doivent jamais être committés.
+
+Les APIs qui dépendent d'une authentification réelle doivent échouer proprement lorsque leur backend sécurisé n'est pas configuré. Le mode mock ne doit pas devenir un mécanisme d'identité en production.
+
+## Store readiness
+
+Avant publication iOS / Android :
+- build natif reproductible ;
+- signature ;
+- test sur appareil réel ;
+- test cold start ;
+- test réseau indisponible ;
+- test permissions ;
+- vérification des données collectées ;
+- politique de confidentialité accessible ;
+- fiches store cohérentes avec le comportement réel ;
+- absence de fonctionnalités annoncées mais non disponibles.
+
+## Important
+
+Les anciennes procédures qui supposent :
+
 ```
-TRAVELPAYOUTS_PARTNER_ID=<id_validé>
-DIRECT_FERRIES_PARTNER_ID=<id_validé>
-DIRECT_FERRIES_BASE_URL=<url_validée>
+npm run build
+npx cap sync
 ```
 
-## 📋 Checklist Déploiement
+puis un build natif immédiat ne doivent pas être considérées comme suffisantes.
 
-### Avant mise en ligne
-- [ ] Tester npm run build localement
-- [ ] Vérifier qu'aucun secret n'est commité
-- [ ] Tester les routes API (/api/*)
-- [ ] Vérifier les imports images et assets
-- [ ] Tester sur mobile (Capacitor) si applicable
-- [ ] Valider que l'app fonctionne sans affiliation (fallback gracieux)
-
-### En production
-- [ ] Variables d'env configurées côté hosting
-- [ ] Monitoring activé (erreurs, performance)
-- [ ] Cache headers configurés (images, static assets)
-- [ ] CORS/CSP headers appropriés
-- [ ] SSL/HTTPS forcé
-- [ ] Rate limiting sur /api/affiliates
-
-## 🌍 Cibles de déploiement
-
-### Web (Recommandé : Vercel, Netlify, Railway)
-```bash
-npm run build && npm run start
-```
-
-### Mobile (iOS/Android via Capacitor)
-```bash
-npm run cap:build
-npx cap sync ios
-npx cap sync android
-```
-
-### PWA (Progressive Web App)
-- manifest.webmanifest ✓ configuré
-- Service Worker à ajouter (future amélioration)
-
-## 🐛 Troubleshooting
-
-| Erreur | Cause | Solution |
-|--------|-------|----------|
-| `Cannot find module @/*` | tsconfig.json paths incorrects | Vérifier paths + relancer dev |
-| `"use client" missing` | Composant use* sans directive | Ajouter "use client" en haut |
-| `Build timeout` | Dépendances trop lourdes | npm ci + npm run build --no-lint |
-| `API 401/403` | Env vars manquants | Configurer .env.local |
-| `Images broken` | next/image + output:export conflict | next.config: images.unoptimized: true ✓ |
-
-## 📚 Ressources
-
-- [Next.js Deployment](https://nextjs.org/docs/deployment)
-- [Capacitor iOS/Android](https://capacitorjs.com/docs/getting-started/environment-setup)
-- [PWA Manifest](https://web.dev/add-manifest/)
-- [Supabase Docs](https://supabase.com/docs)
-
-## 🔄 Post-Déploiement
-
-1. Monitor erreurs (Sentry, LogRocket, etc.)
-2. Configurer Analytics (Vercel Analytics ou GA4)
-3. Intégrer géocodage réel + routing
-4. Ajouter authentification + modération Supabase
-5. Mettre en place CI/CD GitHub Actions
-6. Tests automatisés (Jest, Cypress)
-
-## 📝 État après déploiement
-
-Mettez à jour `RME_ROUTE_ETAT.md` :
-```markdown
-## Déployé (2026-09-XX)
-- Date: [date]
-- URL: [domain]
-- Plateforme: [web/mobile/pwa]
-- Version: 1.0.0
-```
+**Statut : web production opérationnel ; mobile natif en préparation architecturale.**
