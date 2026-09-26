@@ -79,7 +79,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     const result = await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
     expect(result.provider).toBe('openai');
     expect(getProviderHealth().groq.state).toBe('RATE_LIMITED');
-    expect(getProviderHealth().groq.cooldown).toBe(true);
+    expect(getProviderHealth().groq.cooldown_until).not.toBeNull();
   });
 
   it('5. timeout moves to the next provider', async () => {
@@ -108,7 +108,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     ) as unknown as typeof fetch;
     await routeHadakAI({ message: 'question', systemPrompt: 'answer' });
     expect(getProviderHealth().groq.state).toBe('AUTH_ERROR');
-    expect(getProviderHealth().groq.cooldown).toBe(true);
+    expect(getProviderHealth().groq.cooldown_until).not.toBeNull();
   });
 
   it('8. circuit opens after repeated transient failures', async () => {
@@ -117,7 +117,7 @@ describe('LOT A+ — 19 mandatory routing invariants', () => {
     await routeHadakAI({ message: 'one', systemPrompt: 'answer' });
     await routeHadakAI({ message: 'two', systemPrompt: 'answer' });
     expect(getProviderHealth().groq.state).toBe('CIRCUIT_OPEN');
-    expect(getProviderHealth().groq.cooldown).toBe(true);
+    expect(getProviderHealth().groq.cooldown_until).not.toBeNull();
   });
 
   it('9. deterministic time resolution happens before any LLM', async () => {
