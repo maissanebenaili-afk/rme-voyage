@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { MapPin, Trash2 } from 'lucide-react';
+import { ChevronDown, MapPin, Trash2 } from 'lucide-react';
 import { useComputedRoute } from '@/lib/routeContext';
 import { TRAVEL_PHASES, type TravelPhaseId } from '@/lib/travel/travelPhase';
 import { isValidTravelDate } from '@/lib/travel/travelStorage.migrations';
@@ -56,10 +56,12 @@ export default function TravelHub() {
   const timeline = TRAVEL_PHASES.filter((p) => p.timeline);
   const sections = TRAVEL_PHASES.filter((p) => !p.timeline);
 
+  const currentLabel = TRAVEL_PHASES.find((p) => p.id === phase)?.label;
+
   return (
-    <section aria-labelledby="travel-hub-title" className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-5xl px-4 py-5 sm:px-8">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+    <section aria-labelledby="travel-hub-title" className="px-4 py-5 sm:px-8">
+      <details className="group mx-auto max-w-5xl rounded-3xl border-2 border-atlas-600 bg-atlas-50 shadow-md">
+        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 rounded-3xl p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1] sm:p-5 [&::-webkit-details-marker]:hidden">
           <div className="min-w-0">
             <h2 id="travel-hub-title" className="text-lg font-extrabold text-[#0f1f3d]">Mon voyage</h2>
             {hasTrip ? (
@@ -81,57 +83,68 @@ export default function TravelHub() {
                   : 'Chargement de votre voyage…'}
               </p>
             )}
+            {isHydrated && (
+              <p className="mt-2 text-sm font-bold text-atlas-700">Étape : {currentLabel}</p>
+            )}
           </div>
+          <span className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-atlas-700 px-4 text-sm font-bold text-white">
+            <span className="group-open:hidden">Voir les rubriques</span>
+            <span className="hidden group-open:inline">Masquer</span>
+            <ChevronDown size={18} aria-hidden="true" className="transition-transform group-open:rotate-180" />
+          </span>
+        </summary>
+
+        <div className="border-t-2 border-atlas-200 p-4 sm:p-5">
+          <nav aria-label="Étapes du voyage">
+            <ol className="flex flex-wrap gap-2">
+              {timeline.map(({ id, label }) => {
+                const active = isHydrated && id === phase;
+                return (
+                  <li key={id}>
+                    <a
+                      href={`#${HUB_ANCHORS[id]}`}
+                      aria-current={active ? 'step' : undefined}
+                      className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1] ${
+                        active
+                          ? 'border-[#0f1f3d] bg-[#0f1f3d] text-white'
+                          : 'border-slate-300 bg-white text-[#0f1f3d] hover:bg-slate-50'
+                      }`}
+                    >
+                      {label}
+                      {active && <span className="sr-only"> (étape actuelle)</span>}
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+
+          <nav aria-label="Toujours disponibles" className="mt-2">
+            <ul className="flex flex-wrap gap-2">
+              {sections.map(({ id, label }) => (
+                <li key={id}>
+                  <a
+                    href={`#${HUB_ANCHORS[id]}`}
+                    className="inline-flex min-h-11 items-center rounded-full border border-amber-300 bg-amber-50 px-4 text-sm font-bold text-[#92400e] transition hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1]"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
           {hasTrip && (
             <button
               type="button"
               onClick={resetTravel}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-slate-300 px-4 text-sm font-bold text-[#334155] transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1]"
+              className="mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-slate-400 bg-white px-4 text-sm font-bold text-[#334155] transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1]"
             >
-              <Trash2 size={15} aria-hidden="true" /> Effacer
+              <Trash2 size={15} aria-hidden="true" /> Effacer mon voyage
             </button>
           )}
         </div>
-
-        <nav aria-label="Étapes du voyage" className="mt-4">
-          <ol className="flex flex-wrap gap-2">
-            {timeline.map(({ id, label }) => {
-              const active = isHydrated && id === phase;
-              return (
-                <li key={id}>
-                  <a
-                    href={`#${HUB_ANCHORS[id]}`}
-                    aria-current={active ? 'step' : undefined}
-                    className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1] ${
-                      active
-                        ? 'border-[#0f1f3d] bg-[#0f1f3d] text-white'
-                        : 'border-slate-300 bg-white text-[#0f1f3d] hover:bg-slate-50'
-                    }`}
-                  >
-                    {label}
-                    {active && <span className="sr-only"> (étape actuelle)</span>}
-                  </a>
-                </li>
-              );
-            })}
-          </ol>
-        </nav>
-
-        <nav aria-label="Toujours disponibles" className="mt-2">
-          <ul className="flex flex-wrap gap-2">
-            {sections.map(({ id, label }) => (
-              <li key={id}>
-                <a
-                  href={`#${HUB_ANCHORS[id]}`}
-                  className="inline-flex min-h-11 items-center rounded-full border border-amber-300 bg-amber-50 px-4 text-sm font-bold text-[#92400e] transition hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1]"
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+      </details>
     </section>
   );
 }

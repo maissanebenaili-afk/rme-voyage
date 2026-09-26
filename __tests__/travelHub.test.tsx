@@ -136,6 +136,17 @@ describe("TravelHub", () => {
     expect(current()).toHaveTextContent("Mon Voyage");
   });
 
+  test("collapsible: closed by default, the current step stays visible, opens on click", async () => {
+    localStorage.setItem(TRAVEL_STORAGE_KEY, stored({ dateVoyage: "2026-10-06" }));
+    const { container } = render(<TravelHub />);
+    const details = container.querySelector("details")!;
+    expect(details.open).toBe(false);
+
+    expect(await screen.findByText("Étape : Préparer")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Voir les rubriques"));
+    expect(details.open).toBe(true);
+  });
+
   test("every hub entry points to its own anchor", () => {
     expect(new Set(Object.values(HUB_ANCHORS)).size).toBe(6);
   });
