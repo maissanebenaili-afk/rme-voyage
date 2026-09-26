@@ -17,6 +17,12 @@ describe('SportsHub mobile safety', () => {
     nativePlatform.mockReturnValue(true);
   });
 
+  it('does not render native share in the web app', () => {
+    nativePlatform.mockReturnValue(false);
+    render(<SportsHub />);
+    expect(screen.queryByRole('button', { name: 'Partager' })).not.toBeInTheDocument();
+  });
+
   it('does not render sports betting operators in the native app', () => {
     render(<SportsHub />);
 
