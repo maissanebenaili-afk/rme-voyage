@@ -70,7 +70,7 @@ export default async function CaftanPage({ params }: Params) {
                   <span className="block p-4">
                     <span className="block font-black text-[#0f1f3d]">Caftan {s.name}</span>
                     <span className="mt-0.5 block text-xs text-[#64748b]">{s.style}</span>
-                    <span className="mt-1.5 block font-black text-[#c9903a]">
+                    <span className="mt-1.5 block font-black text-[#8a5a14]">
                       {s.prixLocation} €<span className="text-xs font-semibold text-[#475569]">/sem</span>
                     </span>
                   </span>

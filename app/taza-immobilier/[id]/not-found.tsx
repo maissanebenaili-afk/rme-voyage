@@ -14,7 +14,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/taza-immobilier"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[#c9903a] px-6 py-3 text-sm font-extrabold text-white hover:bg-[#a8741e] transition"
+          className="inline-flex items-center gap-2 rounded-2xl bg-[#c9903a] px-6 py-3 text-sm font-extrabold text-[#0f1f3d] hover:bg-[#a8741e] transition"
         >
           <ArrowLeft size={14} /> Retourner au catalogue
         </Link>

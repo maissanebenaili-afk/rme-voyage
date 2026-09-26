@@ -61,7 +61,7 @@ export default function CaftanGallery({ caftan }: { caftan: Caftan }) {
               <CaftanVisual caftan={caftan} view={v.key} variant="thumb" />
             </span>
             <span className={`block py-2 text-[11px] font-bold transition-colors duration-200 ${
-              view === v.key ? 'bg-[#c9903a]/5 text-[#c9903a]' : 'text-[#0f1f3d] group-hover:text-[#c9903a]/70'
+              view === v.key ? 'bg-[#c9903a]/5 text-[#8a5a14]' : 'text-[#0f1f3d] group-hover:text-[#c9903a]/70'
             }`}>
               {v.label}
             </span>

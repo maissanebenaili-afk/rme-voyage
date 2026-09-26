@@ -38,7 +38,7 @@ export default function BelisamaePage() {
         <div className="relative mx-auto max-w-5xl">
           <Link
             href="/boutique"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#8a9589] transition hover:text-[#2f3a33]"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#5b665c] transition hover:text-[#2f3a33]"
           >
             <ArrowLeft size={14} /> La Boutique
           </Link>
@@ -51,7 +51,7 @@ export default function BelisamaePage() {
               <p className="font-display text-xl font-semibold tracking-tight text-[#2f3a33]">
                 Belisamae
               </p>
-              <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#8a9589]">
+              <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#5b665c]">
                 Énergéticienne · Reiki · Géobiologie
               </p>
             </div>
@@ -87,7 +87,7 @@ export default function BelisamaePage() {
 
       <section className="bg-white py-16">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#8a9589]">
+          <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-[#5b665c]">
             Les accompagnements
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#2f3a33] sm:text-4xl">
@@ -126,7 +126,7 @@ export default function BelisamaePage() {
                   {e.n}
                 </span>
                 <h3 className="mt-4 text-sm font-black text-[#2f3a33]">{e.t}</h3>
-                <p className="mt-1.5 text-xs leading-5 text-[#7a8a7e]">{e.d}</p>
+                <p className="mt-1.5 text-xs leading-5 text-[#5b665c]">{e.d}</p>
               </div>
             ))}
           </div>
@@ -138,7 +138,7 @@ export default function BelisamaePage() {
           <h2 className="font-display text-3xl font-normal italic tracking-tight text-white sm:text-4xl">
             Le premier pas est un simple échange.
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-white/70">
+          <p className="mx-auto mt-4 max-w-lg text-white/90">
             Prenez rendez-vous en ligne ou appelez directement — en cabinet comme à distance.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

@@ -41,7 +41,7 @@ function Card({ t }: { t: Transporteur }) {
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-sm font-black text-[#0f1f3d]">{t.name}</h3>
         {t.featured && (
-          <span className="rounded-full bg-[#c9903a] px-2 py-0.5 text-[9px] font-black uppercase text-white">
+          <span className="rounded-full bg-[#c9903a] px-2 py-0.5 text-[9px] font-black uppercase text-[#0f1f3d]">
             Mis en avant
           </span>
         )}

@@ -67,7 +67,7 @@ function BusinessCard({ b }: { b: Business }) {
             <h3 className="font-black text-[#0f1f3d] text-sm">{b.name}</h3>
             {b.tag && (
               <span
-                className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${b.featured ? 'bg-[#c9903a] text-white' : 'bg-[#f1f5f9] text-[#64748b]'}`}
+                className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${b.featured ? 'bg-[#c9903a] text-[#0f1f3d]' : 'bg-[#f1f5f9] text-[#475569]'}`}
               >
                 {b.tag}
               </span>
@@ -95,7 +95,7 @@ function BusinessCard({ b }: { b: Business }) {
         {b.page && (
           <Link
             href={b.page}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#c9903a] py-2 text-xs font-bold text-white transition hover:bg-[#a8741e]"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#c9903a] py-2 text-xs font-bold text-[#0f1f3d] transition hover:bg-[#a8741e]"
           >
             Voir la page <ArrowRight size={11} />
           </Link>
@@ -105,7 +105,7 @@ function BusinessCard({ b }: { b: Business }) {
             href={b.web}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#c9903a] py-2 text-xs font-bold text-white transition hover:bg-[#a8741e]"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#c9903a] py-2 text-xs font-bold text-[#0f1f3d] transition hover:bg-[#a8741e]"
           >
             <Globe size={11} /> Site <ExternalLink size={9} />
           </a>

@@ -20,7 +20,7 @@ export default function MouniaWidget() {
           <h2 className="font-display text-lg font-semibold tracking-tight text-[#2f3a33]">
             Belisamae
           </h2>
-          <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-[#8a9589]">
+          <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-[#5b665c]">
             Énergéticienne · Reiki · Géobiologie
           </p>
         </div>
@@ -45,7 +45,7 @@ export default function MouniaWidget() {
             className="flex items-baseline gap-2 rounded-xl border border-[#e6e9e2] bg-white/60 px-3 py-2"
           >
             <span className="text-[13px] font-semibold text-[#2f3a33]">{a.label}</span>
-            <span className="text-[11px] text-[#8a9589]">— {a.desc}</span>
+            <span className="text-[11px] text-[#5b665c]">— {a.desc}</span>
           </li>
         ))}
       </ul>

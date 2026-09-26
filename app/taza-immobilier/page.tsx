@@ -100,7 +100,7 @@ function PropertyCard({ p }: { p: Property }) {
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
-          className="group mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#c9903a] py-2.5 text-sm font-extrabold text-white shadow-lg shadow-[#c9903a]/20 transition-all duration-300 hover:bg-[#a8741e] hover:shadow-xl hover:shadow-[#c9903a]/30 hover:scale-105"
+          className="group mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#c9903a] py-2.5 text-sm font-extrabold text-[#0f1f3d] shadow-lg shadow-[#c9903a]/20 transition-all duration-300 hover:bg-[#a8741e] hover:shadow-xl hover:shadow-[#c9903a]/30 hover:scale-105"
         >
           <MessageCircle size={14} className="transition-transform group-hover:scale-110" />
           Demander des informations
@@ -184,7 +184,7 @@ export default function TazaImmobilier() {
                   <button
                     key={m}
                     onClick={() => setFilter(m)}
-                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-300 animate-in fade-in slide-in-from-left-4 ${filter === m ? 'bg-[#c9903a] text-white shadow-lg shadow-[#c9903a]/30' : 'border border-[#e2d5c0] bg-white text-[#64748b] hover:border-[#c9903a]/50 hover:shadow-sm'}`}
+                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-300 animate-in fade-in slide-in-from-left-4 ${filter === m ? 'bg-[#c9903a] text-[#0f1f3d] shadow-lg shadow-[#c9903a]/30' : 'border border-[#e2d5c0] bg-white text-[#64748b] hover:border-[#c9903a]/50 hover:shadow-sm'}`}
                     style={{ transitionDelay: `${idx * 50}ms` }}
                   >
                     {m}
@@ -201,7 +201,7 @@ export default function TazaImmobilier() {
                   <button
                     key={f}
                     onClick={() => setFurnish(f)}
-                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-300 animate-in fade-in slide-in-from-left-4 ${furnish === f ? 'bg-[#c9903a] text-white shadow-lg shadow-[#c9903a]/30' : 'border border-[#e2d5c0] bg-white text-[#64748b] hover:border-[#c9903a]/50 hover:shadow-sm'}`}
+                    className={`rounded-full px-3 py-1.5 text-xs font-bold transition-all duration-300 animate-in fade-in slide-in-from-left-4 ${furnish === f ? 'bg-[#c9903a] text-[#0f1f3d] shadow-lg shadow-[#c9903a]/30' : 'border border-[#e2d5c0] bg-white text-[#64748b] hover:border-[#c9903a]/50 hover:shadow-sm'}`}
                     style={{ transitionDelay: `${idx * 50}ms` }}
                   >
                     {f}
@@ -266,9 +266,9 @@ export default function TazaImmobilier() {
       </section>
 
       {/* Footer strip */}
-      <div className="bg-[#0f1f3d] px-5 py-6 text-center text-xs text-white/40">
+      <div className="bg-[#0f1f3d] px-5 py-6 text-center text-xs text-white/75">
         Aziz HiDOUR — Taza · Immobilier{' '}
-        <Link href="/" className="text-[#c9903a] hover:underline">
+        <Link href="/" className="text-[#c9903a] underline hover:no-underline">
           RME Voyage
         </Link>{' '}
         · Tous les détails à confirmer directement

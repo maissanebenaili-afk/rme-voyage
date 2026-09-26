@@ -64,7 +64,7 @@ export default function NewsFeed() {
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold">{item.title}</h3>
-                    <span className="text-xs opacity-60">{item.date}</span>
+                    <span className="text-xs opacity-90">{item.date}</span>
                   </div>
                   <p className="mt-1 text-sm opacity-80">{item.text}</p>
                 </div>

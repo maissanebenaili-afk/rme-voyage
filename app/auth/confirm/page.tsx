@@ -24,7 +24,7 @@ export default function ConfirmPage() {
           {/* Button */}
           <Link
             href="/"
-            className="inline-block bg-[#c9903a] hover:bg-[#a8741e] text-white font-bold py-2.5 px-6 rounded-lg transition-all duration-200"
+            className="inline-block bg-[#c9903a] hover:bg-[#a8741e] text-[#0f1f3d] font-bold py-2.5 px-6 rounded-lg transition-all duration-200"
           >
             Retour à l'accueil
           </Link>
