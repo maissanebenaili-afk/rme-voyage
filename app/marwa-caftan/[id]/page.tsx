@@ -6,6 +6,7 @@ import { CAFTANS, getCaftan, similarCaftans } from '@/lib/caftans';
 import CaftanVisual from '@/components/caftan/CaftanVisual';
 import CaftanGallery from '@/components/caftan/CaftanGallery';
 import CaftanBooking from '@/components/caftan/CaftanBooking';
+import { defaultOgImage } from '@/lib/seo';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   // Le layout parent fusionne openGraph champ par champ : sans ces deux lignes,
   // toutes les fiches partageraient la carte de la collection.
-  return { title, description, openGraph: { title, description, type: 'website' } };
+  return { title, description, openGraph: { title, description, type: 'website', images: [defaultOgImage] } };
 }
 
 export default async function CaftanPage({ params }: Params) {
