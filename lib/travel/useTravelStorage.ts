@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import type { CurrentTravelData } from "./travelStorage.types";
 import {
   createDefaultTravelState,
@@ -23,140 +23,171 @@ type TravelUpdater = (
   prev: CurrentTravelData,
 ) => TravelUpdate;
 
-export function useTravelStorage() {
-  const [travel, setTravelState] = useState<CurrentTravelData>(
-    createDefaultTravelState,
-  );
-  const [isHydrated, setIsHydrated] = useState(false);
-  const skipNextPersistRef = useRef(false);
+type TravelStoreState = {
+  travel: CurrentTravelData;
+  isHydrated: boolean;
+};
 
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
+/*
+ * Store partagé au niveau du module (même modèle que lib/routeContext.ts) :
+ * tous les composants qui appellent useTravelStorage lisent le même état,
+ * au lieu d'avoir chacun leur copie React qui divergerait.
+ */
+const SERVER_STATE: TravelStoreState = {
+  travel: createDefaultTravelState(),
+  isHydrated: false,
+};
+
+let state: TravelStoreState = SERVER_STATE;
+let hydrationStarted = false;
+const listeners = new Set<() => void>();
+
+function emit(next: TravelStoreState): void {
+  state = next;
+  listeners.forEach((listener) => listener());
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot(): TravelStoreState {
+  return state;
+}
+
+function getServerSnapshot(): TravelStoreState {
+  return SERVER_STATE;
+}
+
+function persist(travel: CurrentTravelData): void {
+  try {
+    window.localStorage.setItem(TRAVEL_STORAGE_KEY, JSON.stringify(travel));
+  } catch (error) {
+    console.error("RME Storage Write Error:", error);
+  }
+}
+
+function readPersistedTravel(): CurrentTravelData {
+  let rawData: string | null = null;
+
+  try {
+    rawData = window.localStorage.getItem(TRAVEL_STORAGE_KEY);
+    if (!rawData) {
+      return createDefaultTravelState();
     }
+    return migrateAndValidateTravelData(JSON.parse(rawData));
+  } catch (error) {
+    console.error("RME Storage Error: reset par defaut.", error);
 
-    try {
-      const rawData = window.localStorage.getItem(TRAVEL_STORAGE_KEY);
-
-      if (!rawData) {
-        return;
-      }
-
-      const parsed: unknown = JSON.parse(rawData);
-      const validatedData = migrateAndValidateTravelData(parsed);
-      setTravelState(validatedData);
-    } catch (error) {
-      console.error("RME Storage Error: reset par defaut.", error);
-
+    if (rawData !== null) {
       try {
-        const corruptedData =
-          window.localStorage.getItem(TRAVEL_STORAGE_KEY);
-        if (corruptedData !== null) {
-          window.localStorage.setItem(
-            TRAVEL_STORAGE_BACKUP_KEY,
-            corruptedData,
-          );
-        }
+        window.localStorage.setItem(TRAVEL_STORAGE_BACKUP_KEY, rawData);
+        // Only drop the corrupted payload once a copy is safely stored.
+        window.localStorage.removeItem(TRAVEL_STORAGE_KEY);
       } catch {
         // Storage may be unavailable or quota-limited. Memory state remains valid.
       }
-    } finally {
-      setIsHydrated(true);
     }
-  }, []);
+    return createDefaultTravelState();
+  }
+}
 
-  useEffect(() => {
-    if (!isHydrated || typeof window === "undefined") {
-      return;
-    }
+function hydrateTravelStore(): void {
+  if (hydrationStarted || typeof window === "undefined") {
+    return;
+  }
+  hydrationStarted = true;
+  emit({ travel: readPersistedTravel(), isHydrated: true });
+}
 
-    if (skipNextPersistRef.current) {
-      skipNextPersistRef.current = false;
-      return;
-    }
+function commit(travel: CurrentTravelData): void {
+  emit({ travel, isHydrated: state.isHydrated });
+  // Before hydration, writing would overwrite the stored trip with defaults.
+  if (state.isHydrated) {
+    persist(travel);
+  }
+}
 
+function setTravel(
+  nextData:
+    | CurrentTravelData
+    | ((prev: CurrentTravelData) => CurrentTravelData),
+): void {
+  commit(typeof nextData === "function" ? nextData(state.travel) : nextData);
+}
+
+function withoutUndefined(fields: object) {
+  return Object.fromEntries(
+    Object.entries(fields).filter(([, val]) => val !== undefined),
+  );
+}
+
+function updateTravel(fields: TravelUpdate | TravelUpdater): void {
+  const prev = state.travel;
+  const computedFields = typeof fields === "function" ? fields(prev) : fields;
+  const updated: CurrentTravelData = { ...prev };
+
+  if (computedFields.villes) {
+    updated.villes = {
+      ...prev.villes,
+      ...(withoutUndefined(computedFields.villes) as Partial<CurrentTravelData["villes"]>),
+    };
+  }
+
+  if (computedFields.preferences) {
+    updated.preferences = {
+      ...prev.preferences,
+      ...(withoutUndefined(computedFields.preferences) as CurrentTravelData["preferences"]),
+    };
+  }
+
+  if (computedFields.dateVoyage !== undefined) {
+    updated.dateVoyage = computedFields.dateVoyage;
+  }
+  if (computedFields.modeTransport !== undefined) {
+    updated.modeTransport = computedFields.modeTransport;
+  }
+  if (computedFields.checklistProgress !== undefined) {
+    updated.checklistProgress = computedFields.checklistProgress;
+  }
+
+  commit(updated);
+}
+
+function markConsulted(): void {
+  commit({ ...state.travel, derniereConsultation: new Date().toISOString() });
+}
+
+function resetTravel(): void {
+  if (typeof window !== "undefined") {
     try {
-      window.localStorage.setItem(
-        TRAVEL_STORAGE_KEY,
-        JSON.stringify(travel),
-      );
+      window.localStorage.removeItem(TRAVEL_STORAGE_KEY);
     } catch (error) {
-      console.error("RME Storage Write Error:", error);
+      console.error("RME Storage Reset Error:", error);
     }
-  }, [isHydrated, travel]);
+  }
+  emit({ travel: createDefaultTravelState(), isHydrated: state.isHydrated });
+}
 
-  const setTravel = useCallback(
-    (
-      nextData:
-        | CurrentTravelData
-        | ((prev: CurrentTravelData) => CurrentTravelData),
-    ) => {
-      setTravelState(nextData);
-    },
-    [],
+/** Test-only: simulates a fresh page load (memory state dropped, storage kept). */
+export function resetTravelStoreForTests(): void {
+  state = SERVER_STATE;
+  hydrationStarted = false;
+  listeners.clear();
+}
+
+export function useTravelStorage() {
+  const { travel, isHydrated } = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
   );
 
-  const updateTravel = useCallback(
-    (fields: TravelUpdate | TravelUpdater) => {
-      setTravelState((prev) => {
-        const computedFields =
-          typeof fields === "function" ? fields(prev) : fields;
-
-        const updated: CurrentTravelData = { ...prev };
-
-        if (computedFields.villes) {
-          const cleanedVilles = Object.fromEntries(
-            Object.entries(computedFields.villes).filter(
-              ([, val]) => val !== undefined,
-            ),
-          ) as Partial<CurrentTravelData["villes"]>;
-          updated.villes = { ...prev.villes, ...cleanedVilles };
-        }
-
-        if (computedFields.preferences) {
-          const cleanedPrefs = Object.fromEntries(
-            Object.entries(computedFields.preferences).filter(
-              ([, val]) => val !== undefined,
-            ),
-          ) as Record<string, string | number | boolean | null>;
-          updated.preferences = { ...prev.preferences, ...cleanedPrefs };
-        }
-
-        if (computedFields.dateVoyage !== undefined) {
-          updated.dateVoyage = computedFields.dateVoyage;
-        }
-        if (computedFields.modeTransport !== undefined) {
-          updated.modeTransport = computedFields.modeTransport;
-        }
-        if (computedFields.checklistProgress !== undefined) {
-          updated.checklistProgress = computedFields.checklistProgress;
-        }
-
-        return updated;
-      });
-    },
-    [],
-  );
-
-  const markConsulted = useCallback(() => {
-    setTravelState((prev) => ({
-      ...prev,
-      derniereConsultation: new Date().toISOString(),
-    }));
-  }, []);
-
-  const resetTravel = useCallback(() => {
-    if (typeof window !== "undefined") {
-      try {
-        window.localStorage.removeItem(TRAVEL_STORAGE_KEY);
-      } catch (error) {
-        console.error("RME Storage Reset Error:", error);
-      }
-    }
-
-    skipNextPersistRef.current = true;
-    setTravelState(createDefaultTravelState());
-  }, []);
+  // Hydrate after mount so the first client render matches the server one.
+  useEffect(hydrateTravelStore, []);
 
   return {
     travel,
