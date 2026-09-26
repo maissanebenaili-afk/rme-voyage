@@ -1,116 +1,95 @@
-# RME Voyage — Préparation mobile & stores
+# RME Voyage — Capacitor & stores
 
-## État réel
+## Architecture mobile retenue
 
-RME Voyage est actuellement une application **Next.js + APIs server-side déployée sur Vercel**, avec une configuration Capacitor 7 préparatoire.
+RME utilise une **coquille Capacitor avec le site RME distant** :
 
-Le dépôt ne contient pas encore les projets natifs `ios/` et `android/`. Ils ne doivent pas être générés ou publiés comme une simple étape mécanique tant que l'architecture mobile n'est pas validée.
+- URL chargée par l'application : `https://rme-route.vercel.app`
+- backend et routes Next.js : Vercel
+- pas d'export Next.js statique
+- `webDir` : `public`, utilisé pour les ressources locales lors du sync Capacitor
+- navigation vers les partenaires : navigateur Capacitor séparé de la WebView
+- partage : API native Capacitor
+- retour Android : gestionnaire par défaut du plugin Capacitor App
+- géolocalisation : plugin Capacitor Geolocation
+- splash screen : plugin Capacitor Splash Screen
+- notifications push : **non déclarées** tant qu'elles ne sont pas implémentées et testées
 
-### Point important
+Cette architecture évite de réécrire les APIs existantes et conserve le backend RME sur Vercel.
 
-Le projet utilise des routes API Next.js (`/api/*`). Une exportation Next.js purement statique casserait cette architecture.
+## Hors connexion
 
-La configuration actuelle de Capacitor pointe vers :
+RME possède déjà :
 
+- `public/offline.html`
+- `public/sw.js`
+- un cache limité aux pages publiques et assets ;
+- aucun cache volontaire des APIs, données privées ou URLs partenaires.
+
+Dans la coquille distante, le service worker doit être installé après une première connexion. Le comportement hors connexion doit donc être testé sur appareil réel, notamment après un démarrage à froid sans réseau.
+
+**CONFIRMÉ dans le dépôt :** la page offline et le service worker existent.
+
+**À vérifier sur appareil :** démarrage totalement hors réseau avant toute première visite, puis navigation hors réseau après une première visite.
+
+## Projets natifs
+
+Les répertoires `android/` et `ios/` ne sont pas encore committés.
+
+Ils doivent être générés avec les outils Capacitor correspondant aux versions réellement verrouillées dans le projet, puis testés sur appareils réels. Nous ne fabriquons pas manuellement des projets natifs ou leurs fichiers de signature.
+
+Préparation locale :
+
+```bash
+npm ci
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npx cap add android
+npx cap add ios
+npx cap sync
 ```
-.next/standalone/public
-```
 
-mais `next.config.mjs` ne configure pas `output: "standalone"`. La commande `npm run cap:build` n'est donc **pas actuellement un pipeline mobile reproductible**.
+Puis ouvrir les projets dans Android Studio / Xcode et effectuer les builds signés uniquement avec les comptes et certificats du propriétaire.
 
-**Ne pas lancer `npx cap add ios` ou `npx cap add android` sur cette base en pensant obtenir un binaire de production.**
+## Plugins Capacitor
 
-## Architecture mobile cible à valider
+Le projet verrouille actuellement les plugins v7 suivants :
 
-Avant de générer les projets natifs, nous devons choisir explicitement entre :
+- `@capacitor/app`
+- `@capacitor/browser`
+- `@capacitor/geolocation`
+- `@capacitor/share`
+- `@capacitor/splash-screen`
 
-1. **Web local embarqué + backend Vercel**
-   - le shell et les ressources nécessaires sont embarqués ;
-   - les fonctionnalités nécessitant le serveur utilisent les APIs RME ;
-   - nécessite une stratégie claire pour les assets Next.js et les mises à jour.
+Les versions doivent rester cohérentes avec Capacitor 7 jusqu'à migration volontaire vers Capacitor 8.
 
-2. **Client Capacitor avec backend distant RME**
-   - le backend reste sur Vercel ;
-   - les fonctions natives réellement utiles sont exposées via Capacitor ;
-   - nécessite une validation spécifique de l'expérience offline, du démarrage et des politiques des stores.
+## Icônes
 
-Le choix doit préserver les APIs existantes et éviter une réécriture de l'application.
+Les SVG RME existants servent au web/PWA. Les stores natifs nécessitent une génération réelle des assets PNG et des variantes adaptatives Android.
 
-## Capacitor
+**Non considéré comme terminé tant que les PNG ne sont pas générés, intégrés aux projets natifs et vérifiés sur appareil.**
 
-Version actuellement déclarée dans le projet : Capacitor 7.
-
-Plugins déclarés :
-- Core
-- Geolocation
-- Splash Screen
-
-La configuration mentionne également les notifications, mais aucun pipeline natif complet de notifications n'est actuellement présent dans le dépôt. Ne pas présenter cette capacité comme disponible dans une fiche store avant validation sur appareil.
-
-## PWA
-
-La PWA est déjà présente :
-- manifest web ;
-- service worker ;
-- écran offline ;
-- installation navigateur.
-
-Le service worker évite explicitement de mettre en cache les APIs et les requêtes privées.
-
-## Pré-requis store
+## Exigences stores vérifiées le 26 septembre 2026
 
 ### Apple
 
-Apple demande une application fonctionnelle et testée sur appareil. Les applications doivent apporter une expérience qui les distingue d'un simple site web reconditionné.
-
-RME devra donc démontrer ses fonctionnalités réellement adaptées au mobile : voyage personnel, outils de route, localisation lorsque l'utilisateur l'autorise, fonctionnement dégradé hors connexion et autres fonctions natives effectivement implémentées.
+Apple exige que l'application apporte une expérience qui va au-delà d'un simple site web reconditionné. RME doit donc démontrer ses fonctions de voyage et ses fonctions natives réellement utilisables.
 
 ### Google Play
 
-Google Play exige une application stable et fonctionnelle. Les applications principalement destinées à afficher un site web ou à générer du trafic d'affiliation peuvent être refusées.
-
-RME doit donc rester une **application de service de voyage**, et non une enveloppe de liens partenaires.
+Google interdit les applications dont le but principal est de générer du trafic d'affiliation ou de fournir un simple webview. Les fonctions RME doivent rester centrées sur le service de voyage.
 
 À partir du 31 août 2026, les nouvelles applications et mises à jour Google Play doivent cibler Android 16 / API 36 ou supérieur.
 
-## Données et confidentialité
+Références officielles :
 
-Avant publication :
-- vérifier exactement les données réellement collectées ;
-- vérifier les SDK tiers ;
-- vérifier la géolocalisation ;
-- vérifier Analytics ;
-- vérifier les données envoyées aux APIs ;
-- préparer les déclarations Apple et Google à partir du comportement réel de l'application ;
-- vérifier le mécanisme de suppression de compte si un compte utilisateur est proposé.
+- Apple App Review Guidelines, section 4.2.
+- Google Play Spam / Webviews and Affiliate Spam.
+- Android Developers — Target API level requirements.
 
-Ne jamais remplir les formulaires store à partir d'une ancienne documentation : ils doivent refléter la version effectivement publiée.
-
-## Pipeline de validation avant publication
-
-Le pipeline cible est :
-
-```
-typecheck
-lint
-tests
-build web
-audit sécurité
-test des APIs
-test PWA
-build natif
-test appareil réel
-test réseau faible / hors ligne
-test permissions
-test cold start
-test store metadata
-```
-
-Aucune publication ne doit être considérée prête avant ces contrôles.
-
-## Commandes actuelles
-
-Pour le web :
+## Pipeline de preuve avant publication
 
 ```
 npm ci
@@ -118,16 +97,21 @@ npm run typecheck
 npm run lint
 npm test
 npm run build
+npx cap sync
+build Android
+build iOS
+test appareil Android
+test appareil iPhone/iPad
+test cold start
+test réseau faible
+test hors connexion
+test permission localisation
+test liens externes
+test partage natif
+test retour Android
+test splash
+test rotation / tailles d'écran
+vérification métadonnées stores
 ```
 
-Pour le mobile, aucune commande de production n'est déclarée valide tant que l'architecture Capacitor n'a pas été finalisée.
-
-## À ne pas faire
-
-- Ne pas activer `output: "export"` uniquement pour satisfaire Capacitor.
-- Ne pas prétendre que `.next/standalone/public` est généré tant que `output: "standalone"` n'est pas configuré.
-- Ne pas générer `ios/` et `android/` sans stratégie de build et de signature.
-- Ne pas déclarer des fonctionnalités natives non testées.
-- Ne pas transformer RME en simple WebView d'affiliation.
-
-**Statut : préparation mobile en audit — publication native non déclarée prête.**
+**Statut : code mobile préparé, publication native non déclarée prête tant que les projets natifs, assets PNG, builds signés et tests appareil réel ne sont pas validés.**
