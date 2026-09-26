@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { cacheFootballAnswer, footballCacheKey, getCachedFootballAnswer } from '@/lib/hadakFootballCache';
 import { routeHadakAI } from '@/lib/hadakAiRouter';
+import { moroccoTimeZone, moroccoUtcOffset } from '@/lib/moroccoTime';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type OpenAICompatibleResponse = {
@@ -103,29 +104,44 @@ async function getLiveRates(): Promise<ExchangeRates> {
 // ── Morocco local time ─────────────────────────────────────────────────────
 function getMoroccoTime(): string {
   return new Date().toLocaleTimeString('fr-FR', {
-    timeZone: 'Africa/Casablanca',
+    timeZone: moroccoTimeZone(),
     hour: '2-digit',
     minute: '2-digit',
   });
 }
 function getMoroccoDate(): string {
   return new Date().toLocaleDateString('fr-FR', {
-    timeZone: 'Africa/Casablanca',
+    timeZone: moroccoTimeZone(),
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   });
 }
 
 // ── TheSportsDB football helper (free, key "3" public) ────────────────────
-type SportsDBTeam  = { idTeam: string; strTeam: string };
-type SportsDBEvent = { strHomeTeam: string; intHomeScore: string; strAwayTeam: string; intAwayScore: string; dateEvent: string };
+type SportsDBEvent = { idHomeTeam?: string; strHomeTeam: string; intHomeScore: string; strAwayTeam: string; intAwayScore: string; dateEvent: string };
+
+// Pinned TheSportsDB ids (checked 2026-09-26): a name search returns the wrong
+// club — "wydad" gives Wydad de Fès, "raja" Rajasthan FC, "psg" PSG Talon.
+const FOOTBALL_TEAMS: Array<{ id: string; name: string; alias: RegExp }> = [
+  { id: '136402', name: 'Wydad Casablanca', alias: /\b(wydad|wac)\b/ },
+  { id: '136404', name: 'Raja Casablanca', alias: /\b(raja|rca)\b/ },
+  { id: '136403', name: 'FAR Rabat', alias: /\b(as far|far rabat|asfar)\b/ },
+  { id: '136414', name: 'IR Tanger', alias: /\b(ittihad tanger|ir tanger|irt)\b/ },
+  { id: '137426', name: 'Difaâ Hassani El Jadidi', alias: /\b(difaa|dhj)\b/ },
+  { id: '137425', name: 'RS Berkane', alias: /\b(berkane|rsb)\b/ },
+  { id: '136410', name: 'FUS Rabat', alias: /\bfus\b/ },
+  { id: '136408', name: 'Moghreb Tétouan', alias: /\bmoghreb\b/ },
+  { id: '136416', name: 'Mouloudia Oujda', alias: /\b(mouloudia|mco)\b/ },
+  { id: '133613', name: 'Manchester City', alias: /\b(man city|manchester city)\b/ },
+  { id: '133738', name: 'Real Madrid', alias: /\breal madrid\b/ },
+  { id: '133739', name: 'Barcelona', alias: /\b(barcelona|barca)\b/ },
+  { id: '133714', name: 'Paris Saint-Germain', alias: /\b(psg|paris saint.germain)\b/ },
+];
 
 async function handleFootball(msg: string, lang: string): Promise<string | null> {
   const msgLower = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
-  // Teams whose names we recognize in the message
-  const TEAM_QUERIES = ['wydad', 'raja', 'ittihad tanger', 'difaa hassani', 'renaissance berkane', 'fus rabat',
-    'moghreb tetouan', 'mouloudia oujda', 'man city', 'real madrid', 'barcelona', 'psg'];
-  const mentioned = TEAM_QUERIES.filter(t => msgLower.includes(t.split(' ')[0]));
+  const teams = FOOTBALL_TEAMS.filter(t => t.alias.test(msgLower));
+  const mentioned = teams.map(t => t.name);
 
   // Cache must short-circuit before any external football-data calls.
   const cacheKey = footballCacheKey(lang, mentioned);
@@ -134,28 +150,22 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
 
   // --- Form data for mentioned teams ---
   let formData = '';
-  for (const teamQuery of mentioned.slice(0, 2)) {
+  for (const team of teams.slice(0, 2)) {
     try {
-      const s = await fetch(
-        `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamQuery)}`,
-        { next: { revalidate: 86400 } }
-      ).then(r => r.json()).catch(() => null) as { teams?: SportsDBTeam[] } | null;
-      const team = s?.teams?.[0];
-      if (!team?.idTeam) continue;
       const ev = await fetch(
-        `https://www.thesportsdb.com/api/v1/json/3/eventslast.php?id=${team.idTeam}`,
+        `https://www.thesportsdb.com/api/v1/json/3/eventslast.php?id=${team.id}`,
         { next: { revalidate: 3600 } }
       ).then(r => r.json()).catch(() => null) as { results?: SportsDBEvent[] } | null;
       const last5 = ev?.results?.slice(0, 5) ?? [];
       if (last5.length === 0) continue;
       const form = last5.map(e => {
-        const home = e.strHomeTeam.toLowerCase().includes(teamQuery.split(' ')[0]);
+        const home = e.idHomeTeam === team.id;
         const gf = parseInt(home ? e.intHomeScore : e.intAwayScore);
         const ga = parseInt(home ? e.intAwayScore : e.intHomeScore);
         return isNaN(gf) ? '?' : gf > ga ? 'W' : gf < ga ? 'L' : 'D';
       }).join('');
       const last = last5[0];
-      formData += `${team.strTeam} (forme: ${form}): dernier match ${last.strHomeTeam} ${last.intHomeScore}-${last.intAwayScore} ${last.strAwayTeam}\n`;
+      formData += `${team.name} (forme: ${form}): dernier match ${last.strHomeTeam} ${last.intHomeScore}-${last.intAwayScore} ${last.strAwayTeam}\n`;
     } catch { /* ignore */ }
   }
 
@@ -183,13 +193,14 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
   if (mentioned.length > 0) {
     const langLabel = lang === 'da' ? 'darija marocaine' : lang === 'ar' ? 'arabe' : lang === 'es' ? 'espagnol' : lang === 'en' ? 'anglais' : 'français';
     const context = [
+      `Date du jour au Maroc : ${getMoroccoDate()}`,
       nextMatchesText ? `Prochains matchs Botola Pro:\n${nextMatchesText}` : '',
       formData ? `Forme récente:\n${formData}` : '',
     ].filter(Boolean).join('\n\n');
     const userContent = context ? `Données:\n${context}\n\nQuestion: ${msg}` : msg;
     const routed = await routeHadakAI({
       message: userContent,
-      systemPrompt: `Tu es un expert passionné de football marocain (Botola Pro, équipe nationale Lions de l'Atlas, CAF). Tu analyses les données de forme et donnes des pronostics argumentés. Réponds en ${langLabel}, 3-4 phrases maximum, direct et précis.`,
+      systemPrompt: `Tu es un expert passionné de football marocain (Botola Pro, équipe nationale Lions de l'Atlas, CAF). Tu analyses les données de forme et donnes des pronostics argumentés. N'utilise que les équipes, matchs, dates et scores présents dans les Données : n'invente jamais de club, de match ni de résultat. Si les Données ne montrent pas de match entre ces équipes à la date demandée, dis-le clairement avant tout pronostic. Réponds en ${langLabel}, 3-4 phrases maximum, direct et précis.`,
     });
     if (routed.text) {
       cacheFootballAnswer(cacheKey, routed.text);
@@ -264,10 +275,11 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
   const cityKey = detectCity(msg);
 
   if (intent === 'time') {
-    if (lang === 'da') return `F l-Maghrib daba ${time} (${date}). L-Maghrib kaytbi3 UTC+1 bla changement d'heure.`;
-    if (lang === 'ar') return `الوقت الآن في المغرب ${time} (${date}). المغرب على توقيت UTC+1 بدون تغيير.`;
-    if (lang === 'es') return `En Marruecos son las ${time} (${date}). Marruecos sigue UTC+1 sin cambio horario.`;
-    return `Il est actuellement **${time}** au Maroc (${date}). Le Maroc suit UTC+1 toute l'année, sans changement d'heure.`;
+    const offset = moroccoUtcOffset();
+    if (lang === 'da') return `F l-Maghrib daba ${time} (${date}), b tawqit ${offset}.`;
+    if (lang === 'ar') return `الوقت الآن في المغرب ${time} (${date})، بتوقيت ${offset}.`;
+    if (lang === 'es') return `En Marruecos son las ${time} (${date}), hora ${offset}.`;
+    return `Il est actuellement **${time}** au Maroc (${date}), heure ${offset}.`;
   }
 
   if (intent === 'weather' || (intent === 'generic' && cityKey)) {
@@ -447,11 +459,11 @@ async function callAnthropic(apiKey: string, systemPrompt: string, message: stri
 const MAX_MESSAGE_CHARS = 1_000;
 
 const SYSTEM_PROMPTS: Record<string, string> = {
-  da: `Nta Hadak — assistant dyal MRE. Jaweb b darija, MAX 2 jmal, 3tini l-jawab mbachar bla moqadima. L-Maghrib: UTC+1.`,
-  fr: `Tu es Hadak — assistant MRE. Réponds en français, MAX 2 phrases, va droit au but sans intro. Maroc : UTC+1.`,
-  en: `You are Hadak — MRE assistant. Reply in English, MAX 2 sentences, answer directly no intro. Morocco: UTC+1.`,
-  ar: `أنت حدّاك — مساعد MRE. أجب بالعربية، جملتان MAX، مباشرة بدون مقدمة. المغرب: UTC+1.`,
-  es: `Eres Hadak — asistente MRE. Responde en español, MAX 2 frases, directo sin intro. Marruecos: UTC+1.`,
+  da: `Nta Hadak — assistant dyal MRE. Jaweb b darija, MAX 2 jmal, 3tini l-jawab mbachar bla moqadima.`,
+  fr: `Tu es Hadak — assistant MRE. Réponds en français, MAX 2 phrases, va droit au but sans intro.`,
+  en: `You are Hadak — MRE assistant. Reply in English, MAX 2 sentences, answer directly no intro.`,
+  ar: `أنت حدّاك — مساعد MRE. أجب بالعربية، جملتان MAX، مباشرة بدون مقدمة.`,
+  es: `Eres Hadak — asistente MRE. Responde en español, MAX 2 frases, directo sin intro.`,
 };
 
 // ── Main handler ───────────────────────────────────────────────────────────
@@ -468,8 +480,9 @@ export async function POST(req: NextRequest) {
     }
 
     // hasOwn : « constructor » ou « __proto__ » ne doivent pas servir de prompt système.
-    const systemPrompt =
+    const basePrompt =
       typeof lang === 'string' && Object.hasOwn(SYSTEM_PROMPTS, lang) ? SYSTEM_PROMPTS[lang] : SYSTEM_PROMPTS.fr;
+    const systemPrompt = `${basePrompt} Maroc : ${moroccoUtcOffset()}, il est ${getMoroccoTime()}.`;
     const intent = detectIntent(message);
 
     // 1. Smart local responder — free, always available, real-time data
