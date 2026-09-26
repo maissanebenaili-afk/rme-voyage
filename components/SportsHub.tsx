@@ -57,7 +57,7 @@ export default function SportsHub() {
             <h2 className="mt-1 text-2xl font-black text-white sm:text-3xl">Le match, les chaînes, les analyses.</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-white/60">Un point d'entrée unique vers les diffuseurs officiels, les analyses disponibles et les opérateurs partenaires.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-2"><button type="button" onClick={shareMatch} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black tracking-wide text-white/80">Partager</button><div className="flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-emerald-200"><Radio size={12} className="animate-pulse" /> Direct officiel</div></div>
+          <div className="flex flex-wrap items-center gap-2">{isNativeApp && <button type="button" onClick={shareMatch} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black tracking-wide text-white/80">Partager</button>}<div className="flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-emerald-200"><Radio size={12} className="animate-pulse" /> Direct officiel</div></div>
         </div>
       </div>
 
