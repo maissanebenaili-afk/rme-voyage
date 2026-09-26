@@ -75,7 +75,7 @@ function ChannelCard({ ch, openExternal }: { ch: Channel; openExternal: (url: st
         <div className="flex items-center gap-1.5">
           <span className="font-bold text-sm text-[#0f1f3d] truncate">{ch.name}</span>
           {ch.live && (
-            <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[9px] font-black uppercase text-emerald-600">
+            <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[9px] font-black uppercase text-emerald-800">
               <Signal size={8} className="animate-pulse" /> LIVE
             </span>
           )}
@@ -160,7 +160,7 @@ export default function TVWidget() {
         ))}
       </div>
 
-      <p className="px-5 pb-4 text-center text-[10px] text-[#94a3b8]">
+      <p className="px-5 pb-4 text-center text-[10px] text-[#475569]">
         Les droits et la disponibilité peuvent changer selon le pays. RME ouvre uniquement les pages officielles des diffuseurs.
       </p>
     </div>

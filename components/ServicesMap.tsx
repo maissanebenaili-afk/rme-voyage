@@ -10,8 +10,8 @@ type SearchStatus = "idle" | "loading" | "error" | "ready";
 
 const CATEGORIES: { key: ServiceCategory; icon: typeof Fuel; label: string; color: string }[] = [
   { key: "fuel", icon: Fuel, label: "Stations-service", color: "text-orange-800 bg-orange-50" },
-  { key: "mosque", icon: Moon, label: "Mosquées", color: "text-emerald-600 bg-emerald-50" },
-  { key: "halal", icon: Utensils, label: "Restaurants halal", color: "text-red-600 bg-red-50" },
+  { key: "mosque", icon: Moon, label: "Mosquées", color: "text-emerald-800 bg-emerald-50" },
+  { key: "halal", icon: Utensils, label: "Restaurants halal", color: "text-red-700 bg-red-50" },
   { key: "consulate", icon: Building, label: "Consulats", color: "text-blue-600 bg-blue-50" },
   { key: "rest_area", icon: Bed, label: "Aires de repos", color: "text-purple-600 bg-purple-50" },
   { key: "garage", icon: Wrench, label: "Garages", color: "text-slate-600 bg-slate-100" },
