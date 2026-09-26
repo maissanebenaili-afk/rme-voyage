@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { Tv, Radio, ExternalLink, Signal, MapPin } from 'lucide-react';
 
 type Channel = {
@@ -57,12 +59,13 @@ function isTonightMatchDay() {
   return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()) === '25/09/2026';
 }
 
-function ChannelCard({ ch }: { ch: Channel }) {
+function ChannelCard({ ch, openExternal }: { ch: Channel; openExternal: (url: string, event: React.MouseEvent<HTMLAnchorElement>) => void }) {
   return (
     <a
       href={ch.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={(event) => void openExternal(ch.url, event)}
       className="group flex items-center gap-3 rounded-2xl border border-[#e2e8f0] bg-white p-3.5 transition hover:border-[#f59e0b]/50 hover:shadow-md hover:shadow-[#f59e0b]/5"
     >
       <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#f8fafc] text-xl border border-[#e2e8f0] group-hover:bg-[#fef3c7]">
@@ -91,6 +94,17 @@ function ChannelCard({ ch }: { ch: Channel }) {
 
 export default function TVWidget() {
   const [tab, setTab] = useState<TabKey>('sport');
+  const [isNativeApp, setIsNativeApp] = useState(false);
+
+  const openExternal = async (url: string, event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isNativeApp) return;
+    event.preventDefault();
+    await Browser.open({ url });
+  };
+
+  useEffect(() => {
+    setIsNativeApp(Capacitor.isNativePlatform());
+  }, []);
   const showTonight = isTonightMatchDay();
 
   return (
@@ -142,7 +156,7 @@ export default function TVWidget() {
       {/* Channel grid */}
       <div className="p-4 grid gap-2.5 sm:grid-cols-2">
         {CHANNELS[tab].map((ch) => (
-          <ChannelCard key={ch.name + ch.url} ch={ch} />
+          <ChannelCard key={ch.name + ch.url} ch={ch} openExternal={openExternal} />
         ))}
       </div>
 
