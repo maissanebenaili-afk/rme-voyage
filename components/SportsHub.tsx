@@ -55,7 +55,7 @@ export default function SportsHub() {
           <div>
             <p className="text-[11px] font-black uppercase tracking-[.18em] text-[#fde68a]">RME Sport</p>
             <h2 className="mt-1 text-2xl font-black text-white sm:text-3xl">Le match, les chaînes, les analyses.</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/60">Un point d'entrée unique vers les diffuseurs officiels, les analyses disponibles et les opérateurs partenaires.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Un point d'entrée unique vers les diffuseurs officiels, les analyses disponibles et les opérateurs partenaires.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">{isNativeApp && <button type="button" onClick={shareMatch} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black tracking-wide text-white/80">Partager</button>}<div className="flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-emerald-200"><Radio size={12} className="animate-pulse" /> Direct officiel</div></div>
         </div>
@@ -69,15 +69,15 @@ export default function SportsHub() {
           </div>
           <div className="mt-6 flex items-center justify-between gap-3 text-center">
             <div className="flex-1"><div className="text-3xl">🇲🇦</div><p className="mt-2 text-lg font-black text-white">{MATCH.home}</p></div>
-            <div className="shrink-0"><p className="text-xs font-bold text-white/40">COUP D'ENVOI</p><p className="mt-1 text-2xl font-black text-[#f59e0b]">{MATCH.kickoff}</p></div>
+            <div className="shrink-0"><p className="text-xs font-bold text-slate-300">COUP D'ENVOI</p><p className="mt-1 text-2xl font-black text-[#f59e0b]">{MATCH.kickoff}</p></div>
             <div className="flex-1"><div className="text-3xl">🇬🇦</div><p className="mt-2 text-lg font-black text-white">{MATCH.away}</p></div>
           </div>
-          <p className="mt-4 text-center text-xs text-white/50">{MATCH.date} · {MATCH.venue}</p>
+          <p className="mt-4 text-center text-xs text-slate-300">{MATCH.date} · {MATCH.venue}</p>
           <div className="mt-5 grid gap-2 sm:grid-cols-3">
             {CHANNELS.map((channel) => (
               <a key={channel.name} href={channel.url} target="_blank" rel="noopener noreferrer" onClick={(event) => void openExternal(channel.url, event)} className="rounded-xl border border-white/10 bg-black/10 p-3 transition hover:border-[#f59e0b]/40">
                 <div className="flex items-center justify-between gap-2"><span className="text-xs font-black text-white">{channel.name}</span><ExternalLink size={12} className="text-[#f59e0b]" /></div>
-                <p className="mt-1 text-[10px] text-white/40">{channel.country}</p><p className="mt-1 text-[10px] leading-4 text-white/50">{channel.note}</p>
+                <p className="mt-1 text-[10px] text-slate-300">{channel.country}</p><p className="mt-1 text-[10px] leading-4 text-slate-300">{channel.note}</p>
               </a>
             ))}
           </div>
@@ -86,19 +86,19 @@ export default function SportsHub() {
         <aside className="space-y-4">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <div className="flex items-center gap-2"><BarChart3 size={16} className="text-[#f59e0b]" /><h3 className="text-sm font-black text-white">Analyses alternatives</h3></div>
-            <p className="mt-2 text-xs leading-5 text-white/50">Si Faical ne publie rien, ces sources permettent de continuer la lecture du match.</p>
+            <p className="mt-2 text-xs leading-5 text-slate-300">Si Faical ne publie rien, ces sources permettent de continuer la lecture du match.</p>
             <div className="mt-3 space-y-2">{FALLBACK_ANALYSIS_SOURCES.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" onClick={(event) => void openExternal(source.url, event)} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">{source.name}<ExternalLink size={12} className="text-[#f59e0b]" /></a>)}</div>
           </div>
 
           {!isNativeApp && <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-5">
             <div className="flex items-center gap-2"><Trophy size={16} className="text-[#f59e0b]" /><h3 className="text-sm font-black text-white">Opérateurs sportifs</h3></div>
-            <p className="mt-2 text-xs leading-5 text-white/50">Les liens affiliés ne sont activés que lorsqu'une URL partenaire réelle est configurée.</p>
+            <p className="mt-2 text-xs leading-5 text-slate-300">Les liens affiliés ne sont activés que lorsqu'une URL partenaire réelle est configurée.</p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">{getSportsPartners().map((partner) => <a key={partner.id} href={partner.url} target="_blank" rel={partner.affiliateUrl ? 'sponsored noopener noreferrer' : 'noopener noreferrer'} onClick={(event) => void openExternal(partner.url, event)} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">{partner.name}<span className="text-[9px] uppercase text-[#fde68a]">{partner.status === 'active' ? 'Partenaire' : 'Site'}</span></a>)}</div>
           </div>}
         </aside>
       </div>
 
-      <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4"><ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#f59e0b]" /><p className="text-[10px] leading-4 text-white/40">RME ne reproduit pas les flux protégés. Les droits et la disponibilité varient selon le pays.{!isNativeApp && ' Les liens de paris sportifs sont réservés aux adultes et le jeu comporte des risques.'}</p></div>
+      <div className="flex items-start gap-2 border-t border-white/10 px-5 py-4"><ShieldCheck size={14} className="mt-0.5 shrink-0 text-[#f59e0b]" /><p className="text-[10px] leading-4 text-slate-300">RME ne reproduit pas les flux protégés. Les droits et la disponibilité varient selon le pays.{!isNativeApp && ' Les liens de paris sportifs sont réservés aux adultes et le jeu comporte des risques.'}</p></div>
     </section>
   );
 }
