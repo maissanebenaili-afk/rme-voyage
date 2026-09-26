@@ -13,7 +13,7 @@ export default function CaftanNotFound() {
           Il a peut-être quitté la collection. Le reste de la boutique vous attend.
         </p>
         <Link href="/marwa-caftan"
-          className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#c9903a] px-6 py-3 font-extrabold text-white transition hover:bg-[#a8741e]">
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#c9903a] px-6 py-3 font-extrabold text-[#0f1f3d] transition hover:bg-[#a8741e]">
           <ArrowLeft size={15} /> Voir la collection
         </Link>
       </div>

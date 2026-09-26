@@ -145,7 +145,7 @@ export default function DailyWidget() {
               <span className="ml-1.5 text-white/45 text-xs">{hijri.monthAr}</span>
             </span>
           ) : (
-            <span className="text-white/35 text-xs animate-pulse">Calendrier hijri…</span>
+            <span className="text-white/70 text-xs animate-pulse">Calendrier hijri…</span>
           )}
         </div>
 
@@ -196,7 +196,7 @@ export default function DailyWidget() {
 
           {showPicker && (
             <div className="absolute right-0 top-9 z-50 w-52 rounded-2xl border border-white/10 bg-[#152848] p-2 shadow-2xl">
-              <p className="mb-1 px-2 text-[10px] font-bold uppercase tracking-widest text-white/35">
+              <p className="mb-1 px-2 text-[10px] font-bold uppercase tracking-widest text-white/70">
                 Votre ville
               </p>
               <div className="max-h-56 overflow-y-auto">

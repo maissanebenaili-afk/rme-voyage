@@ -66,24 +66,25 @@ export default function RemittanceComparator() {
       <h2 className="text-2xl font-bold text-[#0f1f3d] mb-1">{t('remittanceTitle')}</h2>
 
       {data && !loading && (
-        <p className="text-sm text-[#0f1f3d]/60 mb-6">
+        <p className="text-sm text-[#0f1f3d]/75 mb-6">
           {t('remittanceMidRate')}: <span className="font-semibold">1 {currency} = {data.midRate.toFixed(4)} MAD</span>
           <span className="ml-2 text-xs">· taux indicatif, source externe</span>
         </p>
       )}
       {data && !loading && (
-        <p className="mb-4 text-xs leading-5 text-[#0f1f3d]/55">
+        <p className="mb-4 text-xs leading-5 text-[#0f1f3d]/75">
           Les frais et délais affichés sont des estimations calculées par RME Voyage, pas des tarifs contractuels. Vérifiez le montant final chez le prestataire avant d’envoyer.
         </p>
       )}
 
       {/* Amount input */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-[#0f1f3d]/70 mb-1">
+        <label htmlFor="remit-1" className="block text-sm font-medium text-[#0f1f3d]/70 mb-1">
           {t('remittanceAmount')}
         </label>
         <div className="flex items-center gap-3">
           <input
+            id="remit-1"
             type="number"
             min={1}
             max={100000}
@@ -101,7 +102,7 @@ export default function RemittanceComparator() {
             <option value="GBP">GBP 🇬🇧</option>
             <option value="CHF">CHF 🇨🇭</option>
           </select>
-          <span className="text-[#0f1f3d]/50 text-sm">→ MAD</span>
+          <span className="text-[#0f1f3d]/75 text-sm">→ MAD</span>
         </div>
       </div>
 
@@ -132,7 +133,7 @@ export default function RemittanceComparator() {
               }`}
             >
               {/* Rank */}
-              <span className="text-lg font-bold text-[#0f1f3d]/40 w-6 shrink-0">
+              <span className="text-lg font-bold text-[#0f1f3d]/75 w-6 shrink-0">
                 {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}
               </span>
 
@@ -146,7 +147,7 @@ export default function RemittanceComparator() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-xs text-[#0f1f3d]/50 mt-0.5">
+                <div className="flex items-center gap-3 text-xs text-[#0f1f3d]/75 mt-0.5">
                   <span className="flex items-center gap-1">
                     <TrendingDown className="w-3 h-3" />
                     {t('remittanceRate')}: {p.appliedRate.toFixed(4)}
@@ -167,7 +168,7 @@ export default function RemittanceComparator() {
                 <div className="font-bold text-[#0f1f3d]">
                   {p.received.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} MAD
                 </div>
-                <div className="text-xs text-[#0f1f3d]/40">{t('remittanceReceived')}</div>
+                <div className="text-xs text-[#0f1f3d]/75">{t('remittanceReceived')}</div>
               </div>
 
               {/* CTA */}
@@ -190,7 +191,7 @@ export default function RemittanceComparator() {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </a>
               ) : (
-                <span className="shrink-0 text-xs font-semibold text-[#0f1f3d]/40">
+                <span className="shrink-0 text-xs font-semibold text-[#0f1f3d]/75">
                   Lien indisponible
                 </span>
               )}

@@ -173,7 +173,7 @@ export function WeatherMorocco() {
                   <span className="text-sm font-semibold text-[#0f1f3d]">
                     {city.name}
                   </span>
-                  <span className="text-xs text-red-500">Indisponible</span>
+                  <span className="text-xs text-red-700">Indisponible</span>
                 </div>
               ) : (
                 <>
@@ -462,10 +462,11 @@ export function CustomsCalculator() {
       {/* Inputs */}
       <div className="mt-4 space-y-3">
         <div>
-          <label className="text-xs font-semibold text-[#0f1f3d]/70">
+          <label htmlFor="tw-1" className="text-xs font-semibold text-[#0f1f3d]/70">
             Électronique (valeur en MAD)
           </label>
           <input
+            id="tw-1"
             type="number"
             value={electronics || ""}
             onChange={(e) => setElectronics(Math.max(0, Number(e.target.value)))}
@@ -474,10 +475,11 @@ export function CustomsCalculator() {
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-[#0f1f3d]/70">
+          <label htmlFor="tw-2" className="text-xs font-semibold text-[#0f1f3d]/70">
             Cadeaux (valeur en MAD)
           </label>
           <input
+            id="tw-2"
             type="number"
             value={gifts || ""}
             onChange={(e) => setGifts(Math.max(0, Number(e.target.value)))}
@@ -489,10 +491,11 @@ export function CustomsCalculator() {
           </p>
         </div>
         <div>
-          <label className="text-xs font-semibold text-[#0f1f3d]/70">
+          <label htmlFor="tw-3" className="text-xs font-semibold text-[#0f1f3d]/70">
             Effets personnels (valeur en MAD)
           </label>
           <input
+            id="tw-3"
             type="number"
             value={personal || ""}
             onChange={(e) => setPersonal(Math.max(0, Number(e.target.value)))}
@@ -893,10 +896,11 @@ export function ZakaatCalculator() {
       {/* Input */}
       <div className="mt-4 flex gap-2">
         <div className="flex-1">
-          <label className="text-xs font-semibold text-[#0f1f3d]/70">
+          <label htmlFor="tw-4" className="text-xs font-semibold text-[#0f1f3d]/70">
             Épargne / Capital
           </label>
           <input
+            id="tw-4"
             type="number"
             value={amount || ""}
             onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
@@ -905,10 +909,11 @@ export function ZakaatCalculator() {
           />
         </div>
         <div className="w-24">
-          <label className="text-xs font-semibold text-[#0f1f3d]/70">
+          <label htmlFor="tw-5" className="text-xs font-semibold text-[#0f1f3d]/70">
             Devise
           </label>
           <select
+            id="tw-5"
             value={currency}
             onChange={(e) => setCurrency(e.target.value as "EUR" | "MAD")}
             className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none"
@@ -1132,7 +1137,7 @@ export function TimeZoneSIM() {
             Coût du roaming (opérateur FR)
           </h3>
         </div>
-        <div className="mt-2 space-y-1 text-xs text-red-700/80">
+        <div className="mt-2 space-y-1 text-xs text-red-700">
           <p>📱 Data: {ROAMING_COSTS.dataPerMb}€/Mo (100 Mo = {ROAMING_COSTS.dataPerMb * 100}€)</p>
           <p>📞 Appels: {ROAMING_COSTS.callPerMin}€/min</p>
           <p>💬 SMS: {ROAMING_COSTS.sms}€/SMS</p>

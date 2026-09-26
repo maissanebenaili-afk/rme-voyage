@@ -16,7 +16,7 @@ export function UserMenu() {
     return (
       <Link
         href="/auth"
-        className="inline-flex items-center gap-2 px-4 py-2 bg-[#c9903a] text-white rounded-lg font-semibold hover:bg-[#a8741e] transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-[#c9903a] text-[#0f1f3d] rounded-lg font-semibold hover:bg-[#a8741e] transition-colors"
       >
         <User size={16} />
         <span className="hidden sm:inline">Connexion</span>
@@ -31,7 +31,7 @@ export function UserMenu() {
         className="inline-flex items-center gap-2 px-4 py-2 bg-[#f0f1f3] text-[#0f1f3d] rounded-lg font-semibold hover:bg-[#e2e4e9] transition-colors"
         aria-label="Menu utilisateur"
       >
-        <div className="w-6 h-6 bg-[#c9903a] rounded-full flex items-center justify-center text-white text-xs font-bold">
+        <div className="w-6 h-6 bg-[#c9903a] rounded-full flex items-center justify-center text-[#0f1f3d] text-xs font-bold">
           {user.email?.[0].toUpperCase()}
         </div>
         <span className="hidden sm:inline text-sm">{user.email?.split('@')[0]}</span>

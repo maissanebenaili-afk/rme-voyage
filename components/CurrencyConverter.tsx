@@ -53,8 +53,9 @@ export default function CurrencyConverter() {
 
       <div className="mt-4 flex items-end gap-2">
         <div className="flex-1">
-          <label className="text-xs font-semibold text-slate-500">Montant</label>
+          <label htmlFor="cc-1" className="text-xs font-semibold text-slate-500">Montant</label>
           <input
+            id="cc-1"
             type="number"
             value={amount}
             onChange={(e) => setAmount(Math.max(0, Number(e.target.value)))}
@@ -62,8 +63,9 @@ export default function CurrencyConverter() {
           />
         </div>
         <div className="flex-1">
-          <label className="text-xs font-semibold text-slate-500">De</label>
+          <label htmlFor="cc-2" className="text-xs font-semibold text-slate-500">De</label>
           <select
+            id="cc-2"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             className="mt-1 w-full rounded-xl border bg-white p-3 text-sm font-bold"
@@ -83,8 +85,9 @@ export default function CurrencyConverter() {
           <ArrowRightLeft size={18} />
         </button>
         <div className="flex-1">
-          <label className="text-xs font-semibold text-slate-500">Vers</label>
+          <label htmlFor="cc-3" className="text-xs font-semibold text-slate-500">Vers</label>
           <select
+            id="cc-3"
             value={to}
             onChange={(e) => setTo(e.target.value)}
             className="mt-1 w-full rounded-xl border bg-white p-3 text-sm font-bold"

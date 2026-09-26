@@ -84,7 +84,7 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-black text-[#c9903a]">{priceLabel}</p>
+              <p className="text-2xl font-black text-[#8a5a14]">{priceLabel}</p>
               <p className="text-xs text-[#64748b] mt-1">{PROPERTY_TYPES[property.type]}</p>
             </div>
           </div>
@@ -166,7 +166,7 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
                 href={whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-white transition hover:bg-[#1da851] mb-4"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851] mb-4"
               >
                 <MessageCircle size={16} /> Contacter
               </a>
@@ -209,9 +209,9 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
       </section>
 
       {/* Footer */}
-      <div className="bg-[#0f1f3d] px-5 py-6 text-center text-xs text-white/40 mt-12">
+      <div className="bg-[#0f1f3d] px-5 py-6 text-center text-xs text-white/75 mt-12">
         Idour Immobilier — Taza · Immobilier{' '}
-        <Link href="/" className="text-[#c9903a] hover:underline">
+        <Link href="/" className="text-[#c9903a] underline hover:no-underline">
           RME Voyage
         </Link>
       </div>

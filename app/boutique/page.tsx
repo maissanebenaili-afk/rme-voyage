@@ -79,13 +79,13 @@ export default function BoutiquePage() {
           </Reveal>
           <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
             <div className="rounded-3xl border border-[#e2d5c0] bg-[#f7f1e7] p-6 text-[#0f1f3d]">
-              <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
+              <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#92400e]">
                 Marwa Caftan
               </p>
-              <p className="mt-3 text-sm leading-6 text-[#64748b]">
+              <p className="mt-3 text-sm leading-6 text-[#475569]">
                 Les styles, modèles et disponibilités sont présentés à titre indicatif et confirmés directement avec le partenaire.
               </p>
-              <p className="mt-4 text-xs font-semibold text-[#8a6a3c]">
+              <p className="mt-4 text-xs font-semibold text-[#6b5230]">
                 Photos d’inspiration — modèles non contractuels.
               </p>
             </div>

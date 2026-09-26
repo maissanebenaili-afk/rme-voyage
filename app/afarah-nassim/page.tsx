@@ -129,7 +129,7 @@ function FormuleCard({ f }: { f: Formule }) {
       <div className="p-5">
         <p className="text-sm leading-6 text-[#5c5348]">{f.desc}</p>
 
-        <p className="mt-4 flex items-center gap-1.5 text-sm font-bold text-[#8a7d6d]">
+        <p className="mt-4 flex items-center gap-1.5 text-sm font-bold text-[#5f5448]">
           <Users size={14} /> Tarif et nombre de convives à confirmer sur devis
         </p>
 
@@ -156,7 +156,7 @@ function FormuleCard({ f }: { f: Formule }) {
           href={devis}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#25d366] py-3 text-sm font-extrabold text-white transition hover:bg-[#1da851]"
+          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#25d366] py-3 text-sm font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851]"
         >
           <MessageCircle size={14} /> Demander un devis
         </a>
@@ -230,7 +230,7 @@ export default function AfarahNassimPage() {
                 href={contactGeneral}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-full bg-[#25d366] px-7 py-3.5 font-extrabold text-white transition hover:bg-[#1da851]"
+                className="flex items-center justify-center gap-2 rounded-full bg-[#25d366] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851]"
               >
                 <MessageCircle size={16} /> WhatsApp
               </a>
@@ -305,7 +305,7 @@ export default function AfarahNassimPage() {
               href={contactGeneral}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#25d366] px-7 py-3.5 font-extrabold text-white transition hover:bg-[#1da851]"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25d366] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851]"
             >
               <MessageCircle size={16} /> Devis par WhatsApp
             </a>

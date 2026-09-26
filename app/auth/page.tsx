@@ -110,7 +110,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#c9903a] hover:bg-[#a8741e] text-white font-bold py-2.5 rounded-lg transition-all duration-200 disabled:opacity-50"
+              className="w-full bg-[#c9903a] hover:bg-[#a8741e] text-[#0f1f3d] font-bold py-2.5 rounded-lg transition-all duration-200 disabled:opacity-50"
             >
               {loading
                 ? 'Chargement...'

@@ -26,7 +26,7 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
       <h1 className="font-display text-3xl font-semibold tracking-tight text-[#0f1f3d]">
         Caftan {caftan.name}
       </h1>
-      <p className="mt-1 text-sm text-[#64748b]">{caftan.style} · {caftan.matiere}</p>
+      <p className="mt-1 text-sm text-[#475569]">{caftan.style} · {caftan.matiere}</p>
 
 
       <p className="mt-4 text-sm leading-6 text-[#475569]">{caftan.description}</p>
@@ -35,7 +35,7 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
       <div className="mt-5 flex overflow-hidden rounded-2xl border border-[#e2d5c0] bg-[#f9f5f0]">
         {(['location', 'vente'] as Mode[]).map(m => (
           <button key={m} onClick={() => setMode(m)} aria-pressed={mode === m}
-            className={`flex-1 py-2.5 text-sm font-bold transition-all duration-300 ${mode === m ? 'bg-[#c9903a] text-white shadow-md shadow-[#c9903a]/30' : 'text-[#64748b] hover:text-[#0f1f3d]'}`}>
+            className={`flex-1 py-2.5 text-sm font-bold transition-all duration-300 ${mode === m ? 'bg-[#c9903a] text-[#0f1f3d] shadow-md shadow-[#c9903a]/30' : 'text-[#475569] hover:text-[#0f1f3d]'}`}>
             {m === 'location' ? '📦 Location' : '🛍️ Achat'}
           </button>
         ))}
@@ -53,7 +53,7 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
 
       {/* Tailles */}
       <fieldset className="mt-5">
-        <legend className="text-xs font-bold uppercase tracking-wide text-[#64748b]">Taille</legend>
+        <legend className="text-xs font-bold uppercase tracking-wide text-[#475569]">Taille</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {ALL_SIZES.map((t, idx) => {
             const dispo = caftan.tailles.includes(t);
@@ -63,7 +63,7 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
                 style={{ transitionDelay: `${idx * 30}ms` }}
                 className={`group relative h-10 w-12 rounded-xl border text-sm font-bold transition-all duration-300 ${
                   !dispo ? 'cursor-not-allowed border-[#f1f5f9] bg-[#f8fafc] text-[#cbd5e1] line-through'
-                  : taille === t ? 'border-[#c9903a] bg-[#c9903a] text-white shadow-lg shadow-[#c9903a]/40'
+                  : taille === t ? 'border-[#c9903a] bg-[#c9903a] text-[#0f1f3d] shadow-lg shadow-[#c9903a]/40'
                   : 'border-[#e2d5c0] text-[#0f1f3d] hover:border-[#c9903a]/70 hover:bg-[#fef3c7]/30 hover:shadow-sm'}`}>
                 {t}
               </button>
@@ -78,14 +78,14 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
       </p>
 
       <a href={whatsappLink(MARWA_WHATSAPP, message)} target="_blank" rel="noopener noreferrer"
-        className="group mt-4 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105">
+        className="group mt-4 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-[#0f1f3d] shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105">
         <MessageCircle size={16} className="transition-transform group-hover:scale-110" />
         {caftan.dispo ? 'Vérifier mes dates avec Marwa' : 'Être prévenue du retour'}
       </a>
 
       <ul className="mt-5 space-y-2 border-t border-[#f1f5f9] pt-4">
         {CONDITIONS.map((c, idx) => (
-          <li key={c} className="flex items-start gap-2 text-xs leading-5 text-[#64748b] animate-in fade-in"
+          <li key={c} className="flex items-start gap-2 text-xs leading-5 text-[#475569] animate-in fade-in"
               style={{ transitionDelay: `${idx * 50}ms` }}>
             <Check size={12} className="mt-0.5 shrink-0 text-[#c9903a]" /> {c}
           </li>

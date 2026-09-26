@@ -123,7 +123,7 @@ export default function CaftanMarketplace() {
                 href={whatsappLink(MARWA_WHATSAPP, message)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105"
+                className="group mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-[#0f1f3d] shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105"
               >
                 <MessageCircle size={16} className="transition-transform group-hover:scale-110" /> Envoyer mon annonce à Marwa
               </a>
@@ -166,7 +166,7 @@ export default function CaftanMarketplace() {
               ))}
             </ul>
 
-            <p className="mt-4 border-t border-white/10 pt-4 text-[11px] leading-4 text-white/45">
+            <p className="mt-4 border-t border-white/10 pt-4 text-[11px] leading-4 text-white/75">
               La caution est versée par le locataire et conservée jusqu&apos;au retour du caftan. En cas
               de dommage, Marwa arbitre entre les deux parties et la caution sert à la réparation ou au
               remplacement. Aucun contrat d&apos;assurance n&apos;est souscrit à ce jour.

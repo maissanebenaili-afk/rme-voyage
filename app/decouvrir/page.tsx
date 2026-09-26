@@ -84,16 +84,16 @@ export default function DiscoverPage() {
               <p className="text-sm font-bold text-[#f5cd93]">Un seul point de départ</p>
               <div className="mt-5 space-y-4 sm:mt-7 sm:space-y-5">
                 <div className="rounded-2xl bg-white/10 p-4 sm:p-5">
-                  <p className="text-sm text-white/60">Itinéraire</p>
+                  <p className="text-sm text-white/85">Itinéraire</p>
                   <p className="mt-1 text-xl font-bold">Europe → Maroc</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <div className="rounded-2xl bg-white/10 p-4 sm:p-5">
-                    <p className="text-sm text-white/60">Transport</p>
+                    <p className="text-sm text-white/85">Transport</p>
                     <p className="mt-1 font-bold">Comparé</p>
                   </div>
                   <div className="rounded-2xl bg-white/10 p-4 sm:p-5">
-                    <p className="text-sm text-white/60">Budget</p>
+                    <p className="text-sm text-white/85">Budget</p>
                     <p className="mt-1 font-bold">Estimé</p>
                   </div>
                 </div>
