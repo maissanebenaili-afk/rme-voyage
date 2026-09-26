@@ -300,11 +300,11 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
   time: {
     keywords: ['heure', 'time', 'hora', 'وقت', 'quelle heure', 'what time', 'horaire', 'clock', 'maintenant', 'now', 'ahora', 'horas', 'l\'heure', 'wa9t', 'وقت'],
     answers: {
-      da: 'L\'wa9t f l\'Maghrib: UTC+1 (ma kaytaghayrch). F l\'Maghrib daba, 7seb +1h men Greenwich (London). L\'wa9t f bladan okhra bhal New York, Paris... Hadak ma ka3refhash bla mode IA — check l\'phone dyalek!',
-      fr: 'Le Maroc est en UTC+1 toute l\'année (pas de changement d\'heure). Pour l\'heure dans d\'autres villes (New York, Paris, Dubai...), consulte l\'horloge mondiale de ton téléphone.',
-      en: 'Morocco is UTC+1 year-round (no daylight saving). For the time in other cities (New York, Paris, Dubai...), check the world clock on your phone.',
-      ar: 'المغرب في UTC+1 طوال العام (بدون تغيير للتوقيت). لمعرفة الوقت في مدن أخرى (نيويورك، باريس، دبي...)، راجع ساعة العالم في هاتفك.',
-      es: 'Marruecos es UTC+1 todo el año (sin cambio de hora). Para conocer la hora en otras ciudades (Nueva York, París, Dubái...), consulta el reloj mundial de tu teléfono.',
+      da: 'L\'Maghrib rj3 l tawqit GMT (UTC+0) mn 20 septembre 2026: nafs l-wa9t dyal London. L\'wa9t f bladan okhra bhal New York, Paris... Hadak ma ka3refhash bla mode IA — check l\'phone dyalek!',
+      fr: 'Le Maroc est revenu à l\'heure GMT (UTC+0) le 20 septembre 2026, sans changement d\'heure saisonnier. Pour l\'heure dans d\'autres villes (New York, Paris, Dubai...), consulte l\'horloge mondiale de ton téléphone.',
+      en: 'Morocco returned to GMT (UTC+0) on 20 September 2026, with no daylight saving. For the time in other cities (New York, Paris, Dubai...), check the world clock on your phone.',
+      ar: 'عاد المغرب إلى توقيت غرينتش (UTC+0) منذ 20 سبتمبر 2026، بدون تغيير موسمي للساعة. لمعرفة الوقت في مدن أخرى (نيويورك، باريس، دبي...)، راجع ساعة العالم في هاتفك.',
+      es: 'Marruecos volvió a la hora GMT (UTC+0) el 20 de septiembre de 2026, sin cambio de hora estacional. Para conocer la hora en otras ciudades (Nueva York, París, Dubái...), consulta el reloj mundial de tu teléfono.',
     },
     followups: ['prayer', 'route', 'weather'],
   },

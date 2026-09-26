@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { countryName } from "@/lib/countries";
 import { MOROCCO_EMERGENCY_NUMBERS, MOROCCO_EMERGENCY_SOURCE } from "@/lib/data/emergencyMorocco";
 import { datasetExpiry, FUEL_PRICES } from "@/lib/fuelByCountry";
+import { moroccoTimeZone, moroccoUtcOffset, utcOffsetLabel } from "@/lib/moroccoTime";
 import {
   CloudRain,
   Volume2,
@@ -1018,6 +1019,8 @@ const ROAMING_COSTS = {
 export function TimeZoneSIM() {
   const [frTime, setFrTime] = useState("");
   const [maTime, setMaTime] = useState("");
+  const [frOffset, setFrOffset] = useState("");
+  const [maOffset, setMaOffset] = useState("");
 
   useEffect(() => {
     function updateTime() {
@@ -1029,13 +1032,15 @@ export function TimeZoneSIM() {
         second: "2-digit",
       });
       const ma = now.toLocaleTimeString("fr-FR", {
-        timeZone: "Africa/Casablanca",
+        timeZone: moroccoTimeZone(now),
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
       });
       setFrTime(fr);
       setMaTime(ma);
+      setFrOffset(utcOffsetLabel("Europe/Paris", now));
+      setMaOffset(moroccoUtcOffset(now));
     }
     updateTime();
     const timer = setInterval(updateTime, 1000);
@@ -1057,14 +1062,14 @@ export function TimeZoneSIM() {
         <div className="rounded-xl border border-[#0f1f3d]/10 bg-white p-4 text-center">
           <p className="text-2xl">🇫🇷</p>
           <p className="mt-1 text-xs font-semibold text-[#0f1f3d]/70">
-            France (UTC+1)
+            France{frOffset && ` (${frOffset})`}
           </p>
           <p className="mt-1 text-xl font-black text-[#0f1f3d]">{frTime}</p>
         </div>
         <div className="rounded-xl border border-[#0f1f3d]/10 bg-white p-4 text-center">
           <p className="text-2xl">🇲🇦</p>
           <p className="mt-1 text-xs font-semibold text-[#0f1f3d]/70">
-            Maroc (UTC+1)
+            Maroc{maOffset && ` (${maOffset})`}
           </p>
           <p className="mt-1 text-xl font-black text-[#0f1f3d]">{maTime}</p>
         </div>

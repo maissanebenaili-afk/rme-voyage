@@ -228,3 +228,67 @@ describe('POST /api/hadak — free providers', () => {
     expect(hosts).not.toContain('api.openai.com')
   })
 })
+
+// Production on 2026-09-26: "Wydad ou Raja ce soir ?" searched TheSportsDB for
+// "wydad" and "raja", got Wydad de Fès and Rajasthan FC, and the LLM built its
+// prediction on those two clubs.
+describe('POST /api/hadak — football teams are pinned by id', () => {
+  const originalFetch = global.fetch
+  const originalEnv = process.env
+  beforeEach(() => {
+    resetFootballCacheForTests()
+    resetRouterForTests()
+  })
+  afterEach(() => {
+    global.fetch = originalFetch
+    process.env = originalEnv
+  })
+
+  it('asks for Wydad Casablanca and Raja Casablanca, never a name search', async () => {
+    process.env = { ...originalEnv, GROQ_API_KEY: 'test-key' } as unknown as NodeJS.ProcessEnv
+    const sportsUrls: string[] = []
+    let prompt = ''
+    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = new URL(input.toString())
+      if (url.hostname === 'www.thesportsdb.com') {
+        sportsUrls.push(url.pathname + url.search)
+        return new Response(JSON.stringify({ results: [] }), { status: 200 })
+      }
+      if (url.hostname === 'api.groq.com') {
+        prompt = JSON.parse(String(init?.body)).messages.map((m: { content: string }) => m.content).join('\n')
+        return new Response(JSON.stringify({ choices: [{ message: { content: 'Pas de match trouvé ce soir.' } }] }), { status: 200 })
+      }
+      throw new Error('offline')
+    }) as unknown as typeof fetch
+
+    await post({ message: 'Wydad ou Raja ce soir ?', lang: 'fr' })
+    expect(sportsUrls).toEqual(expect.arrayContaining(['/api/v1/json/3/eventslast.php?id=136402', '/api/v1/json/3/eventslast.php?id=136404']))
+    expect(sportsUrls.some((u) => u.includes('searchteams'))).toBe(false)
+    expect(prompt).toMatch(/n'invente jamais de club/)
+  })
+
+  it('does not read "dimanche" as Manchester City', async () => {
+    const sportsUrls: string[] = []
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString())
+      if (url.hostname === 'www.thesportsdb.com') sportsUrls.push(url.pathname + url.search)
+      return new Response(JSON.stringify({}), { status: 200 })
+    }) as unknown as typeof fetch
+
+    await post({ message: 'Qui va gagner le match de dimanche ?', lang: 'fr' })
+    expect(sportsUrls.filter((u) => /searchteams|eventslast/.test(u))).toEqual([])
+  })
+})
+
+// Morocco moved to permanent UTC+0 on 2026-09-20 (decree 2.26.530).
+describe('POST /api/hadak — Morocco clock after the return to GMT', () => {
+  afterEach(() => jest.useRealTimers())
+
+  it('gives UTC time and never claims UTC+1', async () => {
+    jest.useFakeTimers({ now: new Date('2026-09-26T17:09:00Z'), doNotFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'setImmediate', 'queueMicrotask', 'nextTick'] })
+    const data = await (await post({ message: 'Quelle heure est-il au Maroc ?', lang: 'fr' })).json()
+    expect(data.response).toContain('17:09')
+    expect(data.response).toContain('UTC+0')
+    expect(data.response).not.toContain('UTC+1')
+  })
+})
