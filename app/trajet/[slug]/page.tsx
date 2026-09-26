@@ -106,11 +106,11 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
       <header className="bg-[#0f1f3d] px-5 py-10 text-white sm:px-8">
         <div className="mx-auto max-w-4xl">
           <nav aria-label="Fil d'Ariane" className="text-xs font-semibold uppercase tracking-[.16em] text-[#fde68a]">
-            <Link href="/" className="hover:underline">
+            <Link href="/" className="inline-block py-1 hover:underline">
               Accueil
             </Link>{' '}
             ·{' '}
-            <Link href="/trajet" className="hover:underline">
+            <Link href="/trajet" className="inline-block py-1 hover:underline">
               Trajets
             </Link>
           </nav>

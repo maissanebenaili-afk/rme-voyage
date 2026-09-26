@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Capacitor } from '@capacitor/core';
 
 const SESSION_KEY = 'rme-splash-shown';
 const HOLD_MS = 1500;
@@ -45,7 +46,11 @@ export default function SplashScreen({ holdMs = HOLD_MS }: SplashScreenProps = {
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-    if (alreadyShown || reduceMotion) return;
+    // Dans l'application Android/iOS, l'écran de démarrage natif
+    // (capacitor.config.ts) s'affiche déjà : ne pas en enchaîner un second.
+    const nativeApp = Capacitor.isNativePlatform();
+
+    if (alreadyShown || reduceMotion || nativeApp) return;
 
     setVisible(true);
     try {

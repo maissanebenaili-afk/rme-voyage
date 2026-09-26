@@ -38,9 +38,9 @@ export default async function CaftanPage({ params }: Params) {
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fdf8f2]">
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
         <nav aria-label="Fil d'Ariane" className="flex items-center gap-1.5 text-xs font-semibold text-[#475569]">
-          <Link href="/" className="hover:text-[#c9903a]">RME Voyage</Link>
+          <Link href="/" className="inline-block py-1 hover:text-[#c9903a]">RME Voyage</Link>
           <span>/</span>
-          <Link href="/marwa-caftan" className="hover:text-[#c9903a]">Marwa Caftan</Link>
+          <Link href="/marwa-caftan" className="inline-block py-1 hover:text-[#c9903a]">Marwa Caftan</Link>
           <span>/</span>
           <span className="text-[#0f1f3d]">Caftan {caftan.name}</span>
         </nav>

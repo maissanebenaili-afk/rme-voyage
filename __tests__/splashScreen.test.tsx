@@ -61,4 +61,13 @@ describe("SplashScreen", () => {
     expect(await screen.findByText("Voyage")).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText("Voyage")).not.toBeInTheDocument(), { timeout: 2600 });
   });
+
+  it("is skipped inside the native app, where the native splash already shows", async () => {
+    const { Capacitor } = jest.requireActual("@capacitor/core");
+    const spy = jest.spyOn(Capacitor, "isNativePlatform").mockReturnValue(true);
+    render(<SplashScreen holdMs={50} />);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.queryByText("Voyage")).not.toBeInTheDocument();
+    spy.mockRestore();
+  });
 });
