@@ -176,3 +176,48 @@ describe('POST /api/hadak — football without Anthropic key', () => {
     expect(data.source).toBe('openai')
   })
 })
+
+// Production on 2026-09-26: the Groq model the code asked for was refused and
+// OpenAI had no credit left, so every open question got the offline guide.
+describe('POST /api/hadak — free providers', () => {
+  const originalFetch = global.fetch
+  const originalEnv = process.env
+  const withoutLlmKeys = () =>
+    Object.fromEntries(Object.entries(originalEnv).filter(([k, v]) => !/ANTHROPIC|GROQ|OPENAI|GEMINI/i.test(k) && !v?.startsWith('sk-ant-') && !v?.startsWith('gsk_')))
+  const reply = (content: string) => new Response(JSON.stringify({ choices: [{ message: { content } }] }), { status: 200 })
+  afterEach(() => {
+    global.fetch = originalFetch
+    process.env = originalEnv
+  })
+
+  it('tries the next Groq model when the first one is refused', async () => {
+    process.env = { ...withoutLlmKeys(), GROQ_API_KEY: 'test-key' } as unknown as NodeJS.ProcessEnv
+    const models: string[] = []
+    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (new URL(input.toString()).hostname !== 'api.groq.com') throw new Error('offline')
+      const { model } = JSON.parse(String(init?.body))
+      models.push(model)
+      return models.length === 1 ? new Response('{}', { status: 404 }) : reply('Réponse Groq')
+    }) as unknown as typeof fetch
+
+    const data = await (await post({ message: 'Donne-moi une recette de tajine', lang: 'fr' })).json()
+    expect(data).toMatchObject({ response: 'Réponse Groq', source: 'groq' })
+    expect(models).toHaveLength(2)
+  })
+
+  it('falls back to Gemini when Groq is rate-limited and skips OpenAI', async () => {
+    process.env = { ...withoutLlmKeys(), GROQ_API_KEY: 'g', GEMINI_API_KEY: 'AQ.test', OPENAI_API_KEY: 'o' } as unknown as NodeJS.ProcessEnv
+    const hosts: string[] = []
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const host = new URL(input.toString()).hostname
+      hosts.push(host)
+      if (host === 'api.groq.com') return new Response('{}', { status: 429 })
+      if (host === 'generativelanguage.googleapis.com') return reply('Réponse Gemini')
+      throw new Error('offline')
+    }) as unknown as typeof fetch
+
+    const data = await (await post({ message: 'Donne-moi une recette de tajine', lang: 'fr' })).json()
+    expect(data).toMatchObject({ response: 'Réponse Gemini', source: 'gemini' })
+    expect(hosts).not.toContain('api.openai.com')
+  })
+})
