@@ -174,7 +174,7 @@ function CaftanCard({ c }: { c: Caftan }) {
         </button>
 
         <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap items-center gap-1.5">
-          {c.stars === 5 && (
+          {c.coupDeCoeur && (
             <span className="rounded-full bg-[#c9903a] px-2.5 py-1 text-[10px] font-black text-[#0f1f3d]">⭐ Coup de cœur</span>
           )}
           {isIllustration(c) && (
