@@ -28,6 +28,7 @@ import {
   Volume2,
   Trophy,
   Navigation,
+  Flag,
 } from 'lucide-react';
 
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
@@ -417,6 +418,7 @@ export default function HadakAI() {
   const [open, setOpen] = useState(false);
   const [lang, setLang] = useState<Lang>('da');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [reported, setReported] = useState<Set<number>>(new Set());
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [lastTopic, setLastTopic] = useState<TopicKey | null>(null);
@@ -527,6 +529,17 @@ export default function HadakAI() {
     utterance.onend = () => setSpeakingIdx(null);
     utterance.onerror = () => setSpeakingIdx(null);
     window.speechSynthesis.speak(utterance);
+  };
+
+  // Signalement (exigence Google Play pour les réponses générées par IA) :
+  // seule la réponse est envoyée, pas la question de l'utilisateur.
+  const reportMessage = (content: string, idx: number) => {
+    setReported((prev) => new Set(prev).add(idx));
+    fetch('/api/hadak/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answer: content.slice(0, 2000), reason: 'inappropriate', lang }),
+    }).catch(() => {});
   };
 
   const handleSend = async (text?: string) => {
@@ -854,6 +867,16 @@ export default function HadakAI() {
                       >
                         <Volume2 className={`h-3 w-3 ${speakingIdx === i ? 'text-[#f59e0b]' : ''}`} />
                         {speakingIdx === i ? 'Stop' : 'Écouter'}
+                      </button>
+                    )}
+                    {msg.role === 'assistant' && msg.topic !== 'greeting' && (
+                      <button
+                        onClick={() => reportMessage(msg.content, i)}
+                        disabled={reported.has(i)}
+                        className="self-start ms-1 flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] text-white/75 hover:text-[#f59e0b] transition-colors disabled:hover:text-white/75"
+                      >
+                        <Flag className="h-3 w-3" aria-hidden="true" />
+                        {reported.has(i) ? 'Signalé, merci' : 'Signaler cette réponse'}
                       </button>
                     )}
                   </div>
