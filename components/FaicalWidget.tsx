@@ -131,7 +131,7 @@ function MatchCard({
         <span className="rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/20 px-2 py-0.5 text-[10px] font-bold text-[#f59e0b]">
           {pick.league}
         </span>
-        <p className="text-[11px] text-white/50">
+        <p className="text-[11px] text-slate-300">
           {date}
           {pick.time ? ` · ${pick.time}` : ''}
         </p>
@@ -149,7 +149,7 @@ function MatchCard({
           <p className="text-sm text-white leading-5">{pick.prediction}</p>
         </div>
       ) : (
-        <div className="rounded-xl bg-white/5 p-3 text-center text-xs text-white/40">
+        <div className="rounded-xl bg-white/5 p-3 text-center text-xs text-slate-300">
           Analyse en cours…
         </div>
       )}
@@ -211,7 +211,7 @@ export default function FaicalWidget() {
             <p className="text-xs text-[#fde68a]/80 font-semibold">{labels.sub}</p>
           </div>
         </div>
-        <span className="rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/40">
+        <span className="rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-slate-300">
           Analyses
         </span>
       </div>
@@ -228,10 +228,10 @@ export default function FaicalWidget() {
 
         {!loading && picks.length === 0 && (
           <>
-            <p className="text-sm text-white/50 text-center py-3">{labels.noData}</p>
+            <p className="text-sm text-slate-300 text-center py-3">{labels.noData}</p>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs font-black uppercase tracking-wider text-[#fde68a]">Autres analyses</p>
-              <p className="mt-1 text-xs leading-5 text-white/50">Si Faical ne publie rien, RME garde des portes de sortie vers d'autres sources de pronostics et statistiques.</p>
+              <p className="mt-1 text-xs leading-5 text-slate-300">Si Faical ne publie rien, RME garde des portes de sortie vers d'autres sources de pronostics et statistiques.</p>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 {FALLBACK_ANALYSIS_SOURCES.map((source) => (
                   <a key={source.id} href={source.url} target="_blank" rel="noopener noreferrer" onClick={(event) => void openExternal(source.url, event)} className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
@@ -253,7 +253,7 @@ export default function FaicalWidget() {
             <ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#f59e0b]" />
             <div>
               <p className="text-xs font-black uppercase tracking-wider text-[#fde68a]">Partenaires paris sportifs</p>
-              <p className="mt-1 text-[11px] leading-5 text-white/50">RME ne crée pas les cotes. Les opérateurs affichés sont destinés aux adultes et leur disponibilité dépend du pays. Jouer comporte des risques.</p>
+              <p className="mt-1 text-[11px] leading-5 text-slate-300">RME ne crée pas les cotes. Les opérateurs affichés sont destinés aux adultes et leur disponibilité dépend du pays. Jouer comporte des risques.</p>
             </div>
           </div>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -267,7 +267,7 @@ export default function FaicalWidget() {
         </div>}
       </div>
 
-      <p className="relative mt-5 text-center text-[11px] text-white/40">
+      <p className="relative mt-5 text-center text-[11px] text-slate-300">
         Analyses de matchs à titre informatif. Les liens partenaires sont séparés des analyses et soumis aux règles applicables.
       </p>
     </section>
