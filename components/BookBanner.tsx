@@ -28,7 +28,7 @@ function Cover({ className = '' }: { className?: string }) {
       <p className="absolute inset-x-[8%] bottom-[6%] text-right text-[clamp(6px,1.5cqw,13px)] font-light leading-[1.15] tracking-widest text-white">
         TAREK
         <br />
-        BENAILI
+        BENAÏLI
       </p>
     </div>
   );
@@ -76,7 +76,7 @@ export default function BookBanner() {
                     <Star key={i} size={12} fill="#f59e0b" className="text-[#f59e0b]" />
                   ))}
                 </div>
-                <p className="text-sm font-bold text-[#f59e0b]">par Tarek Benaili</p>
+                <p className="text-sm font-bold text-[#f59e0b]">par Tarek Benaïli</p>
               </div>
 
               <p className="mt-4 max-w-md text-sm leading-6 text-white/65">

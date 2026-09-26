@@ -38,7 +38,7 @@ function MiniCover() {
       <p className="absolute inset-x-[3px] bottom-[4px] text-right text-[4px] font-light leading-[5px] tracking-wide text-white">
         TAREK
         <br />
-        BENAILI
+        BENAÏLI
       </p>
     </div>
   );
@@ -115,7 +115,7 @@ export default function BookAd() {
           <p className="mt-0.5 text-[10px] leading-3 text-white/45">
             Les Nombres Interdits — Tome 1
           </p>
-          <p className="mt-1 text-[10px] font-bold text-[#f59e0b]">Tarek Benaili</p>
+          <p className="mt-1 text-[10px] font-bold text-[#f59e0b]">Tarek Benaïli</p>
           <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold text-white/60 transition group-hover:text-white">
             Voir sur Amazon <ExternalLink size={9} />
           </span>

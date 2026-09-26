@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SESSION_KEY = 'rme-splash-shown';
-const HOLD_MS = 5000;
+const HOLD_MS = 1500;
 
 /**
- * Écran de démarrage (logo, 5s) affiché une seule fois par session — pas à
+ * Écran de démarrage (logo, 1,5 s) affiché une seule fois par session — pas à
  * chaque navigation, pas aux visiteurs qui reviennent. Purement décoratif :
  * ne retarde jamais le rendu réel de la page en dessous, se contente de la
  * recouvrir puis de disparaître. Respecte prefers-reduced-motion (pas
@@ -80,7 +80,7 @@ export default function SplashScreen({ holdMs = HOLD_MS }: SplashScreenProps = {
             <span className="text-lg font-black tracking-tight text-white">
               RME <span className="font-medium text-[#fde68a]">Voyage</span>
             </span>
-            <span className="text-xs font-semibold tracking-wide text-white/70">by Tarek Benaidi</span>
+            <span className="text-xs font-semibold tracking-wide text-white/70">by Tarek Benaïli</span>
           </motion.div>
         </motion.div>
       )}
