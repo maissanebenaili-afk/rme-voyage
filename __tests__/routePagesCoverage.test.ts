@@ -1,3 +1,4 @@
+import type { RoadLeg } from "../lib/routeLegs";
 import { ROUTE_PAGES } from "../lib/routePages";
 
 const COUNTRY: Record<string, string> = {
@@ -17,9 +18,10 @@ describe("route landing pages", () => {
   });
 
   test.each(ROUTE_PAGES.routes.map((r) => [r.slug, r] as const))("%s starts in its origin country and ends in Morocco", (_slug, route) => {
-    const first = route.legs[0].countries[0].country;
-    const lastLeg = route.legs[route.legs.length - 1];
-    const last = lastLeg.countries[lastLeg.countries.length - 1].country;
+    const roads = route.legs.filter((leg): leg is RoadLeg => leg.kind === "road");
+    const first = roads[0].countries[0].country;
+    const lastRoad = roads[roads.length - 1];
+    const last = lastRoad.countries[lastRoad.countries.length - 1].country;
     expect(first).toBe(COUNTRY[route.origin.split(", ")[1]]);
     expect(last).toBe("MA");
   });
