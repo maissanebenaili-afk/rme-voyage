@@ -5,8 +5,11 @@ const config: CapacitorConfig = {
   appName: "RME Voyage",
   webDir: ".next/standalone/public",
   server: {
+    url: "https://rme-route.vercel.app",
+    cleartext: false,
     androidScheme: "https",
     iosScheme: "capacitor",
+    allowNavigation: ["rme-route.vercel.app"],
   },
   plugins: {
     SplashScreen: {
@@ -19,9 +22,6 @@ const config: CapacitorConfig = {
     },
     Geolocation: {
       permissions: ["location"],
-    },
-    PushNotifications: {
-      presentationOptions: ["badge", "sound", "alert"],
     },
   },
 };
