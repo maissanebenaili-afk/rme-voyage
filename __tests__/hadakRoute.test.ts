@@ -86,3 +86,29 @@ describe('POST /api/hadak — intent detection', () => {
     expect(data.response).toMatch(/Il est actuellement/)
   })
 })
+
+describe('POST /api/hadak — documents vs ferry', () => {
+  const originalFetch = global.fetch
+  afterEach(() => {
+    global.fetch = originalFetch
+  })
+
+  async function ask(message: string) {
+    global.fetch = jest.fn(async () => {
+      throw new Error('no upstream call expected')
+    }) as unknown as typeof fetch
+    const response = await post({ message, lang: 'fr' })
+    return (await response.json()).response as string
+  }
+
+  it('answers documents, not ferries, when a port is named in a documents question', async () => {
+    const text = await ask('Quels documents pour passer la frontière à Tanger Med ?')
+    expect(text).toMatch(/Documents nécessaires/)
+    expect(text).not.toMatch(/Ferries pour les MRE/)
+  })
+
+  it('still answers ferries for "quel ferry pour rentrer au Maroc"', async () => {
+    const text = await ask('Quel ferry pour rentrer au Maroc ?')
+    expect(text).toMatch(/Ferries pour les MRE/)
+  })
+})
