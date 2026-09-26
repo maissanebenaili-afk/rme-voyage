@@ -6,12 +6,8 @@ import { join } from "path";
 // text uses #475569 (slate-600) instead, the same tone as the global override.
 const LOW_CONTRAST = "text-[#94a3b8]";
 
-// Still allowed: a disabled button (WCAG exempts inactive controls) and the
-// review count, which waits on the decision about the caftan reviews.
-const ALLOWED = [
-  { file: "components/caftan/CaftanMarketplace.tsx", marker: "cursor-not-allowed" },
-  { file: "components/caftan/CaftanBooking.tsx", marker: "avis)" },
-];
+// Still allowed: a disabled button (WCAG exempts inactive controls).
+const ALLOWED = [{ file: "components/caftan/CaftanMarketplace.tsx", marker: "cursor-not-allowed" }];
 
 const FILES = [
   "app/marwa-caftan/[id]/page.tsx",

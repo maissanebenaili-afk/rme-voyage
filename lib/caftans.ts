@@ -30,8 +30,8 @@ export type Caftan = {
   caution: number;
   tailles: string[];
   occasion: string[];
-  stars: number;
-  avis: number;
+  /** Sélection de la boutique (choix éditorial, pas une note de clientes). */
+  coupDeCoeur?: boolean;
   dispo: boolean;
   description: string;
   /** Vraies photos. Dès qu'elles existent, elles priment sur l'illustration. */
@@ -43,84 +43,84 @@ export const CAFTANS: Caftan[] = [
     id: 'c1', name: 'Zahia', style: 'Broderie dorée', color: '#6b1a2e', accent: '#d4af37',
     gradient: 'from-[#6b1a2e] to-[#a0344a]', silhouette: 'evase', motif: 'zellige',
     matiere: 'Velours de soie', prixLocation: 150, prixVente: 850, caution: 200,
-    tailles: ['S', 'M', 'L'], occasion: ['Mariage', 'Fiançailles'], stars: 5, avis: 12, dispo: true,
+    tailles: ['S', 'M', 'L'], occasion: ['Mariage', 'Fiançailles'], coupDeCoeur: true, dispo: true,
     description: 'Un grenat profond rehaussé d\'une broderie zellige à l\'empiècement et à l\'ourlet. La coupe évasée tombe sans marquer, portée avec la mdamma assortie.',
   },
   {
     id: 'c2', name: 'Nour', style: 'Perles & soie', color: '#bfa882', accent: '#f0e6d2',
     gradient: 'from-[#bfa882] to-[#e8dcc8]', silhouette: 'takchita', motif: 'floral',
     matiere: 'Soie sauvage', prixLocation: 200, prixVente: 1200, caution: 300,
-    tailles: ['XS', 'S', 'M'], occasion: ['Mariage'], stars: 5, avis: 8, dispo: true,
+    tailles: ['XS', 'S', 'M'], occasion: ['Mariage'], coupDeCoeur: true, dispo: true,
     description: 'Une takchita deux pièces en soie champagne, dfina perlée à la main. La pièce de cérémonie par excellence, pensée pour la mariée.',
   },
   {
     id: 'c3', name: 'Malika', style: 'Velours vert émeraude', color: '#1a5c3a', accent: '#d4af37',
     gradient: 'from-[#1a5c3a] to-[#2d9d62]', silhouette: 'evase', motif: 'sfifa',
     matiere: 'Velours frappé', prixLocation: 180, prixVente: 950, caution: 250,
-    tailles: ['M', 'L', 'XL'], occasion: ['Mariage', 'Soirée'], stars: 5, avis: 15, dispo: true,
+    tailles: ['M', 'L', 'XL'], occasion: ['Mariage', 'Soirée'], coupDeCoeur: true, dispo: true,
     description: 'Émeraude et sfifa dorée le long du plastron. Un velours dense qui tient la lumière toute la soirée.',
   },
   {
     id: 'c4', name: 'Amira', style: 'Rose poudré brodé', color: '#c4607a', accent: '#e8c4a0',
     gradient: 'from-[#c4607a] to-[#e8a8ba]', silhouette: 'droit', motif: 'floral',
     matiere: 'Mousseline doublée', prixLocation: 130, prixVente: 720, caution: 180,
-    tailles: ['XS', 'S', 'M', 'L'], occasion: ['Fiançailles', 'Baptême'], stars: 4, avis: 6, dispo: true,
+    tailles: ['XS', 'S', 'M', 'L'], occasion: ['Fiançailles', 'Baptême'], dispo: true,
     description: 'Rose poudré et broderie florale ton sur ton. Léger, facile à porter une journée entière.',
   },
   {
     id: 'c5', name: 'Yasmine', style: 'Doré palace', color: '#8a5c10', accent: '#f5d98a',
     gradient: 'from-[#8a5c10] to-[#c9903a]', silhouette: 'sirene', motif: 'zellige',
     matiere: 'Brocart', prixLocation: 220, prixVente: 1500, caution: 350,
-    tailles: ['S', 'M'], occasion: ['Mariage'], stars: 5, avis: 20, dispo: false,
+    tailles: ['S', 'M'], occasion: ['Mariage'], coupDeCoeur: true, dispo: false,
     description: 'Brocart doré, coupe sirène ajustée jusqu\'au genou. La pièce la plus demandée de la collection.',
   },
   {
     id: 'c6', name: 'Fatima Zahra', style: 'Bleu roi & argent', color: '#1e3a8a', accent: '#d8dee9',
     gradient: 'from-[#1e3a8a] to-[#3b82f6]', silhouette: 'droit', motif: 'sfifa',
     matiere: 'Satin duchesse', prixLocation: 120, prixVente: 650, caution: 160,
-    tailles: ['S', 'M', 'L', 'XL'], occasion: ['Soirée', 'Mariage'], stars: 4, avis: 9, dispo: true,
+    tailles: ['S', 'M', 'L', 'XL'], occasion: ['Soirée', 'Mariage'], dispo: true,
     description: 'Bleu roi franc, sfifa argentée au col et aux poignets. La coupe droite la plus polyvalente du catalogue.',
   },
   {
     id: 'c7', name: 'Siham', style: 'Noir & broderie argent', color: '#1a1a2e', accent: '#c0c6d4',
     gradient: 'from-[#1a1a2e] to-[#4a4a6a]', silhouette: 'sirene', motif: 'zellige',
     matiere: 'Crêpe lourd', prixLocation: 160, prixVente: 900, caution: 220,
-    tailles: ['XS', 'S', 'M'], occasion: ['Soirée', 'Gala'], stars: 5, avis: 11, dispo: true,
+    tailles: ['XS', 'S', 'M'], occasion: ['Soirée', 'Gala'], coupDeCoeur: true, dispo: true,
     description: 'Noir profond et zellige argenté. Une silhouette sirène qui fonctionne aussi bien en gala qu\'en soirée.',
   },
   {
     id: 'c8', name: 'Houda', style: 'Turquoise & or', color: '#0d6e6e', accent: '#d4af37',
     gradient: 'from-[#0d6e6e] to-[#2ab5b5]', silhouette: 'evase', motif: 'floral',
     matiere: 'Soie lavée', prixLocation: 140, prixVente: 780, caution: 200,
-    tailles: ['M', 'L'], occasion: ['Baptême', 'Fiançailles'], stars: 4, avis: 7, dispo: true,
+    tailles: ['M', 'L'], occasion: ['Baptême', 'Fiançailles'], dispo: true,
     description: 'Turquoise lumineux et broderie florale dorée. Une soie lavée souple, très agréable en journée.',
   },
   {
     id: 'c9', name: 'Karima', style: 'Prune & dentelle', color: '#5b1e6e', accent: '#e0c3f0',
     gradient: 'from-[#5b1e6e] to-[#9c4dc4]', silhouette: 'cape', motif: 'floral',
     matiere: 'Dentelle sur satin', prixLocation: 170, prixVente: 920, caution: 230,
-    tailles: ['S', 'M', 'L'], occasion: ['Mariage', 'Soirée'], stars: 5, avis: 14, dispo: true,
+    tailles: ['S', 'M', 'L'], occasion: ['Mariage', 'Soirée'], coupDeCoeur: true, dispo: true,
     description: 'Prune et dentelle, avec une cape fluide qui se détache aux épaules. Beaucoup d\'allure pour peu de contrainte.',
   },
   {
     id: 'c10', name: 'Zainab', style: 'Ivoire & corail', color: '#c97a5a', accent: '#f5e6d8',
     gradient: 'from-[#c97a5a] to-[#e8b898]', silhouette: 'droit', motif: 'sfifa',
     matiere: 'Lin de soie', prixLocation: 135, prixVente: 750, caution: 180,
-    tailles: ['XS', 'S', 'M', 'L'], occasion: ['Fiançailles', 'Baptême'], stars: 4, avis: 5, dispo: true,
+    tailles: ['XS', 'S', 'M', 'L'], occasion: ['Fiançailles', 'Baptême'], dispo: true,
     description: 'Ivoire réchauffé de corail, sfifa ton sur ton. Le lin de soie respire, idéal pour les cérémonies d\'été.',
   },
   {
     id: 'c11', name: 'Samira', style: 'Rouge grenat luxe', color: '#7c1d1d', accent: '#f5d98a',
     gradient: 'from-[#7c1d1d] to-[#c44040]', silhouette: 'takchita', motif: 'zellige',
     matiere: 'Velours et brocart', prixLocation: 195, prixVente: 1100, caution: 270,
-    tailles: ['S', 'M'], occasion: ['Mariage'], stars: 5, avis: 18, dispo: true,
+    tailles: ['S', 'M'], occasion: ['Mariage'], coupDeCoeur: true, dispo: true,
     description: 'Takchita grenat, dfina en brocart doré sur velours. Une pièce de mariage classique, exécutée au détail près.',
   },
   {
     id: 'c12', name: 'Layla', style: 'Lavande & cristaux', color: '#4a3a7e', accent: '#e8e0f5',
     gradient: 'from-[#4a3a7e] to-[#9e8ec4]', silhouette: 'cape', motif: 'floral',
     matiere: 'Crêpe georgette', prixLocation: 145, prixVente: 800, caution: 200,
-    tailles: ['XS', 'S', 'M'], occasion: ['Soirée', 'Fiançailles'], stars: 4, avis: 10, dispo: true,
+    tailles: ['XS', 'S', 'M'], occasion: ['Soirée', 'Fiançailles'], dispo: true,
     description: 'Lavande et cristaux cousus à l\'encolure, cape en georgette. Léger, mouvant, pensé pour danser.',
   },
 ];

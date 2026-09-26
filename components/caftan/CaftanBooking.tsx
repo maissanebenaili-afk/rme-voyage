@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageCircle, Star, Check } from 'lucide-react';
+import { MessageCircle, Check } from 'lucide-react';
 import type { Caftan, Mode } from '@/lib/caftans';
 import { CONDITIONS } from '@/lib/caftans';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
@@ -28,15 +28,6 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
       </h1>
       <p className="mt-1 text-sm text-[#64748b]">{caftan.style} · {caftan.matiere}</p>
 
-      <div className="mt-2 flex items-center gap-1.5">
-        <div className="flex">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} size={12} fill={i < caftan.stars ? '#c9903a' : 'none'}
-              className={i < caftan.stars ? 'text-[#c9903a]' : 'text-[#e2e8f0]'} />
-          ))}
-        </div>
-        <span className="text-[11px] text-[#94a3b8]">({caftan.avis} avis)</span>
-      </div>
 
       <p className="mt-4 text-sm leading-6 text-[#475569]">{caftan.description}</p>
 
