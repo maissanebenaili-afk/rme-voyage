@@ -36,7 +36,7 @@ export default async function CaftanPage({ params }: Params) {
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fdf8f2]">
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        <nav aria-label="Fil d'Ariane" className="flex items-center gap-1.5 text-xs font-semibold text-[#94a3b8]">
+        <nav aria-label="Fil d'Ariane" className="flex items-center gap-1.5 text-xs font-semibold text-[#475569]">
           <Link href="/" className="hover:text-[#c9903a]">RME Voyage</Link>
           <span>/</span>
           <Link href="/marwa-caftan" className="hover:text-[#c9903a]">Marwa Caftan</Link>
@@ -70,7 +70,7 @@ export default async function CaftanPage({ params }: Params) {
                     <span className="block font-black text-[#0f1f3d]">Caftan {s.name}</span>
                     <span className="mt-0.5 block text-xs text-[#64748b]">{s.style}</span>
                     <span className="mt-1.5 block font-black text-[#c9903a]">
-                      {s.prixLocation} €<span className="text-xs font-semibold text-[#94a3b8]">/sem</span>
+                      {s.prixLocation} €<span className="text-xs font-semibold text-[#475569]">/sem</span>
                     </span>
                   </span>
                 </Link>

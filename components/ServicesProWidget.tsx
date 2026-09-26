@@ -108,7 +108,7 @@ function BusinessCard({ b }: { b: Business }) {
           </a>
         )}
         {(!b.web || b.web === '#') && !b.phone && (
-          <span className="flex flex-1 items-center justify-center rounded-xl bg-[#f1f5f9] py-2 text-xs text-[#94a3b8]">
+          <span className="flex flex-1 items-center justify-center rounded-xl bg-[#f1f5f9] py-2 text-xs text-[#475569]">
             Bientôt disponible
           </span>
         )}
@@ -167,7 +167,7 @@ export default function ServicesProWidget() {
         )}
       </div>
 
-      <p className="px-5 pb-4 text-center text-[10px] text-[#94a3b8]">
+      <p className="px-5 pb-4 text-center text-[10px] text-[#475569]">
         Vous êtes professionnel ?{' '}
         <a href="mailto:pro@rme-voyage.com" className="text-[#c9903a] hover:underline">
           Rejoignez l'annuaire
