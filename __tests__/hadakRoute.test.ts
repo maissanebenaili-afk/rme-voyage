@@ -135,7 +135,7 @@ describe('POST /api/hadak — subject beats weak keywords', () => {
   }
 
   it.each([
-    ['Barcelona contre le Real ce soir, qui va gagner ?', /Football marocain/],
+    ['Barcelona contre le Real ce soir, qui va gagner ?', /Football/],
     ['Quelle heure part le ferry de Tarifa ?', /Ferries pour les MRE/],
     ['Quel ferry pour Barcelona ?', /Ferries pour les MRE/],
     ['Quelle heure est-il au Maroc ?', /Il est actuellement/],
@@ -143,5 +143,36 @@ describe('POST /api/hadak — subject beats weak keywords', () => {
     ['Qui va gagner la CAN 2027 ?', /Football marocain/],
   ])('%s', async (question, expected) => {
     expect(await ask(question)).toMatch(expected)
+  })
+})
+
+// Production on 2026-09-26: only OPENAI_API_KEY is set, so "Wydad ou Raja ce
+// soir ?" got "Mentionne l'équipe pour un pronostic" although both teams were
+// named. Without an Anthropic prediction, the question goes to the LLM chain.
+describe('POST /api/hadak — football without Anthropic key', () => {
+  const originalFetch = global.fetch
+  const originalEnv = process.env
+  afterEach(() => {
+    global.fetch = originalFetch
+    process.env = originalEnv
+  })
+
+  it('answers a named-team question with the configured LLM', async () => {
+    process.env = {
+      ...Object.fromEntries(Object.entries(originalEnv).filter(([k, v]) => !/ANTHROPIC|GROQ|OPENAI/i.test(k) && !v?.startsWith('sk-ant-') && !v?.startsWith('gsk_'))),
+      OPENAI_API_KEY: 'test-key',
+    } as unknown as NodeJS.ProcessEnv
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString())
+      if (url.hostname === 'api.openai.com') {
+        return new Response(JSON.stringify({ choices: [{ message: { content: 'Match serré, léger avantage au Wydad.' } }] }), { status: 200 })
+      }
+      throw new Error('offline')
+    }) as unknown as typeof fetch
+
+    const response = await post({ message: 'Wydad ou Raja ce soir ?', lang: 'fr' })
+    const data = await response.json()
+    expect(data.response).toBe('Match serré, léger avantage au Wydad.')
+    expect(data.source).toBe('openai')
   })
 })

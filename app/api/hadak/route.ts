@@ -118,7 +118,7 @@ function getMoroccoDate(): string {
 type SportsDBTeam  = { idTeam: string; strTeam: string };
 type SportsDBEvent = { strHomeTeam: string; intHomeScore: string; strAwayTeam: string; intAwayScore: string; dateEvent: string };
 
-async function handleFootball(msg: string, lang: string): Promise<string> {
+async function handleFootball(msg: string, lang: string): Promise<string | null> {
   const msgLower = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
   // Teams whose names we recognize in the message
@@ -208,6 +208,11 @@ async function handleFootball(msg: string, lang: string): Promise<string> {
       }
     } catch { /* fall through */ }
   }
+
+  // A team was named but no prediction came back (no Anthropic key in
+  // production, or the call failed): let the general LLM chain answer the
+  // actual question instead of replying "mention the team".
+  if (mentioned.length > 0) return null;
 
   // --- Static fallback ---
   if (nextMatchesText) {
