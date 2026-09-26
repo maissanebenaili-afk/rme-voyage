@@ -43,9 +43,6 @@ describe('POST /api/hadak — intent detection', () => {
   })
 
   it('answers prayer times, not the clock, for "à quelle heure était la prière à Taza aujourd\'hui"', async () => {
-    // Bug report: this exact phrasing used to match the "time" intent first
-    // (it contains "quelle heure"), so the app answered "Il est
-    // actuellement HH:MM" and silently ignored "la prière" and "Taza".
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input.toString())
       if (url.hostname === 'api.aladhan.com') {
@@ -115,8 +112,6 @@ describe('POST /api/hadak — documents vs ferry', () => {
   })
 })
 
-// Every case below was answered wrongly in production on 2026-09-26: the first
-// matching keyword won even when it was only a place name or a clock word.
 describe('POST /api/hadak — subject beats weak keywords', () => {
   const originalFetch = global.fetch
   const originalEnv = process.env
@@ -148,9 +143,6 @@ describe('POST /api/hadak — subject beats weak keywords', () => {
   })
 })
 
-// Production on 2026-09-26: only OPENAI_API_KEY is set, so "Wydad ou Raja ce
-// soir ?" got "Mentionne l'équipe pour un pronostic" although both teams were
-// named. Without an Anthropic prediction, the question goes to the LLM chain.
 describe('POST /api/hadak — football without Anthropic key', () => {
   const originalFetch = global.fetch
   const originalEnv = process.env
@@ -167,6 +159,7 @@ describe('POST /api/hadak — football without Anthropic key', () => {
     process.env = {
       ...Object.fromEntries(Object.entries(originalEnv).filter(([k, v]) => !/ANTHROPIC|GROQ|OPENAI/i.test(k) && !v?.startsWith('sk-ant-') && !v?.startsWith('gsk_'))),
       OPENAI_API_KEY: 'test-key',
+      AI_ROUTER_FREE_ONLY: 'false',
     } as unknown as NodeJS.ProcessEnv
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input.toString())
