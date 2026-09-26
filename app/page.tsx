@@ -439,13 +439,13 @@ export default function Home() {
             <div>
               <h3 className="font-bold text-[#0f1f3d]">Navigation</h3>
               <ul className="mt-3 space-y-2 text-sm">
-                <li><Link href="/" className="hover:text-[#0f1f3d]">Accueil</Link></li>
-                <li><Link href="/guide" className="hover:text-[#0f1f3d]">Guide</Link></li>
-                <li><Link href="/decouvrir" className="hover:text-[#0f1f3d]">Découvrir</Link></li>
-                <li><Link href="/boutique" className="hover:text-[#0f1f3d]">Boutique ✨</Link></li>
-                <li><Link href="/telecharger" className="hover:text-[#0f1f3d]">Télécharger</Link></li>
-                <li><Link href="/soutenir" className="hover:text-[#0f1f3d]">Soutenir le projet 💛</Link></li>
-                <li><a href="/rss.xml" className="hover:text-[#0f1f3d]">Flux RSS</a></li>
+                <li><Link href="/" className="inline-block py-1.5 hover:text-[#0f1f3d]">Accueil</Link></li>
+                <li><Link href="/guide" className="inline-block py-1.5 hover:text-[#0f1f3d]">Guide</Link></li>
+                <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Découvrir</Link></li>
+                <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">Boutique ✨</Link></li>
+                <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">Télécharger</Link></li>
+                <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Soutenir le projet 💛</Link></li>
+                <li><a href="/rss.xml" className="inline-block py-1.5 hover:text-[#0f1f3d]">Flux RSS</a></li>
               </ul>
             </div>
             <div>
@@ -467,11 +467,11 @@ export default function Home() {
                 <li>Assistant Hadak IA</li>
                 <li>Pronos de Faical ⚽</li>
                 <li>TV Gratuite — 20+ chaînes</li>
-                <li><Link href="/marwa-caftan" className="hover:text-[#0f1f3d]">Marwa Caftan — Location & Vente 👗</Link></li>
+                <li><Link href="/marwa-caftan" className="inline-block py-1.5 hover:text-[#0f1f3d]">Marwa Caftan — Location & Vente 👗</Link></li>
                 <li>Traiteurs · Mobilité · Garages</li>
                 <li>Colis &amp; Groupage Maroc 📦</li>
-                <li><Link href="/belisamae" className="hover:text-[#0f1f3d]">Belisamae — Bien-être 🌿</Link></li>
-                <li><Link href="/afarah-nassim" className="hover:text-[#0f1f3d]">Afarah Nassim — Traiteur 🍽️</Link></li>
+                <li><Link href="/belisamae" className="inline-block py-1.5 hover:text-[#0f1f3d]">Belisamae — Bien-être 🌿</Link></li>
+                <li><Link href="/afarah-nassim" className="inline-block py-1.5 hover:text-[#0f1f3d]">Afarah Nassim — Traiteur 🍽️</Link></li>
               </ul>
             </div>
             <div>
