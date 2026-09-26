@@ -246,3 +246,169 @@ Do not count:
 9. Expand search to flights, car rental, activities, eSIM, insurance, tourism boards, B2B/API and European programmes.
 
 Last rule: never spend meaningful development credits on an integration before the commercial opportunity has been verified and the expected economics justify the work.
+
+
+---
+
+# RME Route — Money Hunt 360° Addendum
+## New opportunities identified 2026-09-26
+
+This addendum complements docs/MONEY_HUNT_OPPORTUNITIES.md. It is specifically intended to avoid duplicate work with the existing RME/Claude affiliation research.
+
+## P1 — Viator Partner API
+
+Type: Tours / activities / experiences
+RME fit: Very high
+Evidence: Viator's official Partner API supports a full-featured tours and experiences booking website/application. Affiliate partners can have basic, full, or booking-enabled API access depending on partner status.
+Potential: activity booking commissions; exact commercial terms depend on partner tier/contract.
+Cost: no upfront cost identified in the public API documentation; commercial access must be confirmed.
+Action:
+1. Apply as affiliate partner.
+2. Request API access.
+3. Start with non-transactional content/availability.
+4. Move to booking-enabled integration only after commercial approval and sufficient demand.
+Official source: https://docs.viator.com/partner-api/technical/
+Priority: P1
+
+## P1 — KAYAK White Label
+
+Type: Flights + stays + cars + packages / white-label
+RME fit: Very high
+Evidence: KAYAK states that its White Label can be embedded into a site, supports flights, stays, cars and packages, and provides tracking. It is accessed through the KAYAK Affiliate Network.
+Potential: revenue share on travel bookings; exact terms must be confirmed.
+Cost: public page does not state a fixed upfront fee.
+Strategic value: very fast route to a multi-vertical travel commerce layer without building every booking engine internally.
+Action:
+1. Apply to KAYAK Affiliate Network.
+2. Request White Label terms.
+3. Compare economics against direct API integrations.
+Official source: https://affiliates.kayak.com/whitelabel
+Priority: P1
+
+## P1 — Expedia Group travel solutions
+
+Type: Affiliate / white-label / Rapid API / co-branded partnerships
+RME fit: Very high
+Evidence: Expedia Group officially offers a Travel Agent Affiliate Program, White Label Travel Platform, Rapid API for custom travel booking experiences, and co-branded/loyalty partnership routes.
+Potential: booking revenue/commissions and deeper B2B distribution.
+Cost: commercial terms depend on selected programme.
+Action:
+1. Identify the lowest-friction entry programme.
+2. Request commercial/API conditions.
+3. Compare against Agoda + Omio + Trainline + KAYAK before integrating.
+Official source: https://partner.expediagroup.com/en-us/solutions/build-your-travel-experience
+Priority: P1
+
+## P1 — eSIM partnership layer
+
+Type: Travel connectivity affiliate / API / white-label
+RME fit: High
+Evidence: peydsim publicly offers affiliate links/codes, hosted API and white-label eSIM models, with a free partner application.
+Potential: recurring travel-service revenue and an additional purchase immediately relevant to travellers.
+Cost: free application according to the partner page.
+Action:
+1. Compare at least 2 eSIM providers before selecting one.
+2. Verify commission, payout threshold, countries, refund rules and API limits.
+3. Integrate only after economics are confirmed.
+Official source: https://www.peydsim.de/en/partner
+Priority: P1
+
+## P1/P2 — Direct accommodation acquisition engine
+
+Type: Direct B2B partnerships with rural gîtes, chambres d'hôtes, small hotels and tourism operators
+RME fit: Strategic / potentially high
+Model:
+- RME sends qualified travellers.
+- Partner accommodation receives bookings.
+- RME receives a contracted commission or referral fee where legally/contractually appropriate.
+- Partner receives a trackable source of demand.
+Potential: higher margin and stronger retention than generic affiliate links if volume is demonstrated.
+Cost: low initial cost; main cost is outreach and integration/tracking.
+Action:
+1. Create a simple partner landing page.
+2. Build a partner offer: measurable referrals, multilingual exposure, traveller targeting and analytics.
+3. Pilot with 5-10 properties.
+4. Track leads, bookings, nights, average basket and commission.
+5. Convert successful pilots into recurring agreements.
+Priority: P1 as a business-development experiment.
+
+Important: do not promise guaranteed bookings or occupancy. Revenue projections must be based on measured conversion.
+
+## P2 — France Tourisme Tech / DGE: use as a partnership accelerator
+
+The 2026-2027 fourth promotion is currently listed by the DGE as open through 27 September 2026. The application portal describes a programme starting December 2026, focused on scaling travel-tech companies, open innovation, internationalisation and mentoring. The programme explicitly covers transport/mobility, accommodation, travel booking, leisure, business travel and other tourism segments.
+Action: verify the live portal immediately and submit if RME meets the criteria.
+Official sources:
+https://www.entreprises.gouv.fr/espace-entreprises/appels-a-projets-et-appels-a-manifestation-d-interet
+https://demarche.numerique.gouv.fr/commencer/candidature-ami-france-tourisme-tech-quatrieme-pro
+Priority: P2 operationally only because deadline is imminent.
+
+## P2 — French Tech Nova
+
+Type: national startup support programme
+Evidence: the Mission French Tech currently lists French Tech Nova as open until 30 September 2026. It is designed to accelerate startups led by entrepreneurs from under-represented backgrounds and explicitly mentions disability among possible target situations.
+Potential: support, network, visibility and acceleration; not to be counted as cash revenue.
+Action: verify whether the company and founder profile meet all published criteria, then apply before deadline if eligible.
+Official source: https://lafrenchtech.gouv.fr/en/programme/french-tech-nova/
+Priority: P2
+
+## P3 — Atout France innovation experimentation network
+
+The latest Atout France programme has already closed its current call, but it confirms a strong route worth monitoring for the next edition: tourism innovation experiments involving territories, tourism businesses, AI/data, accessibility, visitor flows and sustainable/inclusive tourism. The 2025-2026 edition had a EUR 650,000 programme budget and 13 projects in the promotion.
+Action: do not apply to the closed call; prepare RME as a candidate for the next call and build a pilot proposition that a destination, tourism office or accommodation network can test.
+Official source: https://www.atout-france.fr/fr/informations/ami-innovation-touristique-terrains-dexperimentation-3
+Priority: P3 / next cohort
+
+# Strategic commercial hypothesis to test
+
+RME should not depend only on generic affiliate links.
+
+Test a three-layer model:
+
+Layer 1 — immediate affiliate:
+Hotels + transport + activities + eSIM.
+
+Layer 2 — direct B2B:
+Gîtes, chambres d'hôtes, independent hotels, activity operators and local tourism providers.
+
+Layer 3 — platform:
+API / white-label / B2B travel intelligence.
+
+Example economics are only hypotheses until measured:
+30 occupied room-nights generated for a partner property is materially more valuable than 30 clicks. The system must therefore track nights, booking value, commission and repeat bookings, not only traffic.
+
+# New Money Hunt rules
+
+For every new opportunity, RME should ask:
+1. Can we earn from the booking?
+2. Can we earn repeatedly from the same traveller?
+3. Can we negotiate a better direct B2B margin than an affiliate?
+4. Can a partner pay RME for qualified demand?
+5. Can the same technical integration serve multiple providers?
+6. Can credits/subsidies reduce development cost?
+7. Is there a deadline that creates urgency?
+8. Is the provider officially verifiable?
+9. What is the minimum implementation effort?
+10. What evidence would justify scaling?
+
+Never count theoretical maximum commission as forecast revenue.
+Never promise occupancy to accommodation partners.
+Never integrate a provider solely because its headline commission is high.
+Prefer providers with official API/affiliate documentation, clear tracking and transparent commercial terms.
+
+# Next research targets not yet exhausted
+
+- flight affiliate/API providers;
+- rental car affiliate/API;
+- insurance distribution partners;
+- airport transfer providers;
+- attraction/ticket APIs beyond Viator;
+- European travel-tech programmes;
+- regional French grants outside Île-de-France;
+- Morocco tourism-tech / diaspora / innovation programmes;
+- tourism-office partnership programmes;
+- corporate travel / employee travel;
+- B2B white-label distribution;
+- accessibility-focused travel programmes;
+- cloud/AI startup credits beyond Google/Vercel.
+
