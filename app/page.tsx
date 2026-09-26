@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import {
   ArrowRight,
   BadgeCheck,
@@ -22,7 +23,6 @@ import {
 } from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
 import RouteJourney from '@/components/RouteJourney';
-import SplashScreen from '@/components/SplashScreen';
 import TravelHub from '@/components/TravelHub';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
@@ -35,7 +35,6 @@ import RemittanceComparator from '@/components/RemittanceComparator';
 import PartnerComparison from '@/components/PartnerComparison';
 import { getPartnerCatalogue } from "@/lib/partnerCatalogue";
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import HadakAI from '@/components/HadakAI';
 import DailyWidget from '@/components/DailyWidget';
 import { WeatherMorocco, DarijaPhrasebook, CustomsCalculator, EmergencyContacts, MoroccanCalendar, ZakaatCalculator, TimeZoneSIM, FuelPriceComparator } from '@/components/TravelWidgets';
 import SmartPacking from '@/components/SmartPacking';
@@ -49,6 +48,13 @@ import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import Reveal from '@/components/Reveal';
+
+// Hadak et l'écran d'accueil embarquent framer-motion (~120 Ko). Aucun des
+// deux n'apparaît dans le HTML serveur (le splash démarre masqué, Hadak ne
+// s'ouvre qu'au clic) : on les charge après l'affichage de la page plutôt
+// que dans le JavaScript initial de l'accueil.
+const HadakAI = dynamic(() => import('@/components/HadakAI'), { ssr: false });
+const SplashScreen = dynamic(() => import('@/components/SplashScreen'), { ssr: false });
 
 const benefits = [
   { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
