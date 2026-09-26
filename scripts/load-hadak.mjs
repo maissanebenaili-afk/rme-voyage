@@ -9,7 +9,7 @@
  * - configured max concurrency
  * - achieved RPS
  * - p50/p95/p99 latency
- * - HTTP errors / timeouts
+ * - HTTP errors / timeouts, with 429 (rate limiter) counted apart
  * - response fallback rate
  *
  * This runner is intentionally dependency-free (Node 20+).
@@ -18,6 +18,10 @@
  * Examples:
  *   node scripts/load-hadak.mjs --target=https://rme-route.vercel.app --scenario=100
  *   node scripts/load-hadak.mjs --target=https://rme-route.vercel.app --scenario=all --query=quelle%20heure%20au%20Maroc
+ *
+ * /api/hadak is rate-limited to 8 requests/minute/IP by proxy.ts: from a single
+ * runner, most requests of a large scenario get 429. Use --endpoint=health to
+ * measure platform capacity, and read rate_limited before any Hadak latency.
  *
  * Safety:
  * - default query is deterministic/local so large scenarios do not intentionally
@@ -56,6 +60,7 @@ Required:
   --target=https://example.vercel.app
 
 Options:
+  --endpoint=hadak|health            default: hadak (health = GET /api/health, no LLM, no rate limit)
   --scenario=100|500|1000|5000|all   default: 100
   --query=<plain text>               default: quelle heure au Maroc
   --lang=fr|da|en|ar|es              default: fr
@@ -68,13 +73,14 @@ For AI-path measurements, use an explicit query and start with 100 requests.
 }
 
 const target = arg("target", "");
+const endpoint = arg("endpoint", "hadak");
 const scenarioArg = arg("scenario", "100");
 const query = arg("query", "quelle heure au Maroc");
 const lang = arg("lang", "fr");
 const timeoutMs = Number(arg("timeout-ms", "10000"));
 const jsonOnly = process.argv.includes("--json");
 
-if (!target || !/^https?:\/\//.test(target)) {
+if (!target || !/^https?:\/\//.test(target) || !["hadak", "health"].includes(endpoint)) {
   if (!jsonOnly) usage();
   process.exit(2);
 }
@@ -89,9 +95,13 @@ if (selected.some(([, scenario]) => !scenario)) {
 }
 
 async function runScenario(name, scenario) {
-  const url = new URL("/api/hadak", target);
+  const url = new URL(endpoint === "health" ? "/api/health" : "/api/hadak", target);
   const latencies = [];
+  const okLatencies = [];
+  const statusCounts = {};
   let completed = 0;
+  let okResponses = 0;
+  let rateLimited = 0;
   let httpErrors = 0;
   let timeouts = 0;
   let fallbackResponses = 0;
@@ -110,22 +120,31 @@ async function runScenario(name, scenario) {
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ message: query, lang }),
-        signal: controller.signal,
-      });
+      const response = await fetch(url, endpoint === "health"
+        ? { method: "GET", signal: controller.signal }
+        : {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ message: query, lang }),
+            signal: controller.signal,
+          });
 
       const latency = performance.now() - requestStarted;
       latencies.push(latency);
       completed += 1;
+      statusCounts[response.status] = (statusCounts[response.status] ?? 0) + 1;
 
-      if (!response.ok) {
+      if (response.status === 429) {
+        rateLimited += 1;
+        await response.body?.cancel();
+      } else if (!response.ok) {
         httpErrors += 1;
+        await response.body?.cancel();
       } else {
         try {
           const body = await response.json();
+          okResponses += 1;
+          okLatencies.push(latency);
           if (body?.fallback === true) fallbackResponses += 1;
           if (typeof body?.source === "string" && body.source !== "local") providerResponses += 1;
         } catch {
@@ -159,6 +178,7 @@ async function runScenario(name, scenario) {
 
   const elapsedMs = performance.now() - startedAt;
   latencies.sort((a, b) => a - b);
+  okLatencies.sort((a, b) => a - b);
 
   return {
     scenario: name,
@@ -171,7 +191,13 @@ async function runScenario(name, scenario) {
     p50_ms: Math.round(percentile(latencies, 0.50) ?? 0),
     p95_ms: Math.round(percentile(latencies, 0.95) ?? 0),
     p99_ms: Math.round(percentile(latencies, 0.99) ?? 0),
+    ok_responses: okResponses,
+    ok_p50_ms: okLatencies.length ? Math.round(percentile(okLatencies, 0.50)) : null,
+    ok_p95_ms: okLatencies.length ? Math.round(percentile(okLatencies, 0.95)) : null,
+    ok_p99_ms: okLatencies.length ? Math.round(percentile(okLatencies, 0.99)) : null,
+    rate_limited: rateLimited,
     http_errors: httpErrors,
+    status_counts: statusCounts,
     timeouts,
     fallback_responses: fallbackResponses,
     provider_responses: providerResponses,
@@ -189,7 +215,8 @@ for (const [name, scenario] of selected) {
 const report = {
   generated_at: new Date().toISOString(),
   target,
-  query,
+  endpoint,
+  query: endpoint === "health" ? null : query,
   lang,
   timeout_ms: timeoutMs,
   results,
@@ -197,6 +224,8 @@ const report = {
     "active_users is a configured virtual-user count; it is not equivalent to concurrency.",
     "achieved_rps is measured total requests divided by elapsed wall-clock time.",
     "fallback/provider counts are application response observations.",
+    "rate_limited counts HTTP 429 from the app's own limiter (8/min/IP on /api/hadak); they are not capacity errors.",
+    "p50/p95/p99 cover every response including 429; ok_p* cover successful responses only.",
     "server CPU/memory are not measurable from this client harness.",
     "No 10K-readiness conclusion is produced by this script.",
   ],

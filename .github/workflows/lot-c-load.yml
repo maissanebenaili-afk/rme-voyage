@@ -8,6 +8,12 @@ on:
         required: true
         default: "https://rme-route.vercel.app"
         type: string
+      endpoint:
+        description: "health = GET /api/health (no LLM, no rate limit); hadak = POST /api/hadak (8 req/min/IP limit)"
+        required: true
+        default: "health"
+        type: choice
+        options: ["health", "hadak"]
       scenario:
         description: "Load scenario"
         required: true
@@ -31,7 +37,7 @@ permissions:
 
 jobs:
   load:
-    name: Lot C — ${{ inputs.scenario }} requests
+    name: Lot C — ${{ inputs.endpoint }} ${{ inputs.scenario }} requests
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -42,17 +48,25 @@ jobs:
         with:
           node-version: "20"
       - name: Run load harness
+        # Inputs go through env, never into the script text (GitHub script-injection guidance).
+        env:
+          TARGET: ${{ inputs.target }}
+          ENDPOINT: ${{ inputs.endpoint }}
+          SCENARIO: ${{ inputs.scenario }}
+          QUERY: ${{ inputs.query }}
+          LANG_CODE: ${{ inputs.lang }}
         run: |
           node scripts/load-hadak.mjs \
-            --target="${{ inputs.target }}" \
-            --scenario="${{ inputs.scenario }}" \
-            --query="${{ inputs.query }}" \
-            --lang="${{ inputs.lang }}" \
+            --target="$TARGET" \
+            --endpoint="$ENDPOINT" \
+            --scenario="$SCENARIO" \
+            --query="$QUERY" \
+            --lang="$LANG_CODE" \
             --json > lot-c-load-report.json
           cat lot-c-load-report.json
       - name: Upload measurement
         uses: actions/upload-artifact@v4
         with:
-          name: lot-c-load-${{ inputs.scenario }}
+          name: lot-c-load-${{ inputs.endpoint }}-${{ inputs.scenario }}
           path: lot-c-load-report.json
           if-no-files-found: error
