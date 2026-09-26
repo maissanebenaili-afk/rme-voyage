@@ -3,65 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Politique de Confidentialité - RME Voyage</title>
+  <title>Politique de confidentialité - RME Voyage</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 17px; line-height: 1.65; max-width: 800px; margin: 0 auto; padding: 20px; color: #1f2937; background: #fff; }
     h1 { color: #0f1f3d; border-bottom: 3px solid #c9903a; padding-bottom: 10px; }
-    h2 { color: #0f1f3d; margin-top: 30px; }
-    .date { color: #999; font-size: 0.9em; }
+    h2 { color: #0f1f3d; margin-top: 32px; }
+    .date { color: #475569; font-size: 0.95em; }
+    .summary { background: #f8fafc; border-left: 4px solid #0f1f3d; padding: 12px 16px; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.95em; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f1f5f9; }
+    a { color: #0f4c81; }
   </style>
 </head>
 <body>
-  <h1>Politique de Confidentialité</h1>
-  <p class="date">Dernière mise à jour : 20 septembre 2026</p>
+  <h1>Politique de confidentialité</h1>
+  <p class="date">Dernière mise à jour : 26 septembre 2026</p>
 
-  <h2>1. Introduction</h2>
-  <p>RME Voyage ("l'Application") respecte votre vie privée. Cette politique explique comment nous collectons, utilisons et protégeons vos données personnelles.</p>
+  <div class="summary">
+    <p><strong>En bref :</strong> RME Voyage fonctionne sans compte. Votre voyage (villes, date, checklist) reste enregistré sur votre appareil. Nous ne vendons aucune donnée, nous n'utilisons pas d'identifiant publicitaire et la mesure d'audience se fait sans cookie. Certaines fonctions envoient des informations à des services tiers, décrits ci-dessous, uniquement quand vous les utilisez.</p>
+  </div>
 
-  <h2>2. Données collectées</h2>
+  <h2>1. Qui est responsable ?</h2>
+  <p>Le responsable du traitement est Nova Presta (SAS), éditrice de RME Voyage. Pour toute question ou demande concernant vos données, écrivez à l'adresse e-mail indiquée sur la fiche de l'application dans Google Play (rubrique « Coordonnées du développeur »).</p>
+
+  <h2>2. Ce qui reste sur votre appareil</h2>
+  <p>Ces informations sont enregistrées dans le stockage local de l'application ou du navigateur. Elles ne nous sont pas transmises :</p>
   <ul>
-    <li><strong>Compte utilisateur :</strong> Email, nom, mot de passe haché (via Supabase Auth)</li>
-    <li><strong>Données de voyage :</strong> Itinéraires, favoris, réservations de caftans/propriétés</li>
-    <li><strong>Localisation :</strong> Position GPS (avec votre consentement, pour la carte)</li>
-    <li><strong>Analytique :</strong> Actions dans l'app (pages visitées, interactions)</li>
+    <li>votre voyage : ville de départ et d'arrivée, date, mode de transport, cases cochées de la checklist, préférences ;</li>
+    <li>vos réglages d'accessibilité (taille du texte, contraste…) ;</li>
+    <li>la ville choisie pour la météo ;</li>
+    <li>le fait d'avoir fermé un bandeau (installation de l'application, présentation d'un livre).</li>
+  </ul>
+  <p>Vous pouvez tout effacer avec le bouton « Effacer mon voyage » ou en supprimant les données de l'application (ou du site) dans les réglages de votre téléphone ou de votre navigateur.</p>
+
+  <h2>3. Ce qui est envoyé, et à qui</h2>
+  <table>
+    <thead>
+      <tr><th>Quand</th><th>Données</th><th>Destinataire</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Horaires de prière autour de vous (seulement si vous autorisez la localisation)</td>
+        <td>Votre position (latitude, longitude)</td>
+        <td>Aladhan (api.aladhan.com), qui calcule les horaires. La direction de la Qibla est calculée sur votre appareil.</td>
+      </tr>
+      <tr>
+        <td>Calcul d'itinéraire, recherche de services sur la route</td>
+        <td>Les villes ou lieux que vous saisissez</td>
+        <td>Nos serveurs, qui interrogent OpenStreetMap (Nominatim, Overpass) et OSRM pour le tracé.</td>
+      </tr>
+      <tr>
+        <td>Questions posées à l'assistant Hadak</td>
+        <td>Le texte de votre question</td>
+        <td>Nos serveurs répondent d'abord avec nos propres fiches. Sinon, la question est transmise à un fournisseur d'intelligence artificielle : Groq, OpenAI ou Anthropic (serveurs situés notamment aux États-Unis). Nous ne conservons pas vos questions. N'y indiquez pas d'informations personnelles sensibles.</td>
+      </tr>
+      <tr>
+        <td>Dictée vocale dans Hadak (seulement quand vous appuyez sur le micro)</td>
+        <td>Votre voix</td>
+        <td>Le service de reconnaissance vocale de votre navigateur ou de votre système (par exemple Google). L'audio ne passe pas par nos serveurs.</td>
+      </tr>
+      <tr>
+        <td>Inscription à la lettre d'information (si vous vous inscrivez)</td>
+        <td>Votre adresse e-mail</td>
+        <td>Resend, notre service d'envoi d'e-mails. Vous pouvez vous désinscrire à tout moment.</td>
+      </tr>
+      <tr>
+        <td>Soutien financier au projet (si vous faites un don)</td>
+        <td>Informations de paiement</td>
+        <td>Stripe, qui traite le paiement. Nous ne voyons jamais votre numéro de carte.</td>
+      </tr>
+      <tr>
+        <td>Mesure d'audience</td>
+        <td>Pages consultées, type d'appareil, pays, clics vers un partenaire (nom du partenaire), performances de chargement</td>
+        <td>Vercel Web Analytics et Speed Insights : sans cookie, sans identifiant publicitaire, résultats agrégés.</td>
+      </tr>
+      <tr>
+        <td>Chaque utilisation</td>
+        <td>Adresse IP et informations techniques de la requête</td>
+        <td>Vercel (hébergement) pour faire fonctionner et sécuriser le service. Les polices (Fontshare), les images (Unsplash, Wikimedia) et la météo (Open-Meteo, pour les villes affichées et non votre position) sont chargées depuis leurs serveurs.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Liens vers des partenaires</h2>
+  <p>Certains liens (ferries, transfert d'argent, hébergement…) mènent vers des sites partenaires, parfois avec un lien d'affiliation : RME Voyage peut alors toucher une commission, sans surcoût pour vous. Une fois sur ces sites, leur propre politique de confidentialité s'applique. Il en va de même pour WhatsApp quand vous contactez directement un professionnel.</p>
+
+  <h2>5. Ce que nous ne faisons pas</h2>
+  <ul>
+    <li>Pas de vente ni de location de vos données.</li>
+    <li>Pas de régie publicitaire ni d'identifiant publicitaire.</li>
+    <li>Pas de compte utilisateur pour l'instant : aucune donnée de profil n'est enregistrée chez nous.</li>
+    <li>Pas de localisation en arrière-plan : la position n'est demandée que lorsque vous utilisez une fonction qui en a besoin.</li>
   </ul>
 
-  <h2>3. Utilisation des données</h2>
-  <p>Vos données sont utilisées pour :</p>
-  <ul>
-    <li>Fournir les services de l'app (caftans, propriétés, planning de voyage)</li>
-    <li>Améliorer l'expérience utilisateur</li>
-    <li>Traiter les commissions de réservation</li>
-    <li>Envoyer des notifications (optionnel)</li>
-  </ul>
+  <h2>6. Durée de conservation</h2>
+  <p>Les données enregistrées sur votre appareil y restent jusqu'à ce que vous les effaciez. L'adresse e-mail de la lettre d'information est conservée jusqu'à votre désinscription. Les journaux techniques de l'hébergeur sont conservés pour une durée limitée, fixée par Vercel.</p>
 
-  <h2>4. Partage des données</h2>
-  <p>Nous ne vendons jamais vos données. Elles peuvent être partagées avec :</p>
-  <ul>
-    <li><strong>Supabase :</strong> Base de données et authentification (serveurs EU)</li>
-    <li><strong>Stripe :</strong> Traitement des paiements (optionnel, PCI-DSS)</li>
-    <li><strong>WhatsApp :</strong> Vos messages de contact direct vers Marwa/Aziz (vous initiez)</li>
-  </ul>
+  <h2>7. Vos droits</h2>
+  <p>Conformément au RGPD, vous pouvez demander l'accès, la rectification ou l'effacement de vos données, vous opposer à leur traitement ou en limiter l'usage, en écrivant à l'adresse indiquée à l'article 1. Vous pouvez aussi adresser une réclamation à la CNIL (<a href="https://www.cnil.fr">www.cnil.fr</a>) ou à l'autorité de protection des données de votre pays.</p>
 
-  <h2>5. Sécurité</h2>
-  <p>Les données sont chiffrées en transit (HTTPS) et au repos (Supabase). Les mots de passe ne sont jamais stockés en clair.</p>
+  <h2>8. Sécurité</h2>
+  <p>Les échanges avec nos serveurs sont chiffrés (HTTPS). Les clés d'accès aux services tiers restent sur nos serveurs et ne sont jamais envoyées à votre appareil.</p>
 
-  <h2>6. Droits de l'utilisateur</h2>
-  <p>Vous pouvez à tout moment :</p>
-  <ul>
-    <li>Accéder à vos données personnelles</li>
-    <li>Demander la suppression de votre compte</li>
-    <li>Exporter vos données</li>
-  </ul>
-  <p>Contactez-nous : contact@rme-voyage.com</p>
+  <h2>9. Enfants</h2>
+  <p>RME Voyage s'adresse à un public général et n'est pas conçu spécifiquement pour les enfants.</p>
 
-  <h2>7. Conformité RGPD</h2>
-  <p>RME Voyage respecte le Règlement Général sur la Protection des Données (RGPD). Vos données personnelles ne sont conservées que le temps nécessaire.</p>
-
-  <h2>8. Modifications</h2>
-  <p>Nous pouvons mettre à jour cette politique. Les changements majeurs seront notifiés via l'application.</p>
+  <h2>10. Modifications</h2>
+  <p>Cette politique sera mise à jour si l'application change la façon dont elle utilise vos données. La date en haut de la page indique la dernière version.</p>
 
   <hr>
-  <p style="font-size: 0.9em; color: #999;">© 2026 RME Voyage. Tous droits réservés.</p>
+  <p style="font-size: 0.95em; color: #475569;">© 2026 RME Voyage — Nova Presta.</p>
 </body>
 </html>

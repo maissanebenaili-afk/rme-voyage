@@ -475,7 +475,12 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs">
-            © 2026 RME Voyage — Nova Presta. Tous droits réservés.
+            <p>© 2026 RME Voyage — Nova Presta. Tous droits réservés.</p>
+            <p className="mt-2">
+              <a href="/api/legal/privacy" className="underline hover:text-[#0f1f3d]">Confidentialité</a>
+              {" · "}
+              <a href="/api/legal/terms" className="underline hover:text-[#0f1f3d]">Conditions d&apos;utilisation</a>
+            </p>
           </div>
         </div>
       </footer>
