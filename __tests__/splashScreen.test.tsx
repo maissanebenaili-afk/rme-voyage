@@ -14,13 +14,13 @@ describe("SplashScreen", () => {
   });
 
   it("shows once, marks the session, then disappears on its own", async () => {
-    // holdMs court : le vrai réglage (5s) reste dans le composant, la suite
-    // ne doit pas attendre 5 secondes pour de vrai.
+    // holdMs court : le vrai réglage (1,5 s) reste dans le composant, la suite
+    // ne doit pas attendre 1,5 seconde pour de vrai.
     render(<SplashScreen holdMs={50} />);
     // "RME Voyage" est scindé par un <span> imbriqué (nœuds de texte
     // séparés) : on matche sur "Voyage" seul, texte propre de ce nœud.
     expect(await screen.findByText("Voyage")).toBeInTheDocument();
-    expect(screen.getByText("by Tarek Benaidi")).toBeInTheDocument();
+    expect(screen.getByText("by Tarek Benaïli")).toBeInTheDocument();
     expect(sessionStorage.getItem("rme-splash-shown")).toBe("1");
 
     await waitFor(
@@ -54,5 +54,11 @@ describe("SplashScreen", () => {
     expect(screen.queryByText("Voyage")).not.toBeInTheDocument();
     // Ne consomme pas non plus la marque de session : rien n'a été montré.
     expect(sessionStorage.getItem("rme-splash-shown")).toBeNull();
+  });
+
+  it("does not hold visitors more than 1.5 s by default", async () => {
+    render(<SplashScreen />);
+    expect(await screen.findByText("Voyage")).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Voyage")).not.toBeInTheDocument(), { timeout: 2600 });
   });
 });
