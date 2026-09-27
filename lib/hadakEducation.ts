@@ -87,6 +87,8 @@ export function buildEducationPlan(request: EducationRequest): EducationPlan {
   const solutionPolicy = solutionPolicyFor(request.mode, request.wantsFullSolution === true);
   const instruction = [
     MODE_INSTRUCTIONS[request.mode],
+    // The Hadak bubble shows plain text: Markdown tables and LaTeX would appear raw.
+    'Write plain text for a phone screen: numbered steps (1., 2., 3.), short lines, maths written inline like 2x + 3 = 7, no tables, no LaTeX, no Markdown headings.',
     request.level ? LEVEL_GUIDANCE[request.level] : UNKNOWN_LEVEL,
     SOLUTION_INSTRUCTIONS[solutionPolicy],
     `Answer in ${LANGUAGE_NAMES[language]}.`,

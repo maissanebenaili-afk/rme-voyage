@@ -35,6 +35,14 @@ import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { buildShareUrl } from '@/lib/tripShare';
 import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/hadakVoice';
 
+// Answers use **bold** for titles; show it as bold instead of raw asterisks.
+// Plain React text nodes only: nothing from the answer is parsed as HTML.
+function renderBold(text: string) {
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 === 1 ? <strong key={i} className="font-bold">{part}</strong> : part,
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
@@ -428,6 +436,8 @@ export default function HadakAI() {
   const [recognition, setRecognition] = useState<any>(null);
   const [isOffline, setIsOffline] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  // Voices can load after a tap: only the latest request may start speaking.
+  const speakRequest = useRef(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -520,6 +530,7 @@ export default function HadakAI() {
 
   const speakMessage = (content: string, idx: number) => {
     if (!('speechSynthesis' in window)) return;
+    const request = ++speakRequest.current;
     if (speakingIdx === idx) {
       window.speechSynthesis.cancel();
       setSpeakingIdx(null);
@@ -529,6 +540,7 @@ export default function HadakAI() {
     synth.cancel();
     setSpeakingIdx(idx);
     void loadVoices(synth).then((voices) => {
+      if (request !== speakRequest.current) return;
       const utterance = new SpeechSynthesisUtterance(cleanForSpeech(content));
       const voice = pickHadakVoice(voices, lang);
       utterance.lang = voice?.lang ?? speechLocale(lang);
@@ -842,7 +854,7 @@ export default function HadakAI() {
                   )}
                   <div className="flex flex-col gap-1">
                     <div
-                      className={`max-w-full rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
+                      className={`max-w-full whitespace-pre-line break-words rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
                         msg.role === 'user'
                           ? 'text-[#0f1f3d] font-semibold'
                           : 'text-white font-medium'
@@ -856,7 +868,7 @@ export default function HadakAI() {
                         borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
                       }}
                     >
-                      {msg.content}
+                      {msg.role === 'assistant' ? renderBold(msg.content) : msg.content}
                     </div>
                     {msg.role === 'assistant' && msg.plannerLink && (
                       <a
