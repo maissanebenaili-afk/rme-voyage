@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { cacheFootballAnswer, footballCacheKey, getCachedFootballAnswer } from '@/lib/hadakFootballCache';
 import { recordResolution, routeHadakAI } from '@/lib/hadakAiRouter';
+import {
+  buildEducationPlan, isEducationLanguage, isEducationLevel, isEducationMode,
+  type EducationLevel, type EducationMode,
+} from '@/lib/hadakEducation';
 import { moroccoTimeZone, moroccoUtcOffset } from '@/lib/moroccoTime';
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -234,10 +238,40 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
 }
 
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'generic';
+type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
+
+// "cours" alone is left out: "cours du dirham" is a currency question.
+const EDUCATION_RE = /\b(exercices?|devoirs?|resous|resoudre|corrige|correction|reviser|revision|brevet|bac|examen|lecon|equations?|fractions?|theoremes?|conjugaison|grammaire|dissertation|homework|exercise|tamrin|dars)\b|تمرين|درس|امتحان/;
+
+function inferEducation(m: string): { mode: EducationMode; level?: EducationLevel } {
+  const mode: EducationMode =
+    /\b(resous|resoudre|corrige|correction|solution|solve)\b/.test(m) ? 'SOLVE'
+    : /\b(brevet|bac|examen|exam|controle)\b|امتحان/.test(m) ? 'EXAM_PREP'
+    : /\b(revise|reviser|revision|fiche)\b/.test(m) ? 'REVISE'
+    : /\b(exercices?|entraine|entrainer|tamrin|practice)\b|تمرين/.test(m) ? 'PRACTICE'
+    : /\b(apprendre|apprends|lecon|learn|dars)\b|درس/.test(m) ? 'LEARN'
+    : 'UNDERSTAND';
+  const level: EducationLevel | undefined =
+    /\b(cp|ce1)\b/.test(m) ? 'PRIMARY_1_2'
+    : /\b(ce2|cm1|cm2)\b/.test(m) ? 'PRIMARY_3_5'
+    : /\b(6e|6eme|sixieme|5e|5eme|cinquieme)\b/.test(m) ? 'COLLEGE_6E_5E'
+    : /\b(4e|4eme|quatrieme|3e|3eme|troisieme|brevet)\b/.test(m) ? 'COLLEGE_4E_3E'
+    : /\b(en seconde|2nde)\b/.test(m) ? 'LYCEE_2NDE'
+    : /\b(en premiere|1ere)\b/.test(m) ? 'LYCEE_1ERE'
+    : /\b(terminale|bac)\b/.test(m) ? 'LYCEE_TERMINALE'
+    : /\b(fac|universite|licence|master|university)\b/.test(m) ? 'UNIVERSITY'
+    : undefined;
+  return { mode, level };
+}
+
+function normalize(msg: string): string {
+  return msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 function detectIntent(msg: string): Intent {
   const m = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  // School work first: "prépare-moi pour le bac" must not become a trip card.
+  if (EDUCATION_RE.test(m)) return 'education';
   // Trip planning — "prépare-moi un voyage à X", "safari l X", "je veux aller à X"
   if (/\b(prepare|preparer|planifie|organise|voyage.*\ba\b|safari.*\bl\b|veux.*aller|want.*go|quiero.*ir|trip.*to|bghit.*nmshi|bghit.*nsafr)\b/.test(m)) return 'trip';
   // Weather — broad pattern: temps, meteo, chaud, froid, pluie, soleil, nuageux, brouillard, vent
@@ -474,9 +508,18 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 // ── Main handler ───────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
-    const { message, lang = 'fr' } = await req.json();
+    const { message, lang = 'fr', education } = await req.json();
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
+    }
+    // Optional explicit choice from the app: { mode?, level?, wantsFullSolution? }.
+    if (education !== undefined && (
+      typeof education !== 'object' || education === null
+      || (education.mode !== undefined && !(typeof education.mode === 'string' && isEducationMode(education.mode)))
+      || (education.level !== undefined && !(typeof education.level === 'string' && isEducationLevel(education.level)))
+      || (education.wantsFullSolution !== undefined && typeof education.wantsFullSolution !== 'boolean')
+    )) {
+      return NextResponse.json({ error: 'Invalid education options' }, { status: 400 });
     }
     // Chaque message peut partir vers un LLM payant : on borne sa taille
     // avant tout appel (la limite par IP du proxy ne borne pas les tokens).
@@ -489,6 +532,29 @@ export async function POST(req: NextRequest) {
       typeof lang === 'string' && Object.hasOwn(SYSTEM_PROMPTS, lang) ? SYSTEM_PROMPTS[lang] : SYSTEM_PROMPTS.fr;
     const systemPrompt = `${basePrompt} Maroc : ${moroccoUtcOffset()}, il est ${getMoroccoTime()}.`;
     const intent = detectIntent(message);
+
+    if (education !== undefined || intent === 'education') {
+      const inferred = inferEducation(normalize(message));
+      const plan = buildEducationPlan({
+        mode: education?.mode ?? inferred.mode,
+        level: education?.level ?? inferred.level,
+        language: typeof lang === 'string' && isEducationLanguage(lang) ? lang : 'fr',
+        prompt: message,
+        wantsFullSolution: education?.wantsFullSolution,
+      });
+      const routed = await routeHadakAI({
+        message: plan.prompt,
+        systemPrompt: `You are Hadak, a patient tutor for Moroccan families and students. ${plan.instruction}`,
+        maxTokens: 1500,
+      });
+      const educationInfo = { mode: plan.mode, level: plan.level ?? null, solution_policy: plan.solutionPolicy };
+      if (routed.text) {
+        return NextResponse.json({
+          response: routed.text, fallback: false, source: routed.provider ?? 'router', request_id: routed.requestId, education: educationInfo,
+        });
+      }
+      return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true, education: educationInfo });
+    }
 
     // 1. Smart local responder — free, always available, real-time data
     const localStarted = Date.now();

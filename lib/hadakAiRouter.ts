@@ -81,6 +81,8 @@ type RouteOptions = {
   message: string;
   systemPrompt: string;
   requestId?: string;
+  /** Default 512; a step-by-step correction needs more room. */
+  maxTokens?: number;
 };
 
 type RouteResult = {
@@ -344,6 +346,7 @@ async function callProvider(
   provider: Provider,
   systemPrompt: string,
   message: string,
+  maxTokens = 512,
 ): Promise<{ text: string | null; state?: ProviderState; retryAfterMs?: number; model?: string; usage?: Usage | null }> {
   const key = provider.getKey();
   if (!key) return { text: null, state: 'DISABLED' };
@@ -363,7 +366,7 @@ async function callProvider(
         headers['anthropic-version'] = '2023-06-01';
         body = JSON.stringify({
           model,
-          max_tokens: 512,
+          max_tokens: maxTokens,
           system: systemPrompt,
           messages: [{ role: 'user', content: message }],
         });
@@ -372,7 +375,7 @@ async function callProvider(
         headers.Authorization = `Bearer ${key}`;
         body = JSON.stringify({
           model,
-          max_tokens: 512,
+          max_tokens: maxTokens,
           messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }],
         });
       }
@@ -415,7 +418,7 @@ export async function routeHadakAI(options: RouteOptions): Promise<RouteResult> 
   for (const provider of providers()) {
     if (!isEligible(provider)) continue;
 
-    const result = await callProvider(provider, options.systemPrompt, options.message);
+    const result = await callProvider(provider, options.systemPrompt, options.message, options.maxTokens);
     if (result.text) {
       markSuccess(provider.id);
       const model = result.model ?? (Array.isArray(provider.model) ? provider.model[0] : provider.model);
