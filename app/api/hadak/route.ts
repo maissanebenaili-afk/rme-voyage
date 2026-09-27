@@ -8,6 +8,7 @@ import {
   type EducationLevel, type EducationMode,
 } from '@/lib/hadakEducation';
 import { moroccoTimeZone, moroccoUtcOffset } from '@/lib/moroccoTime';
+import { isHadakLang, newTrace, nextActionsFor, provenanceOf, type AnswerTrace } from '@/lib/hadakGuidance';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type OpenAICompatibleResponse = {
@@ -141,7 +142,7 @@ const FOOTBALL_TEAMS: Array<{ id: string; name: string; alias: RegExp }> = [
   { id: '133714', name: 'Paris Saint-Germain', alias: /\b(psg|paris saint.germain)\b/ },
 ];
 
-async function handleFootball(msg: string, lang: string): Promise<string | null> {
+async function handleFootball(msg: string, lang: string, trace: AnswerTrace = newTrace()): Promise<string | null> {
   const msgLower = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
   const teams = FOOTBALL_TEAMS.filter(t => t.alias.test(msgLower));
@@ -152,6 +153,7 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
   const cached = mentioned.length > 0 ? getCachedFootballAnswer(cacheKey) : null;
   if (cached) {
     recordResolution('CACHE', 0);
+    trace.ai = true;
     return cached;
   }
 
@@ -211,6 +213,7 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
     });
     if (routed.text) {
       cacheFootballAnswer(cacheKey, routed.text);
+      trace.ai = true;
       return routed.text;
     }
   }
@@ -224,6 +227,8 @@ async function handleFootball(msg: string, lang: string): Promise<string | null>
 
   // --- Static fallback ---
   if (nextMatchesText) {
+    trace.live.push('TheSportsDB');
+    trace.liveOnly = true;
     if (lang === 'da') return `⚽ **Kora dial Maghrib**\n\nMatchat jaya f Botola Pro:\n${nextMatchesText}`;
     if (lang === 'ar') return `⚽ **كرة القدم المغربية**\n\nالمباريات القادمة في البطولة:\n${nextMatchesText}`;
     if (lang === 'es') return `⚽ **Fútbol marroquí**\n\nPróximos partidos Botola Pro:\n${nextMatchesText}`;
@@ -308,12 +313,13 @@ function detectIntent(msg: string): Intent {
   return 'generic';
 }
 
-async function buildLocalResponse(msg: string, lang: string, intent: Intent): Promise<string | null> {
+async function buildLocalResponse(msg: string, lang: string, intent: Intent, trace: AnswerTrace = newTrace()): Promise<string | null> {
   const time = getMoroccoTime();
   const date = getMoroccoDate();
   const cityKey = detectCity(msg);
 
   if (intent === 'time') {
+    trace.clock = true;
     const offset = moroccoUtcOffset();
     if (lang === 'da') return `F l-Maghrib daba ${time} (${date}), b tawqit ${offset}.`;
     if (lang === 'ar') return `الوقت الآن في المغرب ${time} (${date})، بتوقيت ${offset}.`;
@@ -328,6 +334,8 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
     const cityName = lang === 'ar' ? city.ar : lang === 'da' ? city.da : city.fr;
 
     if (weather?.current) {
+      trace.live.push('Open-Meteo');
+      trace.liveOnly = true;
       const temp = Math.round(weather.current.temperature_2m ?? 0);
       const desc = describeWeather(weather.current.weather_code ?? 0, lang);
       const wind = Math.round(weather.current.wind_speed_10m ?? 0);
@@ -354,6 +362,7 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
 
   if (intent === 'currency') {
     const rates = await getLiveRates();
+    if (rates) trace.live.push('open.er-api.com');
     const mad = rates ? rates.MAD.toFixed(2) : '10.90';
     const gbpMad = rates ? (rates.MAD / rates.GBP).toFixed(2) : '12.70';
     const chfMad = rates ? (rates.MAD / rates.CHF).toFixed(2) : '11.55';
@@ -370,6 +379,8 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
     const cityName = lang === 'ar' ? city.ar : lang === 'da' ? city.da : city.fr;
     const pt = await getPrayerTimes(prayerCity);
     if (pt) {
+      trace.live.push('AlAdhan');
+      trace.liveOnly = true;
       if (lang === 'da') return `Salawat f ${cityName} lyoum: Fajr ${pt.Fajr} • Dhuhr ${pt.Dhuhr} • Asr ${pt.Asr} • Maghrib ${pt.Maghrib} • Isha ${pt.Isha}`;
       if (lang === 'ar') return `أوقات الصلاة في ${cityName} اليوم: الفجر ${pt.Fajr} • الظهر ${pt.Dhuhr} • العصر ${pt.Asr} • المغرب ${pt.Maghrib} • العشاء ${pt.Isha}`;
       if (lang === 'es') return `Horarios de oración en ${cityName} hoy: Fajr ${pt.Fajr} • Dhuhr ${pt.Dhuhr} • Asr ${pt.Asr} • Maghrib ${pt.Maghrib} • Isha ${pt.Isha}`;
@@ -401,6 +412,9 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
     const [weather, pt, rates] = await Promise.all([getWeather(key), getPrayerTimes(key), getLiveRates()]);
     const temp = weather?.current ? `${Math.round(weather.current.temperature_2m ?? 0)}°C, ${describeWeather(weather.current.weather_code ?? 0, lang)}` : null;
     const mad = rates ? rates.MAD.toFixed(2) : '10.90';
+    if (weather?.current) trace.live.push('Open-Meteo');
+    if (pt) trace.live.push('AlAdhan');
+    if (rates) trace.live.push('open.er-api.com');
 
     if (lang === 'da') {
       const lines = [`🗺️ **Voyage l-${cityName}**`];
@@ -444,7 +458,7 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent): Pr
     return `**Ramadan au Maroc** : iftar ≈ 19h30-20h en été, 17h30-18h en hiver. Suhour ≈ 4-5h. Les commerces ferment plus tôt. Ambiance unique — beaucoup de MRE rentrent exprès pendant cette période.`;
   }
 
-  if (intent === 'football') return handleFootball(msg, lang);
+  if (intent === 'football') return handleFootball(msg, lang, trace);
 
   return null;
 }
@@ -532,6 +546,7 @@ export async function POST(req: NextRequest) {
       typeof lang === 'string' && Object.hasOwn(SYSTEM_PROMPTS, lang) ? SYSTEM_PROMPTS[lang] : SYSTEM_PROMPTS.fr;
     const systemPrompt = `${basePrompt} Maroc : ${moroccoUtcOffset()}, il est ${getMoroccoTime()}.`;
     const intent = detectIntent(message);
+    const guideLang = isHadakLang(lang) ? lang : 'fr';
 
     if (education !== undefined || intent === 'education') {
       const inferred = inferEducation(normalize(message));
@@ -551,6 +566,7 @@ export async function POST(req: NextRequest) {
       if (routed.text) {
         return NextResponse.json({
           response: routed.text, fallback: false, source: routed.provider ?? 'router', request_id: routed.requestId, education: educationInfo,
+          trust: provenanceOf({ live: [], liveOnly: false, ai: true }), next_actions: [],
         });
       }
       return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true, education: educationInfo });
@@ -558,14 +574,18 @@ export async function POST(req: NextRequest) {
 
     // 1. Smart local responder — free, always available, real-time data
     const localStarted = Date.now();
-    const local = await buildLocalResponse(message, lang, intent);
+    const trace = newTrace();
+    const local = await buildLocalResponse(message, lang, intent, trace);
     if (local) {
       // Football records its own resolution (cache, router or static text).
       if (intent !== 'football') {
         const usesLiveData = intent === 'weather' || intent === 'prayer' || intent === 'currency' || intent === 'trip' || intent === 'generic';
         recordResolution(usesLiveData ? 'EXTERNAL_DATA' : 'DETERMINISTIC_LOCAL', Date.now() - localStarted);
       }
-      return NextResponse.json({ response: local, fallback: false, source: 'local' });
+      return NextResponse.json({
+        response: local, fallback: false, source: 'local',
+        trust: provenanceOf(trace), next_actions: nextActionsFor(intent, guideLang),
+      });
     }
 
     // 2. Shared AI Router — provider registry, FREE_ONLY, circuit breaker and ledger.
@@ -576,6 +596,8 @@ export async function POST(req: NextRequest) {
         fallback: false,
         source: routed.provider ?? 'router',
         request_id: routed.requestId,
+        trust: provenanceOf({ live: [], liveOnly: false, ai: true }),
+        next_actions: nextActionsFor(intent, guideLang),
       });
     }
 
