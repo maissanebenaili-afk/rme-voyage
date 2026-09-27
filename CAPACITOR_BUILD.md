@@ -34,24 +34,35 @@ Dans la coquille distante, le service worker doit être installé après une pre
 
 ## Projets natifs
 
-Les répertoires `android/` et `ios/` ne sont pas encore committés.
+**Android — committé dans `android/` (27/09/2026).**
 
-Ils doivent être générés avec les outils Capacitor correspondant aux versions réellement verrouillées dans le projet, puis testés sur appareils réels. Nous ne fabriquons pas manuellement des projets natifs ou leurs fichiers de signature.
+- Généré avec `npx cap add android` (Capacitor 7.6.9).
+- `compileSdk` / `targetSdk` passés à **36**, comme l'exige Google Play depuis le 31/08/2026.
+- Android Gradle Plugin 8.9.1.
+- Permissions : `INTERNET`, plus la localisation au premier plan (`ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION`), conformément à `play-store-listing/data-safety.md`. La localisation n'est demandée qu'au tap sur « Ma position ».
+- Icônes et splash RME générés par `node scripts/generate-app-assets.mjs`.
+- **Mesuré :** `./gradlew bundleRelease assembleDebug` produit `app-release.aab` et `app-debug.apk`. `aapt2` lit `targetSdkVersion:'36'`.
 
-Préparation locale :
+**Build sans ordinateur : GitHub Actions `Android bundle`** (`.github/workflows/android.yml`).
 
-```bash
-npm ci
-npm run typecheck
-npm run lint
-npm test
-npm run build
-npx cap add android
-npx cap add ios
-npx cap sync
-```
+- Il se lance à la main (onglet Actions → *Android bundle* → *Run workflow*) ou à chaque changement de `android/`.
+- Il produit l'AAB et un APK de test, téléchargeables dans *Artifacts* pendant 14 jours.
+- `versionCode` = numéro du run : chaque envoi à Play est plus haut que le précédent.
+- **Signature :** l'AAB n'est signé que si ces 4 secrets GitHub existent :
 
-Puis ouvrir les projets dans Android Studio / Xcode et effectuer les builds signés uniquement avec les comptes et certificats du propriétaire.
+  | Secret | Contenu |
+  |---|---|
+  | `RME_UPLOAD_KEYSTORE_BASE64` | le fichier `.jks`, en base64 |
+  | `RME_UPLOAD_KEYSTORE_PASSWORD` | mot de passe du keystore |
+  | `RME_UPLOAD_KEY_ALIAS` | alias de la clé |
+  | `RME_UPLOAD_KEY_PASSWORD` | mot de passe de la clé |
+
+  Sans eux, l'AAB n'est pas signé et Play le refusera. La clé d'envoi appartient au propriétaire et n'est jamais committée (`*.jks` est ignoré).
+
+**iOS — pas encore généré.**
+
+- Il faut un Mac ou un runner macOS et un compte Apple Developer (99 $/an).
+- Le dossier `ios/` reste ignoré jusque-là.
 
 ## Plugins Capacitor
 
@@ -65,11 +76,17 @@ Le projet verrouille actuellement les plugins v7 suivants :
 
 Les versions doivent rester cohérentes avec Capacitor 7 jusqu'à migration volontaire vers Capacitor 8.
 
-## Icônes
+## Icônes et visuels store
 
-Les SVG RME existants servent au web/PWA. Les stores natifs nécessitent une génération réelle des assets PNG et des variantes adaptatives Android.
+`node scripts/generate-app-assets.mjs` génère tout depuis le logo du site (« R » ambre sur bleu nuit `#0f1f3d`) :
 
-**Non considéré comme terminé tant que les PNG ne sont pas générés, intégrés aux projets natifs et vérifiés sur appareil.**
+- mipmaps Android (normale, ronde, adaptative) et splash ;
+- PNG web/PWA et `apple-touch-icon` ;
+- icône Play 512 px et bannière 1024×500 (`play-store-listing/assets/`).
+
+Captures d'écran : `play-store-listing/assets/screenshots/`. Ce sont de vraies captures de la production (1080×1920, Chromium mobile, 27/09/2026), sans montage.
+
+**À vérifier sur appareil :** rendu de l'icône adaptative selon les lanceurs.
 
 ## Exigences stores vérifiées le 26 septembre 2026
 
@@ -108,4 +125,10 @@ test rotation / tailles d'écran
 vérification métadonnées stores
 ```
 
-**Statut : code mobile préparé, publication native non déclarée prête tant que les projets natifs, assets PNG, builds signés et tests appareil réel ne sont pas validés.**
+**Statut Android :**
+
+- TECHNICALLY READY pour un envoi en test fermé, une fois la clé d'envoi fournie.
+- Pas encore testé sur un appareil réel.
+- Pas soumis.
+
+**Statut iOS :** non préparé (compte Apple requis).

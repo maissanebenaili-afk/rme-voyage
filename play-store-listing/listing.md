@@ -45,13 +45,10 @@ RME Voyage - Parce que le voyage commence bien avant le départ.
 ## Keywords (max 100 chars)
 voyage, maroc, MRE, RME, prière, qibla, itinéraire, ferry, darija, diaspora
 
-## Screenshots needed
-1. Hero page with route planner
-2. Prayer times & Qibla compass
-3. Interactive map with route
-4. AI Assistant chat in Darija
-5. Travel checklist
-6. Currency converter
+## Visuels prêts (`play-store-listing/assets/`)
+- Icône 512×512 : `play-icon-512.png`
+- Bannière 1024×500 : `feature-graphic-1024x500.png`
+- Captures téléphone (1080×1920, vraies captures de la production du 27/09/2026) : `screenshots/01-accueil.png`, `02-budget.png`, `03-maroc.png` (prières + Qibla), `04-trajet-paris-marrakech.png` (trajets calculés), `05-hadak.png` (assistant, avec la provenance de la réponse)
 
 ## Build Instructions
 Voir `CAPACITOR_BUILD.md` (source à jour pour la construction de l'AAB).

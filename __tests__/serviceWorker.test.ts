@@ -18,7 +18,7 @@ describe('Offline service worker boundaries', () => {
         addEventListener: (type: string, fn: any) => { listeners[type] = fn; },
         skipWaiting: jest.fn(), clients: { claim: jest.fn() } },
       caches: { open: jest.fn().mockResolvedValue({ put: putMock, match: jest.fn() }),
-        match: jest.fn(), keys: jest.fn().mockResolvedValue(['another-app-v1', 'rme-voyage-v2-api', 'rme-voyage-v3-assets']),
+        match: jest.fn(), keys: jest.fn().mockResolvedValue(['another-app-v1', 'rme-voyage-v2-api', 'rme-voyage-v3-assets', 'rme-voyage-v4-assets']),
         delete: deleteMock },
       fetch: fetchMock, URL, Response, AbortController, setTimeout, clearTimeout,
     };
@@ -28,7 +28,7 @@ describe('Offline service worker boundaries', () => {
     let completion: Promise<void> | undefined;
     listeners.activate({ waitUntil: (p: Promise<void>) => { completion = p; } });
     await completion;
-    expect(deleteMock.mock.calls).toEqual([['rme-voyage-v2-api']]);
+    expect(deleteMock.mock.calls).toEqual([['rme-voyage-v2-api'], ['rme-voyage-v3-assets']]);
   });
   it('keeps the offline page even when an optional icon is missing', async () => {
     fetchMock.mockImplementation((url: string) => url === '/icon-192.svg'

@@ -519,6 +519,13 @@ const SYSTEM_PROMPTS: Record<string, string> = {
   es: `Eres Hadak — asistente MRE. Responde en español, MAX 2 frases, directo sin intro.`,
 };
 
+// ── Intent log (month-1 metric: intent → resolution rate) ─────────────────
+// One line per question, never the question itself: which intent, how it
+// was resolved, where the answer came from, how many suggestions were shown.
+function logIntent(intent: string, resolution: 'LOCAL' | 'AI' | 'OFFLINE', basis: string | null, nextActions: number): void {
+  console.info(`[hadak-intent] ${JSON.stringify({ intent, resolution, basis, next_actions: nextActions })}`);
+}
+
 // ── Main handler ───────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
@@ -564,11 +571,13 @@ export async function POST(req: NextRequest) {
       });
       const educationInfo = { mode: plan.mode, level: plan.level ?? null, solution_policy: plan.solutionPolicy };
       if (routed.text) {
+        logIntent('education', 'AI', 'AI', 0);
         return NextResponse.json({
           response: routed.text, fallback: false, source: routed.provider ?? 'router', request_id: routed.requestId, education: educationInfo,
           trust: provenanceOf({ live: [], liveOnly: false, ai: true }), next_actions: [],
         });
       }
+      logIntent('education', 'OFFLINE', null, 0);
       return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true, education: educationInfo });
     }
 
@@ -582,26 +591,29 @@ export async function POST(req: NextRequest) {
         const usesLiveData = intent === 'weather' || intent === 'prayer' || intent === 'currency' || intent === 'trip' || intent === 'generic';
         recordResolution(usesLiveData ? 'EXTERNAL_DATA' : 'DETERMINISTIC_LOCAL', Date.now() - localStarted);
       }
-      return NextResponse.json({
-        response: local, fallback: false, source: 'local',
-        trust: provenanceOf(trace), next_actions: nextActionsFor(intent, guideLang),
-      });
+      const trust = provenanceOf(trace);
+      const nextActions = nextActionsFor(intent, guideLang);
+      logIntent(intent, trust.basis === 'AI' ? 'AI' : 'LOCAL', trust.basis, nextActions.length);
+      return NextResponse.json({ response: local, fallback: false, source: 'local', trust, next_actions: nextActions });
     }
 
     // 2. Shared AI Router — provider registry, FREE_ONLY, circuit breaker and ledger.
     const routed = await routeHadakAI({ message, systemPrompt });
     if (routed.text) {
+      const nextActions = nextActionsFor(intent, guideLang);
+      logIntent(intent, 'AI', 'AI', nextActions.length);
       return NextResponse.json({
         response: routed.text,
         fallback: false,
         source: routed.provider ?? 'router',
         request_id: routed.requestId,
         trust: provenanceOf({ live: [], liveOnly: false, ai: true }),
-        next_actions: nextActionsFor(intent, guideLang),
+        next_actions: nextActions,
       });
     }
 
     // No LLM available — return a helpful offline guide instead of an empty response
+    logIntent(intent, 'OFFLINE', null, 0);
     return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true });
   } catch (err) {
     console.error('[hadak] error:', err);

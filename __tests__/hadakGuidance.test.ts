@@ -63,6 +63,15 @@ describe('POST /api/hadak — trust and next actions', () => {
     expect(data.next_actions[0].destination).toBe('/#route')
   })
 
+  it('logs the intent and its resolution, never the question', async () => {
+    const info = jest.spyOn(console, 'info').mockImplementation(() => {})
+    await post({ message: 'quel ferry pour rentrer au Maroc', lang: 'fr' })
+    const line = info.mock.calls.map(c => String(c[0])).find(l => l.startsWith('[hadak-intent]'))
+    info.mockRestore()
+    expect(JSON.parse(line!.slice('[hadak-intent] '.length))).toEqual({ intent: 'ferry', resolution: 'LOCAL', basis: 'RME_GUIDE', next_actions: 2 })
+    expect(line).not.toContain('rentrer')
+  })
+
   it('marks the clock answer as measured with no suggestion', async () => {
     const data = await (await post({ message: 'quelle heure est-il', lang: 'fr' })).json()
     expect(data.trust.basis).toBe('CLOCK')

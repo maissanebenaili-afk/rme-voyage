@@ -121,7 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <link rel="apple-touch-icon" href="/icon-192.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#0f1f3d" />
         {/* Le fil d'Ariane décrit une page précise : chaque page qui en a un
             l'émet elle-même (voir app/trajet/[slug]). Il ne peut pas être
