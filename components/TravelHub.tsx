@@ -7,6 +7,7 @@ import { TRAVEL_PHASES, type TravelPhaseId } from '@/lib/travel/travelPhase';
 import { isValidTravelDate } from '@/lib/travel/travelStorage.migrations';
 import { useTravelPhase } from '@/lib/travel/useTravelPhase';
 import { useTravelStorage } from '@/lib/travel/useTravelStorage';
+import { buildShareUrl } from '@/lib/tripShare';
 
 /** Where each hub entry points on the home page: existing sections, not new content. */
 export const HUB_ANCHORS: Record<TravelPhaseId, string> = {
@@ -75,6 +76,15 @@ export default function TravelHub() {
                 <p className="mt-1 text-sm text-[#334155]">
                   {statusText(phase, daysUntilDeparture, travel.dateVoyage)}
                 </p>
+                {/* Pick up where the user left off: the saved trip is recomputed in one tap. */}
+                {depart && arrivee && !route && (
+                  <a
+                    href={buildShareUrl({ from: depart, to: arrivee, date: travel.dateVoyage ?? undefined })}
+                    className="mt-2 inline-flex min-h-11 items-center rounded-full bg-[#f59e0b] px-4 text-sm font-extrabold text-[#0f1f3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1]"
+                  >
+                    Reprendre ce trajet →
+                  </a>
+                )}
               </>
             ) : (
               <p className="mt-1 text-sm text-[#334155]">
