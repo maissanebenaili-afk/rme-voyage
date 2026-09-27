@@ -339,3 +339,14 @@ describe("/api/trips authentication — never trusts a client-supplied X-User-ID
     expect(accepted.status).not.toBe(401);
   });
 });
+
+describe("client key", () => {
+  it("uses Netlify's client IP, not a spoofed x-forwarded-for", async () => {
+    const real = "198.51.100.77";
+    for (let i = 0; i < 8; i++) {
+      await proxy(buildRequest("/api/hadak", { method: "POST", headers: { "x-nf-client-connection-ip": real, "x-forwarded-for": `10.0.0.${i}` } }));
+    }
+    const ninth = await proxy(buildRequest("/api/hadak", { method: "POST", headers: { "x-nf-client-connection-ip": real, "x-forwarded-for": "10.0.0.99" } }));
+    expect(ninth.status).toBe(429);
+  });
+});

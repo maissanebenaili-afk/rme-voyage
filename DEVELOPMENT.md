@@ -1,5 +1,7 @@
 # SAFAR Platform Development Guide
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 This document provides guidance for developers working on the **SAFAR (Smart Assistant for African & Mediterranean Routes)** platform - a panafricana AI travel assistant serving diaspora communities across Africa, Europe, and beyond.
 
 ## Platform Vision
@@ -534,7 +536,7 @@ npm run test:coverage
 
 ## Deployment
 
-### Vercel Deployment
+### Vercel Deployment (historique — la production est sur Netlify, voir DEPLOYMENT.md)
 
 The platform is deployed on Vercel with automatic deployments on push to main.
 

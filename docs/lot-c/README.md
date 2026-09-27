@@ -1,5 +1,7 @@
 # Lot C — mesures de charge (production)
 
+> **HISTORICAL — VERCEL.** Mesures faites sur `rme-route.vercel.app` avant le blocage du compte Vercel. Elles ne valent pas pour Netlify. Mesures Netlify : `netlify-rate-limit-2026-09-27.txt`.
+
 Cible : `https://rme-route.vercel.app`, main `61095de`. Client : une seule machine (session Claude Code), `scripts/load-hadak.mjs` au commit `9bc7dc3`. Les rapports JSON bruts sont dans ce dossier.
 
 > **Correction (2026-09-27)** : cette machine ne sort pas par une seule IP. 6 requêtes vers un service d'écho d'IP ont renvoyé 5 adresses différentes (`160.79.106.x`). Les runs ci-dessous sont donc répartis sur plusieurs IP clientes.

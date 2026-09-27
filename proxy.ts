@@ -7,19 +7,15 @@ import { isSupabaseConfigured, updateSession } from '@/lib/supabase/middleware';
 // ---------------------------------------------------------------------------
 //
 // IMPORTANT — LIMITATION CONNUE :
-// Ce rate limiting est un stockage EN MÉMOIRE (Map JS) local à l'instance du
-// process qui exécute le middleware. Ce n'est PAS une solution distribuée :
-//   - Sur Vercel (serverless/edge), chaque invocation peut être routée vers une
-//     instance différente, qui ne partage pas cette Map. Un même client peut
-//     donc dépasser la limite affichée si le trafic est réparti sur plusieurs
-//     instances froides/chaudes.
-//   - En cas de redémarrage/scale-to-zero, les compteurs sont perdus.
-// C'est une protection "best effort" suffisante pour une v1 (limite les abus
-// grossiers, les boucles de scraping basiques, les erreurs de client), mais ne
-// doit jamais être présentée comme une solution de rate limiting robuste ou
-// distribuée. Pour une garantie correcte multi-instances, migrer vers un store
-// partagé et durable : Upstash Redis (`@upstash/ratelimit`) ou Vercel KV.
-// TODO (v1.1+): remplacer ce Map en mémoire par Upstash/Vercel KV.
+// Ce compteur est EN MÉMOIRE (Map JS), local à l'instance qui exécute le
+// proxy. Sur Netlify (hébergeur de production depuis le 27/09/2026) comme sur
+// tout hébergement serverless, les exécutions ne partagent pas cette Map :
+// ce n'est PAS une garantie. Mesuré en production : 10 requêtes /api/hadak
+// rapprochées sont toutes passées.
+// La vraie limite de /api/hadak et /api/faical est la règle native Netlify
+// (netlify/edge-functions/rate-limit-*.ts : 8 requêtes / 60 s / IP, 429).
+// Ce compteur reste une défense d'appoint : il ne peut que laisser passer
+// plus, jamais bloquer avant la règle Netlify.
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 
 type RateLimitEntry = { count: number; resetAt: number };
@@ -37,9 +33,13 @@ const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/newsletter', '/api/p
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak', '/api/faical'];
 
 function getClientKey(request: NextRequest): string {
-  // x-forwarded-for peut contenir plusieurs IPs (client, proxies) ; on garde
-  // la première (client d'origine déclaré). Sur Vercel, cet en-tête est fourni
-  // par la plateforme et n'est pas falsifiable côté edge.
+  // Netlify sets x-nf-client-connection-ip itself; a client cannot forge it.
+  // x-forwarded-for keeps any value the client sent in first position, so it
+  // is only the last resort (local dev, other hosts).
+  const netlifyIp = request.headers.get('x-nf-client-connection-ip')?.trim();
+  if (netlifyIp) return netlifyIp;
+  const realIp = request.headers.get('x-real-ip')?.trim();
+  if (realIp) return realIp;
   const forwarded = request.headers.get('x-forwarded-for');
   const ip = forwarded ? forwarded.split(',')[0]?.trim() : null;
   return ip || 'anonymous';

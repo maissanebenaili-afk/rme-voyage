@@ -1,5 +1,7 @@
 # SAFAR Platform API Documentation
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 Welcome to the SAFAR (Smart Assistant for African & Mediterranean Routes) API. This document provides comprehensive information about all available endpoints and integration points.
 
 ## Overview
@@ -8,7 +10,7 @@ SAFAR is a conversational AI travel assistant designed for diaspora communities 
 
 ### Base URL
 
-- **Production:** `https://rme-voyage.vercel.app/api`
+- **Production:** `https://rme-voyage.netlify.app/api`
 - **Development:** `http://localhost:3000/api`
 
 ### Authentication
