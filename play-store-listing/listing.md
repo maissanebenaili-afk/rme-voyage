@@ -54,6 +54,6 @@ voyage, maroc, MRE, RME, prière, qibla, itinéraire, ferry, darija, diaspora
 Voir `CAPACITOR_BUILD.md` (source à jour pour la construction de l'AAB).
 
 ## Déclarations liées
-- Politique de confidentialité : https://rme-route.vercel.app/api/legal/privacy
+- Politique de confidentialité : https://rme-voyage.netlify.app/api/legal/privacy
 - Formulaire « Sécurité des données » : `data-safety.md`
 - Chaque promesse ci-dessus correspond à une fonction présente dans l'app (vérifié le 26/09/2026) : itinéraire + carte (RouteSearch), prières et Qibla (PrayerWidget, QiblaCompass), coûts carburant/péages/ferry (TripDecisionEngine, FuelByCountryPanel), checklist (TravelChecklist), convertisseur (CurrencyConverter), assistant (HadakAI).

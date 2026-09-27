@@ -7,9 +7,9 @@ describe("/pitch app link", () => {
     render(<JuryPack />);
     expect(screen.getByRole("link", { name: /Ouvrir l'aperçu de l'app/ })).toHaveAttribute(
       "href",
-      "https://rme-route.vercel.app",
+      "https://rme-voyage.netlify.app",
     );
-    expect(screen.getAllByText("https://rme-route.vercel.app").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("https://rme-voyage.netlify.app").length).toBeGreaterThan(0);
     expect(screen.queryByText(/rme-voyage-app\.pplx\.app/)).not.toBeInTheDocument();
   });
 });

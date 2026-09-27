@@ -3,6 +3,17 @@
 Tout le reste est préparé dans le dépôt : projet Android API 36, icônes, bannière, captures, fiche, formulaire de sécurité des données, build automatique.
 Aucune de ces actions ne demande de copier un secret dans une conversation.
 
+## Hébergement : fait le 27/09/2026
+
+- **Vercel a bloqué le compte** (« Account is blocked », HTTP 402).
+  - Le plan Hobby est réservé à l'usage **personnel non commercial**, et Vercel compte la publicité et l'affiliation comme usage commercial.
+  - L'email de Vercel donne la raison exacte.
+- **RME est maintenant hébergé sur Netlify** (plan gratuit, usage commercial autorisé) : https://rme-voyage.netlify.app. L'app Android pointe vers cette adresse.
+- **À faire par le propriétaire (5 minutes)** : Netlify → rme-voyage → Project configuration → Environment variables.
+  - Ajouter `GROQ_API_KEY` et `GEMINI_API_KEY`, puis relancer le déploiement.
+  - Sans ces clés, Hadak répond seulement avec ses réponses locales.
+- **Optionnel** : relier Netlify au dépôt GitHub (Project configuration → Build & deploy → Link repository) pour un déploiement automatique à chaque fusion. Sinon Claude déploie après chaque fusion.
+
 ## Google Play : dans l'ordre
 
 1. **Créer le compte développeur Google Play.**
@@ -43,7 +54,7 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
 
 5. **Remplir les déclarations de la Play Console.** Les réponses préparées sont dans `play-store-listing/data-safety.md` :
    - Sécurité des données.
-   - Politique de confidentialité : `https://rme-route.vercel.app/api/legal/privacy`.
+   - Politique de confidentialité : `https://rme-voyage.netlify.app/api/legal/privacy`.
    - Accès à l'application : aucune connexion requise.
    - **Annonces : répondre « Oui »**, car l'app affiche un encart « Publicité » pour un livre.
    - Classification du contenu (questionnaire IARC).

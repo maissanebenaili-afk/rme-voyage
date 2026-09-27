@@ -6,7 +6,7 @@ on:
       target:
         description: "Base URL to test"
         required: true
-        default: "https://rme-route.vercel.app"
+        default: "https://rme-voyage.netlify.app"
         type: string
       endpoint:
         description: "health = GET /api/health (no LLM, no rate limit); hadak = POST /api/hadak (8 req/min/IP limit)"

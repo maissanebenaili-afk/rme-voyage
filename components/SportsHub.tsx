@@ -33,7 +33,7 @@ export default function SportsHub() {
   };
 
   const shareMatch = async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : 'https://rme-route.vercel.app';
+    const url = typeof window !== 'undefined' ? window.location.href : 'https://rme-voyage.netlify.app';
     await Share.share({
       title: 'RME Sport — Maroc–Gabon',
       text: 'Retrouve les diffuseurs officiels et les informations du match sur RME Voyage.',
