@@ -19,7 +19,7 @@ The whole vision grows out of today's code, with no rewrite.
 
 | Target layer | Already in RME | Missing (build only once a real need is measured) |
 |---|---|---|
-| **Intent Engine** | `detectIntent()` (Hadak), `[hadak-intent]`, `detectCity()` | One multilingual intent (FR / Darija / NL / ES / IT / EN / AR) extracting origin, destination, dates, travellers → IV-001 |
+| **Intent Engine** | `detectIntent()` (Hadak), `[hadak-intent]`, `detectCity()`, **`extractTripFacts()` (`lib/tripFacts.ts`, Lab)** | One multilingual intent (FR / Darija / NL / ES / IT / EN / AR) extracting origin, destination, dates, travellers → IV-001 |
 | **Context / constraints** | `lib/travel/*` (trip saved on the device, date), the checklist | Stated constraints: children, budget, transport mode |
 | **Journey Engine** | `TravelHub` phases (Before / Route / Morocco), `RmeMoment`, « Reprendre ce trajet » | Chaining transport → accommodation → papers → money → SIM → arrival |
 | **Data Graph** | OSRM route, EU fuel bulletin, Open-Meteo, AlAdhan, `routePages.json` | A single source entry with its licence (RADAR) |

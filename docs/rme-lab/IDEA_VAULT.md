@@ -29,6 +29,7 @@ Existing building blocks referred to below:
 ## Entries
 
 ### IV-001 — Voice → Moment
+- **Update 2026-09-27:** now **EXPERIMENT**. Contract `lib/tripFacts.ts` (`extractTripFacts`): a pure function, no AI, no network. It extracts only what the user said (FACT_USER); everything else goes to `unknown`. Covers FR, Latin-script Darija, NL, ES, IT, EN. Not wired into production.
 - **Problem:** saying « Hadak, je rentre au Maroc samedi avec les enfants » today gets a text answer. Nothing is prepared.
 - **Idea:** pull out the facts the user said: destination, date, family (`IntentConfidence: EXPLICIT`). Propose a « Voyage Maroc » Moment (trip, papers, weather on arrival day), confirm, then pre-fill the planner.
 - **Inspiration:** voice assistants that turn a sentence into a structured task.
@@ -158,6 +159,7 @@ Existing building blocks referred to below:
 
 
 ### IV-020…023 — Test Lab (digital twin)
+- **Update 2026-09-27:** now **EXPERIMENT**. The 4 scenarios live in `lib/lab/scenarios.ts`, tested by `__tests__/labScenarios.test.ts`: 16 tests, including 6 languages and adversarial cases. Martil exists only in the Lab (`LAB_EXTRA_DESTINATIONS`); `MOROCCO_CITIES` is unchanged.
 - **Idea:** an isolated environment that plays fake users through the chain intent → journey → offers → recommendations → clicks. No real data, no production calls.
 - **Starting scenarios:**
   - IV-020: Paris → Taza by car;
