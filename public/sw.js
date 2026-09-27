@@ -2,12 +2,12 @@
  * Never cache affiliate URLs, API responses or private/authenticated requests.
  */
 const PREFIX = 'rme-voyage-';
-const VERSION = `${PREFIX}v3`;
+const VERSION = `${PREFIX}v4`;
 const ASSETS = `${VERSION}-assets`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = '/offline.html';
 const PUBLIC_PAGES = ['/', '/guide', '/decouvrir', '/telecharger'];
-const PRECACHE = [OFFLINE, '/manifest.webmanifest', '/icon-192.svg', '/icon-512.svg'];
+const PRECACHE = [OFFLINE, '/manifest.webmanifest', '/icon-192.svg', '/icon-512.svg', '/icons/icon-192.png'];
 
 async function precache(cacheName, paths) {
   const cache = await caches.open(cacheName);

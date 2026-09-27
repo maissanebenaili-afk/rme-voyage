@@ -42,8 +42,8 @@ Thumbs.db
 # Capacitor files
 capacitor.config.json
 /.idea
-/android
-/ios.qa-shots/
+
+/ios
 .qa-geocode-test/
 .qa-shots/
 tsconfig.tsbuildinfo

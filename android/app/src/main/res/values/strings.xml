@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">RME Voyage</string>
+    <string name="title_activity_main">RME Voyage</string>
+    <string name="package_name">com.rmevoyage.app</string>
+    <string name="custom_url_scheme">com.rmevoyage.app</string>
+</resources>
