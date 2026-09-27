@@ -59,6 +59,23 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
 7. **Demander l'accès à la production, puis publier.**
    - Résultat : l'application passe en examen, puis en ligne.
 
+## Décision licences : avant toute monétisation (validation juridique)
+
+Deux services gratuits utilisés par RME ne sont gratuits **que pour un usage non commercial** (voir `docs/rme-lab/RADAR.md`, RAD-24 et RAD-25) :
+
+| Service | Condition | Où RME l'utilise |
+|---|---|---|
+| **Open-Meteo** | Gratuit si non commercial ; Open-Meteo cite « applis avec abonnement ou publicité » comme usage commercial | Météo |
+| **Serveur de démonstration OSRM** | Usage « raisonnable et non commercial », 1 requête par seconde au plus, peut être retiré à tout moment | Calcul d'itinéraire (`/api/route`) |
+
+RME affiche déjà une publicité (le livre) et des liens affiliés.
+
+- Qualifier RME de commercial ou non : c'est une décision du propriétaire, pas du code.
+- Si RME est commercial :
+  - Open-Meteo : prendre son offre commerciale, ou changer de source météo. Tarif et source de remplacement : UNKNOWN, à vérifier.
+  - Itinéraire : héberger son propre OSRM ou Valhalla, ce qui demande un serveur. Coût : UNKNOWN.
+- En attendant, les deux restent en place, avec cache et attribution.
+
 ## Apple App Store
 
 - Il faut : un compte Apple Developer (99 $/an), un Mac (ou un service de build macOS) et un iPhone de test.
