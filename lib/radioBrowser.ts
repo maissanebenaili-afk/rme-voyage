@@ -2,7 +2,6 @@ import type { RadioSearchQuery, RadioStation } from "./radioTypes";
 
 const ENDPOINTS = [
   "https://de1.api.radio-browser.info",
-  "https://fr1.api.radio-browser.info",
   "https://nl1.api.radio-browser.info",
 ] as const;
 
@@ -59,7 +58,10 @@ function buildUrl(endpoint: string, query: RadioSearchQuery): string {
   url.searchParams.set("hidebroken", "true");
   url.searchParams.set("order", "votes");
   url.searchParams.set("reverse", "true");
-  url.searchParams.set("limit", String(Math.min(Math.max(query.limit ?? 12, 1), 50)));
+  url.searchParams.set(
+    "limit",
+    String(Math.min(Math.max(query.limit ?? 12, 1), 50)),
+  );
   url.searchParams.set("offset", String(Math.max(query.offset ?? 0, 0)));
 
   if (query.countryCode) url.searchParams.set("countrycode", query.countryCode);
@@ -100,7 +102,7 @@ export async function searchRadioStations(
         .filter((station): station is RadioStation => station !== null)
         .filter((station) => station.lastCheckOk);
     } catch {
-      // Try the next Radio Browser mirror.
+      // Try the next documented Radio Browser mirror.
     } finally {
       clearTimeout(timer);
     }
