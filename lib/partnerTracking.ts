@@ -1,4 +1,4 @@
-import { track } from '@vercel/analytics';
+import type { RmeEventName, RmeEventProps } from '@/lib/rmeEvents';
 
 export type PartnerProduct = 'ferry' | 'flight' | 'transfer' | 'hotel' | 'car_rental' | 'other';
 
@@ -12,19 +12,33 @@ export type PartnerClickEvent = {
 };
 
 export type FunnelEvent = {
-  event: string;
+  event: Exclude<RmeEventName, 'partner_click'>;
   placement: string;
   page?: string;
   /** Contexte non personnel (ex. has_ferry), jamais d'adresse ni de ville saisie. */
   data?: Record<string, string | number | boolean>;
 };
 
-// Passe par track() de @vercel/analytics : le script Vercel n'accepte que
-// va('event', { name, data }). L'ancien appel direct va(nom, props) était
-// ignoré, si bien qu'aucun événement de l'entonnoir n'était enregistré.
+// Envoi au journal d'événements anonyme de RME (/api/events), qui remplace
+// Vercel Analytics (inactif hors Vercel). sendBeacon survit à la navigation
+// vers le site partenaire ; un échec d'envoi n'interrompt jamais l'interface.
+function send(event: RmeEventName, props: RmeEventProps): void {
+  try {
+    const body = JSON.stringify({ event, props });
+    const sent = typeof navigator.sendBeacon === 'function'
+      && navigator.sendBeacon('/api/events', new Blob([body], { type: 'application/json' }));
+    if (!sent) {
+      void fetch('/api/events', { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } })
+        .catch(() => undefined);
+    }
+  } catch {
+    // mesure seulement : ne jamais casser l'app
+  }
+}
+
 export function trackFunnelEvent(event: FunnelEvent): void {
   if (typeof window === 'undefined') return;
-  track(event.event, {
+  send(event.event, {
     ...event.data,
     placement: event.placement,
     page: event.page ?? window.location.pathname,
@@ -33,7 +47,7 @@ export function trackFunnelEvent(event: FunnelEvent): void {
 
 export function trackPartnerClick(event: PartnerClickEvent): void {
   if (typeof window === 'undefined') return;
-  track('partner_click', {
+  send('partner_click', {
     ...event.context,
     partner: event.partner,
     product: event.product,

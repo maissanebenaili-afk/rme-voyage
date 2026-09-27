@@ -74,10 +74,17 @@ describe('Provider attribution — the click must be tracked to whichever partne
     const link = await screen.findByTestId('compare-ferry');
     await waitFor(() => expect(link).toHaveAttribute('href', 'https://www.gnv.it/fr/booking?ref=approved'));
 
-    const va = jest.fn();
-    ;(window as Window & { va?: jest.Mock }).va = va;
+    const beacon = jest.fn((_url: string, _body: Blob) => true);
+    (navigator as Navigator & { sendBeacon?: typeof beacon }).sendBeacon = beacon;
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-    expect(va).toHaveBeenCalledWith('event', expect.objectContaining({ name: 'partner_click', data: expect.objectContaining({ partner: 'gnv' }) }));
-    delete (window as Window & { va?: jest.Mock }).va;
+    expect(beacon).toHaveBeenCalledTimes(1);
+    const [url, blob] = beacon.mock.calls[0];
+    expect(url).toBe('/api/events');
+    const sent = JSON.parse(await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.readAsText(blob);
+    }));
+    expect(sent).toEqual({ event: 'partner_click', props: expect.objectContaining({ partner: 'gnv' }) });
   });
 });

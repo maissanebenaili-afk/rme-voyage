@@ -20,6 +20,8 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
   - Le compteur de `proxy.ts` reste en place et couvre les quelques secondes de délai avant que Netlify ne bloque.
   - Les deux essais précédents ne l'avaient pas vu : rafales trop courtes (moins que le délai d'environ 10 s de Netlify) et adresses IP différentes.
 
+- **Mesure d'usage** : Netlify → Logs → Functions, filtres `rme-event` (clics partenaires, itinéraires), `hadak-intent` et `hadak-ledger`. Détails : `docs/MONTH1_METRICS.md`.
+
 ### Variables d'environnement (audit statique du 27/09/2026)
 
 | Variable | Lue par | Sert à | Nécessaire ? | Côté | Si absente |

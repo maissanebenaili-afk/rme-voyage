@@ -8,17 +8,21 @@ const policy = read("public/privacy-policy.html");
 // really does. These checks tie the text to the code it describes.
 describe("privacy policy matches the app", () => {
   test("names every third party that receives user data", () => {
-    for (const recipient of ["Aladhan", "OpenStreetMap", "Groq", "OpenAI", "Anthropic", "Resend", "Stripe", "Vercel"]) {
+    for (const recipient of ["Aladhan", "OpenStreetMap", "Groq", "Google Gemini", "OpenRouter", "Resend", "Stripe", "Netlify"]) {
       expect(policy).toContain(recipient);
     }
   });
 
   test("lists each AI provider Hadak can call", () => {
-    const hadak = read("app/api/hadak/route.ts");
-    const providers = { "api.groq.com": "Groq", "generativelanguage.googleapis.com": "Google Gemini", "api.openai.com": "OpenAI", "api.anthropic.com": "Anthropic" };
+    const hadak = read("app/api/hadak/route.ts") + read("lib/hadakAiRouter.ts");
+    const providers = { "api.groq.com": "Groq", "generativelanguage.googleapis.com": "Google Gemini", "openrouter.ai": "OpenRouter", "api.openai.com": "OpenAI", "api.anthropic.com": "Anthropic" };
     for (const [host, name] of Object.entries(providers)) {
       if (hadak.includes(host)) expect(policy).toContain(name);
     }
+  });
+
+  test("describes the current host and analytics, not the retired Vercel ones", () => {
+    expect(policy).not.toMatch(/Vercel|Web Analytics|Speed Insights/);
   });
 
   test("does not promise things the app does not do", () => {

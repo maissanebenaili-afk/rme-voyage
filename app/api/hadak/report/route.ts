@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 // Signalement d'une réponse de Hadak jugée inappropriée ou fausse (exigence
 // Google Play pour les contenus générés par IA). Seule la réponse signalée est
 // reçue, jamais la question de l'utilisateur : elle est écrite dans les journaux
-// du serveur (Vercel), où l'équipe la relit.
+// du serveur (Netlify), où l'équipe la relit.
 const MAX_ANSWER_CHARS = 2000;
 const REASONS = ['inappropriate', 'wrong'] as const;
 type Reason = (typeof REASONS)[number];

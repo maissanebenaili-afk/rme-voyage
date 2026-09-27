@@ -24,12 +24,12 @@ URL de la politique : `https://rme-voyage.netlify.app/api/legal/privacy`
 | Type Google | Collectée | Partagée | Facultative | Finalité | Détail |
 |---|---|---|---|---|---|
 | Position approximative / précise | Oui | Oui (Aladhan) | Oui | Fonctionnalités de l'app | Horaires de prière, seulement si l'utilisateur autorise la localisation. Pas de suivi en arrière-plan. |
-| Messages dans l'app (autres contenus générés) | Oui | Oui (Groq / Google Gemini / OpenAI / Anthropic) | Oui | Fonctionnalités de l'app | Questions à Hadak. Non conservées par RME. Traitement éphémère. |
+| Messages dans l'app (autres contenus générés) | Oui | Oui (Groq / Google Gemini / OpenRouter) | Oui | Fonctionnalités de l'app | Questions à Hadak. Non conservées par RME. Traitement éphémère. Fournisseurs payants désactivés (`AI_ROUTER_FREE_ONLY=true`). |
 | Enregistrements audio | **Non** | — | — | — | Dictée gérée par le système (Web Speech), l'audio ne transite pas par RME. Revoir si un plugin natif d'enregistrement est ajouté. |
 | Adresse e-mail | Oui | Non (Resend = sous-traitant) | Oui | Communications | Lettre d'information, seulement sur inscription. |
 | Informations de paiement | Non | — | — | — | Le paiement du don est saisi sur la page Stripe (hors application) : RME ne les collecte pas. |
-| Interactions avec l'app / pages consultées | Oui | Non (Vercel = sous-traitant) | Non | Analyse | Vercel Web Analytics, sans cookie ni identifiant publicitaire. |
-| Diagnostics / performances | Oui | Non | Non | Analyse | Vercel Speed Insights. |
+| Interactions avec l'app | Oui | Non (Netlify = hébergeur, sous-traitant) | Non | Analyse | Journal d'événements anonyme de RME (`/api/events`) : nom de l'action et contexte non personnel, sans cookie ni identifiant. |
+| Diagnostics / performances | Non | — | — | — | Aucun outil de mesure des performances depuis le 27/09/2026. |
 | Autres infos (villes saisies pour l'itinéraire) | Oui | Non (traitées par nos serveurs, envoyées à OpenStreetMap/OSRM sans identifiant) | Oui | Fonctionnalités de l'app | Pas de lien avec une identité. |
 
 Identifiant publicitaire (AD_ID) : **non utilisé**. Déclarer « Non » dans la

@@ -24,12 +24,12 @@ const rateLimitStore = new Map<string, RateLimitEntry>();
 // Routes API couvertes par le rate limiting (v1 : endpoints publics sensibles).
 const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, routes gratuites
 
-// /api/hadak appelle un LLM payant à l'appel (Anthropic) : limite nettement
-// plus stricte que les autres routes (upstream gratuits) pour borner le coût
-// par IP en cas d'abus/boucle client.
+// /api/hadak et /api/faical appellent un fournisseur IA à chaque question :
+// limite nettement plus stricte que les autres routes pour borner les quotas
+// (et le coût si un fournisseur payant était un jour activé) par IP.
 const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/newsletter', '/api/partners', '/api/prayer', '/api/remittance', '/api/route', '/api/services', '/api/support', '/api/tips'];
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/events', '/api/newsletter', '/api/partners', '/api/prayer', '/api/remittance', '/api/route', '/api/services', '/api/support', '/api/tips'];
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak', '/api/faical'];
 
 function getClientKey(request: NextRequest): string {
