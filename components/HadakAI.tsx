@@ -35,6 +35,14 @@ import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { buildShareUrl } from '@/lib/tripShare';
 import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/hadakVoice';
 
+// Answers use **bold** for titles; show it as bold instead of raw asterisks.
+// Plain React text nodes only: nothing from the answer is parsed as HTML.
+function renderBold(text: string) {
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 === 1 ? <strong key={i} className="font-bold">{part}</strong> : part,
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
@@ -842,7 +850,7 @@ export default function HadakAI() {
                   )}
                   <div className="flex flex-col gap-1">
                     <div
-                      className={`max-w-full rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
+                      className={`max-w-full whitespace-pre-line break-words rounded-2xl px-4 py-3 text-[15px] leading-relaxed ${
                         msg.role === 'user'
                           ? 'text-[#0f1f3d] font-semibold'
                           : 'text-white font-medium'
@@ -856,7 +864,7 @@ export default function HadakAI() {
                         borderTopLeftRadius: msg.role === 'assistant' ? '6px' : undefined,
                       }}
                     >
-                      {msg.content}
+                      {msg.role === 'assistant' ? renderBold(msg.content) : msg.content}
                     </div>
                     {msg.role === 'assistant' && msg.plannerLink && (
                       <a
