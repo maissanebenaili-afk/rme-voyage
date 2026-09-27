@@ -9,9 +9,10 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
   - Le plan Hobby est réservé à l'usage **personnel non commercial**, et Vercel compte la publicité et l'affiliation comme usage commercial.
   - L'email de Vercel donne la raison exacte.
 - **RME est maintenant hébergé sur Netlify** (plan gratuit, usage commercial autorisé) : https://rme-voyage.netlify.app. L'app Android pointe vers cette adresse.
-- **À faire par le propriétaire (5 minutes)** : Netlify → rme-voyage → Project configuration → Environment variables.
-  - Ajouter `GROQ_API_KEY` et `GEMINI_API_KEY`, puis relancer le déploiement.
-  - Sans ces clés, Hadak répond seulement avec ses réponses locales.
+- **Clés IA : posées le 27/09/2026 par Claude, à la demande du propriétaire** : `GROQ_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` (Netlify → Environment variables).
+  - Les 3 clés ont été testées directement chez chaque fournisseur, puis Hadak a répondu en production avec l'IA (`source: groq`).
+  - Elles ne sont ni dans le dépôt, ni dans le code envoyé au navigateur : les 12 scripts de la page d'accueil ont été vérifiés.
+  - Elles ont transité par la conversation. Plus tard, par sécurité : en régénérer de nouvelles chez Groq, Google AI Studio et OpenRouter, puis remplacer les valeurs dans Netlify.
 - **Déjà réglé par Claude** : `AI_ROUTER_FREE_ONLY=true` sur Netlify. Ce n'est pas un secret, c'est un interrupteur : il bloque les fournisseurs IA payants de Hadak.
 - **Protection anti-abus : active et observée le 27/09/2026 à 14 h UTC.**
   - Règle native Netlify : 8 requêtes / 60 s / IP sur `/api/hadak` et `/api/faical` (`netlify/edge-functions/`).
