@@ -3,6 +3,11 @@ import { generatePrediction, type FormEntry } from '@/lib/faicalPrediction';
 
 export const revalidate = 21600; // 6 hours
 
+// TheSportsDB id of the Botola Pro ("Moroccan Championship"), checked on
+// 27/09/2026. The former id 1159 does not exist there, so Faical never had a
+// fixture to show.
+const BOTOLA_PRO_LEAGUE_ID = '4520';
+
 type SportsDBLastEvent = {
   idHomeTeam: string;
   idAwayTeam: string;
@@ -16,6 +21,8 @@ type SportsDBFixture = {
   strAwayTeam: string;
   dateEvent: string;
   strTime?: string;
+  idHomeTeam?: string;
+  idAwayTeam?: string;
   strLeague?: string;
 };
 
@@ -85,7 +92,7 @@ export type FaicalPick = {
 export async function GET() {
   try {
     const fixtRes = await fetch(
-      'https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=1159',
+      `https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=${BOTOLA_PRO_LEAGUE_ID}`,
       { next: { revalidate: 21600 } }
     );
     const fixtData = await fixtRes.json();
@@ -99,8 +106,8 @@ export async function GET() {
     const picks: FaicalPick[] = await Promise.all(
       top3.map(async (evt) => {
         const [homeId, awayId] = await Promise.all([
-          getTeamId(evt.strHomeTeam),
-          getTeamId(evt.strAwayTeam),
+          evt.idHomeTeam || getTeamId(evt.strHomeTeam),
+          evt.idAwayTeam || getTeamId(evt.strAwayTeam),
         ]);
         const [homeForm, awayForm] = await Promise.all([
           homeId ? getTeamForm(homeId) : Promise.resolve({ w: 0, d: 0, l: 0, last5: '' }),

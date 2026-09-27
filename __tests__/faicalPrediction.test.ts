@@ -41,3 +41,17 @@ describe('Faical prediction', () => {
     expect(widget.match(/aiNote:/g)).toHaveLength(5);
   });
 });
+
+describe('Faical fixtures source', () => {
+  const route = fs.readFileSync(path.join(__dirname, '..', 'app/api/faical/route.ts'), 'utf-8');
+
+  it('asks TheSportsDB for the Botola Pro (id 4520), not the non-existent id 1159', () => {
+    expect(route).toContain("BOTOLA_PRO_LEAGUE_ID = '4520'");
+    expect(route).toContain('eventsnextleague.php?id=${BOTOLA_PRO_LEAGUE_ID}');
+    expect(route).not.toMatch(/id=1159/);
+  });
+
+  it('reuses the team ids of the fixture before searching by name', () => {
+    expect(route).toMatch(/evt\.idHomeTeam \|\| getTeamId/);
+  });
+});
