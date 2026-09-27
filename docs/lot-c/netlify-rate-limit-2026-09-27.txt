@@ -1,0 +1,29 @@
+# Netlify rate limit test — target https://rme-voyage.netlify.app — deploy 6ab8fc50acb1818dfaaba8f2 — commit e3e2d5d
+# Rule: 8 req / 60 s / IP (edge functions rate-limit-hadak, rate-limit-faical). Client: one session IP.
+11:22:45 hadak burst1 (20): 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200
+11:23:06 hadak burst2 (10): 200 200 200 200 200 200 200 200 200 200
+11:23:10 headers: HTTP/1.1 200 Connection Established
+11:23:10 headers: HTTP/2 200 
+11:23:10 faical burst1 (20): 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200
+11:23:29 faical burst2 (10): 429 200 200 200 200 200 200 200 200 200
+11:24:37 hadak after 65s (3): 200 200 200
+11:24:38 faical after 65s (3): 200 200 200
+
+# Run 2 — one reused TCP connection per burst (single egress IP), like the Vercel measurement in README.md
+11:24:50 faical 1 conn x20: 200 200 200 200 200 200 200 200 429 429 429 429 429 429 429 429 429 429 429 429 
+11:25:03 faical 1 conn x10: 200 200 200 200 200 200 200 200 429 429 
+11:25:04 hadak 1 conn x20: 200 200 200 200 200 200 200 429 429 429 429 429 429 429 429 429 429 429 429 429 
+11:25:18 hadak 1 conn x10: 200 200 200 200 200 200 200 200 429 429 
+11:25:20 faical headers: HTTP/2 200 
+11:25:20 faical headers: x-nf-request-id: 01M3H9SHV31W07NJ5WEH3VJS8Y
+
+# Reading (2026-09-27)
+# - Run 1 (separate curl processes): the session leaves through several egress IPs, so a per-IP rule
+#   cannot be judged from it. Hadak 33/33 200; Faical one 429 among 33.
+# - Run 2 (one reused connection = one IP): 7-8 x 200 then 429 in each burst. The 429 body is
+#   {"error":"Too many requests..."} = proxy.ts in-memory counter (one warm instance), NOT Netlify's
+#   native rate limiter. 12 s later the counter starts again from zero (another instance).
+# - Netlify native rule (edge functions rate-limit-*, 8/60s/ip+domain): deployed (deploy summary lists
+#   3 edge functions) but NOT OBSERVED enforcing within 30 requests / ~35 s. Deploy-log validation of the
+#   rule is NOT VERIFIED (logs not readable through the connector).
+# RATE_LIMIT_RUNTIME_TEST (native) = FAIL / NOT OBSERVED.

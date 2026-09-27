@@ -13,7 +13,11 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
   - Ajouter `GROQ_API_KEY` et `GEMINI_API_KEY`, puis relancer le déploiement.
   - Sans ces clés, Hadak répond seulement avec ses réponses locales.
 - **Déjà réglé par Claude** : `AI_ROUTER_FREE_ONLY=true` sur Netlify. Ce n'est pas un secret, c'est un interrupteur : il bloque les fournisseurs IA payants de Hadak.
-- **Protection anti-abus** : règle native Netlify, 8 requêtes / 60 s / IP sur `/api/hadak` et sur `/api/faical` (`netlify/edge-functions/`).
+- **Protection anti-abus** : règle native Netlify déclarée (8 requêtes / 60 s / IP sur `/api/hadak` et `/api/faical`, `netlify/edge-functions/`) et déployée.
+  - **Mais son effet n'a pas été observé** lors du test du 27/09/2026 (`docs/lot-c/netlify-rate-limit-2026-09-27.txt`).
+  - Ce qui coupe réellement aujourd'hui, c'est le compteur de `proxy.ts`, et seulement sur une même instance (7 à 8 requêtes, puis 429).
+  - Risque de coût actuel : faible, car `AI_ROUTER_FREE_ONLY=true` est réglé et aucune clé payante n'est posée.
+  - À revérifier dans Netlify → Logs → Edge Functions (validation de la règle). Si la règle n'est pas validée, un compteur partagé (Netlify Blobs) serait l'étape suivante : IV-019.
 
 ### Variables d'environnement (audit statique du 27/09/2026)
 

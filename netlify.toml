@@ -11,3 +11,9 @@
 # for API-uploaded deploys, so it is declared explicitly.
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Netlify serves .webmanifest as application/octet-stream by default.
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
