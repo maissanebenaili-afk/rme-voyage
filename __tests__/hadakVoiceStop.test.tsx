@@ -54,6 +54,17 @@ describe("Hadak voice stop while voices are loading", () => {
     expect(spoken).toEqual([]);
   });
 
+  it("stops reading when the chat is closed", async () => {
+    await openWithAnswer();
+    const cancel = window.speechSynthesis.cancel as jest.Mock;
+    fireEvent.click(screen.getAllByRole("button", { name: "Écouter" }).at(-1)!);
+    cancel.mockClear();
+    fireEvent.click(screen.getByRole("button", { name: /Close Hadak chat|Fermer/ }));
+    expect(cancel).toHaveBeenCalled();
+    await act(async () => { fireVoicesLoaded(); await Promise.resolve(); });
+    expect(spoken).toEqual([]);
+  });
+
   it("speaks only the last answer tapped", async () => {
     await openWithAnswer();
     const [first, last] = [screen.getAllByRole("button", { name: "Écouter" })[0], screen.getAllByRole("button", { name: "Écouter" }).at(-1)!];

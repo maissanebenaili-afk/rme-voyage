@@ -37,6 +37,7 @@ import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/
 import { OFFLINE_PROVENANCE, describeProvenance, type HadakLang, type HadakProvenance } from '@/lib/hadakGuidance';
 import type { NextAction } from '@/lib/rmeMoments';
 import { isPrimaryTruth } from '@/lib/trust';
+import { trackFunnelEvent } from '@/lib/partnerTracking';
 
 // Answers use **bold** for titles; show it as bold instead of raw asterisks.
 // Plain React text nodes only: nothing from the answer is parsed as HTML.
@@ -55,7 +56,10 @@ function TrustBadge({ trust, lang }: { trust: HadakProvenance; lang: HadakLang }
     <div className="self-start ms-1 max-w-[85%] text-[11px]">
       <button
         type="button"
-        onClick={() => setShowWhy((v) => !v)}
+        onClick={() => {
+          if (!showWhy) trackFunnelEvent({ event: 'hadak_trust_why', placement: 'hadak', data: { basis: trust.basis } });
+          setShowWhy((v) => !v);
+        }}
         aria-expanded={showWhy}
         className="flex items-center gap-1 rounded-full px-2 py-0.5 transition-colors"
         style={{
@@ -556,6 +560,7 @@ export default function HadakAI() {
     } else {
       setInput('');
       recognition.start();
+      trackFunnelEvent({ event: 'hadak_voice_input', placement: 'hadak', data: { lang } });
     }
   };
 
@@ -570,6 +575,7 @@ export default function HadakAI() {
     const synth = window.speechSynthesis;
     synth.cancel();
     setSpeakingIdx(idx);
+    trackFunnelEvent({ event: 'hadak_voice_listen', placement: 'hadak', data: { lang } });
     void loadVoices(synth).then((voices) => {
       if (request !== speakRequest.current) return;
       const utterance = new SpeechSynthesisUtterance(cleanForSpeech(content));
@@ -689,6 +695,20 @@ export default function HadakAI() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Closing the chat or leaving the page ends the reading: the voice must
+  // never keep talking over a screen the user has moved to.
+  const closeChat = () => {
+    setOpen(false);
+    if (speakingIdx !== null && 'speechSynthesis' in window) {
+      speakRequest.current++;
+      window.speechSynthesis.cancel();
+      setSpeakingIdx(null);
+    }
+  };
+  useEffect(() => () => {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }, []);
+
   /* Quick suggestions based on context */
   const getSuggestions = (): TopicKey[] => {
     if (lastTopic && KNOWLEDGE[lastTopic]) {
@@ -705,7 +725,7 @@ export default function HadakAI() {
       {/*  Floating chat bubble button   */}
       {/* ============================= */}
       <motion.button
-        onClick={() => setOpen(!open)}
+        onClick={() => (open ? closeChat() : setOpen(true))}
         className="group fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full shadow-2xl"
         style={{
           background: open
@@ -914,7 +934,10 @@ export default function HadakAI() {
                             key={action.id}
                             href={action.destination}
                             title={action.reason}
-                            onClick={() => setOpen(false)}
+                            onClick={() => {
+                              trackFunnelEvent({ event: 'hadak_next_action', placement: 'hadak', data: { action: action.id } });
+                              closeChat();
+                            }}
                             className="rounded-full px-3 py-1.5 text-xs font-semibold transition-colors"
                             style={{ background: 'rgba(255, 255, 255, 0.08)', color: '#fcd34d' }}
                           >
@@ -926,7 +949,7 @@ export default function HadakAI() {
                     {msg.role === 'assistant' && msg.plannerLink && (
                       <a
                         href={msg.plannerLink.url}
-                        onClick={() => setOpen(false)}
+                        onClick={closeChat}
                         className="self-start ms-1 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors"
                         style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}
                       >
