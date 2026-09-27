@@ -33,6 +33,7 @@ import {
 
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { buildShareUrl } from '@/lib/tripShare';
+import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/hadakVoice';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -524,14 +525,22 @@ export default function HadakAI() {
       setSpeakingIdx(null);
       return;
     }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(content);
-    utterance.lang = lang === 'ar' ? 'ar-SA' : lang === 'da' ? 'ar-MA' : lang === 'es' ? 'es-ES' : lang === 'fr' ? 'fr-FR' : 'en-US';
-    utterance.rate = 0.95;
-    utterance.onstart = () => setSpeakingIdx(idx);
-    utterance.onend = () => setSpeakingIdx(null);
-    utterance.onerror = () => setSpeakingIdx(null);
-    window.speechSynthesis.speak(utterance);
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    setSpeakingIdx(idx);
+    void loadVoices(synth).then((voices) => {
+      const utterance = new SpeechSynthesisUtterance(cleanForSpeech(content));
+      const voice = pickHadakVoice(voices, lang);
+      utterance.lang = voice?.lang ?? speechLocale(lang);
+      if (voice) utterance.voice = voice;
+      // A touch brighter and calmer than the default robotic delivery.
+      utterance.rate = 0.98;
+      utterance.pitch = 1.08;
+      utterance.onstart = () => setSpeakingIdx(idx);
+      utterance.onend = () => setSpeakingIdx(null);
+      utterance.onerror = () => setSpeakingIdx(null);
+      synth.speak(utterance);
+    });
   };
 
   // Signalement (exigence Google Play pour les réponses générées par IA) :
