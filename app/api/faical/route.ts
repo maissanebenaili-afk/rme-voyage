@@ -51,15 +51,18 @@ async function getTeamForm(teamId: string): Promise<FormEntry> {
     );
     const data = await res.json();
     const events: SportsDBLastEvent[] = data?.results ?? [];
-    const last5 = events.slice(0, 5);
+    // A match without both scores (not played, or not reported) is skipped:
+    // counting it as 0-0 would invent a draw.
+    const played = events.filter((e) => /^\d+$/.test(e.intHomeScore ?? '') && /^\d+$/.test(e.intAwayScore ?? ''));
+    const last5 = played.slice(0, 5);
     let w = 0,
       d = 0,
       l = 0;
     const letters: string[] = [];
     for (const e of last5) {
       const isHome = e.idHomeTeam === teamId;
-      const myScore = parseInt(isHome ? (e.intHomeScore ?? '0') : (e.intAwayScore ?? '0'));
-      const oppScore = parseInt(isHome ? (e.intAwayScore ?? '0') : (e.intHomeScore ?? '0'));
+      const myScore = Number(isHome ? e.intHomeScore : e.intAwayScore);
+      const oppScore = Number(isHome ? e.intAwayScore : e.intHomeScore);
       if (myScore > oppScore) {
         w++;
         letters.push('W');

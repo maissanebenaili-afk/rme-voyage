@@ -20,8 +20,18 @@ describe('Faical prediction', () => {
     const call = routeMock.mock.calls[0][0];
     expect(call.message).toContain('Raja vs Wydad');
     expect(call.message).toContain('WWDLW');
+    expect(call.message).toContain('5 matchs connus');
     expect(call.systemPrompt).toMatch(/n'invente/);
     expect(call.systemPrompt).toMatch(/pari/);
+  });
+
+  it('tells the model how many matches are really known, and says unknown when none', async () => {
+    routeMock.mockResolvedValue({ text: 'ok', provider: 'groq', resolutionType: 'FREE_PROVIDER', requestId: 'r3' });
+    await generatePrediction('Fès', 'Zemamra', { w: 1, d: 0, l: 0, last5: 'W' }, { w: 0, d: 0, l: 0, last5: '' });
+    const { message, systemPrompt } = routeMock.mock.calls[0][0];
+    expect(message).toContain('Forme Fès (1 match connu) : W');
+    expect(message).toContain('Forme Zemamra : inconnue');
+    expect(systemPrompt).toMatch(/plus de matchs que le nombre de matchs connus/);
   });
 
   it('returns an empty string when no provider answers or the router throws', async () => {
@@ -49,6 +59,11 @@ describe('Faical fixtures source', () => {
     expect(route).toContain("BOTOLA_PRO_LEAGUE_ID = '4520'");
     expect(route).toContain('eventsnextleague.php?id=${BOTOLA_PRO_LEAGUE_ID}');
     expect(route).not.toMatch(/id=1159/);
+  });
+
+  it('never counts a match without both scores as a 0-0 draw', () => {
+    expect(route).toMatch(/const played = events\.filter/);
+    expect(route).not.toMatch(/\?\? '0'/);
   });
 
   it('reuses the team ids of the fixture before searching by name', () => {
