@@ -13,6 +13,7 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
   - Les 3 clés ont été testées directement chez chaque fournisseur, puis Hadak a répondu en production avec l'IA (`source: groq`).
   - Elles ne sont ni dans le dépôt, ni dans le code envoyé au navigateur : les 12 scripts de la page d'accueil ont été vérifiés.
   - Elles ont transité par la conversation. Plus tard, par sécurité : en régénérer de nouvelles chez Groq, Google AI Studio et OpenRouter, puis remplacer les valeurs dans Netlify.
+- **NVIDIA NIM (build.nvidia.com) : ne pas ajouter de clé NVIDIA dans Netlify.** Selon les conditions de NVIDIA, l'accès gratuit est réservé aux tests et au développement ; l'utiliser pour les vrais utilisateurs est interdit sans licence payante (`docs/rme-lab/RADAR.md`, RAD-31).
 - **Déjà réglé par Claude** : `AI_ROUTER_FREE_ONLY=true` sur Netlify. Ce n'est pas un secret, c'est un interrupteur : il bloque les fournisseurs IA payants de Hadak.
 - **Protection anti-abus : active et observée le 27/09/2026 à 14 h UTC.**
   - Règle native Netlify : 8 requêtes / 60 s / IP sur `/api/hadak` et `/api/faical` (`netlify/edge-functions/`).

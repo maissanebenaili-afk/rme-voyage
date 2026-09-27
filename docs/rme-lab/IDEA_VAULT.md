@@ -171,3 +171,8 @@ Existing building blocks referred to below:
 - **Feasibility:** MEDIUM. Starting point: extend the existing Jest suite with scenario tests on `detectIntent`, `nextActionsFor` and `provenanceOf`.
 - **Status:** BACKLOG. First useful step once IV-001 (voice/text → intent) exists.
 - **Framework:** `NORTH_STAR.md`.
+
+### IV-024 — Comparing AI providers in the Lab
+- **Idea:** run the 4 Test Lab scenarios through each AI provider (Groq, Gemini, OpenRouter, and NVIDIA NIM once the owner creates a key) and compare the answers against the facts extracted by `extractTripFacts`: does the answer invent a date, a price or a formality?
+- **Constraint:** NVIDIA NIM stays Lab only, because its free terms exclude production (RAD-31).
+- **Status:** BACKLOG. Only when a real quality problem is measured in `[hadak-ledger]` or in user reports.
