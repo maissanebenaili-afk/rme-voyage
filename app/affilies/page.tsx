@@ -172,10 +172,10 @@ export default function AffiliatesPage() {
           </h1>
           <p className="mt-3 text-lg text-[#5a716c]">
             Pour chaque programme : lien d'inscription, commission, délai de paiement, et les étapes exactes.
-            Une fois inscrit, colle l'URL affilié dans la variable d'environnement Vercel correspondante.
+            Une fois inscrit, colle l'URL affilié dans la variable d'environnement Netlify correspondante.
           </p>
           <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-            <strong>Comment ça marche :</strong> Tu t'inscris → tu reçois un lien de tracking unique → tu le mets dans Vercel
+            <strong>Comment ça marche :</strong> Tu t'inscris → tu reçois un lien de tracking unique → tu le mets dans Netlify
             (Settings → Environment Variables) → RME Voyage utilise automatiquement ton lien. Chaque clic qui
             mène à un transfert te rapporte une commission virée sur ton IBAN.
           </div>
@@ -249,7 +249,7 @@ export default function AffiliatesPage() {
                 </div>
 
                 <div className="mt-4 rounded-lg border border-[#e6ede9] bg-white p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#0369a1]">Variable Vercel à remplir</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#0369a1]">Variable Netlify à remplir</p>
                   <code className="mt-1 block font-mono text-sm text-[#0f1f3d]">{prog.envKey}</code>
                   <p className="mt-1 text-xs text-[#5a716c]">Base du lien deep : <span className="font-mono">{prog.deepLinkBase}</span></p>
                 </div>
@@ -295,7 +295,7 @@ export default function AffiliatesPage() {
             ))}
           </ol>
           <p className="mt-6 text-sm text-white/60">
-            Une fois inscrits, ajoute les URLs dans Vercel → Settings → Environment Variables → Redeploy.
+            Une fois inscrits, ajoute les URLs dans Netlify → Project configuration → Environment variables, puis relance un déploiement.
             RME Voyage injecte les liens automatiquement dans le comparateur.
           </p>
         </div>

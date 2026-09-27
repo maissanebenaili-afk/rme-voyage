@@ -189,7 +189,7 @@ function costFor(provider: Provider, model: string, tokens: Usage): Pick<LedgerE
   return { estimated_cost: Number(usd.toFixed(6)), cost_basis: 'list_price_estimate' };
 }
 
-// One JSON line per resolution, readable in the Vercel runtime logs. It never
+// One JSON line per resolution, readable in the Netlify function logs. It never
 // carries the question, the answer or a key.
 function appendLedger(entry: LedgerEntry): void {
   ledger.push(entry);
