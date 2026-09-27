@@ -150,4 +150,17 @@ describe("TravelHub", () => {
   test("every hub entry points to its own anchor", () => {
     expect(new Set(Object.values(HUB_ANCHORS)).size).toBe(6);
   });
+
+  test("offers to resume a saved trip in one tap, and hides it once the planner has a route", async () => {
+    localStorage.setItem(TRAVEL_STORAGE_KEY, stored({ dateVoyage: "2026-10-12" }));
+    render(<TravelHub />);
+    const resume = await screen.findByRole("link", { name: /Reprendre ce trajet/ });
+    const url = new URL(resume.getAttribute("href")!, "http://localhost");
+    expect(url.searchParams.get("from")).toBe("Paris");
+    expect(url.searchParams.get("to")).toBe("Tanger");
+    expect(url.searchParams.get("date")).toBe("2026-10-12");
+
+    act(() => publishRoute(toComputedRoute("Paris", "Tanger", 2_000_000, 80_000, Date.now())));
+    await waitFor(() => expect(screen.queryByRole("link", { name: /Reprendre ce trajet/ })).not.toBeInTheDocument());
+  });
 });
