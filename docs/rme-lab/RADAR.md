@@ -535,6 +535,25 @@ Repository metadata comes from the GitHub search API (SPDX licence id, `pushed_a
 
 ---
 
+### RAD-31 — NVIDIA NIM (API catalog, build.nvidia.com)
+- **Region:** Global
+- **Facts (NVIDIA API catalog FAQ, https://docs.api.nvidia.com/nim/docs/product, checked 27/09/2026):**
+  - « NIM access through the NVIDIA Developer Program is for prototyping, research, development and testing purposes only ».
+  - Production is « any use of NIM for purposes other than development, testing, research or evaluation such as conducting business transactions ». It needs a paid NVIDIA AI Enterprise licence (price: UNKNOWN).
+  - Free credits and rate limits: UNKNOWN (not in the FAQ).
+  - OpenAI-compatible endpoint: UNKNOWN until tested in the Lab.
+- **RME adaptation:**
+  - **Not in production.** Hadak answers real users, and RME carries ads and affiliate links, so the free access does not cover it.
+  - Lab only, for example to compare answer quality on the Test Lab scenarios (IV-024).
+  - Never add it to the production providers of `lib/hadakAiRouter.ts`, and never put an NVIDIA key in Netlify.
+- **Class:** WATCH
+- **Utility:** LOW today (Groq, Gemini and OpenRouter already answer for free)
+- **Differentiation:** LOW
+- **Feasibility:** HIGH (Lab)
+- **Cost:** 0 € in the Lab; UNKNOWN in production
+- **Risk:** HIGH if used in production (licence)
+- **Licence/rights:** NVIDIA Developer Program terms, development and testing only.
+
 ## 3. Moroccan / MRE-specific
 
 ### RAD-28 — Opération Marhaba (official channels) + Spain Operación Paso del Estrecho (OPE)
