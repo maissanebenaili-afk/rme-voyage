@@ -12,6 +12,31 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
 - **À faire par le propriétaire (5 minutes)** : Netlify → rme-voyage → Project configuration → Environment variables.
   - Ajouter `GROQ_API_KEY` et `GEMINI_API_KEY`, puis relancer le déploiement.
   - Sans ces clés, Hadak répond seulement avec ses réponses locales.
+- **Déjà réglé par Claude** : `AI_ROUTER_FREE_ONLY=true` sur Netlify. Ce n'est pas un secret, c'est un interrupteur : il bloque les fournisseurs IA payants de Hadak.
+- **Protection anti-abus** : règle native Netlify déclarée (8 requêtes / 60 s / IP sur `/api/hadak` et `/api/faical`, `netlify/edge-functions/`) et déployée.
+  - **Mais son effet n'a pas été observé** lors du test du 27/09/2026 (`docs/lot-c/netlify-rate-limit-2026-09-27.txt`).
+  - Ce qui coupe réellement aujourd'hui, c'est le compteur de `proxy.ts`, et seulement sur une même instance (7 à 8 requêtes, puis 429).
+  - Risque de coût actuel : faible, car `AI_ROUTER_FREE_ONLY=true` est réglé et aucune clé payante n'est posée.
+  - À revérifier dans Netlify → Logs → Edge Functions (validation de la règle). Si la règle n'est pas validée, un compteur partagé (Netlify Blobs) serait l'étape suivante : IV-019.
+
+### Variables d'environnement (audit statique du 27/09/2026)
+
+| Variable | Lue par | Sert à | Nécessaire ? | Côté | Si absente |
+|---|---|---|---|---|---|
+| `GROQ_API_KEY` | `lib/hadakAiRouter.ts` | Hadak (IA gratuite) | Recommandée | serveur | Hadak passe au fournisseur suivant |
+| `GEMINI_API_KEY` | `lib/hadakAiRouter.ts` | Hadak (IA gratuite, secours) | Recommandée | serveur | idem |
+| `OPENROUTER_API_KEY` | `lib/hadakAiRouter.ts` | Hadak (modèle `openrouter/free`) | Optionnelle | serveur | idem |
+| `OPENAI_API_KEY` | `lib/hadakAiRouter.ts` | Hadak, **payant** | Non : bloqué par `AI_ROUTER_FREE_ONLY` | serveur | aucun effet |
+| `ANTHROPIC_API_KEY` / `ANTHROPIC_API_CLE` | `lib/hadakAiRouter.ts`, `app/api/faical/route.ts` | Hadak (bloqué par FREE_ONLY) **et pronostics Faical**, **payant** | **Non recommandé** : Faical l'appelle directement, sans FREE_ONLY. Au plus 3 appels toutes les 6 h grâce au cache, `max_tokens` 120 | serveur | Faical affiche les matchs sans pronostic |
+| `AI_ROUTER_FREE_ONLY` | `lib/hadakAiRouter.ts` | Interrupteur « gratuit seulement » | **Oui, réglé à `true`** | serveur | les fournisseurs payants deviennent possibles |
+| `RESEND_API_KEY`, `RESEND_AUDIENCE_ID` | `app/api/newsletter/route.ts` | Inscription newsletter | Optionnelles | serveur | l'inscription n'est pas enregistrée |
+| `STRIPE_SECRET_KEY` | `lib/stripe.ts` | Paiements (Soutenir) | Optionnelle | serveur | paiement indisponible |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `lib/supabase/*`, `proxy.ts` | Comptes, voyages, conseils | Optionnelles | client (publiques par nature) | mode sans compte ; `/api/trips` et `/api/tips` fermées en production |
+| `NEXT_PUBLIC_APP_URL` | `lib/siteUrl.ts`, `proxy.ts` | Adresse canonique, CORS | Optionnelle | client | `https://rme-voyage.netlify.app` |
+| `TRAVELPAYOUTS_FLIGHT_URL` | `lib/affiliate.ts`, `lib/partnerCatalogue.ts` | Lien affilié vols | Optionnelle | serveur | le lien vol n'est pas affiché |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | `lib/contact.ts` | Adresse de contact affichée | Optionnelle | client | valeur par défaut du code |
+| `NEXT_PUBLIC_APP_DOWNLOAD_URL` | `app/telecharger/page.tsx` | Lien « Télécharger l'app » | Plus tard (lien Play Store) | client | page sans lien store |
+
 - **Optionnel** : relier Netlify au dépôt GitHub (Project configuration → Build & deploy → Link repository) pour un déploiement automatique à chaque fusion. Sinon Claude déploie après chaque fusion.
 
 ## Google Play : dans l'ordre

@@ -145,3 +145,14 @@ Existing building blocks referred to below:
 - **Feasibility:** HIGH.
 - **Status:** MONTH 1.
 - **Measure:** resolution rate per intent before and after.
+
+### IV-019 — Limite de débit partagée entre instances
+- **Problème :**
+  - Sur Netlify, le compteur mémoire de `proxy.ts` ne tient que sur une instance.
+  - La règle native (Edge Functions) est déployée, mais son effet n'a pas été observé le 27/09/2026.
+- **Idée :** compteur par IP dans Netlify Blobs, ou un autre stockage gratuit, lu par le proxy pour `/api/hadak` et `/api/faical`.
+- **Faisabilité :** MOYENNE.
+- **Coût :** UNKNOWN (quotas Blobs du plan gratuit).
+- **Statut :** BACKLOG. À faire seulement si la règle native reste inactive ET si des clés IA sont posées.
+- **Plus petite expérience :** lire les logs de validation de la règle native avant tout code.
+

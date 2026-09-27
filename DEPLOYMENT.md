@@ -1,9 +1,11 @@
 # RME Voyage — Déploiement
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 ## Architecture actuelle
 
 - **Web :** Next.js 16 + React 18
-- **Hébergement :** Vercel
+- **Hébergement :** Netlify (plan gratuit) ; Vercel jusqu'au 27/09/2026
 - **APIs :** routes server-side Next.js
 - **PWA :** manifest + service worker
 - **Mobile :** Capacitor 7 préparatoire, projets natifs non encore générés
@@ -21,7 +23,7 @@ npm run build
 
 ## Production web
 
-Le déploiement production est effectué via Vercel.
+Le déploiement production est effectué sur Netlify (`netlify.toml` + `@netlify/plugin-nextjs`), depuis un `git archive` de `main` (Claude) ou automatiquement si le dépôt est relié à Netlify.
 
 Avant toute mise en production :
 - typecheck ;

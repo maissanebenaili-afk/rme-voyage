@@ -1,5 +1,7 @@
 # RME Voyage - Architecture
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 Ce document décrit la pile réellement implémentée dans ce dépôt. Toute
 mention d'un service ci-dessous suppose ses variables d'environnement
 configurées ; sans elles, le code bascule explicitement en mode dégradé
@@ -23,7 +25,7 @@ conversationnel Hadak, marketplace caftans et partenaires immobiliers.
 - **Icônes :** Lucide React
 
 ### Backend
-- **Runtime :** routes API Next.js (`app/api/*`), Vercel serverless/edge
+- **Runtime :** routes API Next.js (`app/api/*`), Netlify Functions (routes) et Edge Functions (proxy, limites de débit)
 - **Auth + DB :** Supabase (PostgreSQL + Auth), **optionnelle** — sans
   `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY`, l'app tourne en
   mode données fictives (voir `packages/utils/supabase.ts`)
@@ -33,11 +35,11 @@ conversationnel Hadak, marketplace caftans et partenaires immobiliers.
   effort, non distribué), CSP, rafraîchissement de session Supabase
 
 ### Infrastructure
-- **Hébergement :** Vercel (voir `RME_ROUTE_ETAT.md` pour l'état de la
+- **Hébergement :** Netlify (Vercel jusqu'au 27/09/2026) (voir `RME_ROUTE_ETAT.md` pour l'état de la
   réflexion sur une alternative gratuite)
 - **CI :** GitHub Actions (`.github/workflows/ci.yml` — lint, test, build)
 - **Mobile :** Capacitor (préparation iOS/Android, non publié)
-- **Analytics :** Vercel Analytics + Speed Insights
+- **Analytics :** Vercel Analytics dans le code : sans effet hors de Vercel. Mesure actuelle : lignes `[hadak-intent]` / `[hadak-ledger]` dans les logs Netlify
 
 ---
 

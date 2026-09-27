@@ -1,5 +1,7 @@
 # 🚀 RME Voyage — Quick Start Guide
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 ## Pour les personnes en situation de handicap moteur
 
 Ce guide est optimisé pour une utilisation **sans souris**, avec **commandes vocales** ou **clavier seul**.
@@ -63,7 +65,7 @@ Tout commit sur `main` déclenche automatiquement :
 1. ✅ Linting TypeScript
 2. ✅ Unit tests
 3. ✅ Build Next.js
-4. ✅ Déploiement Vercel (si success)
+4. ✅ Déploiement Netlify (voir DEPLOYMENT.md)
 
 **Statut des workflows:** https://github.com/maissanebenaili-afk/rme-voyage/actions
 

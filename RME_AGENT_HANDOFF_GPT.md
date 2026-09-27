@@ -1,5 +1,7 @@
 # RME Voyage — Agent Handoff / Knowledge Base
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 > Document de passation entre agents IA.
 > Dernière vérification : 2026-09-26.
 > Ce document ne constitue pas une preuve de déploiement : GitHub/Vercel restent les sources de vérité.

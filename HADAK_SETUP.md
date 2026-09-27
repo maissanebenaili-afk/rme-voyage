@@ -1,8 +1,10 @@
 # 🤖 Configuration Hadak IA avec Anthropic
 
+> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+
 Hadak est maintenant alimenté par Claude AI pour des réponses intelligentes et contextuelles. Voici comment l'activer en production.
 
-## ✅ Configuration Vercel
+## ✅ Configuration (historique Vercel ; aujourd'hui : Netlify → rme-voyage → Environment variables)
 
 ### 1. Obtenir une clé API Anthropic
 
