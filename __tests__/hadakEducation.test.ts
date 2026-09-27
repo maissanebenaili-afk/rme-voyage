@@ -53,3 +53,11 @@ describe('LOT E.1 — Hadak Education contract', () => {
     expect(() => buildEducationPlan({ mode: 'LEARN', language: ' ', prompt: 'test' })).toThrow();
   });
 });
+
+describe('LOT E.1 — readable on the Hadak screen', () => {
+  it('asks for plain text: numbered steps, inline maths, no tables or LaTeX', () => {
+    const { instruction } = buildEducationPlan({ mode: 'SOLVE', level: 'COLLEGE_4E_3E', language: 'fr', prompt: 'x' });
+    expect(instruction).toMatch(/numbered steps/);
+    expect(instruction).toMatch(/no tables, no LaTeX/);
+  });
+});
