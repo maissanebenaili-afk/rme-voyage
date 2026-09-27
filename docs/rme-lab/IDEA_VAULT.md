@@ -150,12 +150,12 @@ Existing building blocks referred to below:
 ### IV-019 — Limite de débit partagée entre instances
 - **Problème :**
   - Sur Netlify, le compteur mémoire de `proxy.ts` ne tient que sur une instance.
-  - La règle native (Edge Functions) est déployée, mais son effet n'a pas été observé le 27/09/2026.
+  - La règle native (Edge Functions) n'avait pas été observée lors des deux premiers essais du 27/09/2026 ; le troisième l'a observée (voir la mise à jour ci-dessous).
 - **Idée :** compteur par IP dans Netlify Blobs, ou un autre stockage gratuit, lu par le proxy pour `/api/hadak` et `/api/faical`.
 - **Faisabilité :** MOYENNE.
 - **Coût :** UNKNOWN (quotas Blobs du plan gratuit).
-- **Statut :** BACKLOG. À faire seulement si la règle native reste inactive ET si des clés IA sont posées.
-- **Plus petite expérience :** lire les logs de validation de la règle native avant tout code.
+- **Mise à jour 27/09/2026 (14 h UTC) :** la règle native est **observée active** (Run 3 de `docs/lot-c/netlify-rate-limit-2026-09-27.txt`) : elle bloque au-delà de 8 requêtes / 60 s par IP.
+- **Statut :** CLOSED (not needed). À rouvrir seulement si une limite par compte, et non plus par IP, devient nécessaire.
 
 
 ### IV-020…023 — Test Lab (digital twin)
