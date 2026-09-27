@@ -20,7 +20,7 @@ describe("SplashScreen", () => {
     // "RME Voyage" est scindé par un <span> imbriqué (nœuds de texte
     // séparés) : on matche sur "Voyage" seul, texte propre de ce nœud.
     expect(await screen.findByText("Voyage")).toBeInTheDocument();
-    expect(screen.getByText("by Tarek Benaïli")).toBeInTheDocument();
+    expect(screen.getByText("par BENAÏLI TAREK")).toBeInTheDocument();
     expect(sessionStorage.getItem("rme-splash-shown")).toBe("1");
 
     await waitFor(

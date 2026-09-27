@@ -85,7 +85,7 @@ export default function SplashScreen({ holdMs = HOLD_MS }: SplashScreenProps = {
             <span className="text-lg font-black tracking-tight text-white">
               RME <span className="font-medium text-[#fde68a]">Voyage</span>
             </span>
-            <span className="text-xs font-semibold tracking-wide text-white/70">by Tarek Benaïli</span>
+            <span className="text-xs font-semibold tracking-wide text-white/70">par BENAÏLI TAREK</span>
           </motion.div>
         </motion.div>
       )}
