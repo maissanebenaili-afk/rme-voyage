@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { generatePrediction, type FormEntry } from '@/lib/faicalPrediction';
 
 export const revalidate = 21600; // 6 hours
 
@@ -20,7 +21,6 @@ type SportsDBFixture = {
 
 type SportsDBTeam = { idTeam: string; strTeam: string };
 
-type FormEntry = { w: number; d: number; l: number; last5: string };
 
 async function getTeamId(name: string): Promise<string | null> {
   try {
@@ -67,44 +67,6 @@ async function getTeamForm(teamId: string): Promise<FormEntry> {
     return { w, d, l, last5: letters.join('') };
   } catch {
     return { w: 0, d: 0, l: 0, last5: '' };
-  }
-}
-
-async function generatePrediction(
-  homeTeam: string,
-  awayTeam: string,
-  homeForm: FormEntry,
-  awayForm: FormEntry
-): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY ?? process.env.ANTHROPIC_API_CLE ?? '';
-  if (!apiKey) return '';
-
-  const prompt = `Tu es Faical, le pronostiqueur football le plus charismatique du Maghreb. Tu parles avec confiance, tu es direct, tu donnes UN résultat probable (score ou issue) et UNE raison principale en 2 phrases max. Pas de "peut-être", pas de "difficile à dire" — Faical tranche toujours.
-
-Match: ${homeTeam} vs ${awayTeam}
-Forme ${homeTeam} (5 derniers): ${homeForm.last5 || 'inconnue'} (${homeForm.w}V ${homeForm.d}N ${homeForm.l}D)
-Forme ${awayTeam} (5 derniers): ${awayForm.last5 || 'inconnue'} (${awayForm.w}V ${awayForm.d}N ${awayForm.l}D)
-
-Donne ton pronostic en français, 2 phrases max, style direct et confiant.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 120,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-    const data = await res.json();
-    return (data?.content?.[0]?.text ?? '') as string;
-  } catch {
-    return '';
   }
 }
 

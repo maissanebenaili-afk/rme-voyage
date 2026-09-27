@@ -26,11 +26,11 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
 
 | Variable | Lue par | Sert à | Nécessaire ? | Côté | Si absente |
 |---|---|---|---|---|---|
-| `GROQ_API_KEY` | `lib/hadakAiRouter.ts` | Hadak (IA gratuite) | Recommandée | serveur | Hadak passe au fournisseur suivant |
+| `GROQ_API_KEY` | `lib/hadakAiRouter.ts` | Hadak et pronostics Faical (IA gratuite) | Recommandée | serveur | Hadak passe au fournisseur suivant |
 | `GEMINI_API_KEY` | `lib/hadakAiRouter.ts` | Hadak (IA gratuite, secours) | Recommandée | serveur | idem |
 | `OPENROUTER_API_KEY` | `lib/hadakAiRouter.ts` | Hadak (modèle `openrouter/free`) | Optionnelle | serveur | idem |
 | `OPENAI_API_KEY` | `lib/hadakAiRouter.ts` | Hadak, **payant** | Non : bloqué par `AI_ROUTER_FREE_ONLY` | serveur | aucun effet |
-| `ANTHROPIC_API_KEY` / `ANTHROPIC_API_CLE` | `lib/hadakAiRouter.ts`, `app/api/faical/route.ts` | Hadak (bloqué par FREE_ONLY) **et pronostics Faical**, **payant** | **Non recommandé** : Faical l'appelle directement, sans FREE_ONLY. Au plus 3 appels toutes les 6 h grâce au cache, `max_tokens` 120 | serveur | Faical affiche les matchs sans pronostic |
+| `ANTHROPIC_API_KEY` | `lib/hadakAiRouter.ts` | Hadak et Faical, **payant** | Non : bloqué par `AI_ROUTER_FREE_ONLY` | serveur | aucun effet |
 | `AI_ROUTER_FREE_ONLY` | `lib/hadakAiRouter.ts` | Interrupteur « gratuit seulement » | **Oui, réglé à `true`** | serveur | les fournisseurs payants deviennent possibles |
 | `RESEND_API_KEY`, `RESEND_AUDIENCE_ID` | `app/api/newsletter/route.ts` | Inscription newsletter | Optionnelles | serveur | l'inscription n'est pas enregistrée |
 | `STRIPE_SECRET_KEY` | `lib/stripe.ts` | Paiements (Soutenir) | Optionnelle | serveur | paiement indisponible |
