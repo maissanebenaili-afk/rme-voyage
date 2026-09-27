@@ -6,3 +6,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Next.js adapter (server functions, routing, images). Not auto-installed
+# for API-uploaded deploys, so it is declared explicitly.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
