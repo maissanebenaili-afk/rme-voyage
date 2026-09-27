@@ -27,6 +27,7 @@ const LABELS = {
     noData: 'Prochains matchs bientôt disponibles.',
     form: 'Forme',
     vs: 'vs',
+    aiNote: 'Avis généré par IA à partir de la forme récente. Pas un conseil de pari.',
   },
   da: {
     title: 'Pronosticat dyal Faical',
@@ -34,6 +35,7 @@ const LABELS = {
     noData: 'Matchat jaya bzzf.',
     form: 'Forma',
     vs: 'vs',
+    aiNote: 'Ra2y m-sawb b l-IA mn l-forma dyal l-matchat l-lekhrin. Machi nasi7a dyal l-pari.',
   },
   ar: {
     title: 'توقعات فايكال',
@@ -41,6 +43,7 @@ const LABELS = {
     noData: 'المباريات القادمة ستظهر قريباً.',
     form: 'الشكل',
     vs: 'ضد',
+    aiNote: 'رأي مولَّد بالذكاء الاصطناعي من نتائج الفريقين الأخيرة. ليس نصيحة للمراهنة.',
   },
   es: {
     title: 'Los pronósticos de Faical',
@@ -48,6 +51,7 @@ const LABELS = {
     noData: 'Próximos partidos disponibles pronto.',
     form: 'Forma',
     vs: 'vs',
+    aiNote: 'Opinión generada por IA a partir de la forma reciente. No es un consejo de apuestas.',
   },
   en: {
     title: "Faical's Picks",
@@ -55,6 +59,7 @@ const LABELS = {
     noData: 'Upcoming fixtures coming soon.',
     form: 'Form',
     vs: 'vs',
+    aiNote: 'AI-generated opinion based on recent form. Not betting advice.',
   },
 };
 
@@ -147,6 +152,9 @@ function MatchCard({
             </span>
           </div>
           <p className="text-sm text-white leading-5">{pick.prediction}</p>
+          <p className="mt-1.5 text-[10px] leading-4 text-slate-300">
+            {labels.aiNote}
+          </p>
         </div>
       ) : (
         <div className="rounded-xl bg-white/5 p-3 text-center text-xs text-slate-300">
