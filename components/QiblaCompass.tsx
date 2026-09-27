@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Compass, Loader2, MapPin } from "lucide-react";
+import { Compass, MapPin } from "lucide-react";
+
+import { DEFAULT_POSITION, formatPosition, requestUserPosition, type UserPosition } from "@/lib/userPosition";
 
 export default function QiblaCompass() {
-  const [qiblaDirection, setQiblaDirection] = useState<number | null>(null);
+  const [position, setPosition] = useState<UserPosition>(DEFAULT_POSITION);
   const [userHeading, setUserHeading] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [location, setLocation] = useState<string>("");
+  const [location, setLocation] = useState<string>("Paris (position par défaut)");
+  const [locating, setLocating] = useState(false);
 
   // Calculate Qibla direction from any location to Mecca (Kaaba)
   // Kaaba coordinates: 21.4225° N, 39.8262° E
@@ -29,80 +30,39 @@ export default function QiblaCompass() {
     return (qibla + 360) % 360;
   }
 
+  const qiblaDirection = calculateQibla(position.lat, position.lon);
+
+  // Live compass once the user has asked for their position (iOS needs a tap
+  // to allow device orientation anyway).
+  const [compassOn, setCompassOn] = useState(false);
   useEffect(() => {
-    let watchId: number;
-
-    async function init() {
-      if (!navigator.geolocation) {
-        setError(true);
-        setLoading(false);
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          const qibla = calculateQibla(latitude, longitude);
-          setQiblaDirection(qibla);
-          setLocation(`${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`);
-          setLoading(false);
-
-          // Track device orientation for live compass
-          if (typeof DeviceOrientationEvent !== "undefined") {
-            const handler = (e: DeviceOrientationEvent) => {
-              if (e.alpha !== null) {
-                setUserHeading(e.alpha);
-              }
-            };
-
-            // Request permission for iOS
-            if (typeof (DeviceOrientationEvent as any).requestPermission === "function") {
-              (DeviceOrientationEvent as any).requestPermission().then((permission: string) => {
-                if (permission === "granted") {
-                  window.addEventListener("deviceorientation", handler);
-                  watchId = window.setInterval(() => {}, 1000) as unknown as number;
-                }
-              }).catch(() => {});
-            } else {
-              window.addEventListener("deviceorientation", handler);
-            }
-
-            return () => {
-              window.removeEventListener("deviceorientation", handler);
-            };
-          }
-        },
-        () => {
-          // Fallback to Paris
-          const qibla = calculateQibla(48.8566, 2.3522);
-          setQiblaDirection(qibla);
-          setLocation("Paris (position par défaut)");
-          setLoading(false);
-        },
-        { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 }
-      );
-    }
-
-    init();
-    return () => {
-      if (watchId) clearInterval(watchId);
+    if (!compassOn || typeof DeviceOrientationEvent === "undefined") return;
+    const handler = (e: DeviceOrientationEvent) => {
+      if (e.alpha !== null) setUserHeading(e.alpha);
     };
-  }, []);
+    window.addEventListener("deviceorientation", handler);
+    return () => window.removeEventListener("deviceorientation", handler);
+  }, [compassOn]);
 
-  if (loading)
-    return (
-      <div className="flex items-center gap-3 rounded-2xl border bg-white p-5 text-sm text-slate-500">
-        <Loader2 size={20} className="animate-spin text-emerald-600" />
-        Calcul de la direction Qibla...
-      </div>
-    );
-
-  if (error || qiblaDirection === null)
-    return (
-      <div className="rounded-2xl border bg-white p-5 text-sm text-slate-500">
-        Direction Qibla indisponible. Géolocalisation requise.
-      </div>
-    );
+  async function locateMe() {
+    setLocating(true);
+    const orientation = typeof DeviceOrientationEvent === "undefined"
+      ? undefined
+      : (DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> });
+    if (typeof orientation?.requestPermission === "function") {
+      orientation.requestPermission().then((p) => setCompassOn(p === "granted")).catch(() => {});
+    } else {
+      setCompassOn(true);
+    }
+    const found = await requestUserPosition();
+    setLocating(false);
+    if (!found) {
+      setLocation("Position refusée · Paris");
+      return;
+    }
+    setPosition(found);
+    setLocation(formatPosition(found));
+  }
 
   const rotation = qiblaDirection - userHeading;
   const oppositeRotation = rotation + 180;
@@ -114,11 +74,17 @@ export default function QiblaCompass() {
           <Compass size={20} className="text-emerald-600" />
           Direction Qibla
         </h2>
-        <span className="flex items-center gap-1 text-xs text-slate-500">
+        <button
+          type="button"
+          onClick={locateMe}
+          disabled={locating}
+          className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 disabled:opacity-60"
+        >
           <MapPin size={12} />
-          {location}
-        </span>
+          {locating ? "Localisation…" : "Ma position"}
+        </button>
       </div>
+      <p className="mt-1 text-xs text-slate-500">{location}</p>
 
       <div className="mt-6 flex flex-col items-center">
         <div className="relative h-48 w-48">
@@ -173,7 +139,7 @@ export default function QiblaCompass() {
             {Math.round(qiblaDirection)}°
           </p>
           <p className="text-xs text-slate-500">
-            Direction de la Kaaba depuis votre position
+            Direction de la Kaaba depuis {position === DEFAULT_POSITION ? "Paris" : "votre position"}
           </p>
         </div>
 
