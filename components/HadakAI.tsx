@@ -34,12 +34,39 @@ import {
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { buildShareUrl } from '@/lib/tripShare';
 import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/hadakVoice';
+import { OFFLINE_PROVENANCE, describeProvenance, type HadakLang, type HadakProvenance } from '@/lib/hadakGuidance';
+import type { NextAction } from '@/lib/rmeMoments';
+import { isPrimaryTruth } from '@/lib/trust';
 
 // Answers use **bold** for titles; show it as bold instead of raw asterisks.
 // Plain React text nodes only: nothing from the answer is parsed as HTML.
 function renderBold(text: string) {
   return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
     i % 2 === 1 ? <strong key={i} className="font-bold">{part}</strong> : part,
+  );
+}
+
+// Trust Layer: where the answer comes from, with a "why?" explanation on tap.
+function TrustBadge({ trust, lang }: { trust: HadakProvenance; lang: HadakLang }) {
+  const [showWhy, setShowWhy] = useState(false);
+  const { badge, why } = describeProvenance(trust, lang);
+  const primary = isPrimaryTruth(trust.level);
+  return (
+    <div className="self-start ms-1 max-w-[85%] text-[11px]">
+      <button
+        type="button"
+        onClick={() => setShowWhy((v) => !v)}
+        aria-expanded={showWhy}
+        className="flex items-center gap-1 rounded-full px-2 py-0.5 transition-colors"
+        style={{
+          background: primary ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+          color: primary ? '#6ee7b7' : 'rgba(255, 255, 255, 0.8)',
+        }}
+      >
+        {primary ? '✓' : 'ⓘ'} {badge} · {lang === 'ar' ? 'لماذا؟' : lang === 'en' ? 'Why?' : lang === 'es' ? '¿Por qué?' : lang === 'da' ? '3lash?' : 'Pourquoi ?'}
+      </button>
+      {showWhy && <p className="mt-1 px-2 text-white/75">{why}</p>}
+    </div>
   );
 }
 
@@ -60,6 +87,10 @@ interface Message {
   topic?: TopicKey | null;
   /** Lien vers le planificateur, préempli avec la ville marocaine détectée dans la question. */
   plannerLink?: { url: string; cityLabel: string };
+  /** Où la réponse a été prise (Trust Layer). */
+  trust?: HadakProvenance;
+  /** Sections à ouvrir ensuite : rien ne s'exécute sans un clic. */
+  nextActions?: NextAction[];
 }
 
 type TopicKey =
@@ -596,20 +627,20 @@ export default function HadakAI() {
         console.error('Hadak API error, falling back to local KB:', response.status);
         setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE }]);
         setLastTopic(topic);
         return;
       }
 
-      let data: { response: string; fallback?: boolean };
+      let data: { response: string; fallback?: boolean; trust?: HadakProvenance; next_actions?: NextAction[] };
       try {
-        data = (await response.json()) as { response: string; fallback?: boolean };
+        data = (await response.json()) as typeof data;
       } catch {
         // JSON parse error — likely malformed response
         console.error('Failed to parse Hadak response, status:', response.status);
         setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE }]);
         setLastTopic(topic);
         return;
       }
@@ -617,7 +648,7 @@ export default function HadakAI() {
       if (data.fallback || !data.response) {
         setIsOffline(true);
         const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink, trust: OFFLINE_PROVENANCE }]);
         setLastTopic(localTopic);
         return;
       }
@@ -626,13 +657,16 @@ export default function HadakAI() {
       const answer = data.response;
       const topic = findTopic(content);
 
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
+      const nextActions = (data.next_actions ?? []).filter(
+        (a) => a.safety === 'INFORMATIONAL' && typeof a.destination === 'string' && a.destination.startsWith('/#'),
+      ).slice(0, 3);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: data.trust, nextActions }]);
       setLastTopic(topic);
     } catch (error) {
       console.error('Error calling Hadak API:', error);
       setIsOffline(true);
       const { content: answer, topic } = getAnswer(content, lang);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE }]);
       setLastTopic(topic);
     } finally {
       setIsTyping(false);
@@ -870,6 +904,25 @@ export default function HadakAI() {
                     >
                       {msg.role === 'assistant' ? renderBold(msg.content) : msg.content}
                     </div>
+                    {msg.role === 'assistant' && msg.trust && (
+                      <TrustBadge trust={msg.trust} lang={lang} />
+                    )}
+                    {msg.role === 'assistant' && msg.nextActions && msg.nextActions.length > 0 && (
+                      <div className="self-start ms-1 flex flex-wrap gap-1.5" aria-label={lang === 'ar' ? 'وماذا بعد؟' : lang === 'en' ? 'What next?' : lang === 'es' ? '¿Y ahora?' : 'Et maintenant ?'}>
+                        {msg.nextActions.map((action) => (
+                          <a
+                            key={action.id}
+                            href={action.destination}
+                            title={action.reason}
+                            onClick={() => setOpen(false)}
+                            className="rounded-full px-3 py-1.5 text-xs font-semibold transition-colors"
+                            style={{ background: 'rgba(255, 255, 255, 0.08)', color: '#fcd34d' }}
+                          >
+                            {action.label} →
+                          </a>
+                        ))}
+                      </div>
+                    )}
                     {msg.role === 'assistant' && msg.plannerLink && (
                       <a
                         href={msg.plannerLink.url}
