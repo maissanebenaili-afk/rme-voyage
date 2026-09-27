@@ -436,6 +436,8 @@ export default function HadakAI() {
   const [recognition, setRecognition] = useState<any>(null);
   const [isOffline, setIsOffline] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  // Voices can load after a tap: only the latest request may start speaking.
+  const speakRequest = useRef(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -528,6 +530,7 @@ export default function HadakAI() {
 
   const speakMessage = (content: string, idx: number) => {
     if (!('speechSynthesis' in window)) return;
+    const request = ++speakRequest.current;
     if (speakingIdx === idx) {
       window.speechSynthesis.cancel();
       setSpeakingIdx(null);
@@ -537,6 +540,7 @@ export default function HadakAI() {
     synth.cancel();
     setSpeakingIdx(idx);
     void loadVoices(synth).then((voices) => {
+      if (request !== speakRequest.current) return;
       const utterance = new SpeechSynthesisUtterance(cleanForSpeech(content));
       const voice = pickHadakVoice(voices, lang);
       utterance.lang = voice?.lang ?? speechLocale(lang);
