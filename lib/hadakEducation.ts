@@ -65,6 +65,10 @@ export function isEducationMode(value: string): value is EducationMode {
   return Object.hasOwn(MODE_INSTRUCTIONS, value);
 }
 
+export function isEducationLevel(value: string): value is EducationLevel {
+  return Object.hasOwn(LEVEL_GUIDANCE, value);
+}
+
 export function isEducationLanguage(value: string): value is EducationLanguage {
   return Object.hasOwn(LANGUAGE_NAMES, value);
 }
