@@ -14,7 +14,7 @@ describe('Offline service worker boundaries', () => {
     deleteMock = jest.fn().mockResolvedValue(true);
     putMock = jest.fn().mockResolvedValue(undefined);
     const context = {
-      self: { location: { origin: 'https://rme-route.vercel.app' },
+      self: { location: { origin: 'https://rme-voyage.netlify.app' },
         addEventListener: (type: string, fn: any) => { listeners[type] = fn; },
         skipWaiting: jest.fn(), clients: { claim: jest.fn() } },
       caches: { open: jest.fn().mockResolvedValue({ put: putMock, match: jest.fn() }),
@@ -42,7 +42,7 @@ describe('Offline service worker boundaries', () => {
   it('does not serve a stale affiliate/API response offline', async () => {
     fetchMock.mockRejectedValue(new Error('offline'));
     let response: Promise<Response> | undefined;
-    listeners.fetch({ request: { method: 'GET', url: 'https://rme-route.vercel.app/api/affiliates' },
+    listeners.fetch({ request: { method: 'GET', url: 'https://rme-voyage.netlify.app/api/affiliates' },
       respondWith: (p: Promise<Response>) => { response = p; } });
     const result = await response!;
     expect(result.status).toBe(503);
@@ -51,7 +51,7 @@ describe('Offline service worker boundaries', () => {
   });
   it('does not substitute cached HTML for Next.js RSC requests', () => {
     const respondWith = jest.fn();
-    listeners.fetch({ request: { method: 'GET', url: 'https://rme-route.vercel.app/guide?_rsc=xyz',
+    listeners.fetch({ request: { method: 'GET', url: 'https://rme-voyage.netlify.app/guide?_rsc=xyz',
       headers: new Headers(), mode: 'cors' }, respondWith });
     expect(respondWith).not.toHaveBeenCalled();
   });

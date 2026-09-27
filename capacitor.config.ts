@@ -5,11 +5,11 @@ const config: CapacitorConfig = {
   appName: "RME Voyage",
   webDir: "public",
   server: {
-    url: "https://rme-route.vercel.app",
+    url: "https://rme-voyage.netlify.app",
     cleartext: false,
     androidScheme: "https",
     iosScheme: "capacitor",
-    allowNavigation: ["rme-route.vercel.app"],
+    allowNavigation: ["rme-voyage.netlify.app"],
   },
   plugins: {
     SplashScreen: {

@@ -4,8 +4,8 @@
 
 RME utilise une **coquille Capacitor avec le site RME distant** :
 
-- URL chargée par l'application : `https://rme-route.vercel.app`
-- backend et routes Next.js : Vercel
+- URL chargée par l'application : `https://rme-voyage.netlify.app`
+- backend et routes Next.js : Netlify (plan gratuit, usage commercial autorisé). Vercel Hobby interdit l’usage commercial (pub, affiliation) et a bloqué le compte le 27/09/2026.
 - pas d'export Next.js statique
 - `webDir` : `public`, utilisé pour les ressources locales lors du sync Capacitor
 - navigation vers les partenaires : navigateur Capacitor séparé de la WebView
@@ -15,7 +15,7 @@ RME utilise une **coquille Capacitor avec le site RME distant** :
 - splash screen : plugin Capacitor Splash Screen
 - notifications push : **non déclarées** tant qu'elles ne sont pas implémentées et testées
 
-Cette architecture évite de réécrire les APIs existantes et conserve le backend RME sur Vercel.
+Cette architecture évite de réécrire les APIs existantes et conserve le backend RME sur un seul hébergeur (Netlify).
 
 ## Hors connexion
 

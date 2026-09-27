@@ -5,7 +5,7 @@ fonction qui envoie des données est ajoutée : la politique
 `public/privacy-policy.html` et ce fichier doivent rester alignés
 (`__tests__/privacyPolicy.test.ts` vérifie une partie de l'alignement).
 
-URL de la politique : `https://rme-route.vercel.app/api/legal/privacy`
+URL de la politique : `https://rme-voyage.netlify.app/api/legal/privacy`
 
 ## Questions générales
 
