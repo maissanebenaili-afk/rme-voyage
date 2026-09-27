@@ -156,3 +156,16 @@ Existing building blocks referred to below:
 - **Statut :** BACKLOG. À faire seulement si la règle native reste inactive ET si des clés IA sont posées.
 - **Plus petite expérience :** lire les logs de validation de la règle native avant tout code.
 
+
+### IV-020…023 — Test Lab (digital twin)
+- **Idea:** an isolated environment that plays fake users through the chain intent → journey → offers → recommendations → clicks. No real data, no production calls.
+- **Starting scenarios:**
+  - IV-020: Paris → Taza by car;
+  - IV-021: Paris → Martil with family;
+  - IV-022: Conakry → Casablanca → final destination (Morocco as a hub);
+  - IV-023: France → Omra (official sources only).
+- **Adversarial cases:** missing data, stale price, removed offer, API down, contradicting sources, bad translation, fake owner, changed formality, partner unavailable.
+- **Pass criterion:** the system fails cleanly (UNKNOWN / UNVERIFIABLE / ABORT) and never invents.
+- **Feasibility:** MEDIUM. Starting point: extend the existing Jest suite with scenario tests on `detectIntent`, `nextActionsFor` and `provenanceOf`.
+- **Status:** BACKLOG. First useful step once IV-001 (voice/text → intent) exists.
+- **Framework:** `NORTH_STAR.md`.
