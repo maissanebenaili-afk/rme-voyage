@@ -3,6 +3,7 @@
 // the server route (app/api/events/route.ts): only these names are accepted,
 // and props are cleaned so no personal data can reach the logs.
 export const RME_EVENTS = [
+  'page_view',
   'partner_click',
   'route_computed',
   'reality_check_used',

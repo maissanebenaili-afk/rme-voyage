@@ -6,6 +6,7 @@ import PWAInstall from '@/components/PWAInstall';
 import Accessibility from '@/components/Accessibility';
 import BookAd from '@/components/BookAd';
 import RegisterSW from './register-sw';
+import PageViewBeacon from '@/components/PageViewBeacon';
 import { siteUrl } from '@/lib/siteUrl';
 
 // Fallback fonts (kept for RTL Arabic + safety net); primary display/body
@@ -133,6 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PWAInstall />
         <Accessibility />
         <BookAd />
+        <PageViewBeacon />
       </body>
     </html>
   );
