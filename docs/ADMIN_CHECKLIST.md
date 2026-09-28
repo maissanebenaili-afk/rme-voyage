@@ -41,7 +41,7 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
 | `NEXT_PUBLIC_CONTACT_EMAIL` | `lib/contact.ts` | Adresse de contact affichée | Optionnelle | client | valeur par défaut du code |
 | `NEXT_PUBLIC_APP_DOWNLOAD_URL` | `app/telecharger/page.tsx` | Lien « Télécharger l'app » | Plus tard (lien Play Store) | client | page sans lien store |
 
-- **Optionnel** : relier Netlify au dépôt GitHub (Project configuration → Build & deploy → Link repository) pour un déploiement automatique à chaque fusion. Sinon Claude déploie après chaque fusion.
+- **Netlify est relié au dépôt GitHub depuis le 28/09/2026** : chaque fusion dans `main` est mise en ligne automatiquement (premier déploiement lié : commit `41f4f4a`). Une variable d'environnement modifiée n'est prise en compte qu'au déploiement suivant : Deploys → Trigger deploy → Deploy site.
 
 ## Google Play : dans l'ordre
 
@@ -121,9 +121,38 @@ RME affiche déjà une publicité (le livre) et des liens affiliés.
 - Il faut : un compte Apple Developer (99 $/an), un Mac (ou un service de build macOS) et un iPhone de test.
 - **Risque connu :** RME charge le site dans une coque native. Apple refuse les applications qui ne sont qu'un site web reconditionné (règle 4.2). Avant de payer, il faut décider si RME sort d'abord sur Android seulement (recommandé : coût nul après les 25 $).
 
-## Partenaires et revenus (quand ce sera le moment)
+## Partenaires et revenus : kit de mise en service
 
-- Comptes d'affiliation (ferry, vols, transferts) : identité et RIB du propriétaire. Donner ensuite l'identifiant partenaire, qui n'est pas un secret, pour que les liens soient branchés.
+- Comptes d'affiliation : identité et RIB du propriétaire. Un lien partenaire n'est pas un secret : il peut être donné à Claude, qui le vérifie avant de le poser.
+- **Valeur attendue : le lien complet copié depuis le tableau de bord du partenaire**, jamais un identifiant seul. Le code refuse un lien qui n'est pas en https ou qui pointe vers un autre domaine que ceux listés ; le bouton garde alors le lien public non affilié.
+
+| Variable Netlify | Domaines acceptés par le code | Où le lien apparaît |
+|---|---|---|
+| `DIRECT_FERRIES_AFFILIATE_URL` | directferries.com / .fr, tp.media | bouton ferry (accueil, 56 pages `/trajet`) + comparatif |
+| `GNV_AFFILIATE_URL`, `FRS_AFFILIATE_URL` | www.gnv.it, www.frs.es | bouton ferry si Direct Ferries n'est pas configuré |
+| `TRAVELPAYOUTS_FLIGHT_URL` | tp.media, www.aviasales.com, www.skyscanner.fr | bouton vol + comparatif |
+| `TRAVELPAYOUTS_HOTEL_URL`, `TRAVELPAYOUTS_CAR_URL`, `TRAVELPAYOUTS_INSURANCE_URL` | tp.media | comparatif partenaires |
+| `ESIM_MOROCCO_AFFILIATE_URL` | esimmorocco.org **uniquement** | comparatif. Un lien Airalo (ou tout autre fournisseur) demande d'abord une modification du code : nom et domaine du partenaire |
+| `WISE_AFFILIATE_URL`, `REMITLY_AFFILIATE_URL`, `WORLDREMIT_AFFILIATE_URL`, `WESTERN_UNION_AFFILIATE_URL`, `MONEYGRAM_AFFILIATE_URL` | tout lien https | bouton « Envoyer » du comparateur de transferts |
+
+Ordre : obtenir le lien → le faire vérifier → Netlify → Project configuration → Environment variables → Add a variable (portée Functions ou All scopes) → Trigger deploy.
+
+Test après déploiement :
+1. `https://rme-voyage.netlify.app/api/partners` : le partenaire passe en `"status": "active"` avec son lien.
+2. `https://rme-voyage.netlify.app/api/affiliates?type=ferry&origin=Europe&destination=Maroc` renvoie `"configured": true` (idem `type=flight`).
+3. Le bouton affiche « Lien affilié configuré » ; un clic produit une ligne `partner_click` dans Netlify → Logs → Functions (filtre `rme-event`).
+4. La conversion n'est visible que dans le tableau de bord du partenaire.
+
+Les paris sportifs (`UNIBET_…`, `BETCLIC_…`, `WINAMAX_…`, `BET365_AFFILIATE_URL`) restent hors activation : secteur régulé (ANJ), décision juridique du propriétaire d'abord.
+
+## Google Search Console
+
+1. https://search.google.com/search-console → Ajouter une propriété → **Préfixe d'URL** → `https://rme-voyage.netlify.app`.
+2. Méthode **Balise HTML** : copier la balise affichée (entière, telle quelle).
+3. Netlify → Environment variables → `GOOGLE_SITE_VERIFICATION` = la balise copiée (ou seulement le code entre guillemets), puis Trigger deploy.
+4. Revenir dans Search Console → **Valider**, puis Sitemaps → `sitemap.xml`.
+
+Le code (`lib/siteVerification.ts`) n'écrit dans la page qu'un code simple (lettres, chiffres, `-`, `_`) ; toute autre valeur est ignorée.
 
 ## Suivi des statuts (à mettre à jour, sans jamais anticiper)
 
