@@ -123,6 +123,8 @@ RME affiche déjà une publicité (le livre) et des liens affiliés.
 
 ## Partenaires et revenus : kit de mise en service
 
+Inventaire complet des surfaces de revenus, conditions VERIFIED et modification minimale pour Airalo : `docs/MONETISATION_SURFACES.md`.
+
 - Comptes d'affiliation : identité et RIB du propriétaire. Un lien partenaire n'est pas un secret : il peut être donné à Claude, qui le vérifie avant de le poser.
 - **Valeur attendue : le lien complet copié depuis le tableau de bord du partenaire**, jamais un identifiant seul. Le code refuse un lien qui n'est pas en https ou qui pointe vers un autre domaine que ceux listés ; le bouton garde alors le lien public non affilié.
 
