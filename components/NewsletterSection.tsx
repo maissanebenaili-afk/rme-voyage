@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { trackNewsletterSignup } from '@/lib/analytics';
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState('');
@@ -23,6 +24,7 @@ export default function NewsletterSection() {
         setStatus('error');
         return;
       }
+      trackNewsletterSignup();
       setStatus('success');
       setEmail('');
     } catch {

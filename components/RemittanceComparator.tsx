@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, TrendingDown, Clock, Banknote } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
+import { trackOutboundClick } from '@/lib/analytics';
 
 interface Provider {
   id: string;
@@ -11,7 +12,8 @@ interface Provider {
   appliedRate: number;
   received: number;
   time: string;
-  affiliateUrl: string | null;
+  url: string;
+  sponsored: boolean;
 }
 
 interface RemittanceData {
@@ -152,9 +154,11 @@ export default function RemittanceComparator() {
 
               {/* CTA */}
               <a
-                href={p.affiliateUrl || `https://www.google.com/search?q=${encodeURIComponent(p.name + ' transfert argent Maroc')}`}
+                href={p.url}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={p.sponsored ? 'sponsored noopener noreferrer' : 'noopener noreferrer'}
+                onClick={() => trackOutboundClick({ partner: p.id, placement: 'remittance', sponsored: p.sponsored })}
+                title={p.sponsored ? t('remittanceSponsored') : undefined}
                 className="shrink-0 flex items-center gap-1 rounded-lg bg-[#0f1f3d] text-white text-sm font-medium px-3 py-2 hover:bg-[#0f1f3d]/80 transition-colors"
               >
                 {t('remittanceSend')}
@@ -163,6 +167,11 @@ export default function RemittanceComparator() {
             </div>
           ))}
         </div>
+      )}
+      {data && (
+        <p className="mt-4 text-xs leading-5 text-[#0f1f3d]/60" data-testid="remittance-disclaimer">
+          {t('remittanceDisclaimer')}
+        </p>
       )}
     </section>
   );

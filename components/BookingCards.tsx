@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Ship, Plane, ExternalLink } from "lucide-react";
 import { comparisonFallbacks, verifiedPartnerUrl, type BookingType } from "@/lib/bookingLinks";
+import { trackOutboundClick } from "@/lib/analytics";
 
 type Props = { origin: string; destination: string; date?: string };
 
@@ -50,6 +51,7 @@ export default function BookingCards({ origin, destination, date }: Props) {
             <a key={type} href={partner || comparisonFallbacks[type]} target="_blank"
               rel={partner ? 'sponsored noopener noreferrer' : 'noopener noreferrer'}
               data-testid={`compare-${type}`}
+              onClick={() => trackOutboundClick({ partner: type, placement: 'booking-cards', sponsored: Boolean(partner) })}
               className={`flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>
               <Icon size={22} className="mt-1 shrink-0" aria-hidden />
               <span className="min-w-0 flex-1">

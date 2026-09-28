@@ -71,6 +71,8 @@ export const translations = {
     remittanceRate: 'Taux appliqué',
     remittanceError: 'Taux indisponibles — réessayez plus tard.',
     remittanceMidRate: 'Taux de marché',
+    remittanceDisclaimer: 'Estimation indicative : frais et marges moyens saisis manuellement, non vérifiés en temps réel. Le montant final est celui affiché par le prestataire.',
+    remittanceSponsored: 'Lien affilié',
   },
   en: {
     appName: 'RME Voyage',
@@ -125,6 +127,8 @@ export const translations = {
     remittanceRate: 'Applied rate',
     remittanceError: 'Rates unavailable — please try again later.',
     remittanceMidRate: 'Market rate',
+    remittanceDisclaimer: 'Indicative estimate: average fees and margins entered manually, not checked in real time. The final amount is the one shown by the provider.',
+    remittanceSponsored: 'Affiliate link',
   },
   ar: {
     appName: 'RME فوياج',
@@ -179,6 +183,8 @@ export const translations = {
     remittanceRate: 'السعر المطبق',
     remittanceError: 'الأسعار غير متاحة — حاول مرة أخرى لاحقاً.',
     remittanceMidRate: 'سعر السوق',
+    remittanceDisclaimer: 'تقدير إرشادي: الرسوم والهوامش المتوسطة مُدخلة يدويًا وغير محدَّثة في الوقت الفعلي. المبلغ النهائي هو الذي يعرضه مقدم الخدمة.',
+    remittanceSponsored: 'رابط تابع',
   },
   es: {
     appName: 'RME Voyage',
@@ -233,6 +239,8 @@ export const translations = {
     remittanceRate: 'Tasa aplicada',
     remittanceError: 'Tasas no disponibles — inténtelo de nuevo más tarde.',
     remittanceMidRate: 'Tasa de mercado',
+    remittanceDisclaimer: 'Estimación orientativa: comisiones y márgenes medios introducidos manualmente, no verificados en tiempo real. El importe final es el que muestra el proveedor.',
+    remittanceSponsored: 'Enlace de afiliado',
   },
   da: {
     appName: 'RME Voyage',
@@ -287,6 +295,8 @@ export const translations = {
     remittanceRate: 'السعر المطبق',
     remittanceError: 'الأسعار ما وصلاتش — عاود من بعد.',
     remittanceMidRate: 'سعر السوق',
+    remittanceDisclaimer: 'تقدير تقريبي: الفرايس والهوامش دخلناهم باليد وماشي محيّنين دابا. المبلغ النهائي هو اللي كيبان عند الشركة.',
+    remittanceSponsored: 'لينك أفلييت',
   },
 } as const;
 

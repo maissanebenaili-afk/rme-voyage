@@ -27,3 +27,16 @@ describe('Comparison journey', () => {
     expect(screen.getByTestId('compare-flight')).toHaveAttribute('href', 'https://www.skyscanner.fr/');
   });
 });
+
+describe('Outbound click measurement', () => {
+  it('records the partner, placement and sponsored flag, never the typed route', async () => {
+    const { fireEvent } = await import('@testing-library/react');
+    const { track } = await import('@vercel/analytics');
+    (track as jest.Mock).mockClear();
+    global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
+    render(<BookingCards origin="Paris" destination="Tanger" />);
+    fireEvent.click(screen.getByTestId('compare-ferry'));
+    expect(track).toHaveBeenCalledWith('Outbound Click', { partner: 'ferry', placement: 'booking-cards', sponsored: false });
+    expect(JSON.stringify((track as jest.Mock).mock.calls)).not.toMatch(/Paris|Tanger/);
+  });
+});
