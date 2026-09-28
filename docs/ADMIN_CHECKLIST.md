@@ -132,8 +132,8 @@ Inventaire complet des surfaces de revenus, conditions VERIFIED et modification 
 |---|---|---|
 | `DIRECT_FERRIES_AFFILIATE_URL` | directferries.com / .fr, tp.media | bouton ferry (accueil, 56 pages `/trajet`) + comparatif |
 | `GNV_AFFILIATE_URL`, `FRS_AFFILIATE_URL` | www.gnv.it, www.frs.es | bouton ferry si Direct Ferries n'est pas configuré |
-| `TRAVELPAYOUTS_FLIGHT_URL` | tp.media, www.aviasales.com, www.skyscanner.fr | bouton vol + comparatif |
-| `TRAVELPAYOUTS_HOTEL_URL`, `TRAVELPAYOUTS_CAR_URL`, `TRAVELPAYOUTS_INSURANCE_URL` | tp.media | comparatif partenaires |
+| `TRAVELPAYOUTS_FLIGHT_URL` | tp.media, lien court `<marque>.tp.st`, www.aviasales.com, www.skyscanner.fr | bouton vol + comparatif |
+| `TRAVELPAYOUTS_HOTEL_URL`, `TRAVELPAYOUTS_CAR_URL`, `TRAVELPAYOUTS_INSURANCE_URL` | tp.media, lien court `<marque>.tp.st` | comparatif partenaires |
 | `ESIM_MOROCCO_AFFILIATE_URL` | esimmorocco.org **uniquement** | comparatif. Un lien Airalo (ou tout autre fournisseur) demande d'abord une modification du code : nom et domaine du partenaire |
 | `WISE_AFFILIATE_URL`, `REMITLY_AFFILIATE_URL`, `WORLDREMIT_AFFILIATE_URL`, `WESTERN_UNION_AFFILIATE_URL`, `MONEYGRAM_AFFILIATE_URL` | tout lien https | bouton « Envoyer » du comparateur de transferts |
 

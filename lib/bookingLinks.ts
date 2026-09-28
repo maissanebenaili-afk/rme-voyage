@@ -20,12 +20,22 @@ const partnerHosts: Record<BookingType, string[]> = {
   ],
 };
 
+// Travelpayouts' link generator returns short links on a brand subdomain of
+// tp.st (e.g. https://aviasales.tp.st/AbCd1234). They are accepted only where
+// tp.media, the Travelpayouts long-link host, is already trusted.
+const TRAVELPAYOUTS_SHORT_LINK_HOST = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.tp\.st$/;
+
+export function isAllowedPartnerHost(hostname: string, allowedHosts: readonly string[]): boolean {
+  if (allowedHosts.includes(hostname)) return true;
+  return allowedHosts.includes('tp.media') && TRAVELPAYOUTS_SHORT_LINK_HOST.test(hostname);
+}
+
 export function verifiedPartnerUrl(value: string | undefined, type: BookingType, allowedHosts?: string[]): string | null {
   if (!value?.trim()) return null;
   try {
     const url = new URL(value.trim());
     if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
-    if (!(allowedHosts ?? partnerHosts[type]).includes(url.hostname)) return null;
+    if (!isAllowedPartnerHost(url.hostname, allowedHosts ?? partnerHosts[type])) return null;
     return url.toString();
   } catch {
     return null;

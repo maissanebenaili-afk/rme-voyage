@@ -19,6 +19,23 @@ describe("getPartnerCatalogue", () => {
     );
   });
 
+  describe("Travelpayouts short links", () => {
+    const original = { ...process.env };
+    afterEach(() => { process.env = { ...original }; });
+
+    it("activates the flight partner with a tp.st short link", () => {
+      process.env.TRAVELPAYOUTS_FLIGHT_URL = "https://aviasales.tp.st/AbCd1234";
+      const flights = getPartnerCatalogue().find((partner) => partner.id === "travelpayouts-flights");
+      expect(flights).toMatchObject({ status: "active", affiliateUrl: "https://aviasales.tp.st/AbCd1234" });
+    });
+
+    it("keeps a partner that does not trust tp.media pending", () => {
+      process.env.ESIM_MOROCCO_AFFILIATE_URL = "https://yesim.tp.st/AbCd1234";
+      const esim = getPartnerCatalogue().find((partner) => partner.id === "esim-morocco");
+      expect(esim?.status).toBe("pending");
+    });
+  });
+
   it("never marks a partner active without a validated affiliate URL", () => {
     const catalogue = getPartnerCatalogue();
 
