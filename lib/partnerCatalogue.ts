@@ -1,3 +1,5 @@
+import { isAllowedPartnerHost } from "./bookingLinks";
+
 export type PartnerCategory =
   | "ferry"
   | "flight"
@@ -136,7 +138,7 @@ function verifiedEnvUrl(value: string | undefined, allowedHosts: string[]): stri
   try {
     const url = new URL(value.trim());
     if (url.protocol !== "https:" || url.username || url.password || url.port) return undefined;
-    return allowedHosts.includes(url.hostname) ? url.toString() : undefined;
+    return isAllowedPartnerHost(url.hostname, allowedHosts) ? url.toString() : undefined;
   } catch {
     return undefined;
   }

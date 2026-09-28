@@ -66,8 +66,20 @@ describe('Approved partner links', () => {
     });
   });
 
+  it('accepts the Travelpayouts short link the link generator returns', () => {
+    process.env.TRAVELPAYOUTS_FLIGHT_URL = 'https://aviasales.tp.st/AbCd1234';
+    expect(buildFlightAffiliateUrl(trip)).toBe('https://aviasales.tp.st/AbCd1234');
+  });
+
+  it('accepts a tp.st short link only where tp.media is trusted', () => {
+    expect(verifiedPartnerUrl('https://directferries.tp.st/x1', 'ferry')).toBe('https://directferries.tp.st/x1');
+    expect(verifiedPartnerUrl('https://brand.tp.st/x1', 'other', ['esimmorocco.org'])).toBeNull();
+  });
+
   it.each(['javascript:alert(1)', 'http://tp.media/r', 'https://tp.media.evil.test/',
-    'https://user:password@tp.media/', 'https://tp.media:444/r', 'not-a-url'])(
+    'https://user:password@tp.media/', 'https://tp.media:444/r', 'not-a-url',
+    'http://aviasales.tp.st/x', 'https://tp.st/x', 'https://a.b.tp.st/x',
+    'https://aviasales.tp.st.evil.test/x', 'https://evil-tp.st/x', 'https://-bad.tp.st/x'])(
     'rejects unsafe or unapproved destination %s', (url) => {
       expect(verifiedPartnerUrl(url, 'flight')).toBeNull();
     });
