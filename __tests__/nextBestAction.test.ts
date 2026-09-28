@@ -57,6 +57,11 @@ describe("Next Best Action", () => {
     expect(actions[1].reason).toBe("La liste avant le départ : passeport, CIN, papiers de la voiture.");
   });
 
+  test("flying in and renting a car there: no road trip is proposed", () => {
+    const kinds = plan("Un vol pour Agadir demain, et louer une voiture sur place").actions.map((a) => a.kind);
+    expect(kinds).toEqual(["papers", "flight", "car_rental", "sim", "money"]);
+  });
+
   test("the order depends on the facts, never on which partners are active", () => {
     const sentences = ["Je veux aller au Maroc ce week-end.", "Il faut que je trouve un hôtel à Marrakech.", "un vol pour Nador, puis louer une voiture"];
     const allActive = PRODUCTION.map((p) => partner(p.id, true));

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 import MagicIntent from "../components/lab/MagicIntent";
 import type { PartnerCatalogueEntry } from "../lib/partnerCatalogue";
@@ -27,13 +27,19 @@ describe("Magic Button (Lab page)", () => {
     global.fetch = originalFetch;
   });
 
+  // The /api/partners refresh resolves after mount: let it land inside act().
+  async function renderPage() {
+    render(<MagicIntent partners={PARTNERS} routes={ROUTES} />);
+    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+  }
+
   function ask(sentence: string) {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: sentence } });
     fireEvent.click(screen.getByRole("button", { name: /Comprendre/ }));
   }
 
   it("shows what it understood with the user's words, then an active partner link", async () => {
-    render(<MagicIntent partners={PARTNERS} routes={ROUTES} />);
+    await renderPage();
     ask("Je veux aller au Maroc ce week-end");
 
     expect(screen.getByRole("heading", { name: "J’ai compris" })).toBeInTheDocument();
@@ -54,23 +60,23 @@ describe("Magic Button (Lab page)", () => {
     });
   });
 
-  it("never turns a pending partner into a link", () => {
-    render(<MagicIntent partners={PARTNERS} routes={ROUTES} />);
+  it("never turns a pending partner into a link", async () => {
+    await renderPage();
     ask("Il faut que je trouve un hôtel à Marrakech");
     expect(screen.queryByRole("link", { name: /Trouver où dormir/ })).toBeNull();
     expect(screen.getByText(/Pas encore de partenaire hôtel vérifié/)).toBeInTheDocument();
   });
 
-  it("fills a missing field with one tap", () => {
-    render(<MagicIntent partners={PARTNERS} routes={ROUTES} />);
+  it("fills a missing field with one tap", async () => {
+    await renderPage();
     ask("Je veux aller à Taza.");
     fireEvent.click(screen.getByRole("button", { name: "Bruxelles" }));
     expect(screen.getByRole("textbox")).toHaveValue("Je veux aller à Taza depuis Bruxelles");
     expect(screen.getByText("Depuis Bruxelles")).toBeInTheDocument();
   });
 
-  it("answers in Darija", () => {
-    render(<MagicIntent partners={PARTNERS} routes={ROUTES} />);
+  it("answers in Darija", async () => {
+    await renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Darija" }));
     fireEvent.click(screen.getByRole("button", { name: "bghit nmshi l bled had l weekend" }));
     expect(screen.getByRole("heading", { name: "Fhemt" })).toBeInTheDocument();
@@ -79,8 +85,8 @@ describe("Magic Button (Lab page)", () => {
     expect(screen.getByRole("link", { name: /Qelleb 3la l-vol/ })).toBeInTheDocument();
   });
 
-  it("says so when it understood nothing", () => {
-    render(<MagicIntent partners={PARTNERS} routes={ROUTES} />);
+  it("says so when it understood nothing", async () => {
+    await renderPage();
     ask("bonjour");
     expect(screen.getByText(/Je n’ai pas encore compris/)).toBeInTheDocument();
     expect(screen.queryAllByRole("link")).toHaveLength(0);

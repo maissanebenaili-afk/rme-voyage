@@ -127,10 +127,14 @@ function findHorizon(raw: string, n: string, today: string): Horizon | undefined
 // Money only when a transfer is meant: « pas assez d'argent » is not a need.
 const MONEY_RE = /\b(?:western union|moneygram|wise|remitly|worldremit|transfert d argent|money transfer|virement)\b|\b(?:envoyer|transferer|send|transfer|enviar|sturen|inviare|nsifet|nsift|sifet)\b[^.?!]*?\b(?:argent|sous|flous|floos|dirhams?|euros?|money|dinero|geld|soldi)\b/;
 
+const CAR_RENTAL_RE = /\b(?:location de voiture|location voiture|louer une voiture|voiture de location|rent a car|car rental|rental car|alquiler de coche|alquilar un coche|huurauto|auto huren|noleggio auto|nkri tomobil|kri tomobil|kra tomobil)\b/;
+// The car words of extractTripFacts' mode rule.
+const CAR_WORD_RE = /\b(?:voiture|car|coche|auto|tomobil|tonobil|macchina)\b/;
+
 const NEEDS: Array<[RegExp, Need]> = [
   [/\b(?:hotels?|hebergements?|logements?|riads?|dormir|airbnb|fondo9|fondoq|nbat)\b/, 'hotel'],
   [/\b(?:vols?|billets? d avion|flights?|plane tickets?|vuelos?|vlucht(?:en)?|voli|volo)\b/, 'flight'],
-  [/\b(?:location de voiture|location voiture|louer une voiture|voiture de location|rent a car|car rental|rental car|alquiler de coche|alquilar un coche|huurauto|auto huren|noleggio auto|nkri tomobil|kri tomobil|kra tomobil)\b/, 'car_rental'],
+  [CAR_RENTAL_RE, 'car_rental'],
   [/\b(?:traversees?|crossing|travesia|overtocht|traversata)\b/, 'ferry'],
   [/\b(?:e-?sim|carte sim|sim|internet|forfait|roaming)\b/, 'sim'],
   [MONEY_RE, 'money'],
@@ -152,13 +156,18 @@ export function extractIntent(input: string, today: string): IntentFacts {
   const trip = extractTripFacts(raw);
   const facts: IntentFacts = { ...trip, needs: findNeeds(raw, n) };
 
+  // « louer une voiture » is a need on arrival, not the way the user travels.
+  const rental = n.match(CAR_RENTAL_RE);
+  const modeOnlyFromRental = trip.mode?.value === 'car' && rental !== null && !CAR_WORD_RE.test(n.replace(rental[0], ' '));
+  if (modeOnlyFromRental) delete facts.mode;
+
   const country = trip.destination ? undefined : findCountry(raw, n);
   if (country) facts.country = country;
   const horizon = findHorizon(raw, n, today);
   if (horizon) facts.horizon = horizon;
 
   // A country or a relative date counts as said: completeness() reads `unknown`.
-  facts.unknown = trip.unknown.filter((field) =>
+  facts.unknown = [...trip.unknown, ...(modeOnlyFromRental ? (['mode'] as const) : [])].filter((field) =>
     !(field === 'destination' && country) && !(field === 'when' && horizon));
   return facts;
 }

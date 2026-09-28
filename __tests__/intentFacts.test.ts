@@ -97,6 +97,14 @@ describe("needs", () => {
     expect(extractIntent("je n'ai pas beaucoup d'argent", MONDAY).needs).toEqual([]);
   });
 
+  test("« louer une voiture » is a need on arrival, not the travel mode", () => {
+    const f = extractIntent("Un vol pour Agadir demain, et louer une voiture sur place", MONDAY);
+    expect(f.mode).toBeUndefined();
+    expect(f.unknown).toContain("mode");
+    expect(f.needs.map((n) => n.value)).toEqual(["flight", "car_rental"]);
+    expect(extractIntent("en voiture depuis Paris, puis louer une voiture à Tanger", MONDAY).mode?.value).toBe("car");
+  });
+
   test("several needs come out in the order they were said", () => {
     const f = extractIntent("un vol pour Nador, puis louer une voiture et une carte SIM", MONDAY);
     expect(f.needs.map((n) => n.value)).toEqual(["flight", "car_rental", "sim"]);
