@@ -29,6 +29,7 @@ Existing building blocks referred to below:
 ## Entries
 
 ### IV-001 — Voice → Moment
+- **Update 2026-09-28:** Magic Button prototype, with IV-007. `lib/lab/intentFacts.ts` adds the country alone (« Maroc », « bled » as INFERENCE), relative dates (« ce week-end », « samedi », always INFERENCE) and the needs said out loud. `lib/lab/nextBestAction.ts` picks at most 5 actions with a reason from the user's words, and never shows a pending partner as bookable. Page `/lab/intention`: not linked, not indexed. GO / NO-GO with 5 testers before any wiring.
 - **Update 2026-09-27:** now **EXPERIMENT**. Contract `lib/tripFacts.ts` (`extractTripFacts`): a pure function, no AI, no network. It extracts only what the user said (FACT_USER); everything else goes to `unknown`. Covers FR, Latin-script Darija, NL, ES, IT, EN. Not wired into production.
 - **Problem:** saying « Hadak, je rentre au Maroc samedi avec les enfants » today gets a text answer. Nothing is prepared.
 - **Idea:** pull out the facts the user said: destination, date, family (`IntentConfidence: EXPLICIT`). Propose a « Voyage Maroc » Moment (trip, papers, weather on arrival day), confirm, then pre-fill the planner.
