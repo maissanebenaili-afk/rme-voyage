@@ -8,6 +8,7 @@ import BookAd from '@/components/BookAd';
 import RegisterSW from './register-sw';
 import PageViewBeacon from '@/components/PageViewBeacon';
 import { siteUrl } from '@/lib/siteUrl';
+import { siteVerification } from '@/lib/siteVerification';
 
 // Fallback fonts (kept for RTL Arabic + safety net); primary display/body
 // identity fonts (Boska + General Sans) load via Fontshare <link> below.
@@ -74,6 +75,7 @@ export const metadata: Metadata = {
     },
   },
   category: 'travel',
+  verification: siteVerification(),
 };
 
 export const viewport: Viewport = {
