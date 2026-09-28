@@ -16,6 +16,7 @@ import {
   type RoutePage,
 } from '@/lib/routePages';
 import { siteUrl } from '@/lib/siteUrl';
+import BookingCards from '@/components/BookingCards';
 
 // Données statiques ; on régénère chaque jour pour que la fraîcheur du
 // bulletin carburant affichée reste juste sans nouveau déploiement.
@@ -245,6 +246,18 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
             Calculer ce trajet avec mes hypothèses <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </section>
+
+        {/* Visitors arriving from search land here, not on the planner: give them the same
+            ferry / flight comparison (public links unless a verified affiliate link is set). */}
+        {ferry && (
+          <div className="mt-10">
+            <BookingCards
+              origin={route.originCity}
+              destination={route.destinationCity}
+              crossing={`${ferry.from} → ${ferry.to}`}
+            />
+          </div>
+        )}
 
         {route.crossings.length > 1 && (
           <section aria-labelledby="traversees-title" className="mt-10">
