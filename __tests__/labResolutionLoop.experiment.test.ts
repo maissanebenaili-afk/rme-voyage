@@ -59,13 +59,13 @@ function stateOf(f: IntentFacts) {
   return { saved, steps: saved ? journeyState(trip, new Set(), TODAY, "fr").steps.length : 0 };
 }
 
-const topAction = (f: IntentFacts) => { const a = planNextActions(f, options).actions[0]; return a ? `${a.kind}${a.href ? "" : "(nolink)"}` : "-"; };
+const topAction = (f: IntentFacts) => { const a = planNextActions(f, options).actions[0]; return a ? `${a.kind}${a.href ? "" : "(nolink)"}` : "-"; };\n/** Semantic action identity for the Question Value Gate: reason text is deliberately ignored. */\nconst semanticActionKey = (a: { kind: string; href?: string; partner?: { id: string } }) => `${a.kind}|${a.href ?? ""}|${a.partner?.id ?? ""}`;\nconst semanticPlanKey = (f: IntentFacts) => planNextActions(f, options).actions.map(semanticActionKey).join("||");
 type Row = { id: string; group: string; understood: number; known: number; unknown: string; q1: string; qCount: number; status: string; note: string; gain1: number; naturalGain1: number; uselessQ: number };
 
 describe("resolution loop (report only)", () => {
   test("print", () => {
     const rows: Row[] = [];
-    const qLog = { total: 0, unlocked: 0, changedTop: 0, refinedOnly: 0, nothing: 0 };
+    const qLog = { total: 0, unlocked: 0, changedTop: 0, refinedOnly: 0, nothing: 0, semanticChanged: 0, semanticNothing: 0 };
     for (const sc of SCENARIOS) {
       let sentence = sc.s;
       let f = extractIntent(sentence, TODAY);
@@ -140,7 +140,7 @@ describe("resolution loop (report only)", () => {
     for (const r of rows) tally[r.status] = (tally[r.status] ?? 0) + 1;
     console.log(rows.map(line).join("\n") + "\n\nSTATUS " + JSON.stringify(tally) +
       `\nRANKED first-question gain avg=${(withQ.reduce((a, r) => a + r.gain1, 0) / withQ.length).toFixed(2)} vs NATURAL-order first gain avg=${(withQ.reduce((a, r) => a + r.naturalGain1, 0) / withQ.length).toFixed(2)} (n=${withQ.length})` +
-      `\nQUESTIONS ${JSON.stringify(qLog)}` +
+      `\nQUESTIONS ${JSON.stringify(qLog)}` +\n      `\nSEMANTIC_NOTE: semanticChanged/semanticNothing ignore action reason text and compare kind|href|partner only` +
       `\nUSELESS questions (gain 0 asked first): ${rows.reduce((a, r) => a + r.uselessQ, 0)}`);
     // Floors of what was measured (2026-09-29). One rupture is known and kept visible: an origin outside the three one-tap cities.
     expect(tally.CLOSED).toBeGreaterThanOrEqual(21);
