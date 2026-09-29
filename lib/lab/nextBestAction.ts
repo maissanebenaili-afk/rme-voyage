@@ -371,17 +371,24 @@ const NEED_TEXT: Record<Need, Record<MagicLang, string>> = {
   papers: { fr: 'Les papiers', da: 'L-wraq' },
 };
 
+// « 3/4 » is 3 April in Europe and March 4th elsewhere: read day first, shown as « déduit ».
+function isAmbiguousDigits(evidence: string): boolean {
+  const m = evidence.match(/^(\d{1,2})[/.-](\d{1,2})(?:[/.-]\d{2,4})?$/);
+  return Boolean(m && Number(m[1]) <= 12 && Number(m[2]) <= 12 && m[1] !== m[2]);
+}
+
 /** What RME understood, each item with the user's words that prove it. */
 export function describeFacts(facts: IntentFacts, lang: MagicLang, today: string): UnderstoodItem[] {
   const fr = lang === 'fr';
   const items: UnderstoodItem[] = [];
+  if (facts.alternatives) items.push({ text: facts.alternatives.options.join(fr ? ' ou ' : ' wla '), evidence: facts.alternatives.evidence, inferred: false });
   if (facts.destination) items.push({ text: facts.destination.value.label, evidence: facts.destination.evidence, inferred: false });
   else if (facts.destinationGuess) items.push({ text: facts.destinationGuess.value.label, evidence: facts.destinationGuess.evidence, inferred: true });
   else if (facts.country) items.push({ text: fr ? 'Maroc' : 'L-Maghrib', evidence: facts.country.evidence, inferred: facts.country.status === 'INFERENCE' });
   if (facts.origin) items.push({ text: `${fr ? 'Depuis' : 'Mn'} ${facts.origin.value.label}`, evidence: facts.origin.evidence, inferred: false });
   const when = whenText(facts, lang, today);
   if (facts.horizon && when) items.push({ text: capitalise(when), evidence: facts.horizon.said, inferred: true });
-  else if (facts.when && when) items.push({ text: capitalise(when), evidence: facts.when.evidence, inferred: false });
+  else if (facts.when && when) items.push({ text: capitalise(when), evidence: facts.when.evidence, inferred: isAmbiguousDigits(facts.when.evidence) });
   if (facts.travellers) {
     const { family, children } = facts.travellers.value;
     const text = children ? (fr ? 'Avec les enfants' : 'M3a d-drari') : family ? (fr ? 'En famille' : 'M3a l-3a2ila') : '';
@@ -401,6 +408,13 @@ export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoi
   const fr = lang === 'fr';
   const rows: MissingChoice[] = [];
   if (facts.past || facts.cancelled || facts.direction) return rows;
+  if (facts.alternatives && !facts.destination) {
+    return [{
+      field: 'destination',
+      label: fr ? 'Où' : 'Fin',
+      options: facts.alternatives.options.map((city) => ({ text: city, append: fr ? ` à ${city}` : ` l ${city}` })),
+    }];
+  }
   const hasPlace = Boolean(facts.destination || facts.destinationGuess || facts.country);
   if (facts.purpose) return rows;
   if (!hasPlace) {

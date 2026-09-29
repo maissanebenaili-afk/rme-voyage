@@ -42,6 +42,26 @@ describe("Magic Button (Lab page)", () => {
     fireEvent.click(screen.getByRole("button", { name: /Comprendre/ }));
   }
 
+  it("asks the one question left when two cities are offered, then plans the one chosen", async () => {
+    await renderPage();
+    ask("Tanger ou Nador ?");
+
+    expect(screen.getByText("vous avez dit « Tanger ou Nador »")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Trouver mon vol/ })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Nador" }));
+    expect(screen.getByRole("link", { name: /Trouver mon vol/ })).toHaveAttribute("href", "https://aviasales.tp.st/test");
+    expect(screen.queryByRole("button", { name: "Tanger" })).not.toBeInTheDocument();
+  });
+
+  it("says a cancelled trip is cancelled instead of planning it", async () => {
+    await renderPage();
+    ask("Je ne pars plus à Tanger");
+
+    expect(screen.getByText(/Ce voyage semble annulé/)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Trouver mon vol/ })).not.toBeInTheDocument();
+  });
+
   it("shows what it understood with the user's words, then an active partner link", async () => {
     await renderPage();
     ask("Je veux aller au Maroc ce week-end");

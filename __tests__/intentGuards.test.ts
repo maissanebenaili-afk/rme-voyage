@@ -1,6 +1,6 @@
 import { extractIntent } from "../lib/lab/intentFacts";
 import { evidenceIsSaid } from "../lib/lab/intentBench";
-import { missingChoices, planNextActions, type PlanOptions } from "../lib/lab/nextBestAction";
+import { describeFacts, missingChoices, planNextActions, type PlanOptions } from "../lib/lab/nextBestAction";
 import type { PartnerCatalogueEntry } from "../lib/partnerCatalogue";
 import { ROUTE_PAGES } from "../lib/routePages";
 
@@ -185,6 +185,77 @@ describe("« Casa » is Casablanca, but only as a place", () => {
   test("not the Spanish word for house", () => {
     expect(extractIntent("quiero una casa grande en agosto", TODAY).destination).toBeUndefined();
     expect(extractIntent("la casa de mi madre", TODAY).destination).toBeUndefined();
+  });
+});
+
+describe("two cities offered: RME asks the one question left", () => {
+  test("« Tanger ou Nador ? » becomes « Où : Tanger ou Nador ? »", () => {
+    const facts = extractIntent("Tanger ou Nador ?", TODAY);
+    expect(facts.alternatives).toEqual({ evidence: "Tanger ou Nador", options: ["Tanger", "Nador"] });
+    expect(evidenceIsSaid("Tanger ou Nador ?", facts)).toBe(true);
+    const rows = missingChoices(facts, "fr");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].field).toBe("destination");
+    expect(rows[0].options.map((o) => o.text)).toEqual(["Tanger", "Nador"]);
+    expect(describeFacts(facts, "fr", TODAY)[0]).toMatchObject({ text: "Tanger ou Nador", inferred: false });
+    expect(plan("Tanger ou Nador ?").actions).toEqual([]);
+  });
+
+  test("the answer settles it, in either order", () => {
+    for (const [answer, city] of [[" à Tanger", "Tanger"], [" à Nador", "Nador"]]) {
+      const facts = extractIntent(`Tanger ou Nador ?${answer}`, TODAY);
+      expect(facts.alternatives).toBeUndefined();
+      expect(facts.destination?.value.label).toBe(city);
+      expect(kinds(`Tanger ou Nador ?${answer}`).length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe("« rentrer en France » is a return, not a trip to a Morocco nobody named", () => {
+  test("je dois rentrer en France demain", () => {
+    const s = "Je dois rentrer en France demain";
+    const facts = extractIntent(s, TODAY);
+    expect(facts.direction).toMatchObject({ value: "return", to: "France" });
+    expect(facts.horizon?.start).toBe("2026-09-30");
+    expect(plan(s).actions.map((a) => a.kind)).toEqual(["flight"]);
+    expect(plan(s).actions[0].reason).toMatch(/^Retour vers France, mercredi 30 septembre/);
+    expect(missingChoices(facts, "fr")).toEqual([]);
+    expect(evidenceIsSaid(s, facts)).toBe(true);
+  });
+
+  test("from a Moroccan city to a country", () => {
+    expect(extractIntent("je rentre en Belgique depuis Nador en août", TODAY).direction?.to).toBe("Belgique");
+  });
+
+  test("not a return", () => {
+    for (const s of ["je vais en France", "je rentre au Maroc en août", "je rentre en France après mes vacances au Maroc", "nrje3 l Nador ghedda"]) {
+      expect(extractIntent(s, TODAY).direction).toBeUndefined();
+    }
+  });
+});
+
+describe("dates that can be read two ways are shown as « déduit »", () => {
+  const whenItem = (s: string) => describeFacts(extractIntent(s, TODAY), "fr", TODAY).find((i) => /^\d/.test(i.evidence));
+  test("3/4", () => expect(whenItem("départ le 3/4 à Nador")?.inferred).toBe(true));
+  test("15/08 can only be day first", () => expect(whenItem("départ le 15/08 à Nador")?.inferred).toBe(false));
+  test("3/3 is the same either way", () => expect(whenItem("départ le 3/3 à Nador")?.inferred).toBe(false));
+});
+
+describe("changes of mind and memories, sentence by sentence", () => {
+  test("the last city said wins", () => {
+    expect(extractIntent("Je vais à Tanger. Finalement Nador.", TODAY).destination?.value.label).toBe("Nador");
+  });
+  test("a cancellation after a plan", () => {
+    expect(plan("Je pars à Tanger. Je ne pars plus.").actions).toEqual([]);
+  });
+  test("a memory is not a plan", () => {
+    expect(plan("Quand j'étais à Tanger, c'était génial").actions).toEqual([]);
+  });
+  test("a future project is a plan", () => {
+    const facts = extractIntent("Je pense aller à Tanger l'été prochain", TODAY);
+    expect(facts.past).toBeUndefined();
+    expect(facts.horizon).toBeDefined();
+    expect(kinds("Je pense aller à Tanger l'été prochain")).toContain("flight");
   });
 });
 

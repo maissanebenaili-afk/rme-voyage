@@ -8,7 +8,7 @@
  */
 import { extractTripFacts, LAB_MOROCCAN_CITIES, norm, type Fact, type TripFacts, type TripField } from '@/lib/tripFacts';
 import { extractArabicFacts, type RelativeRule } from '@/lib/lab/arabicIntent';
-import { BROKEN_MODE_RE, cancelledTrip, modeIsUndecided, numericDate, pastStory, presenceOrigin, returnTrip, saidAt, withoutAlternativeCities, withoutNegatedCities, type Direction } from '@/lib/lab/intentGuards';
+import { BROKEN_MODE_RE, alternativeCities, cancelledTrip, modeIsUndecided, numericDate, pastStory, presenceOrigin, returnTrip, saidAt, withoutAlternativeCities, withoutNegatedCities, type Alternatives, type Direction } from '@/lib/lab/intentGuards';
 
 export type Need = 'flight' | 'hotel' | 'car_rental' | 'ferry' | 'sim' | 'money' | 'papers';
 
@@ -32,6 +32,8 @@ export type IntentFacts = TripFacts & {
   past?: { evidence: string };
   /** « je ne pars plus à Tanger »: the trip is off. */
   cancelled?: { evidence: string };
+  /** « Tanger ou Nador »: two cities offered, none chosen. */
+  alternatives?: Alternatives;
   /** In the order they were said. */
   needs: Array<Fact<Need>>;
 };
@@ -223,7 +225,8 @@ const TRIP_FIELDS: TripField[] = ['destination', 'origin', 'when', 'travellers',
 export function extractIntent(input: string, today: string): IntentFacts {
   const raw = typeof input === 'string' ? input.slice(0, MAX_CHARS) : '';
   const n = norm(raw);
-  const trip = extractTripFacts(withoutAlternativeCities(withoutNegatedCities(raw)));
+  const withoutNegated = withoutNegatedCities(raw);
+  const trip = extractTripFacts(withoutAlternativeCities(withoutNegated));
   const arabic = extractArabicFacts(raw);
   const facts: IntentFacts = { ...trip, needs: findNeeds(raw, n) };
 
@@ -262,6 +265,8 @@ export function extractIntent(input: string, today: string): IntentFacts {
     facts.horizon = { said: arabic.when.said, start: iso(start), end: iso(end), status: 'INFERENCE' };
   }
 
+  const offered = alternativeCities(withoutNegated);
+  if (offered) facts.alternatives = offered;
   facts.when ??= numericDate(raw, n);
   const off = cancelledTrip(raw, n);
   if (off) facts.cancelled = { evidence: off };

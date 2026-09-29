@@ -55,6 +55,9 @@ export function presenceOrigin(raw: string, n: string, facts: TripFacts): TripFa
 }
 
 const RETURN_MARKER = /\b(?:retour|rentre|rentrer|rentrons|retourne|retourner|back|return|returning|terug|volver|regreso|vuelta|kanrje3|knrje3|nrje3|rje3|kanrjaa|rjou3)\b/;
+const EUROPE_COUNTRY = /\b(?:en|au|aux|vers|a|l|ila)\s+(france|belgique|espagne|allemagne|pays[- ]bas|italie|suisse|europe|angleterre|royaume[- ]uni|luxembourg|portugal)\b/;
+const COUNTRY_LABEL: Record<string, string> = { 'pays bas': 'Pays-Bas', 'pays-bas': 'Pays-Bas', 'royaume uni': 'Royaume-Uni', 'royaume-uni': 'Royaume-Uni' };
+const MOROCCO_WORD = /\b(?:maroc|morocco|marruecos|marokko|l?bled)\b/;
 const LEAVING_MOROCCO = /\b(?:du|de|depuis|from|desde|vanaf|men|mn|d)\s+(?:le\s+|l\s+)?(?:l?bled|maroc|morocco|marruecos|marokko)\b/;
 
 /**
@@ -66,15 +69,21 @@ export function returnTrip(raw: string, n: string, facts: TripFacts): { directio
   const marker = n.match(RETURN_MARKER);
   const leaving = n.match(LEAVING_MOROCCO);
   const europe = ORIGINS.find((o) => new RegExp(`\\b${norm(o.label)}\\b`).test(n));
-  const toEurope = europe ? { to: europe.label } : {};
+  const country = n.match(EUROPE_COUNTRY);
+  const countryName = country ? (COUNTRY_LABEL[country[1]] ?? country[1].charAt(0).toUpperCase() + country[1].slice(1)) : undefined;
+  const toEurope = europe ? { to: europe.label } : countryName ? { to: countryName } : {};
   const said = (m: RegExpMatchArray) => saidAt(raw, n, m.index ?? 0, m[0].length);
 
   const fromMoroccanCity = facts.origin?.value.countryCode === 'ma' && !facts.destination;
-  if (fromMoroccanCity && (marker || europe)) {
+  if (fromMoroccanCity && (marker || europe || country)) {
     return { direction: { value: 'return', status: 'INFERENCE', evidence: facts.origin!.evidence, ...toEurope } };
   }
-  if (leaving && !facts.destination && (marker || europe)) {
+  if (leaving && !facts.destination && (marker || europe || country)) {
     return { direction: { value: 'return', status: 'INFERENCE', evidence: said(leaving), ...toEurope } };
+  }
+  // « je dois rentrer en France demain »: coming back, from a Morocco nobody had to name.
+  if (marker && country && !europe && !facts.destination && !facts.origin && !MOROCCO_WORD.test(n)) {
+    return { direction: { value: 'return', status: 'INFERENCE', evidence: said(marker), ...toEurope } };
   }
   // « retour Casablanca Paris »: a Moroccan city straight followed by a European one.
   if (marker && europe && facts.destination && !facts.origin) {
@@ -115,19 +124,33 @@ const OR_BETWEEN = /^\s*(?:ou|or|of|wla|walla|o)\s+(?:(?:a|au|vers|pour|to|l|in|
 
 const blank = (text: string, index: number, length: number) => text.slice(0, index) + ' '.repeat(length) + text.slice(index + length);
 
-/** « Tanger ou Nador » offers two cities: no destination is chosen for the user. */
-export function withoutAlternativeCities(raw: string): string {
+function findAlternatives(raw: string): { a: NonNullable<TripFacts['destination']>; b: NonNullable<TripFacts['destination']>; ai: number; bi: number } | undefined {
   const b = extractTripFacts(raw).destination;
   const n = norm(raw);
-  if (!b || b.value.country !== 'MA' || n.length !== raw.length) return raw;
+  if (!b || b.value.country !== 'MA' || n.length !== raw.length) return undefined;
   const bi = n.lastIndexOf(norm(b.evidence));
-  if (bi < 0 || !OR_BEFORE.test(n.slice(0, bi))) return raw;
-  const withoutB = blank(raw, bi, b.evidence.length);
-  const a = extractTripFacts(withoutB).destination;
-  if (!a || a.value.country !== 'MA') return raw;
+  if (bi < 0 || !OR_BEFORE.test(n.slice(0, bi))) return undefined;
+  const a = extractTripFacts(blank(raw, bi, b.evidence.length)).destination;
+  if (!a || a.value.country !== 'MA') return undefined;
   const ai = n.lastIndexOf(norm(a.evidence), bi);
-  if (ai < 0 || !OR_BETWEEN.test(n.slice(ai + a.evidence.length, bi))) return raw;
-  return blank(withoutB, ai, a.evidence.length);
+  if (ai < 0 || !OR_BETWEEN.test(n.slice(ai + a.evidence.length, bi))) return undefined;
+  return { a, b, ai, bi };
+}
+
+/** « Tanger ou Nador » offers two cities: no destination is chosen for the user. */
+export function withoutAlternativeCities(raw: string): string {
+  const found = findAlternatives(raw);
+  if (!found) return raw;
+  return blank(blank(raw, found.bi, found.b.evidence.length), found.ai, found.a.evidence.length);
+}
+
+export type Alternatives = { evidence: string; options: string[] };
+
+/** The two cities offered, with the user's own words, so RME can ask the one question left. */
+export function alternativeCities(raw: string): Alternatives | undefined {
+  const found = findAlternatives(raw);
+  if (!found) return undefined;
+  return { evidence: raw.slice(found.ai, found.bi + found.b.evidence.length), options: [found.a.value.label, found.b.value.label] };
 }
 
 const MODE_AFTER = '(?!\\s+(?:en|par|via)\\s+(?:voiture|avion|ferry|bateau|car|train|bus))';
