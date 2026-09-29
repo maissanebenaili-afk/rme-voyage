@@ -113,7 +113,7 @@ describe("the « J'ai compris » card", () => {
   test("missing rows: tapping a choice is enough for the parser to read it", () => {
     const sentence = "Je veux aller à Taza";
     const rows = missingChoices(extractIntent(sentence, MONDAY), "fr");
-    expect(rows.map((r) => r.field)).toEqual(["origin", "when"]);
+    expect(rows.map((r) => r.field)).toEqual(["origin", "when", "mode"]);
     const completed = extractIntent(sentence + rows[0].options[1].append + rows[1].options[0].append, MONDAY);
     expect(completed.origin?.value.label).toBe("Bruxelles");
     expect(completed.horizon?.start).toBe("2026-10-03");

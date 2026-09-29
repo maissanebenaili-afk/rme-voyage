@@ -7,7 +7,7 @@
 import type { PartnerCatalogueEntry } from '@/lib/partnerCatalogue';
 import { buildShareUrl } from '@/lib/tripShare';
 import { norm } from '@/lib/tripFacts';
-import type { IntentFacts, Need } from '@/lib/lab/intentFacts';
+import { extractIntent, type IntentFacts, type Need } from '@/lib/lab/intentFacts';
 
 export type MagicLang = 'fr' | 'da';
 export type MagicActionKind = 'papers' | 'flight' | 'route' | 'local_transfer' | 'hotel' | 'car_rental' | 'money' | 'sim';
@@ -73,6 +73,16 @@ const NOT_VERIFIED: Partial<Record<MagicActionKind, Record<MagicLang, string>>> 
   local_transfer: { fr: 'Pas encore de partenaire transport local vérifié dans RME.', da: 'Mazal ma kayn partenaire dyal transport m2akked f RME.' },
 };
 
+const IMPOSSIBLE_DATE_NOTE: Record<MagicLang, string> = {
+  fr: 'Cette date n’existe pas dans le calendrier : vérifiez-la.',
+  da: 'Had tarikh ma kaynch f l-calendrier: t2akked mno.',
+};
+
+const PAST_DATE_NOTE: Record<MagicLang, string> = {
+  fr: 'La date indiquée est déjà passée : vérifiez-la.',
+  da: 'Had tarikh fat: t2akked mno.',
+};
+
 const PILGRIMAGE_NOTE: Record<MagicLang, string> = {
   fr: 'Omra et Hajj : formalités uniquement auprès de la source officielle.',
   da: 'Omra w l-7ajj: l-wraq ghir mn l-masdar r-rasmi.',
@@ -120,9 +130,24 @@ export function departureDate(facts: IntentFacts, today: string): string | undef
   const t0 = Date.parse(`${today}T00:00:00Z`);
   if (!when?.month || !when.day || !Number.isFinite(t0)) return undefined;
   const thisYear = new Date(t0).getUTCFullYear();
-  let start = Date.UTC(when.year ?? thisYear, when.month - 1, when.day);
-  if (!when.year && start < t0) start = Date.UTC(thisYear + 1, when.month - 1, when.day);
-  return new Date(start).toISOString().slice(0, 10);
+  let year = when.year ?? thisYear;
+  if (!when.year && Date.UTC(year, when.month - 1, when.day) < t0) year += 1;
+  const start = new Date(Date.UTC(year, when.month - 1, when.day));
+  // « le 31 février » is not a date: never let it roll over to March.
+  if (start.getUTCMonth() !== when.month - 1 || start.getUTCDate() !== when.day) return undefined;
+  return start.toISOString().slice(0, 10);
+}
+
+/** A day and month the calendar does not have, e.g. « le 31 février ». */
+function isImpossibleDate(facts: IntentFacts, today: string): boolean {
+  const when = facts.when?.value;
+  return Boolean(when?.month && when.day && !departureDate(facts, today));
+}
+
+/** A day the user wrote with its year, already gone. */
+function isPastDate(facts: IntentFacts, today: string): boolean {
+  const date = facts.when?.value.year ? departureDate(facts, today) : undefined;
+  return Boolean(date && date < today);
 }
 
 export function daysUntilDeparture(facts: IntentFacts, today: string): number | undefined {
@@ -216,6 +241,8 @@ export function planNextActions(facts: IntentFacts, { partners, routes, today, l
   }
 
   const notes: string[] = [];
+  if (isImpossibleDate(facts, today)) notes.push(IMPOSSIBLE_DATE_NOTE[lang]);
+  else if (isPastDate(facts, today)) notes.push(PAST_DATE_NOTE[lang]);
   const days = daysUntilDeparture(facts, today);
   const mode = facts.mode?.value;
 
@@ -322,14 +349,28 @@ export function describeFacts(facts: IntentFacts, lang: MagicLang, today: string
   return items;
 }
 
-export type MissingChoice = { field: 'origin' | 'when'; label: string; options: Array<{ text: string; append: string }> };
+export type MissingChoice = { field: 'destination' | 'origin' | 'when' | 'mode'; label: string; options: Array<{ text: string; append: string }> };
 
-/** At most two one-tap rows for what is still missing; a choice is appended to the sentence and parsed again. */
+/** Every one-tap row that could fill a missing field; a choice is appended to the sentence and parsed again. */
 export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoice[] {
   const fr = lang === 'fr';
   const rows: MissingChoice[] = [];
   const hasPlace = Boolean(facts.destination || facts.destinationGuess || facts.country);
-  if (!hasPlace || facts.purpose) return rows;
+  if (facts.purpose) return rows;
+  if (!hasPlace) {
+    // « Je pars demain » with no place: where is the one answer that unlocks everything.
+    const said = Boolean(facts.when || facts.horizon || facts.needs.length || facts.origin || facts.mode);
+    if (said) {
+      rows.push({
+        field: 'destination',
+        label: fr ? 'Où' : 'Fin',
+        options: fr
+          ? [{ text: 'Maroc', append: ' au Maroc' }, { text: 'Tanger', append: ' à Tanger' }, { text: 'Nador', append: ' à Nador' }, { text: 'Casablanca', append: ' à Casablanca' }]
+          : [{ text: 'L-Maghrib', append: ' l l-maghrib' }, { text: 'Tanja', append: ' l Tanja' }, { text: 'Nador', append: ' l Nador' }, { text: 'Casablanca', append: ' l Casablanca' }],
+      });
+    }
+    return rows;
+  }
   if (!facts.origin) {
     rows.push({
       field: 'origin',
@@ -346,5 +387,38 @@ export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoi
         : [{ text: 'Had l weekend', append: ' had l weekend' }, { text: 'F yolyoz', append: ' f yolyoz' }, { text: 'F ghusht', append: ' f ghusht' }],
     });
   }
+  if (!facts.mode && facts.origin?.value.countryCode !== 'ma') {
+    rows.push({
+      field: 'mode',
+      label: fr ? 'Comment' : 'Kifach',
+      options: fr
+        ? [{ text: 'Avion', append: ' en avion' }, { text: 'Voiture', append: ' en voiture' }, { text: 'Ferry', append: ' en ferry' }]
+        : [{ text: 'Tiyara', append: ' b tiyara' }, { text: 'Tomobil', append: ' b tomobil' }, { text: 'Babor', append: ' b l-babor' }],
+    });
+  }
   return rows;
+}
+
+const actionKey = (a: MagicAction) => `${a.kind}|${a.href ?? ''}|${a.reason}`;
+
+function planDistance(a: MagicAction[], b: MagicAction[]): number {
+  let changed = Math.abs(a.length - b.length);
+  for (let i = 0; i < Math.min(a.length, b.length); i++) if (actionKey(a[i]) !== actionKey(b[i])) changed++;
+  return changed;
+}
+
+/**
+ * The questions worth asking, best first: each row is scored by how much the
+ * plan changes, on average, when the user taps one of its answers. Pure: it
+ * only replays the parser and the planner on the sentence plus each answer.
+ */
+export function rankedChoices(sentence: string, options: PlanOptions, max = 2): Array<MissingChoice & { gain: number }> {
+  const trimmed = sentence.replace(/[\s.!?]+$/, '');
+  const base = planNextActions(extractIntent(trimmed, options.today), options).actions;
+  const scored = missingChoices(extractIntent(trimmed, options.today), options.lang).map((row) => {
+    const gains = row.options.map((o) => planDistance(base, planNextActions(extractIntent(trimmed + o.append, options.today), options).actions));
+    return { ...row, gain: gains.reduce((sum, g) => sum + g, 0) / gains.length };
+  });
+  // Stable: equal gains keep the natural order (destination, origin, when, mode).
+  return scored.map((row, i) => ({ row, i })).sort((x, y) => y.row.gain - x.row.gain || x.i - y.i).slice(0, max).map(({ row }) => row);
 }

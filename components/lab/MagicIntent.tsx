@@ -8,8 +8,8 @@ import { doneActions, journeyState } from "@/lib/lab/journeyState";
 import {
   departureDate,
   describeFacts,
-  missingChoices,
   planNextActions,
+  rankedChoices,
   type MagicAction,
   type MagicActionKind,
   type MagicLang,
@@ -141,7 +141,8 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
     return {
       facts,
       understood: describeFacts(facts, lang, analysed.today),
-      missing: missingChoices(facts, lang),
+      // The two questions whose answers change the plan the most.
+      missing: rankedChoices(analysed.sentence, { partners, routes, today: analysed.today, lang, done }),
       plan: planNextActions(facts, { partners, routes, today: analysed.today, lang, done }),
     };
   }, [analysed, lang, partners, routes, ticked, travel.modeTransport, isHydrated]);

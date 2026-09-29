@@ -151,6 +151,9 @@ export function extractTripFacts(input: string): TripFacts {
   const raw = typeof input === 'string' ? input.slice(0, MAX_CHARS) : '';
   const n = norm(raw).replace(/\s*(?:→|->|=>)\s*/g, ' → ');
   const facts: TripFacts = { unknown: [] };
+  // Evidence is the user's own spelling (« Tanja », « août »), never RME's label.
+  // norm() keeps the length of NFC text; with an arrow rewritten, the normalised text is used.
+  const said = (index: number, length: number) => (raw.length === n.length ? raw : n).slice(index, index + length);
 
   // Origin: a known departure city right after "depuis / from / de …", or before an arrow.
   for (const o of ORIGINS) {
@@ -161,7 +164,7 @@ export function extractTripFacts(input: string): TripFacts {
       const before = n.slice(0, idx);
       const after = n.slice(idx + on.length);
       if (FROM_RE.test(before) || /^\s*→/.test(after)) {
-        facts.origin = { value: { label: o.label, countryCode: o.countryCode }, status: 'FACT_USER', evidence: m[0] };
+        facts.origin = { value: { label: o.label, countryCode: o.countryCode }, status: 'FACT_USER', evidence: said(idx, m[0].length) };
         break;
       }
     }
@@ -174,11 +177,11 @@ export function extractTripFacts(input: string): TripFacts {
   for (const h of hits) {
     const before = n.slice(0, h.index);
     if (!facts.via && VIA_RE.test(before)) {
-      facts.via = { value: { key: h.key, label: h.label }, status: 'FACT_USER', evidence: h.label };
+      facts.via = { value: { key: h.key, label: h.label }, status: 'FACT_USER', evidence: said(h.index, h.end - h.index) };
       continue;
     }
     if (!facts.origin && (FROM_RE.test(before) || /^\s*→/.test(n.slice(h.end)))) {
-      facts.origin = { value: { label: h.label, countryCode: 'ma' }, status: 'FACT_USER', evidence: h.label };
+      facts.origin = { value: { label: h.label, countryCode: 'ma' }, status: 'FACT_USER', evidence: said(h.index, h.end - h.index) };
       continue;
     }
     destination = h; // the last Moroccan city that is neither origin nor via
@@ -186,13 +189,14 @@ export function extractTripFacts(input: string): TripFacts {
 
   if (OMRA_RE.test(n) || HAJJ_RE.test(n)) {
     const isHajj = HAJJ_RE.test(n) && !/\b(omra|oumra|umrah|umra)\b/.test(n);
-    facts.purpose = { value: isHajj ? 'hajj' : 'omra', status: 'FACT_USER', evidence: (n.match(isHajj ? HAJJ_RE : OMRA_RE) ?? [''])[0] };
+    const p = n.match(isHajj ? HAJJ_RE : OMRA_RE);
+    facts.purpose = { value: isHajj ? 'hajj' : 'omra', status: 'FACT_USER', evidence: p ? said(p.index ?? 0, p[0].length) : '' };
     if (!destination) {
       facts.destination = { value: { key: 'makkah', label: 'La Mecque', country: 'SA' }, status: 'FACT_USER', evidence: facts.purpose.evidence };
     }
   }
   if (destination) {
-    facts.destination = { value: { key: destination.key, label: destination.label, country: 'MA' }, status: 'FACT_USER', evidence: destination.label };
+    facts.destination = { value: { key: destination.key, label: destination.label, country: 'MA' }, status: 'FACT_USER', evidence: said(destination.index, destination.end - destination.index) };
   }
 
   // When: month (+ optional valid day), year only if written.
@@ -207,13 +211,13 @@ export function extractTripFacts(input: string): TripFacts {
     }
     const yearMatch = n.match(/\b(20\d{2})\b/);
     if (yearMatch) when.year = Number(yearMatch[1]);
-    facts.when = { value: when, status: 'FACT_USER', evidence: m[0] };
+    facts.when = { value: when, status: 'FACT_USER', evidence: said(m.index ?? 0, m[0].length) };
     break;
   }
 
   for (const [re, mode] of MODES) {
     const m = n.match(re);
-    if (m) { facts.mode = { value: mode, status: 'FACT_USER', evidence: m[0] }; break; }
+    if (m) { facts.mode = { value: mode, status: 'FACT_USER', evidence: said(m.index ?? 0, m[0].length) }; break; }
   }
 
   const family = n.match(FAMILY_RE);
@@ -222,7 +226,7 @@ export function extractTripFacts(input: string): TripFacts {
     facts.travellers = {
       value: { ...(family ? { family: true } : {}), ...(children ? { children: true } : {}) },
       status: 'FACT_USER',
-      evidence: (family ?? children)![0],
+      evidence: said((family ?? children)!.index ?? 0, (family ?? children)![0].length),
     };
   }
 
