@@ -1,4 +1,5 @@
 import { verifiedPartnerUrl } from './bookingLinks';
+import { prefilledFlightLink } from '@/lib/flightSearch';
 
 export type AffiliateProvider = 'travelpayouts' | 'directferries';
 export type FerryAffiliateProvider = 'direct_ferries' | 'gnv' | 'frs';
@@ -9,6 +10,15 @@ type Trip = { origin: string; destination: string; date?: string };
 // product ID or support for city/date deep links. Never manufacture those.
 export function buildFlightAffiliateUrl(_params: Trip) {
   return verifiedPartnerUrl(process.env.TRAVELPAYOUTS_FLIGHT_URL, 'flight');
+}
+
+// The same rule holds for pre-filled links: the tracking part is a deep link
+// generated in the Travelpayouts dashboard (TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE,
+// its Aviasales address replaced by {url}); only the documented Aviasales search
+// address is built here. Without that template, or for a city without an
+// airport, this returns null and the generic dashboard link above is used.
+export function buildPrefilledFlightUrl(params: Trip) {
+  return verifiedPartnerUrl(prefilledFlightLink(process.env.TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE, params) ?? undefined, 'flight');
 }
 
 // Tried in this order; the first partner with a complete, verified dashboard

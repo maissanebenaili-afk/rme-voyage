@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildFerryAffiliateUrl, buildFlightAffiliateUrl } from "@/lib/affiliate";
+import { buildFerryAffiliateUrl, buildFlightAffiliateUrl, buildPrefilledFlightUrl } from "@/lib/affiliate";
 
 type AffiliateType = "flight" | "ferry";
 
@@ -32,11 +32,13 @@ export function GET(request: NextRequest) {
   }
 
   if (type === "flight") {
-    const affiliateUrl = buildFlightAffiliateUrl({ origin, destination, date });
+    const prefilledUrl = buildPrefilledFlightUrl({ origin, destination, date });
+    const affiliateUrl = prefilledUrl ?? buildFlightAffiliateUrl({ origin, destination, date });
     return NextResponse.json({
       configured: Boolean(affiliateUrl),
       affiliateUrl,
       provider: affiliateUrl ? "travelpayouts" : null,
+      ...(prefilledUrl ? { prefilled: true } : {}),
     }, { headers: { 'Cache-Control': 'no-store' } });
   }
 

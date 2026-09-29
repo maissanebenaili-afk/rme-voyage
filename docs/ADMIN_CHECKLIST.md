@@ -38,6 +38,7 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `lib/supabase/*`, `proxy.ts` | Comptes, voyages, conseils | Optionnelles | client (publiques par nature) | mode sans compte ; `/api/trips` et `/api/tips` fermées en production |
 | `NEXT_PUBLIC_APP_URL` | `lib/siteUrl.ts`, `proxy.ts` | Adresse canonique, CORS | Optionnelle | client | `https://rme-voyage.netlify.app` |
 | `TRAVELPAYOUTS_FLIGHT_URL` | `lib/affiliate.ts`, `lib/partnerCatalogue.ts` | Lien affilié vols | Optionnelle | serveur | le lien vol n'est pas affiché |
+| `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE` | `lib/flightSearch.ts`, `lib/affiliate.ts` | Lien vol qui s'ouvre sur le trajet déjà rempli | Optionnelle | serveur | lien vol générique (`TRAVELPAYOUTS_FLIGHT_URL`) |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | `lib/contact.ts` | Adresse de contact affichée | Optionnelle | client | valeur par défaut du code |
 | `NEXT_PUBLIC_APP_DOWNLOAD_URL` | `app/telecharger/page.tsx` | Lien « Télécharger l'app » | Plus tard (lien Play Store) | client | page sans lien store |
 
@@ -133,11 +134,20 @@ Inventaire complet des surfaces de revenus, conditions VERIFIED et modification 
 | `DIRECT_FERRIES_AFFILIATE_URL` | directferries.com / .fr, tp.media | bouton ferry (accueil, 56 pages `/trajet`) + comparatif |
 | `GNV_AFFILIATE_URL`, `FRS_AFFILIATE_URL` | www.gnv.it, www.frs.es | bouton ferry si Direct Ferries n'est pas configuré |
 | `TRAVELPAYOUTS_FLIGHT_URL` | tp.media, lien court `<marque>.tp.st`, www.aviasales.com, www.skyscanner.fr | bouton vol + comparatif |
+| `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE` | tp.media, lien court `<marque>.tp.st` ; un seul `{url}` | bouton vol des pages `/trajet` et du planificateur, pré-rempli (ville, date) |
 | `TRAVELPAYOUTS_HOTEL_URL`, `TRAVELPAYOUTS_CAR_URL`, `TRAVELPAYOUTS_INSURANCE_URL` | tp.media, lien court `<marque>.tp.st` | comparatif partenaires |
 | `ESIM_MOROCCO_AFFILIATE_URL` | esimmorocco.org **uniquement** | comparatif. Un lien Airalo (ou tout autre fournisseur) demande d'abord une modification du code : nom et domaine du partenaire |
 | `WISE_AFFILIATE_URL`, `REMITLY_AFFILIATE_URL`, `WORLDREMIT_AFFILIATE_URL`, `WESTERN_UNION_AFFILIATE_URL`, `MONEYGRAM_AFFILIATE_URL` | tout lien https | bouton « Envoyer » du comparateur de transferts |
 
 Ordre : obtenir le lien → le faire vérifier → Netlify → Project configuration → Environment variables → Add a variable (portée Functions ou All scopes) → Trigger deploy.
+
+**Lien vol pré-rempli (`TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE`).** Le suivi n'est jamais fabriqué par RME : il vient d'un lien généré par le tableau de bord.
+1. Dans Travelpayouts, générer un lien partenaire Aviasales pour une recherche d'exemple, par exemple `https://www.aviasales.com/search/PAR0310TNG1` (Paris, 3 octobre, Tanger, 1 passager).
+2. Copier le lien **long** obtenu (`https://tp.media/r?…&u=…`), pas un lien court.
+3. Dans ce lien, remplacer la valeur de `u=` (l'adresse Aviasales encodée) par `{url}`.
+4. Le donner à vérifier, puis le poser dans Netlify et relancer le déploiement.
+
+Sans cette variable, ou pour une ville sans aéroport (Utrecht, Meknès, Taza…), le bouton garde le lien générique. Chaque clic vol mesure `prefilled` (vrai ou faux) dans `partner_click`. Le suivi d'un « SubID » par emplacement est à confirmer sur un lien généré par le tableau de bord avant d'être ajouté.
 
 Test après déploiement :
 1. `https://rme-voyage.netlify.app/api/partners` : le partenaire passe en `"status": "active"` avec son lien.
