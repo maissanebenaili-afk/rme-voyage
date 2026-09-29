@@ -54,6 +54,17 @@ describe("Magic Button (Lab page)", () => {
     expect(screen.queryByRole("button", { name: "Tanger" })).not.toBeInTheDocument();
   });
 
+  it("does not offer to save a return trip: the saved journey only knows outbound trips", async () => {
+    await renderPage();
+    ask("Je rentre du Maroc à Bruxelles dimanche");
+    expect(screen.getByRole("link", { name: /Trouver mon vol/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Enregistrer ce voyage/ })).not.toBeInTheDocument();
+    expect(window.localStorage.getItem(TRAVEL_STORAGE_KEY)).toBeNull();
+
+    ask("Paris Tanger samedi");
+    expect(screen.getByRole("button", { name: /Enregistrer ce voyage/ })).toBeInTheDocument();
+  });
+
   it("says a cancelled trip is cancelled instead of planning it", async () => {
     await renderPage();
     ask("Je ne pars plus à Tanger");

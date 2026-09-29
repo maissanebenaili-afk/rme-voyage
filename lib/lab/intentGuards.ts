@@ -113,10 +113,16 @@ const MODE_CHOICE = new RegExp(`\\b(${MODE_WORD})\\b\\s+(?:ou|or|of|o|oder|wla|w
 
 const modeOf = (word: string) => (/voiture|car|coche|auto|tomobil|tonobil/.test(word) ? 'car' : /avion|plane|flight|vuelo|vliegtuig|tiyara|tayyara/.test(word) ? 'plane' : 'ferry');
 
-/** « en avion ou en voiture »: two modes offered is no mode chosen. */
-export function modeIsUndecided(n: string): boolean {
+/**
+ * « en avion ou en voiture »: two modes offered is no mode chosen, until the user says one
+ * after it (« … en voiture »): what is said last decides, as for the city.
+ */
+export function resolveModeChoice(raw: string, n: string): { undecided: boolean; later?: TripFacts['mode'] } {
   const m = n.match(MODE_CHOICE);
-  return Boolean(m && modeOf(m[1]) !== modeOf(m[2]));
+  if (!m || modeOf(m[1]) === modeOf(m[2])) return { undecided: false };
+  const text = raw.length === n.length ? raw : n;
+  const later = extractTripFacts(text.slice((m.index ?? 0) + m[0].length)).mode;
+  return later ? { undecided: false, later } : { undecided: true };
 }
 
 const OR_BEFORE = /\b(?:ou|or|of|wla|walla|o)\s+(?:(?:a|au|vers|pour|to|l|in|naar)\s+)?$/;

@@ -8,7 +8,7 @@
  */
 import { extractTripFacts, LAB_MOROCCAN_CITIES, norm, type Fact, type TripFacts, type TripField } from '@/lib/tripFacts';
 import { extractArabicFacts, type RelativeRule } from '@/lib/lab/arabicIntent';
-import { BROKEN_MODE_RE, alternativeCities, cancelledTrip, modeIsUndecided, numericDate, pastStory, presenceOrigin, returnTrip, saidAt, withoutAlternativeCities, withoutNegatedCities, type Alternatives, type Direction } from '@/lib/lab/intentGuards';
+import { BROKEN_MODE_RE, alternativeCities, cancelledTrip, numericDate, pastStory, presenceOrigin, resolveModeChoice, returnTrip, saidAt, withoutAlternativeCities, withoutNegatedCities, type Alternatives, type Direction } from '@/lib/lab/intentGuards';
 
 export type Need = 'flight' | 'hotel' | 'car_rental' | 'ferry' | 'sim' | 'money' | 'papers';
 
@@ -238,7 +238,9 @@ export function extractIntent(input: string, today: string): IntentFacts {
   facts.destination ??= arabic.destination;
   facts.origin ??= arabic.origin;
   facts.mode ??= arabic.mode;
-  if (modeIsUndecided(n)) delete facts.mode;
+  const choice = resolveModeChoice(raw, n);
+  if (choice.later) facts.mode = choice.later;
+  else if (choice.undecided) delete facts.mode;
   facts.origin ??= presenceOrigin(raw, n, facts);
   facts.travellers ??= arabic.travellers;
   for (const need of arabic.needs) {

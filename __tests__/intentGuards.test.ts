@@ -259,6 +259,27 @@ describe("changes of mind and memories, sentence by sentence", () => {
   });
 });
 
+describe("a mode question is settled by its answer, whichever way the user said it", () => {
+  test.each([
+    ["en avion ou en voiture vers Oujda, je sais pas en voiture", "car"],
+    ["en avion ou en voiture vers Oujda en avion", "plane"],
+    ["ferry ou avion pour Al Hoceima b l-babor", "ferry"],
+  ])("%s", (sentence, mode) => {
+    const facts = extractIntent(sentence, TODAY);
+    expect(facts.mode?.value).toBe(mode);
+    expect(evidenceIsSaid(sentence, facts)).toBe(true);
+    expect(missingChoices(facts, "fr").some((row) => row.field === "mode")).toBe(false);
+  });
+
+  test("the question is answered by the one-tap options", () => {
+    const base = "en avion ou en voiture vers Oujda";
+    expect(extractIntent(base, TODAY).mode).toBeUndefined();
+    expect(extractIntent(`${base} en voiture`, TODAY).mode?.value).toBe("car");
+    expect(extractIntent(`${base} en avion`, TODAY).mode?.value).toBe("plane");
+    expect(extractIntent(`${base} en ferry`, TODAY).mode?.value).toBe("ferry");
+  });
+});
+
 describe("known limits, kept visible", () => {
   test("a bare « Tanger Paris » is ambiguous and stays read as a trip to Tanger", () => {
     const facts = extractIntent("Tanger Paris", TODAY);
