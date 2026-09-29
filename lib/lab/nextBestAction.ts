@@ -88,6 +88,16 @@ const PILGRIMAGE_NOTE: Record<MagicLang, string> = {
   da: 'Omra w l-7ajj: l-wraq ghir mn l-masdar r-rasmi.',
 };
 
+const RETURN_NOTE: Record<MagicLang, string> = {
+  fr: 'Retour vers l’Europe : RME prépare surtout l’aller pour l’instant, donc rien n’est proposé pour le mauvais sens.',
+  da: 'Rje3 l Ouroupa: daba RME kaywejjed ghir d-dhab, wakha ma kan9tarah walou.',
+};
+
+const PAST_NOTE: Record<MagicLang, string> = {
+  fr: 'On dirait un souvenir plutôt qu’un projet. Dites-moi ce que vous voulez préparer.',
+  da: 'Ka-ybano souvenir mashi mashru3. 9ol lia ash bghiti twejjed.',
+};
+
 const DAYS: Record<MagicLang, string[]> = {
   fr: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
   da: ['l7ed', 'tnin', 'tlat', 'larb3', 'lkhmis', 'jem3a', 'sebt'],
@@ -227,7 +237,35 @@ function routeHref(facts: IntentFacts, destination: string | undefined, routes: 
   return '/#route';
 }
 
-export function planNextActions(facts: IntentFacts, { partners, routes, today, lang, done = [] }: PlanOptions): MagicPlan {
+// Morocco → Europe: no outbound step (papers, arrival SIM, transfers) is right, so only the trip itself is offered.
+function returnPlan(facts: IntentFacts, { partners, routes, today, lang }: PlanOptions): MagicPlan {
+  const fr = lang === 'fr';
+  const mode = facts.mode?.value;
+  const from = facts.origin?.value.label;
+  const to = facts.direction?.to;
+  const when = whenText(facts, lang, today);
+  const trip = `${from ? (fr ? ` depuis ${from}` : ` mn ${from}`) : ''}${to ? (fr ? ` vers ${to}` : ` l ${to}`) : ''}${when ? `, ${when}` : ''}`;
+  const notes = [RETURN_NOTE[lang]];
+  if (mode === 'car' || mode === 'ferry') {
+    const href = routeHref(facts, to, routes, departureDate(facts, today));
+    return { actions: [{ kind: 'route', label: LABEL.route[lang], reason: `${fr ? 'Retour' : 'Rjou3'}${trip}.`, href }], notes };
+  }
+  const partner = partners.find((p) => p.id === PARTNER_OF.flight && p.status === 'active' && p.affiliateUrl);
+  return {
+    actions: [{
+      kind: 'flight',
+      label: LABEL.flight[lang],
+      reason: partner ? `${fr ? 'Retour' : 'Rjou3'}${trip}.` : NOT_VERIFIED.flight![lang],
+      ...(partner ? { href: partner.affiliateUrl, partner: { id: partner.id, name: partner.name } } : {}),
+    }],
+    notes,
+  };
+}
+
+export function planNextActions(facts: IntentFacts, options: PlanOptions): MagicPlan {
+  if (facts.past) return { actions: [], notes: [PAST_NOTE[options.lang]] };
+  if (facts.direction) return returnPlan(facts, options);
+  const { partners, routes, today, lang, done = [] } = options;
   const city = facts.destination?.value.label ?? facts.destinationGuess?.value.label;
   const hasPlace = Boolean(city || facts.country);
   if (!hasPlace && facts.needs.length === 0) return { actions: [], notes: [] };
@@ -344,6 +382,7 @@ export function describeFacts(facts: IntentFacts, lang: MagicLang, today: string
     if (text) items.push({ text, evidence: facts.travellers.evidence, inferred: false });
   }
   if (facts.mode) items.push({ text: MODE_TEXT[facts.mode.value][lang], evidence: facts.mode.evidence, inferred: false });
+  if (facts.direction) items.push({ text: facts.direction.to ? (fr ? `Retour vers ${facts.direction.to}` : `Rjou3 l ${facts.direction.to}`) : (fr ? 'Retour vers l’Europe' : 'Rjou3 l Ouroupa'), evidence: facts.direction.evidence, inferred: true });
   if (facts.purpose) items.push({ text: facts.purpose.value === 'hajj' ? 'Hajj' : 'Omra', evidence: facts.purpose.evidence, inferred: false });
   for (const need of facts.needs) items.push({ text: NEED_TEXT[need.value][lang], evidence: need.evidence, inferred: false });
   return items;
@@ -355,6 +394,7 @@ export type MissingChoice = { field: 'destination' | 'origin' | 'when' | 'mode';
 export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoice[] {
   const fr = lang === 'fr';
   const rows: MissingChoice[] = [];
+  if (facts.past || facts.direction) return rows;
   const hasPlace = Boolean(facts.destination || facts.destinationGuess || facts.country);
   if (facts.purpose) return rows;
   if (!hasPlace) {

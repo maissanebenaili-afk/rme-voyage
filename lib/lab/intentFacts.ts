@@ -8,6 +8,7 @@
  */
 import { extractTripFacts, LAB_MOROCCAN_CITIES, norm, type Fact, type TripFacts, type TripField } from '@/lib/tripFacts';
 import { extractArabicFacts, type RelativeRule } from '@/lib/lab/arabicIntent';
+import { BROKEN_MODE_RE, modeIsUndecided, pastStory, presenceOrigin, returnTrip, saidAt, withoutNegatedCities, type Direction } from '@/lib/lab/intentGuards';
 
 export type Need = 'flight' | 'hotel' | 'car_rental' | 'ferry' | 'sim' | 'money' | 'papers';
 
@@ -25,18 +26,16 @@ export type IntentFacts = TripFacts & {
   /** A misspelt Moroccan city (« marakech »): RME's reading, never a FACT_USER. */
   destinationGuess?: { value: { key: string; label: string }; status: 'INFERENCE'; evidence: string };
   horizon?: Horizon;
+  /** Morocco → Europe: the planner does not prepare this direction yet and says so. */
+  direction?: Direction;
+  /** A memory (« hier je suis allé à Nador »), not a plan. */
+  past?: { evidence: string };
   /** In the order they were said. */
   needs: Array<Fact<Need>>;
 };
 
 const MAX_CHARS = 2000;
 const DAY_MS = 86_400_000;
-
-// norm() keeps the length of NFC text, so an index found in the normalised
-// sentence points at the user's own spelling (« hôtel », not « hotel »).
-function saidAt(raw: string, n: string, index: number, length: number): string {
-  return (raw.length === n.length ? raw : n).slice(index, index + length);
-}
 
 const COUNTRY_RE = /\b(?:maroc|morocco|marruecos|marokko|marocco|l[- ]?maghrib)\b/g;
 const HOME_RE = /\b(?:l?bled)\b/g;
@@ -156,7 +155,7 @@ function findNeeds(raw: string, n: string): Array<Fact<Need>> {
 // « louer une voiture » is a need on arrival and « pas de voiture » a mode not
 // used: blank both, then read the travel mode from what is left.
 function travelMode(raw: string, n: string, mode: TripFacts['mode']): TripFacts['mode'] {
-  const spans = [...n.matchAll(NEGATED_MODE_RE), ...n.matchAll(new RegExp(CAR_RENTAL_RE.source, 'g'))];
+  const spans = [...n.matchAll(NEGATED_MODE_RE), ...n.matchAll(new RegExp(CAR_RENTAL_RE.source, 'g')), ...n.matchAll(BROKEN_MODE_RE)];
   if (!mode || spans.length === 0) return mode;
   let text = raw.length === n.length ? raw : n;
   for (const m of spans) {
@@ -222,7 +221,7 @@ const TRIP_FIELDS: TripField[] = ['destination', 'origin', 'when', 'travellers',
 export function extractIntent(input: string, today: string): IntentFacts {
   const raw = typeof input === 'string' ? input.slice(0, MAX_CHARS) : '';
   const n = norm(raw);
-  const trip = extractTripFacts(raw);
+  const trip = extractTripFacts(withoutNegatedCities(raw));
   const arabic = extractArabicFacts(raw);
   const facts: IntentFacts = { ...trip, needs: findNeeds(raw, n) };
 
@@ -234,11 +233,18 @@ export function extractIntent(input: string, today: string): IntentFacts {
   facts.destination ??= arabic.destination;
   facts.origin ??= arabic.origin;
   facts.mode ??= arabic.mode;
+  if (modeIsUndecided(n)) delete facts.mode;
+  facts.origin ??= presenceOrigin(raw, n, facts);
   facts.travellers ??= arabic.travellers;
   for (const need of arabic.needs) {
     if (!facts.needs.some((f) => f.value === need.value)) facts.needs.push(need);
   }
-  if (!facts.destination) {
+  const back = returnTrip(raw, n, facts);
+  if (back) {
+    facts.direction = back.direction;
+    if (back.origin) { facts.origin = back.origin; delete facts.destination; }
+  }
+  if (!facts.destination && !facts.direction) {
     const country = findCountry(raw, n) ?? arabic.country;
     if (country) facts.country = country;
     const guess = guessCity(raw, n);
@@ -253,6 +259,9 @@ export function extractIntent(input: string, today: string): IntentFacts {
     const iso = (time: number) => new Date(time).toISOString().slice(0, 10);
     facts.horizon = { said: arabic.when.said, start: iso(start), end: iso(end), status: 'INFERENCE' };
   }
+
+  const memory = pastStory(raw, n, Boolean(facts.horizon || facts.when));
+  if (memory) facts.past = { evidence: memory };
 
   // A country, a guessed city or a relative date counts as said: completeness() reads `unknown`.
   const known: Record<TripField, unknown> = {

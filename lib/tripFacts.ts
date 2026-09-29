@@ -108,7 +108,7 @@ function moroccanHits(n: string): CityHit[] {
 }
 
 // Departure cities: the planner's list (Europe) plus West-African hubs.
-const ORIGINS: Array<{ label: string; countryCode: string }> = [
+export const ORIGINS: Array<{ label: string; countryCode: string }> = [
   ...CITY_SUGGESTIONS.filter((c) => c.countryCode !== 'ma').map((c) => ({
     label: c.displayName.split(',')[0], countryCode: c.countryCode,
   })),

@@ -94,6 +94,7 @@ export function evidenceOf(facts: IntentFacts): string[] {
     facts.destination?.evidence, facts.origin?.evidence, facts.via?.evidence, facts.when?.evidence,
     facts.travellers?.evidence, facts.mode?.evidence, facts.purpose?.evidence,
     facts.country?.evidence, facts.horizon?.said, facts.destinationGuess?.evidence,
+    facts.direction?.evidence, facts.past?.evidence,
     ...facts.needs.map((n) => n.evidence),
   ];
   return all.filter((e): e is string => Boolean(e));
