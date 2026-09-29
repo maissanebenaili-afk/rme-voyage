@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Car, FileText, Hotel, Plane, Route, Smartphone, Sparkles, Wallet } from "lucide-react";
+import { ArrowRight, Bus, Car, Check, FileText, Hotel, Plane, Route, Save, Share2, Smartphone, Sparkles, Wallet } from "lucide-react";
+import { CHECKLIST_PREFIX } from "@/components/TravelChecklist";
 import { extractIntent } from "@/lib/lab/intentFacts";
+import { doneActions, journeyState } from "@/lib/lab/journeyState";
 import {
+  departureDate,
   describeFacts,
   missingChoices,
   planNextActions,
@@ -14,14 +17,18 @@ import {
 } from "@/lib/lab/nextBestAction";
 import type { PartnerCatalogueEntry } from "@/lib/partnerCatalogue";
 import { trackFunnelEvent, trackPartnerClick, type PartnerProduct } from "@/lib/partnerTracking";
+import { toLocalIsoDate } from "@/lib/travel/travelPhase";
+import { useTravelStorage } from "@/lib/travel/useTravelStorage";
 
 const ICON: Record<MagicActionKind, typeof Plane> = {
-  papers: FileText, flight: Plane, route: Route, hotel: Hotel, car_rental: Car, money: Wallet, sim: Smartphone,
+  papers: FileText, flight: Plane, route: Route, local_transfer: Bus, hotel: Hotel, car_rental: Car, money: Wallet, sim: Smartphone,
 };
 
 const PRODUCT: Record<MagicActionKind, PartnerProduct> = {
-  papers: "other", flight: "flight", route: "ferry", hotel: "hotel", car_rental: "car_rental", money: "transfer", sim: "other",
+  papers: "other", flight: "flight", route: "ferry", local_transfer: "transfer", hotel: "hotel", car_rental: "car_rental", money: "transfer", sim: "other",
 };
+
+const MAX_SHARED_CHARS = 300;
 
 const TEXT = {
   fr: {
@@ -40,7 +47,18 @@ const TEXT = {
     youSaid: "vous avez dit",
     canPrepare: "Ce que je peux préparer",
     partnerLink: "Lien partenaire",
-    footer: "Prototype RME Lab. Une date marquée « déduit » est calculée par RME : vérifiez-la.",
+    save: "Enregistrer ce voyage sur ce téléphone",
+    saved: "Enregistré sur ce téléphone : RME suit maintenant votre voyage.",
+    share: "Partager",
+    shareIntro: "Je prépare mon voyage :",
+    shareCta: "Prépare le tien avec RME :",
+    myTrip: "Mon voyage",
+    phase: { "mon-voyage": "À définir", preparer: "Préparer", route: "Départ aujourd’hui", maroc: "Au Maroc" },
+    daysLeft: (n: number) => (n === 1 ? "départ demain" : `départ dans ${n} jours`),
+    ready: (done: number, total: number) => `${done}/${total} prêts`,
+    nextStep: "Prochaine étape",
+    allSet: "Tout est coché. Bonne route !",
+    footer: "Prototype RME Lab. Une date marquée « déduit » est calculée par RME : vérifiez-la. Votre voyage reste sur ce téléphone.",
   },
   da: {
     title: "Goul liya chno bghiti",
@@ -58,14 +76,20 @@ const TEXT = {
     youSaid: "gulti",
     canPrepare: "Chno n9der nwajjed",
     partnerLink: "Lien partenaire",
-    footer: "Prototype RME Lab. Tarikh fih « mstantaj » 7sbato RME: t2akked mno.",
+    save: "Sjjel had s-safar f had telephone",
+    saved: "Tsjjel f had telephone: RME kaytab3 s-safar dyalk.",
+    share: "Partager",
+    shareIntro: "Kanwajjed s-safar dyali:",
+    shareCta: "Wajjed dyalk m3a RME:",
+    myTrip: "S-safar dyali",
+    phase: { "mon-voyage": "Mazal", preparer: "Wajjed", route: "Safar lyoum", maroc: "F l-Maghrib" },
+    daysLeft: (n: number) => (n === 1 ? "safar ghedda" : `b9aw ${n} ayyam`),
+    ready: (done: number, total: number) => `${done}/${total} wajdin`,
+    nextStep: "L-khotwa jaya",
+    allSet: "Kolchi m-cochi. Triq salama!",
+    footer: "Prototype RME Lab. Tarikh fih « mstantaj » 7sbato RME: t2akked mno. S-safar dyalk kaybqa f had telephone.",
   },
 } as const;
-
-function localToday(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
 
 type Props = { partners: PartnerCatalogueEntry[]; routes: RouteIndexEntry[] };
 
@@ -74,7 +98,23 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
   const [text, setText] = useState("");
   const [analysed, setAnalysed] = useState<{ sentence: string; today: string } | null>(null);
   const [partners, setPartners] = useState(initialPartners);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const { travel, updateTravel, isHydrated } = useTravelStorage();
   const t = TEXT[lang];
+
+  const analyse = (sentence: string) => {
+    setText(sentence);
+    setSavedAt(null);
+    if (sentence.trim()) setAnalysed({ sentence, today: toLocalIsoDate(new Date()) });
+  };
+
+  // A shared link (?q=…&lang=da) opens on its sentence, already understood.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shared = params.get("q")?.slice(0, MAX_SHARED_CHARS);
+    if (params.get("lang") === "da") setLang("da");
+    if (shared?.trim()) analyse(shared);
+  }, []);
 
   // Affiliate links live in server-only env vars: the current catalogue comes from the server route.
   useEffect(() => {
@@ -88,19 +128,65 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
     return () => controller.abort();
   }, []);
 
+  // The user's own checklist ticks, shared with the home page checklist.
+  const ticked = useMemo(
+    () => new Set(travel.checklistProgress.filter((k) => k.startsWith(CHECKLIST_PREFIX)).map((k) => k.slice(CHECKLIST_PREFIX.length))),
+    [travel.checklistProgress],
+  );
+
   const result = useMemo(() => {
     if (!analysed) return null;
     const facts = extractIntent(analysed.sentence, analysed.today);
+    const done = isHydrated ? doneActions(ticked, travel.modeTransport) : [];
     return {
+      facts,
       understood: describeFacts(facts, lang, analysed.today),
       missing: missingChoices(facts, lang),
-      plan: planNextActions(facts, { partners, routes, today: analysed.today, lang }),
+      plan: planNextActions(facts, { partners, routes, today: analysed.today, lang, done }),
     };
-  }, [analysed, lang, partners, routes]);
+  }, [analysed, lang, partners, routes, ticked, travel.modeTransport, isHydrated]);
 
-  const analyse = (sentence: string) => {
-    setText(sentence);
-    if (sentence.trim()) setAnalysed({ sentence, today: localToday() });
+  const journey = useMemo(() => {
+    if (!isHydrated || (!travel.dateVoyage && !travel.villes.arrivee)) return null;
+    return journeyState(travel, ticked, toLocalIsoDate(new Date()), lang);
+  }, [isHydrated, travel, ticked, lang]);
+
+  const toggleStep = (id: string) => {
+    const key = `${CHECKLIST_PREFIX}${id}`;
+    updateTravel((prev) => ({
+      checklistProgress: prev.checklistProgress.includes(key)
+        ? prev.checklistProgress.filter((entry) => entry !== key)
+        : [...prev.checklistProgress, key],
+    }));
+  };
+
+  const saveTrip = () => {
+    if (!result || !analysed) return;
+    const { facts } = result;
+    const city = facts.destination?.value.label ?? facts.destinationGuess?.value.label;
+    updateTravel((prev) => ({
+      villes: {
+        depart: facts.origin?.value.label ?? prev.villes.depart,
+        arrivee: city ?? (facts.country ? "Maroc" : prev.villes.arrivee),
+      },
+      dateVoyage: departureDate(facts, analysed.today) ?? prev.dateVoyage,
+      modeTransport: facts.mode?.value ?? prev.modeTransport,
+    }));
+    setSavedAt(analysed.sentence);
+    trackFunnelEvent({ event: "hadak_next_action", placement: "magic", data: { action: "save_trip" } });
+  };
+
+  const share = async () => {
+    if (!result || !analysed) return;
+    const query = new URLSearchParams({ q: analysed.sentence.slice(0, MAX_SHARED_CHARS), ...(lang === "da" ? { lang } : {}) });
+    const url = `${window.location.origin}/lab/intention?${query}`;
+    const message = `${t.shareIntro} ${result.understood.map((i) => i.text).join(" · ")}. ${t.shareCta}`;
+    trackFunnelEvent({ event: "hadak_next_action", placement: "magic", data: { action: "share" } });
+    if (typeof navigator.share === "function") {
+      await navigator.share({ text: message, url }).catch(() => {});
+      return;
+    }
+    window.open(`https://wa.me/?text=${encodeURIComponent(`${message} ${url}`)}`, "_blank", "noopener,noreferrer");
   };
 
   const onAction = (action: MagicAction, rank: number) => {
@@ -118,6 +204,40 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
 
   return (
     <div className="space-y-5">
+      {journey && (
+        <section aria-label={t.myTrip} className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[.16em] text-emerald-800">{t.myTrip}</p>
+              <p className="mt-1 text-lg font-black text-[#0f1f3d]">
+                {[travel.villes.depart, travel.villes.arrivee].filter(Boolean).join(" → ") || "—"}
+              </p>
+              <p className="text-sm font-semibold text-emerald-900">
+                {t.phase[journey.phase]}
+                {journey.phase === "preparer" && journey.daysUntilDeparture !== null && ` · ${t.daysLeft(journey.daysUntilDeparture)}`}
+              </p>
+            </div>
+            <span className="rounded-full bg-white px-3 py-1 text-sm font-black text-emerald-800">{t.ready(journey.done, journey.steps.length)}</span>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white" aria-hidden>
+            <div className="h-full rounded-full bg-emerald-600" style={{ width: `${Math.round((journey.done / journey.steps.length) * 100)}%` }} />
+          </div>
+          <p className="mt-3 text-sm font-bold text-[#0f1f3d]">
+            {journey.next ? `${t.nextStep} : ${journey.next.label}` : t.allSet}
+          </p>
+          <ul className="mt-2 space-y-1">
+            {journey.steps.map((step) => (
+              <li key={step.id}>
+                <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                  <input type="checkbox" checked={step.done} onChange={() => toggleStep(step.id)} className="h-4 w-4 accent-emerald-700" />
+                  <span className={step.done ? "line-through opacity-60" : ""}>{step.label}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section className="rounded-3xl bg-[#0f1f3d] p-5 text-white shadow-lg sm:p-6">
         <div className="flex items-center justify-between gap-3">
           <h1 className="flex items-center gap-2 text-xl font-black">
@@ -149,6 +269,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
           <textarea
             id="magic-sentence"
             rows={2}
+            dir="auto"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={t.placeholder}
@@ -180,7 +301,16 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
             <p className="text-sm font-semibold text-slate-600">{t.notUnderstood}</p>
           ) : (
             <>
-              <h2 className="text-lg font-black">{t.understood}</h2>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-lg font-black">{t.understood}</h2>
+                <button
+                  type="button"
+                  onClick={share}
+                  className="flex items-center gap-1.5 rounded-full border border-slate-300 px-3 py-1 text-sm font-bold hover:border-[#0f1f3d]"
+                >
+                  <Share2 size={15} aria-hidden /> {t.share}
+                </button>
+              </div>
               <ul className="flex flex-wrap gap-2">
                 {result.understood.map((item) => (
                   <li key={`${item.text}-${item.evidence}`} className="rounded-2xl bg-slate-100 px-3 py-2">
@@ -192,7 +322,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
                         </span>
                       )}
                     </span>
-                    <span className="block text-[11px] text-slate-500">
+                    <span className="block text-[11px] text-slate-500" dir="auto">
                       {t.youSaid} « {item.evidence} »
                     </span>
                   </li>
@@ -226,10 +356,10 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
               <h3 className="text-xs font-black uppercase tracking-[.16em] text-[#b45309]">{t.canPrepare}</h3>
               <ol className="mt-3 space-y-2">
                 {result.plan.actions.map((action, index) => {
-                  const Icon = ICON[action.kind];
+                  const Icon = action.done ? Check : ICON[action.kind];
                   const body = (
                     <>
-                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-[#0f1f3d]">
+                      <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${action.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-[#0f1f3d]"}`}>
                         <Icon size={19} aria-hidden />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -247,6 +377,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
                     </>
                   );
                   const external = Boolean(action.href?.startsWith("http"));
+                  const tone = action.done ? "opacity-60" : "";
                   return (
                     <li key={action.kind}>
                       {action.href ? (
@@ -255,7 +386,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
                           target={external ? "_blank" : undefined}
                           rel={action.partner ? "sponsored noopener noreferrer" : external ? "noopener noreferrer" : undefined}
                           onClick={() => onAction(action, index + 1)}
-                          className="flex items-center gap-3 rounded-2xl border border-slate-200 p-3 transition hover:border-slate-300 hover:shadow-md"
+                          className={`flex items-center gap-3 rounded-2xl border border-slate-200 p-3 transition hover:border-slate-300 hover:shadow-md ${tone}`}
                         >
                           {body}
                         </a>
@@ -266,6 +397,22 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
                   );
                 })}
               </ol>
+
+              {isHydrated && (
+                savedAt === analysed?.sentence ? (
+                  <p className="mt-3 flex items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900">
+                    <Check size={16} aria-hidden /> {t.saved}
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={saveTrip}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#0f1f3d] px-4 py-2.5 text-sm font-black text-[#0f1f3d]"
+                  >
+                    <Save size={16} aria-hidden /> {t.save}
+                  </button>
+                )
+              )}
             </div>
           )}
           <p className="text-[11px] leading-4 text-slate-400">{t.footer}</p>

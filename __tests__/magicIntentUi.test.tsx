@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 import MagicIntent from "../components/lab/MagicIntent";
+import { resetTravelStoreForTests, TRAVEL_STORAGE_KEY } from "../lib/travel/useTravelStorage";
 import type { PartnerCatalogueEntry } from "../lib/partnerCatalogue";
 
 const PARTNERS: PartnerCatalogueEntry[] = [
@@ -20,6 +21,9 @@ describe("Magic Button (Lab page)", () => {
   let fetchMock: jest.Mock;
 
   beforeEach(() => {
+    window.localStorage.clear();
+    resetTravelStoreForTests();
+    window.history.replaceState({}, "", "/lab/intention");
     fetchMock = jest.fn(async () => ({ ok: true, json: async () => ({ partners: PARTNERS }) }));
     global.fetch = fetchMock as unknown as typeof fetch;
   });
@@ -90,5 +94,40 @@ describe("Magic Button (Lab page)", () => {
     ask("bonjour");
     expect(screen.getByText(/Je n’ai pas encore compris/)).toBeInTheDocument();
     expect(screen.queryAllByRole("link")).toHaveLength(0);
+  });
+
+  it("saves the trip on the device, then follows it: phase, steps, and the same ticks as the home checklist", async () => {
+    await renderPage();
+    ask("Je rentre à Tanger le 12 décembre en voiture depuis Paris");
+    fireEvent.click(screen.getByRole("button", { name: /Enregistrer ce voyage/ }));
+
+    const trip = screen.getByRole("region", { name: "Mon voyage" });
+    expect(within(trip).getByText("Paris → Tanger")).toBeInTheDocument();
+    expect(within(trip).getByText(/^Préparer · départ dans \d+ jours$/)).toBeInTheDocument();
+    expect(within(trip).getByText("0/7 prêts")).toBeInTheDocument();
+
+    fireEvent.click(within(trip).getByRole("checkbox", { name: "Passeport (validité > 6 mois)" }));
+    expect(within(trip).getByText("1/7 prêts")).toBeInTheDocument();
+    expect(within(trip).getByText(/Prochaine étape : Assurance voyage/)).toBeInTheDocument();
+    expect(window.localStorage.getItem(TRAVEL_STORAGE_KEY)).toContain("chk:passport");
+  });
+
+  it("opens a shared link on its sentence, already understood", async () => {
+    window.history.replaceState({}, "", "/lab/intention?q=" + encodeURIComponent("Je veux aller au Maroc ce week-end"));
+    await renderPage();
+    expect(screen.getByRole("textbox")).toHaveValue("Je veux aller au Maroc ce week-end");
+    expect(screen.getByRole("heading", { name: "J’ai compris" })).toBeInTheDocument();
+  });
+
+  it("shares through WhatsApp when the phone has no share sheet", async () => {
+    const open = jest.spyOn(window, "open").mockImplementation(() => null);
+    await renderPage();
+    ask("Je veux aller au Maroc ce week-end");
+    fireEvent.click(screen.getByRole("button", { name: /Partager/ }));
+    await waitFor(() => expect(open).toHaveBeenCalled());
+    const url = String(open.mock.calls[0][0]);
+    expect(url.startsWith("https://wa.me/?text=")).toBe(true);
+    expect(decodeURIComponent(url)).toContain("/lab/intention?q=Je+veux+aller+au+Maroc+ce+week-end");
+    open.mockRestore();
   });
 });

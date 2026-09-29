@@ -5,11 +5,12 @@
  * a partner whose link is not active is never presented as bookable.
  */
 import type { PartnerCatalogueEntry } from '@/lib/partnerCatalogue';
+import { buildShareUrl } from '@/lib/tripShare';
 import { norm } from '@/lib/tripFacts';
 import type { IntentFacts, Need } from '@/lib/lab/intentFacts';
 
 export type MagicLang = 'fr' | 'da';
-export type MagicActionKind = 'papers' | 'flight' | 'route' | 'hotel' | 'car_rental' | 'money' | 'sim';
+export type MagicActionKind = 'papers' | 'flight' | 'route' | 'local_transfer' | 'hotel' | 'car_rental' | 'money' | 'sim';
 
 export type MagicAction = {
   kind: MagicActionKind;
@@ -19,6 +20,8 @@ export type MagicAction = {
   href?: string;
   /** Present only when href is an active affiliate link. */
   partner?: { id: string; name: string };
+  /** The user already ticked this step in their checklist. */
+  done?: boolean;
 };
 
 export type MagicPlan = { actions: MagicAction[]; notes: string[] };
@@ -32,6 +35,8 @@ export type PlanOptions = {
   /** The user's local date, YYYY-MM-DD. */
   today: string;
   lang: MagicLang;
+  /** Steps the user ticked as done (their checklist, on their device): shown last. */
+  done?: MagicActionKind[];
 };
 
 const MAX_ACTIONS = 5;
@@ -47,12 +52,14 @@ const PARTNER_OF: Partial<Record<MagicActionKind, string>> = {
   hotel: 'travelpayouts-hotels',
   car_rental: 'travelpayouts-car',
   sim: 'esim-morocco',
+  local_transfer: 'lgrima',
 };
 
 const LABEL: Record<MagicActionKind, Record<MagicLang, string>> = {
   papers: { fr: 'Préparer mes papiers', da: 'Wajjed l-wraq' },
   flight: { fr: 'Trouver mon vol', da: 'Qelleb 3la l-vol' },
   route: { fr: 'Calculer mon trajet', da: '7seb triq dyali' },
+  local_transfer: { fr: 'Transport sur place', da: 'Transport f blasa' },
   hotel: { fr: 'Trouver où dormir', da: 'Fin nbat' },
   car_rental: { fr: 'Louer une voiture', da: 'Kri tomobil' },
   money: { fr: 'Comparer les transferts', da: 'Qaren tahwil l-flous' },
@@ -63,6 +70,7 @@ const NOT_VERIFIED: Partial<Record<MagicActionKind, Record<MagicLang, string>>> 
   flight: { fr: 'Pas encore de partenaire vol vérifié dans RME.', da: 'Mazal ma kayn partenaire dyal l-vol m2akked f RME.' },
   hotel: { fr: 'Pas encore de partenaire hôtel vérifié dans RME.', da: 'Mazal ma kayn partenaire dyal l-otel m2akked f RME.' },
   car_rental: { fr: 'Pas encore de partenaire location vérifié dans RME.', da: 'Mazal ma kayn partenaire dyal kra tomobil m2akked f RME.' },
+  local_transfer: { fr: 'Pas encore de partenaire transport local vérifié dans RME.', da: 'Mazal ma kayn partenaire dyal transport m2akked f RME.' },
 };
 
 const PILGRIMAGE_NOTE: Record<MagicLang, string> = {
@@ -105,21 +113,23 @@ export function whenText(facts: IntentFacts, lang: MagicLang, today: string): st
   return lang === 'fr' ? `en ${month}` : `f ${month}`;
 }
 
-export function daysUntilDeparture(facts: IntentFacts, today: string): number | undefined {
+/** The departure day, YYYY-MM-DD: the start of a relative date, or a day and month said. */
+export function departureDate(facts: IntentFacts, today: string): string | undefined {
+  if (facts.horizon) return facts.horizon.start;
+  const when = facts.when?.value;
   const t0 = Date.parse(`${today}T00:00:00Z`);
-  if (!Number.isFinite(t0)) return undefined;
-  let start: number | undefined;
-  if (facts.horizon) {
-    start = Date.parse(`${facts.horizon.start}T00:00:00Z`);
-  } else if (facts.when?.value.month && facts.when.value.day) {
-    const { month, day, year } = facts.when.value;
-    const thisYear = new Date(t0).getUTCFullYear();
-    start = Date.UTC(year ?? thisYear, month - 1, day);
-    if (!year && start < t0) start = Date.UTC(thisYear + 1, month - 1, day);
-  }
-  if (start === undefined || !Number.isFinite(start)) return undefined;
-  const days = Math.round((start - t0) / DAY_MS);
-  return days >= 0 ? days : undefined;
+  if (!when?.month || !when.day || !Number.isFinite(t0)) return undefined;
+  const thisYear = new Date(t0).getUTCFullYear();
+  let start = Date.UTC(when.year ?? thisYear, when.month - 1, when.day);
+  if (!when.year && start < t0) start = Date.UTC(thisYear + 1, when.month - 1, when.day);
+  return new Date(start).toISOString().slice(0, 10);
+}
+
+export function daysUntilDeparture(facts: IntentFacts, today: string): number | undefined {
+  const date = departureDate(facts, today);
+  if (!date) return undefined;
+  const days = Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / DAY_MS);
+  return Number.isFinite(days) && days >= 0 ? days : undefined;
 }
 
 type Context = {
@@ -166,6 +176,10 @@ function baseReason(kind: MagicActionKind, c: Context): string {
         return fr ? `En voiture${from} : distance, péages, carburant et ferry.` : `B tomobil${from}: l-masafa, péage, lissans w ferry.`;
       }
       return fr ? `En ferry ${towards(c)} : traversées et ports.` : `B l-babor ${towards(c)}: traversées w l-mwani.`;
+    case 'local_transfer': {
+      const between = c.origin && c.city ? (fr ? ` entre ${c.origin} et ${c.city}` : ` bin ${c.origin} w ${c.city}`) : at(c);
+      return fr ? `Sans voiture${between}.` : `Bla tomobil${between}.`;
+    }
     case 'hotel':
       return fr ? `Pour dormir${at(c)}${when}.` : `Bach tbat${at(c)}${when}.`;
     case 'car_rental':
@@ -177,18 +191,20 @@ function baseReason(kind: MagicActionKind, c: Context): string {
   }
 }
 
-function routeHref(facts: IntentFacts, routes: RouteIndexEntry[]): string {
+// A /trajet landing page when one exists, else the planner pre-filled through its share link.
+function routeHref(facts: IntentFacts, destination: string | undefined, routes: RouteIndexEntry[], date: string | undefined): string {
   const origin = facts.origin?.value.label;
-  const destination = facts.destination?.value.label;
   if (origin && destination) {
     const page = routes.find((r) => norm(r.originCity) === norm(origin) && norm(r.destinationCity) === norm(destination));
     if (page) return `/trajet/${page.slug}`;
+    return buildShareUrl({ from: origin, to: destination, date }, '');
   }
   return '/#route';
 }
 
-export function planNextActions(facts: IntentFacts, { partners, routes, today, lang }: PlanOptions): MagicPlan {
-  const hasPlace = Boolean(facts.destination || facts.country);
+export function planNextActions(facts: IntentFacts, { partners, routes, today, lang, done = [] }: PlanOptions): MagicPlan {
+  const city = facts.destination?.value.label ?? facts.destinationGuess?.value.label;
+  const hasPlace = Boolean(city || facts.country);
   if (!hasPlace && facts.needs.length === 0) return { actions: [], notes: [] };
 
   const order: MagicActionKind[] = [];
@@ -210,15 +226,21 @@ export function planNextActions(facts: IntentFacts, { partners, routes, today, l
   } else {
     if (days !== undefined && days <= URGENT_DAYS) add('papers');
     for (const kind of said.keys()) add(kind);
+    // A trip inside Morocco needs local transport, not a flight or border papers.
     const fromAbroad = facts.origin?.value.countryCode !== 'ma';
     if (mode === 'car' || mode === 'ferry') add('route');
     else if (hasPlace && fromAbroad) add('flight');
-    if (hasPlace) { add('papers'); add('sim'); add('money'); }
+    else if (hasPlace) add('local_transfer');
+    if (hasPlace) {
+      if (fromAbroad) add('papers');
+      add('sim');
+      add('money');
+    }
   }
 
   const context: Context = {
     lang,
-    city: facts.destination?.value.label,
+    city,
     country: Boolean(facts.country),
     origin: facts.origin?.value.label,
     when: whenText(facts, lang, today),
@@ -226,7 +248,9 @@ export function planNextActions(facts: IntentFacts, { partners, routes, today, l
     car: mode === 'car',
   };
 
-  const actions = order.slice(0, MAX_ACTIONS).map((kind): MagicAction => {
+  // What the user already did goes last; the order of the rest never changes.
+  const ranked = [...order.filter((k) => !done.includes(k)), ...order.filter((k) => done.includes(k))];
+  const actions = ranked.slice(0, MAX_ACTIONS).map((kind): MagicAction => {
     const partnerId = PARTNER_OF[kind];
     const partner = partnerId
       ? partners.find((p) => p.id === partnerId && p.status === 'active' && p.affiliateUrl)
@@ -235,20 +259,23 @@ export function planNextActions(facts: IntentFacts, { partners, routes, today, l
     let href: string | undefined;
     if (kind === 'papers') href = '/#preparer';
     else if (kind === 'money') href = '/#transfert';
-    else if (kind === 'route') href = routeHref(facts, routes);
+    else if (kind === 'route') href = routeHref(facts, city, routes, departureDate(facts, today));
     else if (partner) href = partner.affiliateUrl;
     else if (kind === 'sim') href = '/#preparer'; // the checklist covers the SIM until an eSIM partner is active
 
     const unverified = !href ? NOT_VERIFIED[kind]?.[lang] : undefined;
     const evidence = said.get(kind);
     const prefix = evidence ? (lang === 'fr' ? `Vous avez dit « ${evidence} ». ` : `Gulti « ${evidence} ». `) : '';
+    const isDone = done.includes(kind);
+    const doneNote = isDone ? (lang === 'fr' ? 'Déjà coché dans votre checklist. ' : 'Deja m-cochi f checklist dyalk. ') : '';
 
     return {
       kind,
       label: LABEL[kind][lang],
-      reason: prefix + (unverified ?? baseReason(kind, context)),
+      reason: doneNote + prefix + (unverified ?? baseReason(kind, context)),
       ...(href ? { href } : {}),
       ...(partner ? { partner: { id: partner.id, name: partner.name } } : {}),
+      ...(isDone ? { done: true } : {}),
     };
   });
 
@@ -278,6 +305,7 @@ export function describeFacts(facts: IntentFacts, lang: MagicLang, today: string
   const fr = lang === 'fr';
   const items: UnderstoodItem[] = [];
   if (facts.destination) items.push({ text: facts.destination.value.label, evidence: facts.destination.evidence, inferred: false });
+  else if (facts.destinationGuess) items.push({ text: facts.destinationGuess.value.label, evidence: facts.destinationGuess.evidence, inferred: true });
   else if (facts.country) items.push({ text: fr ? 'Maroc' : 'L-Maghrib', evidence: facts.country.evidence, inferred: facts.country.status === 'INFERENCE' });
   if (facts.origin) items.push({ text: `${fr ? 'Depuis' : 'Mn'} ${facts.origin.value.label}`, evidence: facts.origin.evidence, inferred: false });
   const when = whenText(facts, lang, today);
@@ -300,7 +328,7 @@ export type MissingChoice = { field: 'origin' | 'when'; label: string; options: 
 export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoice[] {
   const fr = lang === 'fr';
   const rows: MissingChoice[] = [];
-  const hasPlace = Boolean(facts.destination || facts.country);
+  const hasPlace = Boolean(facts.destination || facts.destinationGuess || facts.country);
   if (!hasPlace || facts.purpose) return rows;
   if (!facts.origin) {
     rows.push({

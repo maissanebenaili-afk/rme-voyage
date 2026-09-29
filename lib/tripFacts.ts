@@ -29,29 +29,79 @@ export function norm(text: string): string {
 }
 
 // Moroccan cities known to the Lab only; promoted to MOROCCO_CITIES once checked.
-const LAB_EXTRA_DESTINATIONS: Record<string, string> = { martil: 'Martil' };
+// Al Hoceïma has its own /trajet pages; the others are frequent MRE destinations.
+const LAB_EXTRA_DESTINATIONS: Record<string, string> = {
+  martil: 'Martil',
+  'al hoceima': 'Al Hoceïma',
+  chefchaouen: 'Chefchaouen',
+  berkane: 'Berkane',
+  driouch: 'Driouch',
+  'el jadida': 'El Jadida',
+  mohammedia: 'Mohammedia',
+  ifrane: 'Ifrane',
+  errachidia: 'Errachidia',
+  dakhla: 'Dakhla',
+  laayoune: 'Laâyoune',
+  tiznit: 'Tiznit',
+  taroudant: 'Taroudant',
+  guelmim: 'Guelmim',
+  asilah: 'Asilah',
+  saidia: 'Saïdia',
+  fnideq: 'Fnideq',
+};
+
+// Everyday spellings (Darija, Spanish, English) → the key of a city above or in MOROCCO_CITIES.
+const LAB_CITY_ALIASES: Record<string, string> = {
+  tanja: 'tanger',
+  tetuan: 'tetouan',
+  tetwan: 'tetouan',
+  fez: 'fes',
+  fass: 'fes',
+  marrakesh: 'marrakech',
+  mraksh: 'marrakech',
+  wejda: 'oujda',
+  'beni mellal': 'benimelal',
+  'al-hoceima': 'al hoceima',
+  alhoceima: 'al hoceima',
+  'el hoceima': 'al hoceima',
+  hoceima: 'al hoceima',
+  lhoceima: 'al hoceima',
+  alhucemas: 'al hoceima',
+  chaouen: 'chefchaouen',
+  xauen: 'chefchaouen',
+  jdida: 'el jadida',
+  'el-jadida': 'el jadida',
+  layoune: 'laayoune',
+};
 // Words that are also everyday words: only taken after a place preposition.
 const AMBIGUOUS = new Set(['safi', 'sale']);
 const PLACE_PREP = /(?:^|\s)(?:a|au|vers|pour|to|naar|hacia|en|in|l|ila|via|par|de|depuis|from|desde|vanaf|da)\s+$/;
 
 type CityHit = { key: string; label: string; index: number; end: number };
 
+/** Every Moroccan city the Lab knows, by normalised key, with its French label. */
+export const LAB_MOROCCAN_CITIES: Record<string, string> = {
+  ...Object.fromEntries(Object.entries(MOROCCO_CITIES).map(([k, v]) => [norm(k), v.fr])),
+  ...LAB_EXTRA_DESTINATIONS,
+};
+
 function moroccanHits(n: string): CityHit[] {
+  // [spelling to look for, key of the city it names]
   const entries: Array<[string, string]> = [
-    ...Object.entries(MOROCCO_CITIES).map(([k, v]) => [k, v.fr] as [string, string]),
-    ...Object.entries(LAB_EXTRA_DESTINATIONS),
+    ...Object.keys(LAB_MOROCCAN_CITIES).map((k) => [k, k] as [string, string]),
+    ...Object.entries(LAB_CITY_ALIASES),
   ];
   const seen = new Set<string>();
   const hits: CityHit[] = [];
-  for (const [key, label] of entries) {
-    const nk = norm(key);
-    if (seen.has(nk)) continue;
-    seen.add(nk);
-    const re = new RegExp(`\\b${nk}\\b`, 'g');
+  for (const [spelling, key] of entries) {
+    const ns = norm(spelling);
+    if (seen.has(ns)) continue;
+    seen.add(ns);
+    const re = new RegExp(`\\b${ns}\\b`, 'g');
     for (const m of n.matchAll(re)) {
       const index = m.index ?? 0;
-      if (AMBIGUOUS.has(nk) && !PLACE_PREP.test(n.slice(0, index))) continue;
-      hits.push({ key: nk, label, index, end: index + nk.length });
+      if (AMBIGUOUS.has(ns) && !PLACE_PREP.test(n.slice(0, index))) continue;
+      hits.push({ key, label: LAB_MOROCCAN_CITIES[key], index, end: index + ns.length });
     }
   }
   return hits.sort((a, b) => a.index - b.index);
