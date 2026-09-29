@@ -89,7 +89,7 @@ export function returnTrip(raw: string, n: string, facts: TripFacts): { directio
 }
 
 const PAST = /\b(?:hier|l annee derniere|l an dernier|l ete dernier|le mois dernier|la semaine derniere|il y a \d+ (?:jours?|semaines?|mois|ans?)|je suis alle|je suis allee|on est alle|on est alles|nous sommes alles|j etais|on etait|c etait|yesterday|last (?:year|month|week|summer)|we went|i went|i was|ik ben geweest|ik was|fuimos|mshit|mchit|kount|konna)\b/;
-const WANTS = /\b(?:veux|voudrais|voudrions|souhaite|envie|prevois|pars|partir|partons|vais|allons|aller|repars|repartir|retourner|revenir|reviens|besoin|faut|bghit|nbghi|nmshi|kanmshi|ghadi|want|going to|will|plan|quiero|voy|wil|ga)\b/;
+const WANTS = /\b(?:dois|doit|devons|veux|voudrais|voudrions|souhaite|envie|prevois|pars|partir|partons|vais|allons|aller|repars|repartir|retourner|revenir|reviens|besoin|faut|bghit|nbghi|nmshi|kanmshi|ghadi|want|going to|will|plan|quiero|voy|wil|ga)\b/;
 
 /** A memory, not a plan: « hier je suis allé à Nador ». Only when nothing says they want to go. */
 export function pastStory(raw: string, n: string, hasFutureDate: boolean): string | undefined {
@@ -108,4 +108,69 @@ const modeOf = (word: string) => (/voiture|car|coche|auto|tomobil|tonobil/.test(
 export function modeIsUndecided(n: string): boolean {
   const m = n.match(MODE_CHOICE);
   return Boolean(m && modeOf(m[1]) !== modeOf(m[2]));
+}
+
+const OR_BEFORE = /\b(?:ou|or|of|wla|walla|o)\s+(?:(?:a|au|vers|pour|to|l|in|naar)\s+)?$/;
+const OR_BETWEEN = /^\s*(?:ou|or|of|wla|walla|o)\s+(?:(?:a|au|vers|pour|to|l|in|naar)\s+)?$/;
+
+const blank = (text: string, index: number, length: number) => text.slice(0, index) + ' '.repeat(length) + text.slice(index + length);
+
+/** « Tanger ou Nador » offers two cities: no destination is chosen for the user. */
+export function withoutAlternativeCities(raw: string): string {
+  const b = extractTripFacts(raw).destination;
+  const n = norm(raw);
+  if (!b || b.value.country !== 'MA' || n.length !== raw.length) return raw;
+  const bi = n.lastIndexOf(norm(b.evidence));
+  if (bi < 0 || !OR_BEFORE.test(n.slice(0, bi))) return raw;
+  const withoutB = blank(raw, bi, b.evidence.length);
+  const a = extractTripFacts(withoutB).destination;
+  if (!a || a.value.country !== 'MA') return raw;
+  const ai = n.lastIndexOf(norm(a.evidence), bi);
+  if (ai < 0 || !OR_BETWEEN.test(n.slice(ai + a.evidence.length, bi))) return raw;
+  return blank(withoutB, ai, a.evidence.length);
+}
+
+const MODE_AFTER = '(?!\\s+(?:en|par|via)\\s+(?:voiture|avion|ferry|bateau|car|train|bus))';
+const CANCEL_CLEAR = [
+  new RegExp(`\\bne (?:pars|part|partons|vais|vas|va|allons|voyage|voyageons) plus\\b${MODE_AFTER}`),
+  /\b(?:on|je|nous) n y (?:va|vais|allons|vas) pas\b/,
+  /\bfinalement (?:je|on|nous) (?:reste|restons|ne (?:pars|partons|vais|allons))\b/,
+  /\bma (?:nbghich|nmshich|ghadich|bghitch|mshitch)\b/,
+  /\b(?:no voy|i m not going|i am not going|we are not going|ik ga niet)\b/,
+];
+const CANCEL_TRIP = [
+  /\b(?:voyage|sejour|vacances|trip)\b[^.?!]{0,30}\b(?:annule|annulee|annules|cancel+ed)\b/,
+  /\b(?:annule|annulee|cancel+ed)\b[^.?!]{0,20}\b(?:voyage|sejour|vacances|trip)\b/,
+];
+const CANCEL_POLICY = /\b(?:annulation (?:gratuite|possible|flexible)|conditions d annulation|free cancell?ation)\b/;
+
+/** « je ne pars plus à Tanger », « voyage annulé »: nothing to plan. A cancelled flight with a wish to go is not this. */
+export function cancelledTrip(raw: string, n: string): string | undefined {
+  for (const re of CANCEL_CLEAR) {
+    const m = n.match(re);
+    if (m) return saidAt(raw, n, m.index ?? 0, m[0].length);
+  }
+  if (WANTS.test(n) || CANCEL_POLICY.test(n)) return undefined;
+  for (const re of CANCEL_TRIP) {
+    const m = n.match(re);
+    if (m) return saidAt(raw, n, m.index ?? 0, m[0].length);
+  }
+  return undefined;
+}
+
+const UNIT_AFTER = /^\s*(?:h|heures?|kg|km|euros?|€|%|personnes?|places?|nuits?|jours?)\b/;
+
+/** « 15/08 », « 15/08/2026 », « 15.08.2026 »: day first, as written in Europe. Two-part dates need « / ». */
+export function numericDate(raw: string, n: string): TripFacts['when'] {
+  for (const m of n.matchAll(/(?<![\d/.-])(\d{1,2})([/.-])(\d{1,2})(?:\2(\d{4}|\d{2}))?(?![\d/])/g)) {
+    const [text, d, sep, mo, y] = m;
+    if (!y && sep !== '/') continue;
+    if (UNIT_AFTER.test(n.slice((m.index ?? 0) + text.length))) continue;
+    const day = Number(d), month = Number(mo);
+    const year = y ? (y.length === 2 ? 2000 + Number(y) : Number(y)) : undefined;
+    if (day < 1 || day > 31 || month < 1 || month > 12) continue;
+    if (year !== undefined && (year < 2020 || year > 2100)) continue;
+    return { value: { month, day, ...(year ? { year } : {}) }, status: 'FACT_USER', evidence: saidAt(raw, n, m.index ?? 0, text.length) };
+  }
+  return undefined;
 }

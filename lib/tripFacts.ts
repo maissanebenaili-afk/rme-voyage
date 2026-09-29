@@ -72,9 +72,10 @@ const LAB_CITY_ALIASES: Record<string, string> = {
   jdida: 'el jadida',
   'el-jadida': 'el jadida',
   layoune: 'laayoune',
+  casa: 'casablanca',
 };
 // Words that are also everyday words: only taken after a place preposition.
-const AMBIGUOUS = new Set(['safi', 'sale']);
+const AMBIGUOUS = new Set(['safi', 'sale', 'casa']);
 const PLACE_PREP = /(?:^|\s)(?:a|au|vers|pour|to|naar|hacia|en|in|l|ila|via|par|de|depuis|from|desde|vanaf|da)\s+$/;
 
 type CityHit = { key: string; label: string; index: number; end: number };

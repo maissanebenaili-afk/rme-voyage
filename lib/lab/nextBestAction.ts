@@ -98,6 +98,11 @@ const PAST_NOTE: Record<MagicLang, string> = {
   da: 'Ka-ybano souvenir mashi mashru3. 9ol lia ash bghiti twejjed.',
 };
 
+const CANCELLED_NOTE: Record<MagicLang, string> = {
+  fr: 'Ce voyage semble annulé, donc je ne propose rien. Dites-moi si vous voulez le reprendre.',
+  da: 'Had s-safar ban lia mlghi, donc ma kan9tarah walou. 9ol lia ila bghiti trje3 lih.',
+};
+
 const DAYS: Record<MagicLang, string[]> = {
   fr: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
   da: ['l7ed', 'tnin', 'tlat', 'larb3', 'lkhmis', 'jem3a', 'sebt'],
@@ -264,6 +269,7 @@ function returnPlan(facts: IntentFacts, { partners, routes, today, lang }: PlanO
 
 export function planNextActions(facts: IntentFacts, options: PlanOptions): MagicPlan {
   if (facts.past) return { actions: [], notes: [PAST_NOTE[options.lang]] };
+  if (facts.cancelled) return { actions: [], notes: [CANCELLED_NOTE[options.lang]] };
   if (facts.direction) return returnPlan(facts, options);
   const { partners, routes, today, lang, done = [] } = options;
   const city = facts.destination?.value.label ?? facts.destinationGuess?.value.label;
@@ -394,7 +400,7 @@ export type MissingChoice = { field: 'destination' | 'origin' | 'when' | 'mode';
 export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoice[] {
   const fr = lang === 'fr';
   const rows: MissingChoice[] = [];
-  if (facts.past || facts.direction) return rows;
+  if (facts.past || facts.cancelled || facts.direction) return rows;
   const hasPlace = Boolean(facts.destination || facts.destinationGuess || facts.country);
   if (facts.purpose) return rows;
   if (!hasPlace) {

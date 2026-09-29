@@ -111,6 +111,83 @@ describe("the departure city is read where it is said without « depuis »", () 
   });
 });
 
+describe("a cancelled trip is not planned", () => {
+  test.each([
+    "je voulais aller à Nador mais finalement je reste à Paris",
+    "je ne pars plus à Tanger",
+    "voyage à Marrakech annulé",
+    "ma nbghich nmshi l Tanja",
+    "on n'y va pas au Maroc cette année",
+  ])("%s", (sentence) => {
+    const facts = extractIntent(sentence, TODAY);
+    expect(facts.cancelled).toBeDefined();
+    expect(plan(sentence).actions).toEqual([]);
+    expect(plan(sentence).notes).toHaveLength(1);
+    expect(evidenceIsSaid(sentence, facts)).toBe(true);
+    expect(missingChoices(facts, "fr")).toEqual([]);
+  });
+
+  test.each([
+    "mon vol est annulé, je suis à Paris et je dois aller à Marrakech",
+    "hôtel à Marrakech avec annulation gratuite",
+    "je ne vais plus en voiture, je prends l'avion pour Nador",
+    "je ne pars pas en voiture, je prends l'avion pour Nador",
+    "je veux aller à Tanger, le voyage de l'an dernier a été annulé",
+  ])("a real plan is kept: %s", (sentence) => {
+    expect(extractIntent(sentence, TODAY).cancelled).toBeUndefined();
+    expect(kinds(sentence).length).toBeGreaterThan(0);
+  });
+});
+
+describe("dates written with digits", () => {
+  test.each([
+    ["on part à Nador le 15/08", { month: 8, day: 15 }],
+    ["je pars le 15/08/2027 à Tanger", { month: 8, day: 15, year: 2027 }],
+    ["départ le 15.08.2027 pour Oujda", { month: 8, day: 15, year: 2027 }],
+    ["départ le 15-08-27 pour Oujda", { month: 8, day: 15, year: 2027 }],
+  ])("%s", (sentence, when) => {
+    const facts = extractIntent(sentence, TODAY);
+    expect(facts.when?.value).toEqual(when);
+    expect(evidenceIsSaid(sentence, facts)).toBe(true);
+  });
+
+  test("an impossible date is flagged, not planned as a real one", () => {
+    expect(plan("je pars le 31/09 à Tanger").notes).toEqual(["Cette date n’existe pas dans le calendrier : vérifiez-la."]);
+  });
+
+  test.each([
+    "valise de 1.5 kg pour Tanger", "on part 3-4 jours à Nador", "2 sur 3/4 places pour Tanger", "je veux aller à 2026-13-45",
+    "10/12 personnes à Tanger", "le 15/13 à Nador", "le 32/01 à Nador", "Nador le 12/25",
+  ])("not a date: %s", (sentence) => {
+    expect(extractIntent(sentence, TODAY).when).toBeUndefined();
+  });
+});
+
+describe("two cities offered are no destination chosen", () => {
+  test("« Tanger ou Nador » picks neither", () => {
+    for (const s of ["Tanger ou Nador ?", "je vais à Tanger ou à Nador", "Tanja wla Nador"]) {
+      expect(extractIntent(s, TODAY).destination).toBeUndefined();
+    }
+  });
+
+  test("only two cities are an alternative", () => {
+    expect(extractIntent("Paris ou Lyon puis Tanger", TODAY).destination?.value.label).toBe("Tanger");
+    expect(extractIntent("Tanger en juillet ou en août", TODAY).destination?.value.label).toBe("Tanger");
+    expect(extractIntent("de Nador à Tanger ou en voiture", TODAY).destination?.value.label).toBe("Tanger");
+  });
+});
+
+describe("« Casa » is Casablanca, but only as a place", () => {
+  test("after a place word", () => {
+    expect(extractIntent("on part à Casa en août", TODAY).destination?.value.label).toBe("Casablanca");
+    expect(extractIntent("vol pour Casa demain", TODAY).destination?.value.label).toBe("Casablanca");
+  });
+  test("not the Spanish word for house", () => {
+    expect(extractIntent("quiero una casa grande en agosto", TODAY).destination).toBeUndefined();
+    expect(extractIntent("la casa de mi madre", TODAY).destination).toBeUndefined();
+  });
+});
+
 describe("known limits, kept visible", () => {
   test("a bare « Tanger Paris » is ambiguous and stays read as a trip to Tanger", () => {
     const facts = extractIntent("Tanger Paris", TODAY);
