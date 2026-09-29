@@ -27,6 +27,8 @@ const IATA: Record<string, string> = {
 };
 
 const TEMPLATE_HOST_PLACEHOLDER = '{url}';
+// Stand-in address used only to check where {url} lands in a template.
+const PROBE_URL = 'https://www.aviasales.com/';
 const MAX_PASSENGERS = 9;
 
 function cityKey(label: string): string {
@@ -64,10 +66,10 @@ export function isValidDeepLinkTemplate(template: string | undefined): template 
   const value = template.trim();
   if (value.split(TEMPLATE_HOST_PLACEHOLDER).length !== 2) return false;
   try {
-    const url = new URL(value.replace(TEMPLATE_HOST_PLACEHOLDER, 'https%3A%2F%2Fwww.aviasales.com%2F'));
+    const url = new URL(value.replace(TEMPLATE_HOST_PLACEHOLDER, encodeURIComponent(PROBE_URL)));
     if (url.protocol !== 'https:' || url.username || url.password || url.port) return false;
     if (!isAllowedPartnerHost(url.hostname, ['tp.media'])) return false;
-    return [...url.searchParams.values()].includes('https://www.aviasales.com/');
+    return [...url.searchParams.values()].some((param) => param === PROBE_URL);
   } catch {
     return false;
   }
