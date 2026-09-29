@@ -59,7 +59,8 @@ function stateOf(f: IntentFacts) {
   return { saved, steps: saved ? journeyState(trip, new Set(), TODAY, "fr").steps.length : 0 };
 }
 
-const topAction = (f: IntentFacts) => { const a = planNextActions(f, options).actions[0]; return a ? `${a.kind}${a.href ? "" : "(nolink)"}` : "-"; };\n/** Semantic action identity for the Question Value Gate: reason text is deliberately ignored. */\nconst semanticActionKey = (a: { kind: string; href?: string; partner?: { id: string } }) => `${a.kind}|${a.href ?? ""}|${a.partner?.id ?? ""}`;\nconst semanticPlanKey = (f: IntentFacts) => planNextActions(f, options).actions.map(semanticActionKey).join("||");
+const topAction = (f: IntentFacts) => { const a = planNextActions(f, options).actions[0]; return a ? `${a.kind}${a.href ? "" : "(nolink)"}` : "-"; };
+/** Semantic action identity for the Question Value Gate: reason text is deliberately ignored. */\nconst semanticActionKey = (a: { kind: string; href?: string; partner?: { id: string } }) => `${a.kind}|${a.href ?? ""}|${a.partner?.id ?? ""}`;\nconst semanticPlanKey = (f: IntentFacts) => planNextActions(f, options).actions.map(semanticActionKey).join("||");
 type Row = { id: string; group: string; understood: number; known: number; unknown: string; q1: string; qCount: number; status: string; note: string; gain1: number; naturalGain1: number; uselessQ: number };
 
 describe("resolution loop (report only)", () => {
