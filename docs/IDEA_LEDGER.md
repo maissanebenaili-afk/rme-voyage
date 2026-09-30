@@ -45,3 +45,5 @@ Statuts : ACTIVE, TEST, RESEARCH, OPPORTUNITY, FROZEN, REFUTED, UNKNOWN, SUPERSE
 ## Règle de récupération historique
 
 Cette première version contient les idées connues du dossier de travail courant. Elle ne prétend pas être exhaustive. Toute nouvelle idée retrouvée dans une branche reçoit un ID avant d'être classée comme oubliée.
+
+| IDEA-034 | RME | Store-readiness audit gate basé sur le dépôt réel, sans doublons ni migrations spéculatives | ChatGPT contre-audit 2026-09-30 | ACTIVE | audit frais avant build/release |
