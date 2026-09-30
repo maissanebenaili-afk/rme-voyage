@@ -29,3 +29,5 @@ Statuts : VERIFIED, OBSERVED, CALCULATED, DECLARED, UNKNOWN, CONTRADICTED, HISTO
 | E-021 | iOS native project | UNKNOWN | chemins iOS antérieurement absents | 2026-09 | revérifier sur main actuel |
 | E-022 | MICEP empirical validity | UNKNOWN | simulations seulement | 2026-09 | simulation ≠ terrain |
 | E-023 | Trading profitability | UNKNOWN | aucun capital live / performance démontrée | 2026-09 | aucune projection |
+
+| E-024 | Store-ready proposal contre-audit | OBSERVED/CONTRADICTED | audit indépendant de main: le dépôt utilise manifest.webmanifest et /api/legal/privacy; les tables SQL réelles sont users/trips/community_tips/... et non profiles/itineraries/ferry_bookings/checkpoints | 2026-09-30 | livrables externes non intégrables tels quels; aucune migration Supabase exécutée |
