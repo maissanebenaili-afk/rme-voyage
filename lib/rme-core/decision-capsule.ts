@@ -15,14 +15,21 @@ export type DecisionCapsule = {
 };
 
 function canonicalize(value: unknown): string {
+  if (value === null) return "null";
+  if (typeof value === "string" || typeof value === "boolean") return JSON.stringify(value);
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw new Error("CANONICAL_JSON_VALUE_INVALID");
+    return JSON.stringify(value);
+  }
+  if (typeof value === "undefined") throw new Error("CANONICAL_JSON_VALUE_INVALID");
   if (Array.isArray(value)) return "[" + value.map(canonicalize).join(",") + "]";
-  if (value && typeof value === "object") {
+  if (typeof value === "object") {
     const record = value as Record<string, unknown>;
     return "{" + Object.keys(record).sort()
       .map((key) => JSON.stringify(key) + ":" + canonicalize(record[key]))
       .join(",") + "}";
   }
-  return JSON.stringify(value);
+  throw new Error("CANONICAL_JSON_VALUE_INVALID");
 }
 
 export function fingerprint(input: unknown): string {
