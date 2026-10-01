@@ -11,6 +11,7 @@ export type DecisionCapsule = {
   decision: Record<string, unknown>;
   explanationReasonCode: string;
   commercialState: string;
+  integrityFingerprint: string;
 };
 
 function canonicalize(value: unknown): string {
@@ -28,6 +29,21 @@ export function fingerprint(input: unknown): string {
   return createHash("sha256").update(canonicalize(input)).digest("hex");
 }
 
+function capsuleIntegrityPayload(capsule: Omit<DecisionCapsule, "integrityFingerprint">) {
+  return {
+    capsuleId: capsule.capsuleId,
+    createdAt: capsule.createdAt,
+    inputFingerprint: capsule.inputFingerprint,
+    engineVersions: capsule.engineVersions,
+    configurationVersion: capsule.configurationVersion,
+    evidenceRefs: capsule.evidenceRefs,
+    riskAssessment: capsule.riskAssessment,
+    decision: capsule.decision,
+    explanationReasonCode: capsule.explanationReasonCode,
+    commercialState: capsule.commercialState,
+  };
+}
+
 export function createDecisionCapsule(input: {
   capsuleId: string;
   createdAt: string;
@@ -40,7 +56,7 @@ export function createDecisionCapsule(input: {
   explanationReasonCode: string;
   commercialState: string;
 }): DecisionCapsule {
-  return {
+  const capsule = {
     capsuleId: input.capsuleId,
     createdAt: input.createdAt,
     inputFingerprint: fingerprint(input.input),
@@ -51,6 +67,10 @@ export function createDecisionCapsule(input: {
     decision: structuredClone(input.decision),
     explanationReasonCode: input.explanationReasonCode,
     commercialState: input.commercialState,
+  };
+  return {
+    ...capsule,
+    integrityFingerprint: fingerprint(capsuleIntegrityPayload(capsule)),
   };
 }
 
@@ -71,6 +91,10 @@ export function replayDecision(
   }
   if (capsule.configurationVersion !== configurationVersion) {
     return { status: "REPLAY_MISMATCH", reason: "CONFIGURATION" };
+  }
+  const { integrityFingerprint: storedIntegrity, ...unsignedCapsule } = capsule;
+  if (storedIntegrity !== fingerprint(capsuleIntegrityPayload(unsignedCapsule))) {
+    return { status: "REPLAY_MISMATCH", reason: "INTEGRITY" };
   }
   return { status: "REPLAY_MATCH", fingerprint: capsule.inputFingerprint };
 }
