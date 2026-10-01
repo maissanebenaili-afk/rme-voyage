@@ -34,3 +34,31 @@ describe("RME Counterfactual Engine", () => {
     expect(result.alternative.viable).toBe(false);
   });
 });
+
+  test("rejects non-finite mutation deltas", () => {
+    expect(() => runCounterfactual(base, {
+      id: "nan-risk",
+      totalMinutesDelta: 0,
+      riskScoreDelta: Number.NaN,
+      ecoScoreDelta: 0,
+    })).toThrow("COUNTERFACTUAL_NON_FINITE");
+  });
+
+  test("rejects a negative resulting journey duration", () => {
+    expect(() => runCounterfactual(base, {
+      id: "negative-time",
+      totalMinutesDelta: -366,
+      riskScoreDelta: 0,
+      ecoScoreDelta: 0,
+    })).toThrow("COUNTERFACTUAL_TOTAL_MINUTES_INVALID");
+  });
+
+  test("rejects a resulting risk outside the closed interval [0, 1]", () => {
+    expect(() => runCounterfactual(base, {
+      id: "risk-overflow",
+      totalMinutesDelta: 0,
+      riskScoreDelta: 1,
+      ecoScoreDelta: 0,
+    })).toThrow("COUNTERFACTUAL_RISK_INVALID");
+  });
+});
