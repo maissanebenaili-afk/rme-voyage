@@ -33,7 +33,7 @@ describe("RME Counterfactual Engine", () => {
     expect(result.alternative.critical).toBe(true);
     expect(result.alternative.viable).toBe(false);
   });
-});
+
 
   test("rejects non-finite mutation deltas", () => {
     expect(() => runCounterfactual(base, {
