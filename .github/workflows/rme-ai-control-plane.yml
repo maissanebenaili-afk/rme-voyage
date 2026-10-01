@@ -74,6 +74,11 @@ jobs:
           OBJECTIVE: ${{ inputs.objective }}
         run: |
           set -euo pipefail
+          if [ -z "${OPENHANDS_API_KEY:-}" ]; then
+            echo 'OPENHANDS_API_KEY is not configured; OpenHands dispatch skipped.'
+            printf '{"status":"SKIPPED","reason":"OPENHANDS_API_KEY_NOT_CONFIGURED"}\n' > openhands-session.json
+            exit 0
+          fi
           python - <<'PY' > payload.json
           import json, os
           prompt = (
