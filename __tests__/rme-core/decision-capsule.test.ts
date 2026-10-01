@@ -70,3 +70,13 @@ describe("RME Decision Capsule", () => {
     });
   });
 });
+
+  test("rejects non-JSON numeric values instead of hashing them as null", () => {
+    expect(() => fingerprint({ risk: Number.NaN })).toThrow("CANONICAL_JSON_VALUE_INVALID");
+    expect(() => fingerprint({ risk: Number.POSITIVE_INFINITY })).toThrow("CANONICAL_JSON_VALUE_INVALID");
+  });
+
+  test("rejects undefined values instead of producing a partial fingerprint", () => {
+    expect(() => fingerprint({ risk: undefined })).toThrow("CANONICAL_JSON_VALUE_INVALID");
+  });
+});
