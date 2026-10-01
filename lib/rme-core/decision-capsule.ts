@@ -81,7 +81,7 @@ export function replayDecision(
   configurationVersion: string,
 ): { status: "REPLAY_MATCH"; fingerprint: string } | {
   status: "REPLAY_MISMATCH";
-  reason: "INPUT" | "ENGINE" | "CONFIGURATION";
+  reason: "INPUT" | "ENGINE" | "CONFIGURATION" | "INTEGRITY";
 } {
   if (capsule.inputFingerprint !== fingerprint(input)) {
     return { status: "REPLAY_MISMATCH", reason: "INPUT" };
