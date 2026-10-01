@@ -31,6 +31,26 @@ describe("RME Decision Capsule", () => {
     });
   });
 
+  test("tampering with stored decision is detected during replay", () => {
+    const capsule = createDecisionCapsule({
+      capsuleId: "cap-integrity",
+      createdAt: "2026-10-01T00:00:00Z",
+      input,
+      engineVersions: engines,
+      configurationVersion: "rme-1",
+      evidenceRefs: ["ev-1"],
+      riskAssessment: { score: 0.1, confidence: 1 },
+      decision: { viable: true, ecoScore: 1107.5 },
+      explanationReasonCode: "OK",
+      commercialState: "UNPROVEN",
+    });
+    capsule.decision.ecoScore = 1;
+    expect(replayDecision(capsule, input, engines, "rme-1")).toEqual({
+      status: "REPLAY_MISMATCH",
+      reason: "INTEGRITY",
+    });
+  });
+
   test("version changes are explicit mismatches, never silently reconciled", () => {
     const capsule = createDecisionCapsule({
       capsuleId: "cap-2",
