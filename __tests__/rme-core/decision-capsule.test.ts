@@ -69,7 +69,7 @@ describe("RME Decision Capsule", () => {
       reason: "CONFIGURATION",
     });
   });
-});
+
 
   test("rejects non-JSON numeric values instead of hashing them as null", () => {
     expect(() => fingerprint({ risk: Number.NaN })).toThrow("CANONICAL_JSON_VALUE_INVALID");
