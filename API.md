@@ -375,10 +375,6 @@ Real-time updates for:
 // Coming in Phase 2
 // HISTORICAL / NOT VERIFIED : aucun endpoint WebSocket de production n'est actuellement revendiqué.
 // Ne pas utiliser cet ancien exemple pour déduire une disponibilité en production.
-ws.onmessage = (event) => {
-  const update = JSON.parse(event.data);
-  // Handle real-time updates
-};
 ```
 
 ---
