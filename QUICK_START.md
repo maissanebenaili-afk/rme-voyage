@@ -1,6 +1,12 @@
 # 🚀 RME Voyage — Quick Start Guide
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Preuve de correspondance :** SHA Git du déploiement Netlify.
+>
+> **Vercel : HISTORICAL** — ancien environnement ; pas une cible de production actuelle.
 
 ## Pour les personnes en situation de handicap moteur
 
@@ -98,7 +104,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
 ├── __tests__/              # Tests unitaires Jest
 ├── .github/workflows/      # GitHub Actions CI/CD
 ├── .env.example            # Template (exemple)
-├── vercel.json             # Config Vercel deployment
+├── netlify.toml            # Configuration Netlify
 └── package.json            # Scripts & dépendances
 ```
 
@@ -160,7 +166,8 @@ Si tu as besoin d'aide :
 
 - [Next.js Docs](https://nextjs.org/docs)
 - [Jest Testing](https://jestjs.io/)
-- [Vercel Deployment](https://vercel.com/docs)
+- [DEPLOYMENT.md](./DEPLOYMENT.md) — procédure de déploiement actuelle
+- [Netlify](https://www.netlify.com/)
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [Accessibility (a11y)](https://www.w3.org/WAI/)
 

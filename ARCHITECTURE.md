@@ -1,6 +1,14 @@
 # RME Voyage - Architecture
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Vercel : HISTORICAL** — ancien environnement ; pas une cible de production actuelle.
+>
+> **Preuve de correspondance :** SHA Git associé au déploiement Netlify.
+>
+> **Dernier snapshot de production vérifié pendant le contrôle documentaire :** `7dda27a9dcdb02346dcb27119093e11b587ba52b`. Ce SHA est un instantané daté.
 
 Ce document décrit la pile réellement implémentée dans ce dépôt. Toute
 mention d'un service ci-dessous suppose ses variables d'environnement
@@ -35,13 +43,33 @@ conversationnel Hadak, marketplace caftans et partenaires immobiliers.
   effort, non distribué), CSP, rafraîchissement de session Supabase
 
 ### Infrastructure
-- **Hébergement :** Netlify (Vercel jusqu'au 27/09/2026) (voir `RME_ROUTE_ETAT.md` pour l'état de la
-  réflexion sur une alternative gratuite)
+- **Hébergement :** Netlify
+- **Vercel :** HISTORICAL
 - **CI :** GitHub Actions (`.github/workflows/ci.yml` — lint, test, build)
 - **Mobile :** Capacitor (préparation iOS/Android, non publié)
-- **Analytics :** Vercel Analytics dans le code : sans effet hors de Vercel. Mesure actuelle : lignes `[hadak-intent]` / `[hadak-ledger]` dans les logs Netlify
+- **Analytics :** les anciennes références à Vercel Analytics sont HISTORICAL et ne constituent pas une preuve d'hébergement Vercel. La mesure actuellement revendiquée doit être vérifiée dans le code et les logs de production.
 
 ---
+
+## Frontière de vérité
+
+```text
+GitHub / main
+      │
+      │ commit SHA
+      ▼
+Netlify production
+      │
+      │ deployment SHA
+      ▼
+preuve de correspondance
+```
+
+Un composant présent dans le dépôt n'est pas automatiquement une fonctionnalité **ACTIVE**.
+
+Une fonctionnalité expérimentale reste **LAB** jusqu'à validation explicite.
+
+Une intégration nécessitant un compte ou une variable externe reste **CONFIGURABLE** tant que cette configuration n'est pas vérifiée.
 
 ## 2. Fonctionnalités implémentées
 

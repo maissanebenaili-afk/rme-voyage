@@ -1,6 +1,10 @@
 # SAFAR Platform Development Guide
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Vercel : HISTORICAL** — ancien environnement.
 
 This document provides guidance for developers working on the **SAFAR (Smart Assistant for African & Mediterranean Routes)** platform - a panafricana AI travel assistant serving diaspora communities across Africa, Europe, and beyond.
 
@@ -43,8 +47,8 @@ SAFAR uses a **multi-agent conversational AI architecture** designed for diaspor
 │  - Voice Input (Web Speech API)         │
 │  - Voice Output (TTS)                   │
 ├─────────────────────────────────────────┤
-│  API Layer (Vercel Edge Functions)      │
-│  - /api/chat                            │
+│  API Layer (Next.js server-side routes) │
+│  - /api/hadak                           │
 │  - /api/trips                           │
 │  - /api/tips                            │
 ├─────────────────────────────────────────┤
@@ -90,8 +94,7 @@ SAFAR uses a **multi-agent conversational AI architecture** designed for diaspor
 rme-voyage/
 ├── app/
 │   ├── api/
-│   │   ├── chat/          # Main conversational endpoint
-│   │   ├── hadak/         # Legacy endpoint
+│   │   ├── hadak/         # Current conversational endpoint
 │   │   ├── tips/          # Community tips
 │   │   └── trips/         # Trip management
 │   ├── layout.tsx
@@ -395,7 +398,7 @@ See [API.md](./API.md) for complete endpoint documentation.
 
 ### Core Endpoints
 
-- `POST /api/chat` - Main conversational interface
+- `POST /api/hadak` - Main conversational interface
 - `GET /api/tips` - Fetch community tips
 - `POST /api/tips` - Submit community tip
 - `GET /api/trips` - Get user's trips
@@ -498,30 +501,14 @@ describe('NavigatorAgent', () => {
 });
 ```
 
-### Integration Tests
+### Integration Tests — HISTORICAL / NOT VERIFIED
 
-```typescript
-// app/api/chat.test.ts
-import { POST } from './route';
+The following legacy example previously targeted the removed /api/chat route. It is retained only as historical documentation and is not a current test contract.
 
-describe('Chat API', () => {
-  it('should process message and route to agent', async () => {
-    const request = new Request('http://localhost/api/chat', {
-      method: 'POST',
-      body: JSON.stringify({
-        message: 'What is the weather in Marrakech?',
-        userId: 'test-user',
-        language: 'en',
-      }),
-    });
-
-    const response = await POST(request as any);
-    const data = await response.json();
-
-    expect(data.success).toBe(true);
-    expect(data.response.agent).toMatch(/LOCALIZER|SAFAR/);
-  });
-});
+```text
+HISTORICAL: app/api/chat.test.ts
+The former Chat API test targeted http://localhost/api/chat.
+Do not use or restore this route based on this example.
 ```
 
 ### Running Tests
@@ -536,26 +523,23 @@ npm run test:coverage
 
 ## Deployment
 
-### Vercel Deployment (historique — la production est sur Netlify, voir DEPLOYMENT.md)
+### Web Deployment
 
-The platform is deployed on Vercel with automatic deployments on push to main.
+La production web utilise Netlify.
 
-```bash
-# Deploy to Vercel
-vercel deploy
+Flux de référence :
 
-# Deploy to production
-vercel deploy --prod
+```text
+GitHub / main
+      ↓
+Netlify
+      ↓
+Production
 ```
 
-### Environment Variables on Vercel
+Les anciennes commandes Vercel sont **HISTORICAL** et ne doivent pas être utilisées pour déployer la production actuelle.
 
-```bash
-vercel env add OPENAI_API_KEY
-vercel env add CLÉ_API_OPENAI
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-```
+Pour la procédure opérationnelle, consulter `DEPLOYMENT.md`.
 
 ### Database Migrations
 

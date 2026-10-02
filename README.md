@@ -2,7 +2,25 @@
 
 Plateforme de préparation et d'accompagnement des voyages des MRE et voyageurs des corridors **France ↔ Maroc**, avec extension **Algérie**.
 
-## État actuel — septembre 2026
+## État documentaire — octobre 2026
+
+## Vérité de déploiement
+
+- **Code de référence :** GitHub, branche `main`.
+- **Production web :** Netlify.
+- **URL canonique :** https://rme-voyage.netlify.app
+- **Preuve de correspondance :** SHA Git associé au déploiement de production Netlify.
+- **Dernier snapshot de production vérifié pendant le contrôle documentaire :** `7dda27a9dcdb02346dcb27119093e11b587ba52b`.
+- Ce SHA est un instantané daté et doit être revérifié avant toute nouvelle affirmation concernant la production.
+- **Vercel : HISTORICAL** — ancien environnement ; pas une cible de production actuelle.
+
+### Statuts produit
+
+- **ACTIVE** — présent, vérifié et utilisable sur la production Netlify actuelle.
+- **CONFIGURABLE** — code présent, mais activation dépendante d'une configuration ou validation externe.
+- **LAB** — expérimental, isolé et non inclus dans la promesse produit de production.
+- **HISTORICAL** — archive, ancien environnement, ancien audit ou décision datée.
+- **NOT VERIFIED** — affirmation sans preuve actuelle suffisante ; ne pas la présenter comme disponible.
 
 RME Voyage a dépassé le stade de simple MVP. Le dépôt est désormais orienté **validation produit, économie réelle du voyage, monétisation mesurable et qualité des données**.
 
@@ -33,7 +51,7 @@ Le socle actuel comprend notamment :
 
 ## Monétisation
 
-Les intégrations partenaires ne sont considérées comme **actives** que lorsqu'une URL, un compte partenaire ou une configuration réelle a été fournie et vérifiée.
+Les intégrations partenaires sont **CONFIGURABLE** tant que le compte, l'URL partenaire et le flux réel n'ont pas été vérifiés. Une présence de code ou de documentation ne constitue pas une preuve de commission active.
 
 Axes :
 - vols ;
@@ -55,7 +73,7 @@ Axes :
 - Supabase/SSR préparé pour l'authentification et la persistance
 - Capacitor préparé pour les builds mobiles
 - Leaflet / cartographie
-- Vercel : cible de déploiement actuellement configurée
+- Netlify : hébergement de production actuel
 
 ## Développement
 
@@ -99,6 +117,12 @@ npm run build
 
 ## Source de vérité
 
-**Code : GitHub → `main`.**
+**Code de référence : GitHub → `main`.**
+
+**Production : Netlify → dernier déploiement de production.**
+
+**Preuve : SHA Git associé au déploiement Netlify.**
+
+Une PR, un commit ou un build vert ne prouvent pas à eux seuls la production.
 
 Les anciens audits peuvent contenir des états historiques. Pour connaître l'état courant, partir des derniers commits de `main` et vérifier les fichiers concernés avant de conclure.
