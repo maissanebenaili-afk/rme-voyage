@@ -1,6 +1,10 @@
 # SAFAR Platform Development Guide
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Vercel : HISTORICAL** — ancien environnement.
 
 This document provides guidance for developers working on the **SAFAR (Smart Assistant for African & Mediterranean Routes)** platform - a panafricana AI travel assistant serving diaspora communities across Africa, Europe, and beyond.
 
@@ -43,7 +47,7 @@ SAFAR uses a **multi-agent conversational AI architecture** designed for diaspor
 │  - Voice Input (Web Speech API)         │
 │  - Voice Output (TTS)                   │
 ├─────────────────────────────────────────┤
-│  API Layer (Vercel Edge Functions)      │
+│  API Layer (Next.js server-side routes) │
 │  - /api/chat                            │
 │  - /api/trips                           │
 │  - /api/tips                            │
@@ -536,26 +540,23 @@ npm run test:coverage
 
 ## Deployment
 
-### Vercel Deployment (historique — la production est sur Netlify, voir DEPLOYMENT.md)
+### Web Deployment
 
-The platform is deployed on Vercel with automatic deployments on push to main.
+La production web utilise Netlify.
 
-```bash
-# Deploy to Vercel
-vercel deploy
+Flux de référence :
 
-# Deploy to production
-vercel deploy --prod
+```text
+GitHub / main
+      ↓
+Netlify
+      ↓
+Production
 ```
 
-### Environment Variables on Vercel
+Les anciennes commandes Vercel sont **HISTORICAL** et ne doivent pas être utilisées pour déployer la production actuelle.
 
-```bash
-vercel env add OPENAI_API_KEY
-vercel env add CLÉ_API_OPENAI
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-```
+Pour la procédure opérationnelle, consulter `DEPLOYMENT.md`.
 
 ### Database Migrations
 
