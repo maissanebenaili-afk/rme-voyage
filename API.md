@@ -1,6 +1,18 @@
-# SAFAR Platform API Documentation
+# RME Voyage — API
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Preuve de correspondance :** SHA Git associé au déploiement de production Netlify.
+>
+> **Dernier snapshot de production vérifié pendant le contrôle documentaire :** `7dda27a9dcdb02346dcb27119093e11b587ba52b`.
+>
+> Ce SHA est un instantané daté et doit être revérifié avant toute nouvelle affirmation concernant la production.
+>
+> **Vercel : HISTORICAL** — ancien environnement ; les anciennes URL Vercel ne constituent pas des endpoints de production.
+>
+> **Statuts :** ACTIVE / CONFIGURABLE / LAB / HISTORICAL / NOT VERIFIED. Une documentation ancienne ne suffit pas à établir qu'un endpoint ou une offre est actuellement disponible.
 
 Welcome to the SAFAR (Smart Assistant for African & Mediterranean Routes) API. This document provides comprehensive information about all available endpoints and integration points.
 
@@ -168,7 +180,7 @@ Content-Type: application/json
 
 ---
 
-### 3. Trips (`/api/trips`)
+### 3. Trips (`/api/trips`) — ACTIVE, sous réserve des contrôles d'authentification actuels
 
 Manage travel itineraries and trip planning.
 
@@ -270,7 +282,7 @@ DELETE /api/trips?tripId=trip-789&userId=user-123
 
 ---
 
-### 4. Hadak (Legacy) (`/api/hadak`)
+### 4. Hadak (`/api/hadak`) — ACTIVE
 
 Legacy endpoint for basic chat. Kept for backward compatibility.
 
@@ -328,7 +340,9 @@ SAFAR supports 5 languages with dedicated system prompts and keyword detection:
 
 ---
 
-## Subscription Tiers
+## Subscription Tiers — HISTORICAL / NOT VERIFIED
+
+> Les niveaux tarifaires et limites ci-dessous proviennent d'une documentation héritée. Ils ne doivent pas être présentés comme une offre commerciale actuelle sans vérification de la configuration et du produit.
 
 ### Free Tier
 - 10 messages/day
@@ -359,7 +373,8 @@ Real-time updates for:
 
 ```javascript
 // Coming in Phase 2
-const ws = new WebSocket('wss://rme-voyage.vercel.app/ws');
+// HISTORICAL / NOT VERIFIED : aucun endpoint WebSocket de production n'est actuellement revendiqué.
+// Ne pas utiliser cet ancien exemple pour déduire une disponibilité en production.
 ws.onmessage = (event) => {
   const update = JSON.parse(event.data);
   // Handle real-time updates
@@ -397,7 +412,7 @@ askSafar('Best route to Casablanca?', 'user-123');
 import requests
 
 response = requests.post(
-  'https://rme-voyage.vercel.app/api/chat',
+  'https://rme-voyage.netlify.app/api/chat',
   json={
     'message': 'What are prayer times in Fez?',
     'userId': 'user-123',
@@ -411,7 +426,7 @@ print(response.json()['response']['text'])
 ### cURL
 
 ```bash
-curl -X POST https://rme-voyage.vercel.app/api/chat \
+curl -X POST https://rme-voyage.netlify.app/api/chat \
   -H "Content-Type: application/json" \
   -d '{
     "message": "Ferry from Tangier to Barcelona?",
