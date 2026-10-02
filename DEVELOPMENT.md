@@ -48,7 +48,7 @@ SAFAR uses a **multi-agent conversational AI architecture** designed for diaspor
 │  - Voice Output (TTS)                   │
 ├─────────────────────────────────────────┤
 │  API Layer (Next.js server-side routes) │
-│  - /api/chat                            │
+│  - /api/hadak                           │
 │  - /api/trips                           │
 │  - /api/tips                            │
 ├─────────────────────────────────────────┤
@@ -94,8 +94,8 @@ SAFAR uses a **multi-agent conversational AI architecture** designed for diaspor
 rme-voyage/
 ├── app/
 │   ├── api/
-│   │   ├── chat/          # Main conversational endpoint
-│   │   ├── hadak/         # Legacy endpoint
+│   │   ├── hadak/         # Current conversational endpoint
+│   │   ├── hadak/         # Current conversational endpoint
 │   │   ├── tips/          # Community tips
 │   │   └── trips/         # Trip management
 │   ├── layout.tsx
@@ -399,7 +399,7 @@ See [API.md](./API.md) for complete endpoint documentation.
 
 ### Core Endpoints
 
-- `POST /api/chat` - Main conversational interface
+- `POST /api/hadak` - Main conversational interface
 - `GET /api/tips` - Fetch community tips
 - `POST /api/tips` - Submit community tip
 - `GET /api/trips` - Get user's trips
