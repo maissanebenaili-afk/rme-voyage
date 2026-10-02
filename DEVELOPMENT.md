@@ -95,7 +95,6 @@ rme-voyage/
 ├── app/
 │   ├── api/
 │   │   ├── hadak/         # Current conversational endpoint
-│   │   ├── hadak/         # Current conversational endpoint
 │   │   ├── tips/          # Community tips
 │   │   └── trips/         # Trip management
 │   ├── layout.tsx
