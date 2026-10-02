@@ -57,29 +57,29 @@
 
 ## 💰 Monetization Paths — HISTORICAL / NOT VERIFIED
 
-### 1. **Commission on Marwa Caftan Rentals** (ACTIVE NOW)
+### 1. **Commission on Marwa Caftan Rentals** — HISTORICAL / NOT VERIFIED
 - User currently makes 10% commission on caftan rentals
 - **Action:** Add "Book Now" button in app → SMS/WhatsApp to Marwa
 - **Potential:** €500–2000/month (if 10% market cap of users books caftans)
 
-### 2. **Commission on Idour Real Estate** (ACTIVE NOW)
+### 2. **Commission on Idour Real Estate** — HISTORICAL / NOT VERIFIED
 - User makes commission on property bookings
 - **Action:** Highlight premium properties in app home
 - **Potential:** €1000–5000/month (higher ticket)
 
-### 3. **Premium Subscription** (NEW)
+### 3. **Premium Subscription** — HISTORICAL / NOT VERIFIED
 - Feature: "Save favorite caftans" + "price alerts" + "trip history"
 - Price: €4.99/month or €24.99/year
 - **Action:** Implement with Stripe + in-app subscription
 - **Potential:** €500–3000/month (if 50–200 subscribers)
 
-### 4. **Affiliate Links** (ALREADY IN PROJECT)
+### 4. **Affiliate Links** — CONFIGURABLE / NOT VERIFIED
 - TravelPayouts (flights) + DirectFerries (ferries)
 - Currently on website but not prominent
 - **Action:** Feature in "Plan your trip" section with commission highlight
 - **Potential:** €100–500/month (travel affiliate margin ~2–5%)
 
-### 5. **In-App Advertising** (SLOWER)
+### 5. **In-App Advertising** — HISTORICAL / NOT VERIFIED
 - AdMob / Google Ads in app
 - **Potential:** €50–300/month (low until high DAU)
 
