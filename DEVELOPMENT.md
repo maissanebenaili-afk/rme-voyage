@@ -502,30 +502,14 @@ describe('NavigatorAgent', () => {
 });
 ```
 
-### Integration Tests
+### Integration Tests — HISTORICAL / NOT VERIFIED
 
-```typescript
-// app/api/chat.test.ts
-import { POST } from './route';
+The following legacy example previously targeted the removed /api/chat route. It is retained only as historical documentation and is not a current test contract.
 
-describe('Chat API', () => {
-  it('should process message and route to agent', async () => {
-    const request = new Request('http://localhost/api/chat', {
-      method: 'POST',
-      body: JSON.stringify({
-        message: 'What is the weather in Marrakech?',
-        userId: 'test-user',
-        language: 'en',
-      }),
-    });
-
-    const response = await POST(request as any);
-    const data = await response.json();
-
-    expect(data.success).toBe(true);
-    expect(data.response.agent).toMatch(/LOCALIZER|SAFAR/);
-  });
-});
+```text
+HISTORICAL: app/api/chat.test.ts
+The former Chat API test targeted http://localhost/api/chat.
+Do not use or restore this route based on this example.
 ```
 
 ### Running Tests
