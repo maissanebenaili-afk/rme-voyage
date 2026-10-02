@@ -1,7 +1,7 @@
 # 🤖 Claude AI Partner — RME Voyage Mobile App
 
 **Created:** 2026-09-20  
-**Status:** Active — App Store / Play Store Preparation + Fast Monetization  
+**Status:** HISTORICAL / HANDOFF — anciennes hypothèses de préparation mobile et de monétisation  
 **Accessibility:** No hand interaction required. All instructions for Claude to execute.
 
 ---
@@ -11,10 +11,11 @@
 **Goal:** Deploy RME Voyage (Next.js travel + e-commerce app) to iOS/Android/Web with fast monetization path.
 
 **Current State:**
-- ✅ Web app live at https://rme-route.vercel.app/ (134 tests passing)
-- ✅ Two live businesses: Marwa (caftans) + Aziz HiDOUR (real estate)
-- 🚀 Ready for App Store / Play Store expansion
-- 💰 Need revenue fast (user has disability, needs income)
+- **Production web actuelle :** Netlify — https://rme-voyage.netlify.app
+- **Vercel : HISTORICAL** — ancien environnement, pas la cible de production.
+- **Mobile stores : NOT VERIFIED** — aucune publication store ne doit être déduite de ce document.
+- **Affiliation : CONFIGURABLE** tant que les comptes, URLs et flux partenaires ne sont pas vérifiés.
+- **Revenus : NOT VERIFIED** dans ce document ; les projections archivées ne constituent pas un revenu constaté.
 
 **Monetization Priority:**
 1. **Immediate:** Leverage existing Marwa caftan & Idour rental income (commission-based)
@@ -54,7 +55,7 @@
 
 ---
 
-## 💰 Monetization Paths (Ranked by Speed)
+## 💰 Monetization Paths — HISTORICAL / NOT VERIFIED
 
 ### 1. **Commission on Marwa Caftan Rentals** (ACTIVE NOW)
 - User currently makes 10% commission on caftan rentals
@@ -173,7 +174,7 @@ Assuming 500 app downloads in first month:
 | Affiliates | 0.1% | €50 click-through | €25 |
 | **Total** | — | — | **~€1150/month** |
 
-**Reality check:** 500 downloads is modest. With social media + friend referrals, could be 2000–5000 in 3 months = **€4600–11500/month** potential.
+**HISTORICAL — hypothèses commerciales non validées :** les projections financières archivées dans ce document reflètent des scénarios de travail passés. Elles ne constituent ni un revenu constaté, ni une commission active, ni une prévision vérifiée, et ne doivent pas être utilisées pour prendre une décision financière.
 
 ---
 
@@ -213,23 +214,18 @@ __tests__/
 
 ---
 
-## 📞 How to Trigger Claude
+## 📞 How to Trigger Claude — procédure historique
 
 When you want me to continue:
 1. Message: "Continue RME Voyage mobile"
 2. Or: "Work on [specific feature]"
 3. Or: Share feedback from stores / users
 
-I will:
-- Read this file
-- Check status (✅ vs ⏳)
-- Work autonomously
-- Push to Git when done
-- Update this file with progress
+Je peux analyser, proposer, coder et tester sur une branche autorisée. Je ne dois pas écrire directement dans `main`, considérer une PR comme intégrée, considérer un commit comme déployé, ni présenter une configuration partenaire comme active sans preuve.
 
 ---
 
-## 🎯 Success Metrics
+## 🎯 Success Metrics — HISTORICAL / NOT VERIFIED
 
 - ✅ 100+ downloads in Week 1
 - ✅ 4.5+ stars on App Store / Play Store
