@@ -4,7 +4,12 @@
 
 > Document de passation entre agents IA.
 > Dernière vérification : 2026-09-26.
-> Ce document ne constitue pas une preuve de déploiement : GitHub/Vercel restent les sources de vérité.
+> Ce document ne constitue pas une preuve de déploiement.
+>
+> **Source de code :** GitHub, branche `main`.
+> **Source de production :** dernier déploiement de production Netlify.
+> **Preuve de correspondance :** SHA Git associé au déploiement Netlify.
+> **Vercel : HISTORICAL** — ancien environnement ; pas une cible ou source de production actuelle.
 
 ## 0. Règle absolue : preuve avant affirmation
 
@@ -30,18 +35,44 @@ Ne jamais transformer une hypothèse en fait.
 Repository :
 
 - GitHub : https://github.com/maissanebenaili-afk/rme-voyage
-- Branche de production de référence : `main`
-- Production annoncée : https://rme-route.vercel.app
+- Branche de référence : `main`
+- Production web : Netlify
+- URL canonique : https://rme-voyage.netlify.app
+- Vercel : HISTORICAL
 
-Au moment de cette vérification, le commit le plus récent observé sur `main` est :
+Dernier snapshot de production vérifié pendant le contrôle documentaire :
 
-- `cbe7ea2896b6f19382d005da8cccb8c8737602ea`
-- `fix(a11y): white text on emerald buttons reaches AA (#144)`
-- 2026-09-26
+`7dda27a9dcdb02346dcb27119093e11b587ba52b`
+
+Ce SHA est un instantané daté. Il doit être revérifié avant toute nouvelle affirmation concernant la production.
 
 Ne pas utiliser un ancien SHA comme état actuel sans le revérifier.
 
 ---
+
+## Statuts produit obligatoires
+
+- **ACTIVE** — présent, vérifié et utilisable sur la production Netlify actuelle.
+- **CONFIGURABLE** — code présent, mais activation dépendante d'une configuration ou validation externe.
+- **LAB** — expérimental, isolé et non inclus dans la promesse produit de production.
+- **HISTORICAL** — archive, ancien environnement, ancien audit ou décision datée.
+- **NOT VERIFIED** — affirmation sans preuve actuelle suffisante ; ne pas la présenter comme disponible.
+
+## Interdiction de déduction
+
+Un agent ne doit jamais déduire :
+
+- fonctionnalité ACTIVE ← présence de code ;
+- fonctionnalité ACTIVE ← PR ouverte ;
+- fonctionnalité ACTIVE ← commit ;
+- production ← branche ;
+- production ← build réussi ;
+- production ← déploiement sans SHA vérifié ;
+- affiliation active ← présence d'un composant partenaire ;
+- commission réelle ← projection commerciale ;
+- donnée temps réel ← donnée statique récente.
+
+Chaque conclusion doit avoir sa preuve correspondante.
 
 ## 2. Historique récent vérifié
 
