@@ -173,9 +173,10 @@ export default function Home() {
 
       {/* RME Live — compact, useful, and intentionally secondary to the journey */ }
       <section aria-label="RME Live" className="border-b border-slate-200 bg-white">
+        <Link href="/actualites" className="group block">
         <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2.5 sm:px-8">
-          <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700">
-            🔴 RME Live
+          <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700 group-hover:bg-red-100">
+            🔴 RME Live · Tout voir
           </span>
           <div className="min-w-0 overflow-hidden">
             <div className="flex min-w-max animate-[marquee_32s_linear_infinite] gap-8 text-xs font-semibold text-slate-600">
@@ -185,6 +186,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+        </Link>
       </section>
 
       {/* Daily Widget — hijri date, Ramadan countdown, personalized weather */}
