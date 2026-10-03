@@ -34,7 +34,7 @@ import {
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { buildShareUrl } from '@/lib/tripShare';
 import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/hadakVoice';
-import { OFFLINE_PROVENANCE, describeProvenance, type HadakLang, type HadakProvenance } from '@/lib/hadakGuidance';
+import { OFFLINE_PROVENANCE, describeProvenance, type HadakProvenance } from '@/lib/hadakGuidance';
 import type { NextAction } from '@/lib/rmeMoments';
 import { isPrimaryTruth } from '@/lib/trust';
 import { trackFunnelEvent } from '@/lib/partnerTracking';
