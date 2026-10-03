@@ -166,7 +166,7 @@ export default function QuranReader() {
         <div className="border-b border-emerald-100 px-5 py-5 sm:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-[.16em] text-emerald-700">Coran · Hafs / écriture uthmanique</p>
+              <p className="text-xs font-black uppercase tracking-[.16em] text-emerald-700">Coran · écriture uthmanique</p>
               <h1 className="mt-1 font-[family-name:var(--font-amiri)] text-3xl font-bold text-[#172033] sm:text-4xl">{current?.name ?? 'Coran'}</h1>
               {current && <p className="mt-1 text-sm text-slate-500">{current.englishName} · {current.numberOfAyahs} versets</p>}
             </div>
