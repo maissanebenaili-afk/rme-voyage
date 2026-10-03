@@ -24,34 +24,84 @@ export type TripFacts = {
 
 const MAX_CHARS = 2000;
 
-function norm(text: string): string {
+export function norm(text: string): string {
   return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ');
 }
 
 // Moroccan cities known to the Lab only; promoted to MOROCCO_CITIES once checked.
-const LAB_EXTRA_DESTINATIONS: Record<string, string> = { martil: 'Martil' };
+// Al Hoceïma has its own /trajet pages; the others are frequent MRE destinations.
+const LAB_EXTRA_DESTINATIONS: Record<string, string> = {
+  martil: 'Martil',
+  'al hoceima': 'Al Hoceïma',
+  chefchaouen: 'Chefchaouen',
+  berkane: 'Berkane',
+  driouch: 'Driouch',
+  'el jadida': 'El Jadida',
+  mohammedia: 'Mohammedia',
+  ifrane: 'Ifrane',
+  errachidia: 'Errachidia',
+  dakhla: 'Dakhla',
+  laayoune: 'Laâyoune',
+  tiznit: 'Tiznit',
+  taroudant: 'Taroudant',
+  guelmim: 'Guelmim',
+  asilah: 'Asilah',
+  saidia: 'Saïdia',
+  fnideq: 'Fnideq',
+};
+
+// Everyday spellings (Darija, Spanish, English) → the key of a city above or in MOROCCO_CITIES.
+const LAB_CITY_ALIASES: Record<string, string> = {
+  tanja: 'tanger',
+  tetuan: 'tetouan',
+  tetwan: 'tetouan',
+  fez: 'fes',
+  fass: 'fes',
+  marrakesh: 'marrakech',
+  mraksh: 'marrakech',
+  wejda: 'oujda',
+  'beni mellal': 'benimelal',
+  'al-hoceima': 'al hoceima',
+  alhoceima: 'al hoceima',
+  'el hoceima': 'al hoceima',
+  hoceima: 'al hoceima',
+  lhoceima: 'al hoceima',
+  alhucemas: 'al hoceima',
+  chaouen: 'chefchaouen',
+  xauen: 'chefchaouen',
+  jdida: 'el jadida',
+  'el-jadida': 'el jadida',
+  layoune: 'laayoune',
+};
 // Words that are also everyday words: only taken after a place preposition.
 const AMBIGUOUS = new Set(['safi', 'sale']);
 const PLACE_PREP = /(?:^|\s)(?:a|au|vers|pour|to|naar|hacia|en|in|l|ila|via|par|de|depuis|from|desde|vanaf|da)\s+$/;
 
 type CityHit = { key: string; label: string; index: number; end: number };
 
+/** Every Moroccan city the Lab knows, by normalised key, with its French label. */
+export const LAB_MOROCCAN_CITIES: Record<string, string> = {
+  ...Object.fromEntries(Object.entries(MOROCCO_CITIES).map(([k, v]) => [norm(k), v.fr])),
+  ...LAB_EXTRA_DESTINATIONS,
+};
+
 function moroccanHits(n: string): CityHit[] {
+  // [spelling to look for, key of the city it names]
   const entries: Array<[string, string]> = [
-    ...Object.entries(MOROCCO_CITIES).map(([k, v]) => [k, v.fr] as [string, string]),
-    ...Object.entries(LAB_EXTRA_DESTINATIONS),
+    ...Object.keys(LAB_MOROCCAN_CITIES).map((k) => [k, k] as [string, string]),
+    ...Object.entries(LAB_CITY_ALIASES),
   ];
   const seen = new Set<string>();
   const hits: CityHit[] = [];
-  for (const [key, label] of entries) {
-    const nk = norm(key);
-    if (seen.has(nk)) continue;
-    seen.add(nk);
-    const re = new RegExp(`\\b${nk}\\b`, 'g');
+  for (const [spelling, key] of entries) {
+    const ns = norm(spelling);
+    if (seen.has(ns)) continue;
+    seen.add(ns);
+    const re = new RegExp(`\\b${ns}\\b`, 'g');
     for (const m of n.matchAll(re)) {
       const index = m.index ?? 0;
-      if (AMBIGUOUS.has(nk) && !PLACE_PREP.test(n.slice(0, index))) continue;
-      hits.push({ key: nk, label, index, end: index + nk.length });
+      if (AMBIGUOUS.has(ns) && !PLACE_PREP.test(n.slice(0, index))) continue;
+      hits.push({ key, label: LAB_MOROCCAN_CITIES[key], index, end: index + ns.length });
     }
   }
   return hits.sort((a, b) => a.index - b.index);
@@ -101,6 +151,9 @@ export function extractTripFacts(input: string): TripFacts {
   const raw = typeof input === 'string' ? input.slice(0, MAX_CHARS) : '';
   const n = norm(raw).replace(/\s*(?:→|->|=>)\s*/g, ' → ');
   const facts: TripFacts = { unknown: [] };
+  // Evidence is the user's own spelling (« Tanja », « août »), never RME's label.
+  // norm() keeps the length of NFC text; with an arrow rewritten, the normalised text is used.
+  const said = (index: number, length: number) => (raw.length === n.length ? raw : n).slice(index, index + length);
 
   // Origin: a known departure city right after "depuis / from / de …", or before an arrow.
   for (const o of ORIGINS) {
@@ -111,7 +164,7 @@ export function extractTripFacts(input: string): TripFacts {
       const before = n.slice(0, idx);
       const after = n.slice(idx + on.length);
       if (FROM_RE.test(before) || /^\s*→/.test(after)) {
-        facts.origin = { value: { label: o.label, countryCode: o.countryCode }, status: 'FACT_USER', evidence: m[0] };
+        facts.origin = { value: { label: o.label, countryCode: o.countryCode }, status: 'FACT_USER', evidence: said(idx, m[0].length) };
         break;
       }
     }
@@ -124,11 +177,11 @@ export function extractTripFacts(input: string): TripFacts {
   for (const h of hits) {
     const before = n.slice(0, h.index);
     if (!facts.via && VIA_RE.test(before)) {
-      facts.via = { value: { key: h.key, label: h.label }, status: 'FACT_USER', evidence: h.label };
+      facts.via = { value: { key: h.key, label: h.label }, status: 'FACT_USER', evidence: said(h.index, h.end - h.index) };
       continue;
     }
     if (!facts.origin && (FROM_RE.test(before) || /^\s*→/.test(n.slice(h.end)))) {
-      facts.origin = { value: { label: h.label, countryCode: 'ma' }, status: 'FACT_USER', evidence: h.label };
+      facts.origin = { value: { label: h.label, countryCode: 'ma' }, status: 'FACT_USER', evidence: said(h.index, h.end - h.index) };
       continue;
     }
     destination = h; // the last Moroccan city that is neither origin nor via
@@ -136,13 +189,14 @@ export function extractTripFacts(input: string): TripFacts {
 
   if (OMRA_RE.test(n) || HAJJ_RE.test(n)) {
     const isHajj = HAJJ_RE.test(n) && !/\b(omra|oumra|umrah|umra)\b/.test(n);
-    facts.purpose = { value: isHajj ? 'hajj' : 'omra', status: 'FACT_USER', evidence: (n.match(isHajj ? HAJJ_RE : OMRA_RE) ?? [''])[0] };
+    const p = n.match(isHajj ? HAJJ_RE : OMRA_RE);
+    facts.purpose = { value: isHajj ? 'hajj' : 'omra', status: 'FACT_USER', evidence: p ? said(p.index ?? 0, p[0].length) : '' };
     if (!destination) {
       facts.destination = { value: { key: 'makkah', label: 'La Mecque', country: 'SA' }, status: 'FACT_USER', evidence: facts.purpose.evidence };
     }
   }
   if (destination) {
-    facts.destination = { value: { key: destination.key, label: destination.label, country: 'MA' }, status: 'FACT_USER', evidence: destination.label };
+    facts.destination = { value: { key: destination.key, label: destination.label, country: 'MA' }, status: 'FACT_USER', evidence: said(destination.index, destination.end - destination.index) };
   }
 
   // When: month (+ optional valid day), year only if written.
@@ -157,13 +211,13 @@ export function extractTripFacts(input: string): TripFacts {
     }
     const yearMatch = n.match(/\b(20\d{2})\b/);
     if (yearMatch) when.year = Number(yearMatch[1]);
-    facts.when = { value: when, status: 'FACT_USER', evidence: m[0] };
+    facts.when = { value: when, status: 'FACT_USER', evidence: said(m.index ?? 0, m[0].length) };
     break;
   }
 
   for (const [re, mode] of MODES) {
     const m = n.match(re);
-    if (m) { facts.mode = { value: mode, status: 'FACT_USER', evidence: m[0] }; break; }
+    if (m) { facts.mode = { value: mode, status: 'FACT_USER', evidence: said(m.index ?? 0, m[0].length) }; break; }
   }
 
   const family = n.match(FAMILY_RE);
@@ -172,7 +226,7 @@ export function extractTripFacts(input: string): TripFacts {
     facts.travellers = {
       value: { ...(family ? { family: true } : {}), ...(children ? { children: true } : {}) },
       status: 'FACT_USER',
-      evidence: (family ?? children)![0],
+      evidence: said((family ?? children)!.index ?? 0, (family ?? children)![0].length),
     };
   }
 
