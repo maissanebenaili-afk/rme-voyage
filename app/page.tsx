@@ -449,6 +449,23 @@ export default function Home() {
       {/* Newsletter Section */}
       <NewsletterSection />
 
+      <section id="coran" className="border-y border-emerald-100 bg-[#f5f3ea] py-14">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <div className="flex flex-col gap-6 rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[.18em] text-emerald-700">Dernière rubrique · spiritualité</p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-[#0f1f3d] sm:text-4xl">📖 Le Coran, avec vous sur la route.</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                Les 114 sourates, lecture confortable et préparation hors connexion avant l’avion, le bateau ou les longues heures en voiture.
+              </p>
+            </div>
+            <Link href="/coran" className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#0f1f3d] px-6 py-3.5 font-extrabold text-white transition hover:bg-[#17395a]">
+              Ouvrir le Coran
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-slate-50 px-5 py-12 text-[#475569]">
         <div className="mx-auto max-w-6xl">
