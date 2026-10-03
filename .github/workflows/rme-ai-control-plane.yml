@@ -1,0 +1,122 @@
+name: RME AI Control Plane
+
+on:
+  workflow_dispatch:
+    inputs:
+      mission_id:
+        description: Stable mission identifier
+        required: true
+        type: string
+      objective:
+        description: Bounded objective for the agents
+        required: true
+        type: string
+      mode:
+        description: Agent operating mode
+        required: true
+        default: read-only
+        type: choice
+        options:
+          - read-only
+          - propose
+          - implement
+      run_jules:
+        description: Dispatch Jules
+        required: true
+        default: true
+        type: boolean
+      run_openhands:
+        description: Dispatch OpenHands when configured
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rme-ai-control-plane-${{ inputs.mission_id }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch-jules:
+    if: ${{ inputs.run_jules }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke Jules
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          prompt: |
+            RME CONTROL PLANE MISSION
+            Mission ID: ${{ inputs.mission_id }}
+            Mode: ${{ inputs.mode }}
+            Objective: ${{ inputs.objective }}
+            Rules:
+            - Never write to main.
+            - Claims require reproducible evidence.
+            - Preserve existing behavior unless required.
+            - Run relevant tests and report exact results.
+            - Report files, commit SHA, failures and uncertainty.
+            - Do not expose or commit secrets.
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: main
+          include_commit_log: true
+
+  dispatch-openhands:
+    if: ${{ inputs.run_openhands }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start OpenHands Cloud session
+        env:
+          OPENHANDS_API_KEY: ${{ secrets.OPENHANDS_API_KEY }}
+          MISSION_ID: ${{ inputs.mission_id }}
+          MODE: ${{ inputs.mode }}
+          OBJECTIVE: ${{ inputs.objective }}
+        run: |
+          set -euo pipefail
+          if [ -z "${OPENHANDS_API_KEY:-}" ]; then
+            echo 'OPENHANDS_API_KEY is not configured; OpenHands dispatch skipped.'
+            printf '{"status":"SKIPPED","reason":"OPENHANDS_API_KEY_NOT_CONFIGURED"}\n' > openhands-session.json
+            exit 0
+          fi
+          python - <<'PY' > payload.json
+          import json, os
+          prompt = (
+              'RME CONTROL PLANE MISSION\n'
+              f"Mission ID: {os.environ['MISSION_ID']}\n"
+              f"Mode: {os.environ['MODE']}\n"
+              f"Objective: {os.environ['OBJECTIVE']}\n\n"
+              'Rules:\n- Never write to main.\n- Claims require reproducible evidence.\n'
+              '- Report exact files, tests, failures and uncertainty.\n- Do not expose or commit secrets.\n'
+          )
+          print(json.dumps({'initial_message': {'content': [{'type': 'text', 'text': prompt}]}, 'selected_repository': 'maissanebenaili-afk/rme-voyage'}))
+          PY
+          curl --fail-with-body -sS -X POST 'https://app.all-hands.dev/api/v1/app-conversations' -H "Authorization: Bearer ${OPENHANDS_API_KEY}" -H 'Content-Type: application/json' -d @payload.json | tee openhands-session.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openhands-${{ inputs.mission_id }}
+          path: openhands-session.json
+
+  mission-record:
+    runs-on: ubuntu-latest
+    needs: [dispatch-jules, dispatch-openhands]
+    if: ${{ always() }}
+    steps:
+      - name: Record dispatch metadata
+        run: |
+          cat > mission-dispatch.json <<'JSON'
+          {
+            "missionId": "${{ inputs.mission_id }}",
+            "mode": "${{ inputs.mode }}",
+            "objective": ${{ toJSON(inputs.objective) }},
+            "jules": "${{ needs.dispatch-jules.result }}",
+            "openhands": "${{ needs.dispatch-openhands.result }}",
+            "workflowRun": "${{ github.run_id }}",
+            "commit": "${{ github.sha }}"
+          }
+          JSON
+          cat mission-dispatch.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mission-${{ inputs.mission_id }}
+          path: mission-dispatch.json
