@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { __test__ } from '@/components/RmeNowCard';
 
 describe('RmeNowCard state', () => {
