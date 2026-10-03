@@ -13,8 +13,8 @@ const feeds = [
   { id: 'monde', label: 'Monde', emoji: '🌐', query: 'monde actualités', sourceUrl: 'https://www.lemonde.fr/international/' },
 ];
 
-function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
+function rssText(value: string) {
+  return value.replaceAll('<![CDATA[', '').replaceAll(']]>', '').trim();
 }
 
 function safeStoryUrl(value: string, fallback: string) {
@@ -37,11 +37,11 @@ async function getStories(query: string, sourceUrl: string): Promise<Story[]> {
       const item = match[1];
       const get = (tag: string) => {
         const found = item.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
-        return found ? stripHtml(found[1]) : '';
+        return found ? rssText(found[1]) : '';
       };
       const title = get('title');
       const link = get('link');
-      const description = get('description');
+      const description = '';
       const pubDate = get('pubDate');
       const source = get('source') || 'Actualités';
       return { title, url: safeStoryUrl(link, sourceUrl), source, date: pubDate, description };
