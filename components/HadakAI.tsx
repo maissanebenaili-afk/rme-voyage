@@ -662,9 +662,10 @@ export default function HadakAI() {
 
       if (data.fallback || !data.response) {
         setIsOffline(true);
-        const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink, trust: OFFLINE_PROVENANCE }]);
+        const { content: localAnswer, topic: localTopic } = getAnswer(content, responseLang);
+        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink, trust: OFFLINE_PROVENANCE, language: responseLang }]);
         setLastTopic(localTopic);
+        if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(localAnswer, responseIndex, responseLang), 0); }
         return;
       }
 
