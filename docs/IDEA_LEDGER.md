@@ -41,9 +41,28 @@ Statuts : ACTIVE, TEST, RESEARCH, OPPORTUNITY, FROZEN, REFUTED, UNKNOWN, SUPERSE
 | IDEA-031 | RME | Acquisition organique comme risque commercial principal | Gemini | RESEARCH | observer acquisition/activation |
 | IDEA-032 | RME | Habitude/rassurance peut dominer optimisation | Gemini | RESEARCH | test comportemental |
 | IDEA-033 | RME | 0/100 clics = signal d'alerte, pas arrêt automatique | ChatGPT | ACTIVE | contrôler trafic/instrumentation |
+| IDEA-034 | RME | Store-readiness audit gate basé sur le dépôt réel, sans doublons ni migrations spéculatives | ChatGPT contre-audit 2026-09-30 | ACTIVE | audit frais avant build/release |
+| IDEA-035 | RME | Safe Stop | Idea Recovery 2026-10-01 | TEST | douleur spontanée + vérification terrain |
+| IDEA-036 | RME | WhatsApp concierge | Idea Recovery 2026-10-01 | TEST | 5 conversations ouvertes |
+| IDEA-037 | RME | Ferry Radar | Idea Recovery 2026-10-01 | RESEARCH | signal utilisateur + données fiables |
+| IDEA-038 | RME | Fast-Track documentaire | Idea Recovery 2026-10-01 | RESEARCH | cadre légal + demande réelle |
+| IDEA-039 | RME | SOS Route Spain | Idea Recovery 2026-10-01 | RESEARCH | utilité terrain |
+| IDEA-040 | RME | Drive Terroir | Idea Recovery 2026-10-01 | RESEARCH | demande et partenaires |
+| IDEA-041 | RME | Génération de leads immobiliers qualifiés | Idea Recovery 2026-10-01 | RESEARCH | cadre légal/intermédiation |
+| IDEA-042 | RME | France↔Maroc colis/fret | Idea Recovery 2026-10-01 | FROZEN | douane/responsabilité/transport |
+| IDEA-043 | RME | Studio familial / Safe Stop Taza | Idea Recovery 2026-10-01 | RESEARCH | établissement vérifié |
+| IDEA-044 | RME | Demande groupée ferry | Idea Recovery 2026-10-01 | RESEARCH | preuve de demande |
+| IDEA-045 | RME | RME convoy | Idea Recovery 2026-10-01 | RESEARCH | modèle légal + demande |
+| IDEA-046 | RME | Reverse B2B sponsorship | Idea Recovery 2026-10-01 | RESEARCH | sponsor réel |
+| IDEA-047 | RME | MRE Trust-as-a-Service | Idea Recovery 2026-10-01 | RESEARCH | hypothèse stratégique |
+| IDEA-048 | RME | Sponsoring agriculture oliviers/ruches | Idea Recovery 2026-10-01 | RESEARCH | demande + partenaire |
+| IDEA-049 | Nova | Proxy opérationnel construction/investissement | Idea Recovery 2026-10-01 | RESEARCH | besoin client réel |
+| IDEA-050 | Nova | Reverse logistics hub | Idea Recovery 2026-10-01 | RESEARCH | flux réel |
+| IDEA-051 | Nova | Interroger les clients/prospects agro sur leurs besoins logistiques réels | Idea Recovery 2026-10-01 | ACTIVE | entretien terrain |
+| IDEA-052 | RME/Nova | User-discovery interview ouverte | Idea Recovery 2026-10-01 | ACTIVE | verbatims sans suggestion |
+| IDEA-053 | Nova | Premier contrat avant grand récit stratégique | Idea Recovery 2026-10-01 | ACTIVE | prospect → accord → cash |
+| IDEA-054 | RME | **Continuity Companion / anti-small-prompt** : conserver l'état d'une trajectoire, détecter les changements pertinents et n'afficher une prochaine action que si elle peut changer la décision | ChatGPT 2026-10-03 | TEST | comparaison petit prompt vs RME stateless vs RME stateful |
 
 ## Règle de récupération historique
 
-Cette première version contient les idées connues du dossier de travail courant. Elle ne prétend pas être exhaustive. Toute nouvelle idée retrouvée dans une branche reçoit un ID avant d'être classée comme oubliée.
-
-| IDEA-034 | RME | Store-readiness audit gate basé sur le dépôt réel, sans doublons ni migrations spéculatives | ChatGPT contre-audit 2026-09-30 | ACTIVE | audit frais avant build/release |
+Cette version contient les idées récupérées et intégrées au registre de travail. Elle ne prétend pas garantir la récupération de sources historiques auxquelles nous n'avons pas accès. Une idée réfutée ou gelée reste archivée et peut être réactivée uniquement avec une nouvelle preuve.
