@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { detectHadakLanguage } from '@/lib/hadakLanguage';
 
 describe('detectHadakLanguage', () => {
