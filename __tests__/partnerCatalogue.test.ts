@@ -36,6 +36,18 @@ describe("getPartnerCatalogue", () => {
     });
   });
 
+  it.each([
+    ["airalo", "AIRALO_AFFILIATE_URL", "https://airalo.tp.st/AbCd1234"],
+    ["yesim", "YESIM_AFFILIATE_URL", "https://yesim.tp.st/AbCd1234"],
+    ["kkday", "KKDAY_AFFILIATE_URL", "https://kkday.tp.st/AbCd1234"],
+    ["klook", "KLOOK_AFFILIATE_URL", "https://klook.tp.st/AbCd1234"],
+  ])("%s activates only with its validated short link", (id, envVar, url) => {
+    delete process.env[envVar];
+    expect(getPartnerCatalogue().find((partner) => partner.id === id)?.status).toBe("pending");
+    process.env[envVar] = url;
+    expect(getPartnerCatalogue().find((partner) => partner.id === id)).toMatchObject({ status: "active", affiliateUrl: url });
+  });
+
   it("never marks a partner active without a validated affiliate URL", () => {
     const catalogue = getPartnerCatalogue();
 

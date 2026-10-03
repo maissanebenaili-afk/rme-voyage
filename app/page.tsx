@@ -24,6 +24,7 @@ import {
 import RouteSearch from '@/components/RouteSearch';
 import RouteJourney from '@/components/RouteJourney';
 import TravelHub from '@/components/TravelHub';
+import RmeNowCard from '@/components/RmeNowCard';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -117,17 +118,39 @@ export default function Home() {
 
         <div id="planifier" className="mx-auto max-w-5xl px-4 pb-12 pt-2 sm:px-8 sm:pb-16">
           <div className="animate-fade-up text-center">
+            <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-[#d6c7a2] bg-white/70 px-3 py-1.5 text-xs font-extrabold text-[#6b4f16] shadow-sm">
+              🇲🇦 <span>Europe → Maroc, à ta façon</span>
+            </div>
             <h1 className="text-3xl font-display font-semibold leading-tight tracking-tight sm:text-5xl">
-              Où voulez-vous aller <span className="gradient-text-gold">au Maroc ?</span>
+              Ton voyage au Maroc, <span className="gradient-text-gold">sans prise de tête.</span>
             </h1>
-            <p className="mx-auto mt-2 max-w-md text-sm text-[#475569] sm:text-base">
-              Entrez vos deux villes : itinéraire, ferry et budget en un instant.
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-[#475569] sm:text-base">
+              Route, ferry, avion, budget, papiers et étapes : RME t'aide à préparer le voyage comme quelqu'un qui connaît le chemin.
             </p>
           </div>
 
           <div className="mt-6 animate-scale-in">
             <RouteSearch />
             <RouteJourney />
+          </div>
+
+          <div className="mx-auto mt-5 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">
+            {[
+              { icon: '🚗', label: 'En voiture', message: 'Je rentre au Maroc en voiture' },
+              { icon: '✈️', label: 'En avion', message: 'Je cherche un voyage en avion vers le Maroc' },
+              { icon: '👨‍👩‍👧‍👦', label: 'En famille', message: 'Je prépare un voyage en famille au Maroc' },
+              { icon: '🎙️', label: 'Je parle à Hadak', message: 'Salam Hadak, aide-moi à préparer mon voyage' },
+            ].map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('hadak:open-with-message', { detail: item.message }))}
+                className="rounded-2xl border border-white/80 bg-white/80 px-3 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-white focus-visible:outline-amber-500"
+              >
+                <span className="text-lg" aria-hidden="true">{item.icon}</span>
+                <span className="mt-1 block text-xs font-extrabold text-[#0f1f3d]">{item.label}</span>
+              </button>
+            ))}
           </div>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-bold text-[#475569]">
@@ -138,6 +161,7 @@ export default function Home() {
         </div>
       </section>
 
+      <RmeNowCard />
       <TravelHub />
 
       {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
@@ -151,6 +175,7 @@ export default function Home() {
 
       {/* RME Live — compact, useful, and intentionally secondary to the journey */ }
       <section aria-label="RME Live" className="border-b border-slate-200 bg-white">
+        <Link href="/actualites" className="group block">
         <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2.5 sm:px-8">
           <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700">
             🔴 RME Live
@@ -163,6 +188,7 @@ export default function Home() {
             </div>
           </div>
         </div>
+        </Link>
       </section>
 
       {/* Daily Widget — hijri date, Ramadan countdown, personalized weather */}
@@ -198,8 +224,8 @@ export default function Home() {
                 <p className="text-xs text-[#92400e] font-semibold">Ton assistant voyage MRE</p>
               </div>
             </div>
-            <p className="text-[#334155] text-base max-w-lg">
-              Dis-lui où tu veux aller — il prépare tout : météo, prières, change, ferry, documents.
+            <p className="text-[#334155] text-base max-w-xl">
+              Parle-lui comme tu veux : <strong>darija, français, arabe ou mélange des deux</strong>. Si tu préfères parler, utilise le micro : Hadak peut te répondre à voix haute.
             </p>
             <div className="flex flex-wrap justify-center gap-2.5 mt-1">
               {[
@@ -442,6 +468,7 @@ export default function Home() {
                 <li><Link href="/" className="inline-block py-1.5 hover:text-[#0f1f3d]">Accueil</Link></li>
                 <li><Link href="/guide" className="inline-block py-1.5 hover:text-[#0f1f3d]">Guide</Link></li>
                 <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Découvrir</Link></li>
+                <li><Link href="/actualites" className="inline-block py-1.5 hover:text-[#0f1f3d]">RME Actu</Link></li>
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">Boutique ✨</Link></li>
                 <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">Télécharger</Link></li>
                 <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Soutenir le projet 💛</Link></li>
