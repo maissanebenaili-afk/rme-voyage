@@ -72,9 +72,10 @@ const LAB_CITY_ALIASES: Record<string, string> = {
   jdida: 'el jadida',
   'el-jadida': 'el jadida',
   layoune: 'laayoune',
+  casa: 'casablanca',
 };
 // Words that are also everyday words: only taken after a place preposition.
-const AMBIGUOUS = new Set(['safi', 'sale']);
+const AMBIGUOUS = new Set(['safi', 'sale', 'casa']);
 const PLACE_PREP = /(?:^|\s)(?:a|au|vers|pour|to|naar|hacia|en|in|l|ila|via|par|de|depuis|from|desde|vanaf|da)\s+$/;
 
 type CityHit = { key: string; label: string; index: number; end: number };
@@ -108,7 +109,7 @@ function moroccanHits(n: string): CityHit[] {
 }
 
 // Departure cities: the planner's list (Europe) plus West-African hubs.
-const ORIGINS: Array<{ label: string; countryCode: string }> = [
+export const ORIGINS: Array<{ label: string; countryCode: string }> = [
   ...CITY_SUGGESTIONS.filter((c) => c.countryCode !== 'ma').map((c) => ({
     label: c.displayName.split(',')[0], countryCode: c.countryCode,
   })),

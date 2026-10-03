@@ -399,7 +399,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
                 })}
               </ol>
 
-              {isHydrated && (
+              {isHydrated && !result.facts.direction && (
                 savedAt === analysed?.sentence ? (
                   <p className="mt-3 flex items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900">
                     <Check size={16} aria-hidden /> {t.saved}

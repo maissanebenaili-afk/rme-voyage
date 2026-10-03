@@ -88,6 +88,21 @@ const PILGRIMAGE_NOTE: Record<MagicLang, string> = {
   da: 'Omra w l-7ajj: l-wraq ghir mn l-masdar r-rasmi.',
 };
 
+const RETURN_NOTE: Record<MagicLang, string> = {
+  fr: 'Retour vers l’Europe : RME prépare surtout l’aller pour l’instant, donc rien n’est proposé pour le mauvais sens.',
+  da: 'Rje3 l Ouroupa: daba RME kaywejjed ghir d-dhab, wakha ma kan9tarah walou.',
+};
+
+const PAST_NOTE: Record<MagicLang, string> = {
+  fr: 'On dirait un souvenir plutôt qu’un projet. Dites-moi ce que vous voulez préparer.',
+  da: 'Ka-ybano souvenir mashi mashru3. 9ol lia ash bghiti twejjed.',
+};
+
+const CANCELLED_NOTE: Record<MagicLang, string> = {
+  fr: 'Ce voyage semble annulé, donc je ne propose rien. Dites-moi si vous voulez le reprendre.',
+  da: 'Had s-safar ban lia mlghi, donc ma kan9tarah walou. 9ol lia ila bghiti trje3 lih.',
+};
+
 const DAYS: Record<MagicLang, string[]> = {
   fr: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
   da: ['l7ed', 'tnin', 'tlat', 'larb3', 'lkhmis', 'jem3a', 'sebt'],
@@ -227,7 +242,36 @@ function routeHref(facts: IntentFacts, destination: string | undefined, routes: 
   return '/#route';
 }
 
-export function planNextActions(facts: IntentFacts, { partners, routes, today, lang, done = [] }: PlanOptions): MagicPlan {
+// Morocco → Europe: no outbound step (papers, arrival SIM, transfers) is right, so only the trip itself is offered.
+function returnPlan(facts: IntentFacts, { partners, routes, today, lang }: PlanOptions): MagicPlan {
+  const fr = lang === 'fr';
+  const mode = facts.mode?.value;
+  const from = facts.origin?.value.label;
+  const to = facts.direction?.to;
+  const when = whenText(facts, lang, today);
+  const trip = `${from ? (fr ? ` depuis ${from}` : ` mn ${from}`) : ''}${to ? (fr ? ` vers ${to}` : ` l ${to}`) : ''}${when ? `, ${when}` : ''}`;
+  const notes = [RETURN_NOTE[lang]];
+  if (mode === 'car' || mode === 'ferry') {
+    const href = routeHref(facts, to, routes, departureDate(facts, today));
+    return { actions: [{ kind: 'route', label: LABEL.route[lang], reason: `${fr ? 'Retour' : 'Rjou3'}${trip}.`, href }], notes };
+  }
+  const partner = partners.find((p) => p.id === PARTNER_OF.flight && p.status === 'active' && p.affiliateUrl);
+  return {
+    actions: [{
+      kind: 'flight',
+      label: LABEL.flight[lang],
+      reason: partner ? `${fr ? 'Retour' : 'Rjou3'}${trip}.` : NOT_VERIFIED.flight![lang],
+      ...(partner ? { href: partner.affiliateUrl, partner: { id: partner.id, name: partner.name } } : {}),
+    }],
+    notes,
+  };
+}
+
+export function planNextActions(facts: IntentFacts, options: PlanOptions): MagicPlan {
+  if (facts.past) return { actions: [], notes: [PAST_NOTE[options.lang]] };
+  if (facts.cancelled) return { actions: [], notes: [CANCELLED_NOTE[options.lang]] };
+  if (facts.direction) return returnPlan(facts, options);
+  const { partners, routes, today, lang, done = [] } = options;
   const city = facts.destination?.value.label ?? facts.destinationGuess?.value.label;
   const hasPlace = Boolean(city || facts.country);
   if (!hasPlace && facts.needs.length === 0) return { actions: [], notes: [] };
@@ -327,23 +371,31 @@ const NEED_TEXT: Record<Need, Record<MagicLang, string>> = {
   papers: { fr: 'Les papiers', da: 'L-wraq' },
 };
 
+// « 3/4 » is 3 April in Europe and March 4th elsewhere: read day first, shown as « déduit ».
+function isAmbiguousDigits(evidence: string): boolean {
+  const m = evidence.match(/^(\d{1,2})[/.-](\d{1,2})(?:[/.-]\d{2,4})?$/);
+  return Boolean(m && Number(m[1]) <= 12 && Number(m[2]) <= 12 && m[1] !== m[2]);
+}
+
 /** What RME understood, each item with the user's words that prove it. */
 export function describeFacts(facts: IntentFacts, lang: MagicLang, today: string): UnderstoodItem[] {
   const fr = lang === 'fr';
   const items: UnderstoodItem[] = [];
+  if (facts.alternatives) items.push({ text: facts.alternatives.options.join(fr ? ' ou ' : ' wla '), evidence: facts.alternatives.evidence, inferred: false });
   if (facts.destination) items.push({ text: facts.destination.value.label, evidence: facts.destination.evidence, inferred: false });
   else if (facts.destinationGuess) items.push({ text: facts.destinationGuess.value.label, evidence: facts.destinationGuess.evidence, inferred: true });
   else if (facts.country) items.push({ text: fr ? 'Maroc' : 'L-Maghrib', evidence: facts.country.evidence, inferred: facts.country.status === 'INFERENCE' });
   if (facts.origin) items.push({ text: `${fr ? 'Depuis' : 'Mn'} ${facts.origin.value.label}`, evidence: facts.origin.evidence, inferred: false });
   const when = whenText(facts, lang, today);
   if (facts.horizon && when) items.push({ text: capitalise(when), evidence: facts.horizon.said, inferred: true });
-  else if (facts.when && when) items.push({ text: capitalise(when), evidence: facts.when.evidence, inferred: false });
+  else if (facts.when && when) items.push({ text: capitalise(when), evidence: facts.when.evidence, inferred: isAmbiguousDigits(facts.when.evidence) });
   if (facts.travellers) {
     const { family, children } = facts.travellers.value;
     const text = children ? (fr ? 'Avec les enfants' : 'M3a d-drari') : family ? (fr ? 'En famille' : 'M3a l-3a2ila') : '';
     if (text) items.push({ text, evidence: facts.travellers.evidence, inferred: false });
   }
   if (facts.mode) items.push({ text: MODE_TEXT[facts.mode.value][lang], evidence: facts.mode.evidence, inferred: false });
+  if (facts.direction) items.push({ text: facts.direction.to ? (fr ? `Retour vers ${facts.direction.to}` : `Rjou3 l ${facts.direction.to}`) : (fr ? 'Retour vers l’Europe' : 'Rjou3 l Ouroupa'), evidence: facts.direction.evidence, inferred: true });
   if (facts.purpose) items.push({ text: facts.purpose.value === 'hajj' ? 'Hajj' : 'Omra', evidence: facts.purpose.evidence, inferred: false });
   for (const need of facts.needs) items.push({ text: NEED_TEXT[need.value][lang], evidence: need.evidence, inferred: false });
   return items;
@@ -355,6 +407,14 @@ export type MissingChoice = { field: 'destination' | 'origin' | 'when' | 'mode';
 export function missingChoices(facts: IntentFacts, lang: MagicLang): MissingChoice[] {
   const fr = lang === 'fr';
   const rows: MissingChoice[] = [];
+  if (facts.past || facts.cancelled || facts.direction) return rows;
+  if (facts.alternatives && !facts.destination) {
+    return [{
+      field: 'destination',
+      label: fr ? 'Où' : 'Fin',
+      options: facts.alternatives.options.map((city) => ({ text: city, append: fr ? ` à ${city}` : ` l ${city}` })),
+    }];
+  }
   const hasPlace = Boolean(facts.destination || facts.destinationGuess || facts.country);
   if (facts.purpose) return rows;
   if (!hasPlace) {
