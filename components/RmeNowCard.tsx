@@ -25,6 +25,18 @@ function buildState(
     };
   }
 
+  if (phase === 'mon-voyage') {
+    return {
+      eyebrow: 'À définir',
+      title: `${depart} → ${arrivee}`,
+      body: 'Votre trajet est enregistré, mais aucune date de départ n’est définie. Ajoutez-la pour que RME puisse vous guider au bon moment.',
+      actions: [
+        { label: 'Définir ma date', href: '#planifier' },
+        { label: 'Voir mon voyage', href: '#planifier' },
+      ],
+    };
+  }
+
   if (phase === 'preparer') {
     const timing = days === 1 ? 'demain' : days ? \`dans \${days} jours\` : 'bientôt';
     return {
