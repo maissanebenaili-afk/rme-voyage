@@ -32,19 +32,21 @@ Preuves : `CODE` (lu dans `main`), `PROD` (lecture publique du site le 2026-10-0
 | Données de trajet | `lib/data/routePages.json`, `fuelPrices.json`, `/api/route` | oui | public | n/a | idée « API / B2B » : hypothèse, rien ne la prouve |
 | Veille BOAMP `omega-veritas` | `omega-veritas/` | oui | n/a | n/a | étape « Open a pull request » en échec, cause UNKNOWN |
 
-## 3. Conditions d'usage : vérifiées sur les sources officielles (2026-10-03)
+## 3. Conditions d'usage : fait vérifié, restriction contractuelle, reste à vérifier
 
-Lecture des conditions, pas un avis juridique.
+Pages officielles lues le 2026-10-03. Lecture des conditions, pas un avis juridique.
 
-| Service | Où | Ce que dit la source | Conséquence |
+| Service (où dans le code) | Fait vérifié | Restriction contractuelle (citation) | Reste à vérifier |
 |---|---|---|---|
-| **Open-Meteo gratuit** | `app/api/hadak/route.ts` | « You may only use the free API services for non-commercial purposes. » Moins de 10 000 appels/jour, 5 000/heure, 600/minute. Licence CC-BY 4.0, donc **attribution obligatoire**. Offres payantes : Standard, Professional, Enterprise, tarifs non lus. (open-meteo.com/en/terms) | Le site porte des liens d'affiliation : usage probablement commercial. À régler avant de monétiser. Vérifier aussi si l'attribution est affichée : UNKNOWN. |
-| **OSRM serveur de démonstration** | `app/api/route/route.ts` | « restricted to reasonable, non-commercial use-cases », « Do not exceed 1 request per second », « no guarantees wrt. uptime, latency, or data updates ». (wiki officiel OSRM) | Même question. Le code précise déjà que ce n'est pas un service de production. Solution possible : serveur OSRM propre ou fournisseur payant. |
-| **Gemini API gratuit** | `lib/hadakAiRouter.ts` | « You may use only Paid Services when making API Clients available to users in the European Economic Area, Switzerland, or the United Kingdom. » Les contenus envoyés servent à améliorer les produits Google. Ne pas envoyer d'informations personnelles. (ai.google.dev/gemini-api/terms) | Le public est en France. Si la clé n'est pas sur offre payante, l'usage est interdit. L'état de la clé en PROD est UNKNOWN. Le tableau de santé montre `gemini` « AVAILABLE ». |
-| **Paris sportifs (affiliation)** | `lib/sportsPartners.ts` | En France, seuls les opérateurs agréés par l'ANJ peuvent proposer des jeux en ligne. Betclic, Winamax et Unibet figurent parmi les agréés. Pour bet365.fr, la recherche ne montre qu'un agrément pour les courses hippiques ; paris sportifs : UNKNOWN. (anj.fr, résultats de recherche) | La promotion des paris est encadrée. Décision juridique de Tarek avant toute activation. La checklist #214 les garde déjà hors activation : cohérent. |
-| **TheSportsDB (clé gratuite)** | `app/api/faical`, `app/api/hadak` | Clé gratuite `123`, 30 requêtes/minute. Rien d'explicite sur l'usage commercial. (thesportsdb.com/documentation) Le code utilise la clé `3`. | UNKNOWN. Écart de clé à noter. |
-| **Aladhan** | `app/api/prayer`, `app/api/hadak` | La page lue ne contient pas les conditions. | UNKNOWN. |
-| Nominatim, Overpass, devises (fawazahmed0 via jsDelivr) | `serverGeocode`, `/api/services`, `/api/remittance` | Non revérifiés aujourd'hui. | UNKNOWN. |
+| **Open-Meteo gratuit** (`app/api/hadak/route.ts`) | La page des conditions existe et distingue offre gratuite et offres Standard, Professional, Enterprise. Limites gratuites : 10 000 appels/jour, 5 000/heure, 600/minute. Licence CC-BY 4.0. | « You may only use the free API services for non-commercial purposes. » (open-meteo.com/en/terms) | RME est-il « commercial » (liens d'affiliation, un livre en publicité) : décision de Tarek. Tarif commercial : non lu. Attribution CC-BY affichée sur le site : UNKNOWN. |
+| **OSRM serveur de démonstration** (`app/api/route/route.ts`) | Le wiki officiel décrit le serveur comme une démonstration. | « restricted to reasonable, non-commercial use-cases », « Do not exceed 1 request per second », « no guarantees wrt. uptime, latency, or data updates ». | Même décision « commercial ». Coût d'un OSRM ou d'un service payant de remplacement : UNKNOWN. |
+| **Gemini API gratuit** (`lib/hadakAiRouter.ts`, fournisseur `gemini`) | Les conditions existent et séparent services gratuits et payants. | « You may use only Paid Services when making API Clients available to users in the European Economic Area, Switzerland, or the United Kingdom. » Les contenus envoyés servent à améliorer les produits Google. (ai.google.dev/gemini-api/terms) | **La clé en production est-elle sur offre gratuite ou payante ?** UNKNOWN, visible seulement dans la console Google. La restriction s'applique si elle est gratuite. |
+| Paris sportifs (`lib/sportsPartners.ts`) | Les opérateurs doivent être agréés par l'ANJ ; Betclic, Winamax et Unibet le sont. Pour bet365.fr, la recherche n'a montré qu'un agrément courses hippiques. | Cadre ANJ, non lu en détail. | Paris sportifs sur bet365 : UNKNOWN. Décision juridique de Tarek. |
+| TheSportsDB gratuit (`app/api/faical`, `hadak`) | Clé gratuite `123`, 30 requêtes/minute. Le code utilise la clé `3`. | Rien d'explicite sur l'usage commercial. | UNKNOWN. |
+| Aladhan (`app/api/prayer`, `hadak`) | — | — | La page lue ne contient pas les conditions : UNKNOWN. |
+| Nominatim, Overpass, devises (fawazahmed0) | — | — | Non revérifiés aujourd'hui : UNKNOWN. |
+
+Aucune étape de la séance d'activation ne met en service Open-Meteo, OSRM ou Gemini : ces trois services tournent déjà. Ce qui change avec l'activation, c'est qu'elle rend le site plus clairement commercial. D'où la règle : **décider d'abord, accélérer ensuite.**
 
 ## 4. Contrôle de cohérence avec #207, #214 et la production
 
@@ -55,7 +57,7 @@ Lecture des conditions, pas un avis juridique.
 | Lien de vol prérempli en PROD | `/api/affiliates?type=flight…` répond sans `prefilled:true`. Le code l'ajoute dès que le modèle est posé **et** déployé. Le commit du prérempli date du 2026-10-03 à 02h37 (heure de Paris). La page d'accueil en cache a 20,7 heures (stockée vers 23h45 le 2026-10-02) : Netlify vide le cache à chaque déploiement, donc aucun déploiement n'a eu lieu depuis. Le déploiement en production est donc **antérieur** au commit du lien prérempli. | PROD, en-têtes `age`, `date` ; CODE `git log` |
 | Conséquence | La cause la plus probable est un **déploiement ancien**, pas seulement une variable absente. Il faudra les deux : déploiement récent et modèle de lien. Indice fort, pas une preuve : le commit exact déployé reste UNKNOWN. | — |
 | Suivi des clics | Le code envoie `partner_click` à `/api/events` (journal `rme-event` des fonctions Netlify), pas à Vercel. `MONETISATION.md` dit encore « Vercel Analytics » : **documentation périmée**. `/api/events` répond (400 sur un événement invalide, comme prévu). Durée de conservation des journaux sur l'offre gratuite : UNKNOWN. | CODE `lib/partnerTracking.ts`, PROD |
-| `MONETISATION.md` | La matrice dit « Hôtels, eSIM, assurance, location voiture : pas de code ». C'est faux aujourd'hui : le catalogue existe. Document à mettre à jour (non fait ici). | CODE `lib/partnerCatalogue.ts` |
+| `MONETISATION.md` (signalé, **non modifié**) | Ligne 24 : « Hôtels, eSIM, assurance, location voiture : pas de code ». Faux aujourd'hui : le catalogue existe. Ligne 31 : le clic est envoyé à « Vercel Analytics ». Faux aujourd'hui : il part vers `/api/events`. À remettre en cohérence plus tard, par une PR documentaire séparée. | CODE `lib/partnerCatalogue.ts`, `lib/partnerTracking.ts` |
 | Partenaires en PROD | 1 actif sur 10 (Travelpayouts Vols), les 9 autres `pending`. | PROD `/api/partners` |
 | Statut Vercel rouge sur #207 | Compte Vercel bloqué, sans lien avec le code. Le site tourne sur Netlify. | GitHub |
 | Pages hors sitemap | `/affilies`, `/pitch`, `/pro` (+ `/auth`, normal). Volontaire ou oubli : UNKNOWN. | CODE, PROD |
@@ -116,5 +118,36 @@ Chaque piste est une hypothèse, pas un revenu. Aucune commission n'est vérifi�
 - **Application Android** : publication UNKNOWN ; à vérifier avant d'y investir.
 - **Veille BOAMP** : cause de l'échec UNKNOWN.
 
-## 6. Ce qui reste hors de portée ici
+## 6. Contrôle final : #207, #214, #215 et `main`
+
+| Question | Réponse | Preuve |
+|---|---|---|
+| #214 décrit-elle toutes les variables nécessaires ? | Oui. Toutes les variables lues par `main` y figurent (hors `NODE_ENV`). Corrigée le 2026-10-03 : l'étape 0 dit maintenant que le déploiement actuel n'est pas prouvé récent, et Gemini est ajouté aux décisions de licence. | CODE, comparaison des noms |
+| L'ordre d'activation peut-il mettre en service une fonction dépendant d'un service non validé ? | Non : aucune étape n'active Open-Meteo, OSRM ni Gemini, qui tournent déjà. Mais l'activation rend le site plus commercial : les décisions de licence passent **avant** (séquence §7). Les paris restent hors activation. | CODE |
+| Le lien de vol prérempli sera-t-il vérifiable après déploiement ? | Oui, sans clic : `/api/affiliates?type=flight&origin=Paris&destination=Tanger&date=<date future>` doit contenir `"prefilled":true` et une adresse `https://tp.media/r?`. Paris et Tanger ont un code d'aéroport dans le code. Le forme du modèle `…&u={url}` est acceptée par le contrôle du code. | CODE `lib/flightSearch.ts` |
+| Les 4 partenaires de #207 restent-ils isolés ? | Oui. Chacun a sa propre variable (`AIRALO_`, `YESIM_`, `KKDAY_`, `KLOOK_AFFILIATE_URL`) ; absente ou refusée, la carte reste « À activer ». La PR ne touche que le catalogue, ses tests et la documentation (3 fichiers). | CODE, diff de la PR |
+| Obsolescences de `MONETISATION.md` | Signalées au §4, non modifiées. | — |
+| Point à trancher dans #214 | #214 dit « Un clic produit une ligne `partner_click` » et aussi « Ne cliquer ni acheter via ses propres liens pour tester ». Les deux phrases se contredisent. Proposition : ne pas cliquer soi-même, attendre les premiers clics réels. | CODE, doc |
+
+## 7. Séquence d'activation recommandée
+
+Seules les étapes humaines indispensables, dans l'ordre exact. Ne rien faire dans Netlify avant l'étape 5.
+
+**Avant Netlify (hors production)**
+1. **Lire** #214 et #207. Si OK, fusionner d'abord #207, puis #214. #215 est un simple document, sans effet.
+2. **Tranche Gemini** dans la console Google : offre payante, ou retirer la clé `GEMINI_API_KEY` plus tard dans la séance. Sans réponse, noter UNKNOWN et ne pas accélérer.
+3. **Tranche « RME est commercial »** (Open-Meteo, OSRM) : oui ou non. Si oui, prévoir offre payante ou source de remplacement. Les paris restent hors activation.
+4. **Dans Travelpayouts** : générer le lien long d'une recherche Aviasales et remplacer l'adresse par `{url}` ; générer les trois liens courts hôtel, voiture, assurance ; confirmer que les programmes Airalo, Yesim, KKday et Klook sont connectés au compte.
+
+**Dans Netlify (séance unique, groupe par groupe, vérification après chaque déploiement)**
+5. Regarder le commit publié. S'il est antérieur à `f2d4d0a` : Trigger deploy, sans changer de variable. Vérifier `/api/partners` : un seul partenaire actif.
+6. Poser `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE`, déployer, vérifier `"prefilled":true`.
+7. Poser les trois liens hôtel, voiture, assurance, déployer, vérifier `/api/partners`.
+8. Poser les quatre liens Airalo, Yesim, KKday, Klook (seulement si #207 est fusionnée), déployer, vérifier `/api/partners`.
+9. Remplir le journal d'activation de #214. S'arrêter.
+
+**Après**
+10. Attendre de vrais clics (5 personnes, voir P5), lire les lignes `rme-event`, et seulement alors parler de conversion.
+
+## 8. Ce qui reste hors de portée ici
 Le commit réellement déployé, l'état des variables Netlify (volontairement non lues), la conservation des journaux, tout chiffre de trafic, de clic, de conversion ou de revenu.
