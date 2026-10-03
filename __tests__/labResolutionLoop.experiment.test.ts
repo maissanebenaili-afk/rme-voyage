@@ -4,51 +4,10 @@
  * Each scenario carries a hidden truth; a synthetic user taps the option that matches it.
  */
 import { extractIntent, type IntentFacts } from "../lib/lab/intentFacts";
-import { describeFacts, departureDate, missingChoices, planNextActions, rankedChoices, type PlanOptions } from "../lib/lab/nextBestAction";
+import { describeFacts, departureDate, missingChoices, planNextActions, rankedChoices } from "../lib/lab/nextBestAction";
 import { journeyState } from "../lib/lab/journeyState";
-import type { PartnerCatalogueEntry } from "../lib/partnerCatalogue";
-import { ROUTE_PAGES } from "../lib/routePages";
+import { FIELD_OF, options, SCENARIOS, TODAY } from "./fixtures/labScenarios";
 
-const TODAY = "2026-09-29";
-const partners: PartnerCatalogueEntry[] = [{
-  id: "travelpayouts-flights", name: "TP", category: "flight", description: "", status: "active",
-  affiliateUrl: "https://aviasales.tp.st/test", publicUrl: "https://www.travelpayouts.com/", envVar: "X", commissionNote: "",
-}];
-const routes = ROUTE_PAGES.routes.map(({ slug, originCity, destinationCity }) => ({ slug, originCity, destinationCity }));
-const options: PlanOptions = { partners, routes, today: TODAY, lang: "fr" };
-
-type Truth = { dest?: string; origin?: string; when?: string; mode?: "Avion" | "Voiture" | "Ferry" };
-type S = { id: string; group: string; s: string; truth?: Truth; terminal?: "cancel" | "past" | "return" };
-const SCENARIOS: S[] = [
-  { id: "01", group: "destination inconnue", s: "Je pars demain", truth: { dest: "Tanger", origin: "Paris", mode: "Avion" } },
-  { id: "02", group: "destination inconnue", s: "Je veux partir en août", truth: { dest: "Nador", origin: "Bruxelles", mode: "Voiture" } },
-  { id: "03", group: "deux destinations", s: "Tanger ou Nador ?", truth: { dest: "Nador", origin: "Paris", when: "En août", mode: "Avion" } },
-  { id: "04", group: "origine inconnue", s: "Nador en août", truth: { origin: "Paris", mode: "Avion" } },
-  { id: "05", group: "origine hors choix", s: "Je vais à Tanger samedi", truth: { origin: "Lyon", mode: "Avion" } },
-  { id: "06", group: "date inconnue", s: "Paris Nador en avion", truth: { when: "En août" } },
-  { id: "07", group: "date inconnue", s: "de Bruxelles à Al Hoceima en voiture", truth: { when: "En juillet" } },
-  { id: "08", group: "mode inconnu", s: "Bruxelles Tanger en août", truth: { mode: "Ferry" } },
-  { id: "09", group: "mode ambigu", s: "en avion ou en voiture vers Oujda", truth: { origin: "Paris", when: "En août", mode: "Voiture" } },
-  { id: "10", group: "annulation", s: "Je ne pars plus à Tanger", terminal: "cancel" },
-  { id: "11", group: "changement d'avis", s: "Tanger non plutôt Nador en août depuis Paris", truth: { mode: "Avion" } },
-  { id: "12", group: "retour", s: "Je rentre du Maroc à Bruxelles dimanche", terminal: "return" },
-  { id: "13", group: "retour", s: "Je dois rentrer en France demain", terminal: "return" },
-  { id: "14", group: "hôtel + voiture", s: "hôtel et voiture à Marrakech en août", truth: { origin: "Paris", mode: "Avion" } },
-  { id: "15", group: "famille", s: "On part à Tanger avec les enfants en juillet", truth: { origin: "Bruxelles", mode: "Voiture" } },
-  { id: "16", group: "Darija", s: "bghit nmshi l Nador ghedda", truth: { origin: "Paris", mode: "Avion" } },
-  { id: "17", group: "Darija sans lieu", s: "bghit nmshi ghedda", truth: { dest: "Nador", origin: "Paris", mode: "Avion" } },
-  { id: "18", group: "arabe", s: "بغيت نمشي لطنجة نهار السبت", truth: { origin: "Paris", mode: "Avion" } },
-  { id: "19", group: "translittération", s: "bghit nmshi l Tanja b l-babor", truth: { origin: "Paris", when: "En août" } },
-  { id: "20", group: "transfert d'argent", s: "envoyer de l'argent à ma mère au Maroc", truth: { origin: "Paris", when: "En août", mode: "Avion" } },
-  { id: "21", group: "SIM seule", s: "carte SIM pour le Maroc", truth: { origin: "Paris", when: "En août", mode: "Avion" } },
-  { id: "22", group: "phrase complète", s: "Paris Tanger en avion samedi" },
-  { id: "23", group: "souvenir", s: "hier je suis allé à Nador", terminal: "past" },
-  { id: "24", group: "ville seule", s: "Marrakech", truth: { origin: "Paris", when: "En août", mode: "Avion" } },
-  { id: "25", group: "pays seul", s: "je veux aller au bled", truth: { origin: "Bruxelles", when: "En juillet", mode: "Voiture" } },
-  { id: "26", group: "interne Maroc", s: "comment aller de Casablanca à Marrakech demain", truth: {} },
-];
-
-const FIELD_OF: Record<string, keyof Truth> = { destination: "dest", origin: "origin", when: "when", mode: "mode" };
 const uncertainty = (f: IntentFacts) => f.unknown.length + (f.alternatives ? 1 : 0);
 const hrefCount = (f: IntentFacts) => planNextActions(f, options).actions.filter((a) => a.href).length;
 
@@ -60,13 +19,12 @@ function stateOf(f: IntentFacts) {
 }
 
 const topAction = (f: IntentFacts) => { const a = planNextActions(f, options).actions[0]; return a ? `${a.kind}${a.href ? "" : "(nolink)"}` : "-"; };
-/** Semantic action identity for the Question Value Gate: reason text is deliberately ignored. */\nconst semanticActionKey = (a: { kind: string; href?: string; partner?: { id: string } }) => `${a.kind}|${a.href ?? ""}|${a.partner?.id ?? ""}`;\nconst semanticPlanKey = (f: IntentFacts) => planNextActions(f, options).actions.map(semanticActionKey).join("||");
 type Row = { id: string; group: string; understood: number; known: number; unknown: string; q1: string; qCount: number; status: string; note: string; gain1: number; naturalGain1: number; uselessQ: number };
 
 describe("resolution loop (report only)", () => {
   test("print", () => {
     const rows: Row[] = [];
-    const qLog = { total: 0, unlocked: 0, changedTop: 0, refinedOnly: 0, nothing: 0, semanticChanged: 0, semanticNothing: 0 };
+    const qLog = { total: 0, unlocked: 0, changedTop: 0, refinedOnly: 0, nothing: 0 };
     for (const sc of SCENARIOS) {
       let sentence = sc.s;
       let f = extractIntent(sentence, TODAY);
@@ -141,7 +99,7 @@ describe("resolution loop (report only)", () => {
     for (const r of rows) tally[r.status] = (tally[r.status] ?? 0) + 1;
     console.log(rows.map(line).join("\n") + "\n\nSTATUS " + JSON.stringify(tally) +
       `\nRANKED first-question gain avg=${(withQ.reduce((a, r) => a + r.gain1, 0) / withQ.length).toFixed(2)} vs NATURAL-order first gain avg=${(withQ.reduce((a, r) => a + r.naturalGain1, 0) / withQ.length).toFixed(2)} (n=${withQ.length})` +
-      `\nQUESTIONS ${JSON.stringify(qLog)}` +\n      `\nSEMANTIC_NOTE: semanticChanged/semanticNothing ignore action reason text and compare kind|href|partner only` +
+      `\nQUESTIONS ${JSON.stringify(qLog)}` +
       `\nUSELESS questions (gain 0 asked first): ${rows.reduce((a, r) => a + r.uselessQ, 0)}`);
     // Floors of what was measured (2026-09-29). One rupture is known and kept visible: an origin outside the three one-tap cities.
     expect(tally.CLOSED).toBeGreaterThanOrEqual(21);

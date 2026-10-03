@@ -16,6 +16,8 @@ Tests : `__tests__/labResolutionLoop.experiment.test.ts` (26 scénarios) et `__t
 | précise seulement (même action, texte différent) | 21 | 49 % |
 | **ne change rien de visible** | **13** | **30 %** |
 
+*Mise à jour 2026-10-03 : la ligne « ne change rien de visible » (30 %) comptait le texte de justification comme un changement de plan. La mesure sémantique est dans `QUESTION_VALUE_GATE.md` : seules 2 réponses sur 43 ne changent vraiment rien ; 20 ne changent que le texte du vol, et deviendraient des changements d'action avec la #197.*
+
 Dans 16 scénarios sur 20 avec question, une action existait déjà avant la première question : la question raffine plus qu'elle ne débloque. Classer les questions par gain donne un premier gain moyen de 1,72 contre 1,60 en ordre naturel (+7 %, 20 phrases). Le +33 % mesuré sur 10 phrases dans la #198 ne se confirme pas sur ce jeu plus large.
 
 **Ruptures trouvées.**
