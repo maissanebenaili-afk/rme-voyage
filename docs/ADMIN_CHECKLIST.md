@@ -116,6 +116,8 @@ RME affiche déjà une publicité (le livre) et des liens affiliés.
   - Itinéraire : héberger son propre OSRM ou Valhalla, ce qui demande un serveur. Coût : UNKNOWN.
 - En attendant, les deux restent en place, avec cache et attribution.
 
+**Gemini (offre gratuite) : troisième point, ajouté le 03/10/2026.** Condition des Gemini API Additional Terms, lues sur ai.google.dev le 03/10/2026 : « You may use only Paid Services when making API Clients available to users in the European Economic Area, Switzerland, or the United Kingdom », et les contenus envoyés servent à améliorer les produits Google. Le public de RME est en France. Fait vérifié : cette restriction existe. État de la clé `GEMINI_API_KEY` en production (offre gratuite ou payante) : UNKNOWN, à vérifier dans la console Google, hors dépôt. Tant que ce n'est pas tranché : soit retirer la clé (le routeur utilise les autres fournisseurs), soit passer le projet Google sur l'offre payante. Aucune de ces deux actions n'est requise par la séance d'activation, mais l'activation commerciale ne doit pas être accélérée avant.
+
 ## Apple App Store
 
 - Il faut : un compte Apple Developer (99 $/an), un Mac (ou un service de build macOS) et un iPhone de test.
@@ -161,7 +163,7 @@ Les paris sportifs (`UNIBET_…`, `BETCLIC_…`, `WINAMAX_…`, `BET365_AFFILIAT
 
 | Étape | Quoi | Prérequis | Vérification publique (aucun clic d'affiliation) |
 |---|---|---|---|
-| 0 | Quel code tourne en production ? | aucun | Netlify → Deploys → « Published deploy » : le commit doit être celui de `main`, ou postérieur à `f2d4d0a` (« add safe Travelpayouts flight deep links »). Sinon : Trigger deploy |
+| 0 | Quel code tourne en production ? **Non prouvé aujourd'hui** : indices d'un déploiement antérieur à `f2d4d0a` (voir l'étape 1) | aucun | Netlify → Deploys → « Published deploy » : le commit doit être celui de `main`, ou postérieur à `f2d4d0a` (« add safe Travelpayouts flight deep links »). Sinon : Trigger deploy, sans changer aucune variable, puis revérifier `/api/partners` (un seul actif : Travelpayouts Vols). Ne rien activer tant que ce point n'est pas tranché |
 | 1 | Lien de vol pré-rempli | étape 0 ; `TRAVELPAYOUTS_FLIGHT_URL` déjà posée (elle reste le repli) | `/api/affiliates?type=flight&origin=Paris&destination=Tanger&date=<une date future>` doit contenir `"prefilled":true` et une adresse qui commence par `https://tp.media/r?` |
 | 2 | Quatre partenaires : Airalo, Yesim, KKday, Klook | PR #207 fusionnée, puis étape 0 | `/api/partners` : chacun en `"status":"active"` avec son lien |
 | 3 | Hôtels, voiture, assurance | étape 0 ; aucun code à fusionner | `/api/partners` : `travelpayouts-hotels`, `travelpayouts-car`, `travelpayouts-insurance` en `active` |
@@ -176,7 +178,7 @@ Adresses de vérification : `https://rme-voyage.netlify.app` + le chemin du tabl
 - **Le code l'accepte seulement si :** https, hôte `tp.media`, un seul `{url}`, placé comme valeur d'un paramètre de la requête. N'ajouter que ce qui figure dans le lien réel, jamais un identifiant de sous-compte inventé.
 - **Si l'API ne renvoie pas `prefilled` :** le modèle est refusé (relire la forme), le déploiement n'a pas été refait (étape 0), ou la ville n'a pas d'aéroport connu (Meknès, Taza, Utrecht… : le lien générique reste, c'est normal).
 - Cette variable concerne le code déjà dans `main` : elle ne dépend pas de la PR #207.
-- **Constat du 03/10/2026 :** le code de `main` contenait ce pré-remplissage, mais l'API de production renvoyait encore le lien générique, sans `prefilled`. Cause non établie (déploiement en retard ou variable absente).
+- **Constat du 03/10/2026 :** le code de `main` contenait ce pré-remplissage, mais l'API de production renvoyait encore le lien générique, sans `prefilled`. Cause non établie. Indice fort d'un déploiement ancien : le cache de la page d'accueil avait 20,7 heures à 18h25 UTC (stocké vers 21h45 UTC le 02/10), or Netlify vide le cache à chaque déploiement, et le commit `f2d4d0a` date du 03/10 à 02h37 (heure de Paris). Le commit réellement publié n'est pas lu ici : l'étape 0 le tranche. Après un nouveau déploiement, si `prefilled` manque encore, la variable est absente ou refusée.
 
 ### Étapes 2 et 3 : liens courts
 
@@ -187,7 +189,7 @@ Adresses de vérification : `https://rme-voyage.netlify.app` + le chemin du tabl
 
 ### Règles de séance
 
-1. Une variable à la fois : poser, Trigger deploy, vérifier l'adresse du tableau, noter le résultat.
+1. Un groupe à la fois : le vol (étape 1) seul ; puis hôtels, voiture, assurance ensemble ; puis les quatre liens de la PR #207 ensemble. Pour chaque groupe : poser, Trigger deploy, vérifier les adresses du tableau, noter le résultat. En cas d'anomalie, retirer la dernière variable posée.
 2. Ne jamais coller une clé ou un secret (`STRIPE_SECRET_KEY`, `*_API_KEY`) dans le dépôt, une PR, une issue ou un message. Un lien d'affiliation n'est pas un secret.
 3. Laisser `AI_ROUTER_FREE_ONLY=true` tant qu'aucun budget IA n'est décidé.
 4. Ne pas toucher à `STRIPE_SECRET_KEY` sans décision explicite : elle active la page de dons.
