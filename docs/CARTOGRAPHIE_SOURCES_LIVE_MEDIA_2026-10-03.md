@@ -59,11 +59,34 @@ Chaîne proposée : sources → collecte → déduplication → vérification �
 | E1 | Les flux officiels couvrent une part utile du trajet Paris → Algésiras → Tanger | Pour 5 itinéraires réels, compter les tronçons couverts par DGT, le trafic français non concédé et Météo-France | % du trajet couvert, retard moyen des données | KEEP si au moins la moitié du trajet européen est couverte, sinon REJECT |
 | E2 | Le flux DGT filtré par trajet est assez léger pour un cache serveur | Appeler le flux toutes les 5 minutes pendant une journée, filtrer, mesurer le temps et la taille | Octets, temps d'exécution, erreurs | KEEP ou MODIFY |
 | E3 | La presse signale les perturbations de ferry et de frontière avant les opérateurs | Relever à la main, une semaine, les sujets « ferry Tanger » et « frontière Ceuta » dans GDELT | Nombre d'événements, délai par rapport aux faits | Si le signal est faible : REJECT l'idée |
-| E4 | Les signalements d'utilisateurs peuvent remplacer l'absence de source ferry | Tester auprès des 5 premiers utilisateurs du Lab | Nombre de signalements, justesse | Après un premier signal commercial seulement |
-| E5 | La transcription de contenus audio de droits libres (pas YouTube) est utile en darija | Tester 5 extraits | Taux d'erreur sur les noms de lieux | Seulement si E3 montre un besoin |
+| E4 | Les signalements d'utilisateurs peuvent remplacer l'absence de source ferry. **Déjà conçu dans `docs/rme-lab/RADAR.md` (RAD-11 : signalements avec fraîcheur, confirmations et durée de vie)**. | Reprendre la plus petite expérience de RAD-11 : un seul type de signalement (« attente au port », 3 valeurs) | Signalements par jour en pointe, taux de confirmation | Après un premier signal commercial seulement |
+| E5 | La transcription de contenus audio de droits libres (pas YouTube) est utile en darija. **Déjà conçu dans RADAR RAD-16** (whisper.cpp dans le navigateur, modèles darija sous licence MIT), ce qui évite le coût et le transfert d'audio vers un tiers. | Reprendre l'expérience de RAD-16 : une note vocale de 3 téléphones | Temps de chargement, facteur temps réel, erreurs sur les noms de lieux | Seulement si E3 montre un besoin |
 
 ## 6. Points qui ne dépendent pas de l'outil
 
 - **NewsFeed daté** : à corriger indépendamment (retirer, ou dater clairement).
 - **Décision juridique** avant tout résumé d'articles ou transcription de contenus protégés.
 - **Aucune promesse commerciale** : « passer plus de temps dans l'application » est un objectif, pas un résultat mesuré.
+
+## 7. Mesures faites le 2026-10-03 (E1 et E2, partielles)
+
+Flux DGT (Espagne), une seule lecture, depuis le serveur de cette session.
+
+| Mesure | Résultat |
+|---|---|
+| Poids transféré | **106 Ko compressés** (3,1 Mo décompressés) |
+| Temps de réponse | 0,54 s |
+| Analyse du fichier | 731 enregistrements en 0,03 s ; 730 avec coordonnées |
+| Événements à moins de 45 km d'Algésiras–Tarifa | 13 |
+| Événements près de Málaga, Séville, Almería | 12, 18, 9 |
+| Événements près de Madrid, Valence | 41, 41 |
+| Près de Barcelone (hors couverture annoncée) | 4, tous de type générique |
+| Enregistrements avec heure de fin prévue | 307 sur 730 |
+| Types | 447 gestion de voie, 233 « générique » (sans catégorie exploitable), 19 limitation de vitesse, 15 conditions de chaussée, 9 trafic anormal, 3 environnement, 1 véhicule en obstruction |
+
+Lecture : E2 est favorable (un appel toutes les quelques minutes, mis en cache côté serveur, reste léger). E1 est **partielle** : l'Espagne du sud est bien couverte, mais près d'un tiers des événements n'a pas de catégorie claire, donc il faudrait lire leur texte. La France (autoroutes à péage), le ferry, la frontière et le Maroc restent non mesurés, faute de source ouverte (voir §2). Un essai sur le flux français non concédé n'a pas abouti (l'adresse testée était erronée) : non mesuré.
+
+## 8. Concordance avec l'existant
+
+Voir `docs/INTELLIGENCE_RME_ARCHITECTURE.md` : ce qui était déjà conçu dans `docs/rme-lab/` (RADAR, IDEA_VAULT, NORTH_STAR) et dans le code (`lib/routeEvents.ts`, `lib/rmeMoments.ts`, `lib/trust.ts`), ce qui est dormant, et ce qui manque.
+
