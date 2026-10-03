@@ -13,10 +13,6 @@ const feeds = [
   { id: 'monde', label: 'Monde', emoji: '🌐', query: 'monde actualités', sourceUrl: 'https://www.lemonde.fr/international/' },
 ];
 
-function escapeXml(value: string) {
-  return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-}
-
 function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, '').replace(/<!\[CDATA\[|\]\]>/g, '').trim();
 }
