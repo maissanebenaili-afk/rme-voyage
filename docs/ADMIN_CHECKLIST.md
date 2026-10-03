@@ -153,6 +153,70 @@ Test après déploiement :
 
 Les paris sportifs (`UNIBET_…`, `BETCLIC_…`, `WINAMAX_…`, `BET365_AFFILIATE_URL`) restent hors activation : secteur régulé (ANJ), décision juridique du propriétaire d'abord.
 
+## Séance unique d'activation : ordre, prérequis, vérifications
+
+> Écrit le 03/10/2026 d'après le code de `main` et l'état public de la production. Aucune valeur secrète n'est écrite dans ce dépôt : seulement des noms et des formats. Ne poser une variable qu'une fois son prérequis rempli.
+
+États à ne jamais confondre : **code présent ≠ partenaire approuvé ≠ lien actif ≠ clic ≠ conversion ≠ revenu.** Poser une variable fait passer un partenaire de « code présent » à « lien actif ». Cela ne prouve ni l'approbation du programme, ni un clic, ni une commission.
+
+| Étape | Quoi | Prérequis | Vérification publique (aucun clic d'affiliation) |
+|---|---|---|---|
+| 0 | Quel code tourne en production ? | aucun | Netlify → Deploys → « Published deploy » : le commit doit être celui de `main`, ou postérieur à `f2d4d0a` (« add safe Travelpayouts flight deep links »). Sinon : Trigger deploy |
+| 1 | Lien de vol pré-rempli | étape 0 ; `TRAVELPAYOUTS_FLIGHT_URL` déjà posée (elle reste le repli) | `/api/affiliates?type=flight&origin=Paris&destination=Tanger&date=<une date future>` doit contenir `"prefilled":true` et une adresse qui commence par `https://tp.media/r?` |
+| 2 | Quatre partenaires : Airalo, Yesim, KKday, Klook | PR #207 fusionnée, puis étape 0 | `/api/partners` : chacun en `"status":"active"` avec son lien |
+| 3 | Hôtels, voiture, assurance | étape 0 ; aucun code à fusionner | `/api/partners` : `travelpayouts-hotels`, `travelpayouts-car`, `travelpayouts-insurance` en `active` |
+| 4 | Ferry | programme Direct Ferries non vérifié : ne pas le planifier avant d'avoir un lien | `/api/affiliates?type=ferry&origin=Europe&destination=Maroc` doit donner `"configured":true` |
+| 5 | Search Console | section suivante | la page d'accueil contient `google-site-verification` |
+
+Adresses de vérification : `https://rme-voyage.netlify.app` + le chemin du tableau. Elles ne déclenchent aucun clic d'affiliation. Ne cliquer ni acheter via ses propres liens pour « tester ».
+
+### Étape 1 : `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE`
+
+- **Valeur :** le lien long de Travelpayouts (« Get full link » sur une recherche Aviasales), où l'adresse Aviasales est remplacée par `{url}`. Forme : `https://tp.media/r?campaign_id=<…>&marker=<…>&p=<…>&trs=<…>&u={url}`.
+- **Le code l'accepte seulement si :** https, hôte `tp.media`, un seul `{url}`, placé comme valeur d'un paramètre de la requête. N'ajouter que ce qui figure dans le lien réel, jamais un identifiant de sous-compte inventé.
+- **Si l'API ne renvoie pas `prefilled` :** le modèle est refusé (relire la forme), le déploiement n'a pas été refait (étape 0), ou la ville n'a pas d'aéroport connu (Meknès, Taza, Utrecht… : le lien générique reste, c'est normal).
+- Cette variable concerne le code déjà dans `main` : elle ne dépend pas de la PR #207.
+- **Constat du 03/10/2026 :** le code de `main` contenait ce pré-remplissage, mais l'API de production renvoyait encore le lien générique, sans `prefilled`. Cause non établie (déploiement en retard ou variable absente).
+
+### Étapes 2 et 3 : liens courts
+
+- Valeur de chaque variable : le lien court `https://<marque>.tp.st/<code>` copié du tableau de bord Travelpayouts.
+- Le code accepte n'importe quel lien `*.tp.st` : **vérifier à l'œil que la marque correspond** (le lien `airalo.tp.st` va dans `AIRALO_AFFILIATE_URL`, pas ailleurs).
+- Un lien généré n'est pas une approbation : avant de compter un partenaire comme commercialement actif, vérifier dans Travelpayouts que le programme est connecté au compte RME. État au 03/10/2026 pour Airalo, KKday, Klook et Yesim : UNKNOWN.
+- Les trois emplacements hôtels, voiture et assurance existent déjà dans le code et apparaissent « À activer » en production.
+
+### Règles de séance
+
+1. Une variable à la fois : poser, Trigger deploy, vérifier l'adresse du tableau, noter le résultat.
+2. Ne jamais coller une clé ou un secret (`STRIPE_SECRET_KEY`, `*_API_KEY`) dans le dépôt, une PR, une issue ou un message. Un lien d'affiliation n'est pas un secret.
+3. Laisser `AI_ROUTER_FREE_ONLY=true` tant qu'aucun budget IA n'est décidé.
+4. Ne pas toucher à `STRIPE_SECRET_KEY` sans décision explicite : elle active la page de dons.
+
+### Journal d'activation (à remplir au fil des étapes, sans jamais anticiper)
+
+| Date | Variable | Programme connecté au compte ? | Lien posé | Vérifié par l'API | Premier clic | Première conversion | Revenu confirmé |
+|---|---|---|---|---|---|---|---|
+| | | | | | | | |
+
+### Toutes les variables lues par le code de `main` (03/10/2026)
+
+| Domaine | Variables | Secret ? | Observé en production le 03/10/2026 |
+|---|---|---|---|
+| Vols | `TRAVELPAYOUTS_FLIGHT_URL` | non | posée : partenaire `active` |
+| Vols pré-remplis | `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE` | non | non observée (pas de `prefilled`) |
+| Hôtels, voiture, assurance | `TRAVELPAYOUTS_HOTEL_URL`, `TRAVELPAYOUTS_CAR_URL`, `TRAVELPAYOUTS_INSURANCE_URL` | non | absentes : `pending` |
+| Ferry | `DIRECT_FERRIES_AFFILIATE_URL`, `GNV_AFFILIATE_URL`, `FRS_AFFILIATE_URL` | non | Direct Ferries `pending` ; GNV et FRS non observables |
+| eSIM et expériences | `ESIM_MOROCCO_AFFILIATE_URL`, `LOCK_AND_GOO_AFFILIATE_URL`, `STASH_AND_GO_AFFILIATE_URL`, `AJILI_AFFILIATE_URL`, `LGRIMA_AFFILIATE_URL` | non | absentes : `pending` |
+| Nouveaux partenaires (PR #207) | `AIRALO_AFFILIATE_URL`, `YESIM_AFFILIATE_URL`, `KKDAY_AFFILIATE_URL`, `KLOOK_AFFILIATE_URL` | non | n'existent pas encore dans le code déployé |
+| Transferts d'argent | `WISE_`, `REMITLY_`, `WORLDREMIT_`, `WESTERN_UNION_`, `MONEYGRAM_` + `AFFILIATE_URL` | non | non vérifié |
+| Référencement | `GOOGLE_SITE_VERIFICATION` | non | absente (la page d'accueil ne contient pas la balise) |
+| IA | `AI_ROUTER_FREE_ONLY` | non | `free_only: true` sur `/api/health` |
+| IA, clés | `GROQ_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | **oui** | `/api/health` liste les cinq fournisseurs « AVAILABLE » sans dire quelles clés existent |
+| Newsletter | `RESEND_API_KEY` (**secret**), `RESEND_AUDIENCE_ID` | clé : oui | non observé |
+| Dons | `STRIPE_SECRET_KEY` | **oui** | non observé |
+| Données | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | publiques par conception | non observé |
+| Publiques | `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_DOWNLOAD_URL` | non | non observé |
+
 ## Google Search Console
 
 1. https://search.google.com/search-console → Ajouter une propriété → **Préfixe d'URL** → `https://rme-voyage.netlify.app`.
