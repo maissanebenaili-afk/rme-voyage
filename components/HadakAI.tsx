@@ -34,10 +34,11 @@ import {
 import { MOROCCO_CITIES, detectCity } from '@/lib/moroccoCities';
 import { buildShareUrl } from '@/lib/tripShare';
 import { cleanForSpeech, loadVoices, pickHadakVoice, speechLocale } from '@/lib/hadakVoice';
-import { OFFLINE_PROVENANCE, describeProvenance, type HadakLang, type HadakProvenance } from '@/lib/hadakGuidance';
+import { OFFLINE_PROVENANCE, describeProvenance, type HadakProvenance } from '@/lib/hadakGuidance';
 import type { NextAction } from '@/lib/rmeMoments';
 import { isPrimaryTruth } from '@/lib/trust';
 import { trackFunnelEvent } from '@/lib/partnerTracking';
+import { detectHadakLanguage, type HadakLang } from '@/lib/hadakLanguage';
 
 // Answers use **bold** for titles; show it as bold instead of raw asterisks.
 // Plain React text nodes only: nothing from the answer is parsed as HTML.
@@ -95,6 +96,8 @@ interface Message {
   trust?: HadakProvenance;
   /** Sections à ouvrir ensuite : rien ne s'exécute sans un clic. */
   nextActions?: NextAction[];
+  /** Language actually used for this answer (can differ from the selected UI mode). */
+  language?: Lang;
 }
 
 type TopicKey =
@@ -473,6 +476,7 @@ export default function HadakAI() {
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
   // Voices can load after a tap: only the latest request may start speaking.
   const speakRequest = useRef(0);
+  const speakNextResponse = useRef(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -541,6 +545,7 @@ export default function HadakAI() {
       // Dictée terminée = question posée : on l'envoie directement, sans
       // obliger à trouver le bouton d'envoi (utilisateurs 50+, dictée vocale).
       if (transcript.trim()) {
+        speakNextResponse.current = true;
         handleSendRef.current(transcript.trim());
       }
     };
@@ -564,7 +569,7 @@ export default function HadakAI() {
     }
   };
 
-  const speakMessage = (content: string, idx: number) => {
+  const speakMessage = (content: string, idx: number, messageLang: Lang = lang) => {
     if (!('speechSynthesis' in window)) return;
     const request = ++speakRequest.current;
     if (speakingIdx === idx) {
@@ -575,12 +580,12 @@ export default function HadakAI() {
     const synth = window.speechSynthesis;
     synth.cancel();
     setSpeakingIdx(idx);
-    trackFunnelEvent({ event: 'hadak_voice_listen', placement: 'hadak', data: { lang } });
+    trackFunnelEvent({ event: 'hadak_voice_listen', placement: 'hadak', data: { lang: messageLang } });
     void loadVoices(synth).then((voices) => {
       if (request !== speakRequest.current) return;
       const utterance = new SpeechSynthesisUtterance(cleanForSpeech(content));
-      const voice = pickHadakVoice(voices, lang);
-      utterance.lang = voice?.lang ?? speechLocale(lang);
+      const voice = pickHadakVoice(voices, messageLang);
+      utterance.lang = voice?.lang ?? speechLocale(messageLang);
       if (voice) utterance.voice = voice;
       // A touch brighter and calmer than the default robotic delivery.
       utterance.rate = 0.98;
@@ -607,7 +612,9 @@ export default function HadakAI() {
     const content = (text ?? input).trim();
     if (!content || isTyping) return;
 
+    const responseLang = detectHadakLanguage(content, lang);
     const userMsg: Message = { role: 'user', content };
+    const responseIndex = messages.length + 1;
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setIsTyping(true);
@@ -624,7 +631,7 @@ export default function HadakAI() {
       const response = await fetch('/api/hadak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content, lang }),
+        body: JSON.stringify({ message: content, lang: responseLang }),
       });
 
       // Check HTTP status BEFORE parsing JSON — 503/429/502/500 with fallback flag
@@ -633,8 +640,9 @@ export default function HadakAI() {
         console.error('Hadak API error, falling back to local KB:', response.status);
         setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE, language: responseLang }]);
         setLastTopic(topic);
+        if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(answer, responseIndex, responseLang), 0); }
         return;
       }
 
@@ -646,16 +654,18 @@ export default function HadakAI() {
         console.error('Failed to parse Hadak response, status:', response.status);
         setIsOffline(true);
         const { content: answer, topic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE, language: responseLang }]);
         setLastTopic(topic);
+        if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(answer, responseIndex, responseLang), 0); }
         return;
       }
 
       if (data.fallback || !data.response) {
         setIsOffline(true);
-        const { content: localAnswer, topic: localTopic } = getAnswer(content, lang);
-        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink, trust: OFFLINE_PROVENANCE }]);
+        const { content: localAnswer, topic: localTopic } = getAnswer(content, responseLang);
+        setMessages((prev) => [...prev, { role: 'assistant', content: localAnswer, topic: localTopic, plannerLink, trust: OFFLINE_PROVENANCE, language: responseLang }]);
         setLastTopic(localTopic);
+        if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(localAnswer, responseIndex, responseLang), 0); }
         return;
       }
 
@@ -666,14 +676,16 @@ export default function HadakAI() {
       const nextActions = (data.next_actions ?? []).filter(
         (a) => a.safety === 'INFORMATIONAL' && typeof a.destination === 'string' && a.destination.startsWith('/#'),
       ).slice(0, 3);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: data.trust, nextActions }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: data.trust, nextActions, language: responseLang }]);
       setLastTopic(topic);
+      if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(answer, responseIndex, responseLang), 0); }
     } catch (error) {
       console.error('Error calling Hadak API:', error);
       setIsOffline(true);
       const { content: answer, topic } = getAnswer(content, lang);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: OFFLINE_PROVENANCE, language: responseLang }]);
       setLastTopic(topic);
+      if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(answer, responseIndex, responseLang), 0); }
     } finally {
       setIsTyping(false);
     }
@@ -925,7 +937,7 @@ export default function HadakAI() {
                       {msg.role === 'assistant' ? renderBold(msg.content) : msg.content}
                     </div>
                     {msg.role === 'assistant' && msg.trust && (
-                      <TrustBadge trust={msg.trust} lang={lang} />
+                      <TrustBadge trust={msg.trust} lang={(msg.language ?? lang) as HadakLang} />
                     )}
                     {msg.role === 'assistant' && msg.nextActions && msg.nextActions.length > 0 && (
                       <div className="self-start ms-1 flex flex-wrap gap-1.5" aria-label={lang === 'ar' ? 'وماذا بعد؟' : lang === 'en' ? 'What next?' : lang === 'es' ? '¿Y ahora?' : 'Et maintenant ?'}>
@@ -965,7 +977,7 @@ export default function HadakAI() {
                     )}
                     {msg.role === 'assistant' && (
                       <button
-                        onClick={() => speakMessage(msg.content, i)}
+                        onClick={() => speakMessage(msg.content, i, msg.language ?? lang)}
                         className="self-start ms-1 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] text-white/40 hover:text-[#f59e0b] transition-colors"
                         aria-label={speakingIdx === i ? 'Arrêter' : 'Écouter'}
                       >
