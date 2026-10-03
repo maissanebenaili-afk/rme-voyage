@@ -26,25 +26,28 @@ describe("Homepage branding", () => {
     global.fetch = originalFetch;
   });
 
-  it("shows RME Voyage positioning and promise", () => {
+  it("shows the MRE-first positioning and promise", () => {
     render(<Home />);
 
-    // Brand name appears in the nav (split across two <span> nodes: "RME" / "Voyage").
     expect(screen.getAllByText(/RME/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Voyage/).length).toBeGreaterThan(0);
 
-    // Hero headline introduced by the planner-first redesign: the real
-    // trip planner sits directly under it, not a marketing pitch.
     expect(
       screen.getByRole("heading", {
-        name: /Où voulez-vous aller.*au Maroc/i,
+        name: /Ton voyage au Maroc, sans prise de tête/i,
       }),
     ).toBeTruthy();
 
-    // Hero subtext describing the value proposition.
     expect(
-      screen.getByText(/itinéraire, ferry et budget en un instant/i),
+      screen.getByText(/Route, ferry, avion, budget, papiers et étapes/i),
     ).toBeTruthy();
+
+    expect(screen.getByRole("button", { name: /En voiture/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /En avion/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /En famille/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Je parle à Hadak/i })).toBeInTheDocument();
+
+    expect(screen.getByRole("link", { name: /RME Live.*Tout voir/i })).toHaveAttribute("href", "/actualites");
 
     // Legacy product name must not resurface.
     expect(screen.queryByText(/MRE Route/i)).toBeNull();
