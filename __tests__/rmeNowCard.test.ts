@@ -11,4 +11,10 @@ describe('RmeNowCard state', () => {
     expect(state.title).toBe('Votre passage vers le Maroc');
     expect(state.actions.some((action) => action.href === '#booking-title')).toBe(true);
   });
+  it('asks for a date when a trip exists without a departure date', () => {
+    const state = __test__.buildState(true, 'mon-voyage', null, false, 'Paris', 'Tanger');
+    expect(state.title).toBe('Paris → Tanger');
+    expect(state.actions[0].label).toBe('Définir ma date');
+  });
+
 });
