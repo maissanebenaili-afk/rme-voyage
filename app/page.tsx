@@ -24,6 +24,7 @@ import {
 import RouteSearch from '@/components/RouteSearch';
 import RouteJourney from '@/components/RouteJourney';
 import TravelHub from '@/components/TravelHub';
+import RmeNowCard from '@/components/RmeNowCard';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -161,6 +162,7 @@ export default function Home() {
       </section>
 
       <TravelHub />
+      <RmeNowCard />
 
       {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
           Atlas pâle plutôt que gris neutre : une section qu'on identifie
