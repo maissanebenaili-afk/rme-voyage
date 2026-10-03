@@ -161,8 +161,8 @@ export default function Home() {
         </div>
       </section>
 
-      <TravelHub />
       <RmeNowCard />
+      <TravelHub />
 
       {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
           Atlas pâle plutôt que gris neutre : une section qu'on identifie
