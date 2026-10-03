@@ -9,6 +9,7 @@ import {
 } from '@/lib/hadakEducation';
 import { moroccoTimeZone, moroccoUtcOffset } from '@/lib/moroccoTime';
 import { isHadakLang, newTrace, nextActionsFor, provenanceOf, type AnswerTrace } from '@/lib/hadakGuidance';
+import { detectHadakLanguage } from '@/lib/hadakLanguage';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type OpenAICompatibleResponse = {
@@ -549,18 +550,22 @@ export async function POST(req: NextRequest) {
     }
 
     // hasOwn : « constructor » ou « __proto__ » ne doivent pas servir de prompt système.
+    const selectedLang = isHadakLang(lang) ? lang : 'fr';
+    // The selector is the conversation default, not a hard lock. If the user
+    // clearly switches language, Hadak follows the language actually used.
+    const responseLang = detectHadakLanguage(message, selectedLang);
     const basePrompt =
-      typeof lang === 'string' && Object.hasOwn(SYSTEM_PROMPTS, lang) ? SYSTEM_PROMPTS[lang] : SYSTEM_PROMPTS.fr;
+      Object.hasOwn(SYSTEM_PROMPTS, responseLang) ? SYSTEM_PROMPTS[responseLang] : SYSTEM_PROMPTS.fr;
     const systemPrompt = `${basePrompt} Maroc : ${moroccoUtcOffset()}, il est ${getMoroccoTime()}.`;
     const intent = detectIntent(message);
-    const guideLang = isHadakLang(lang) ? lang : 'fr';
+    const guideLang = responseLang;
 
     if (education !== undefined || intent === 'education') {
       const inferred = inferEducation(normalize(message));
       const plan = buildEducationPlan({
         mode: education?.mode ?? inferred.mode,
         level: education?.level ?? inferred.level,
-        language: typeof lang === 'string' && isEducationLanguage(lang) ? lang : 'fr',
+        language: isEducationLanguage(responseLang) ? responseLang : 'fr',
         prompt: message,
         wantsFullSolution: education?.wantsFullSolution,
       });
@@ -578,13 +583,13 @@ export async function POST(req: NextRequest) {
         });
       }
       logIntent('education', 'OFFLINE', null, 0);
-      return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true, education: educationInfo });
+      return NextResponse.json({ response: buildOfflineFallback(responseLang, message), fallback: true, education: educationInfo });
     }
 
     // 1. Smart local responder — free, always available, real-time data
     const localStarted = Date.now();
     const trace = newTrace();
-    const local = await buildLocalResponse(message, lang, intent, trace);
+    const local = await buildLocalResponse(message, responseLang, intent, trace);
     if (local) {
       // Football records its own resolution (cache, router or static text).
       if (intent !== 'football') {

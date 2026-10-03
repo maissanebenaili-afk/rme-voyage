@@ -121,6 +121,11 @@ RME affiche déjà une publicité (le livre) et des liens affiliés.
 - Il faut : un compte Apple Developer (99 $/an), un Mac (ou un service de build macOS) et un iPhone de test.
 - **Risque connu :** RME charge le site dans une coque native. Apple refuse les applications qui ne sont qu'un site web reconditionné (règle 4.2). Avant de payer, il faut décider si RME sort d'abord sur Android seulement (recommandé : coût nul après les 25 $).
 
+
+### Lien vol pré-rempli Travelpayouts
+
+Après validation du lien long réel du tableau de bord, remplacer uniquement l’adresse Aviasales encodée dans `u=` par `{url}`. Pour la preuve actuellement fournie : `https://tp.media/r?campaign_id=100&marker=775818&p=4114&trs=579104&u={url}`. Ne jamais ajouter de SubID ou de marqueur inventé.
+
 ## Partenaires et revenus : kit de mise en service
 
 Inventaire complet des surfaces de revenus, conditions VERIFIED et modification minimale pour Airalo : `docs/MONETISATION_SURFACES.md`.
