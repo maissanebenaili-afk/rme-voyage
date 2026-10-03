@@ -88,3 +88,43 @@ describe('Provider attribution — the click must be tracked to whichever partne
     expect(sent).toEqual({ event: 'partner_click', props: expect.objectContaining({ partner: 'gnv' }) });
   });
 });
+
+describe('Pre-filled flight link', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  function partnerService(prefilledFor: (origin: string | null) => boolean) {
+    return jest.fn((input: RequestInfo | URL) => {
+      const url = new URL(input.toString(), 'https://rme.test');
+      const origin = url.searchParams.get('origin');
+      const flight = url.searchParams.get('type') === 'flight';
+      return Promise.resolve({
+        ok: true,
+        json: async () => (flight && prefilledFor(origin)
+          ? { configured: true, affiliateUrl: `https://tp.media/r?marker=123&u=${encodeURIComponent(`https://www.aviasales.com/search/${origin}`)}`, provider: 'travelpayouts', prefilled: true }
+          : { configured: false, affiliateUrl: null, provider: null }),
+      });
+    }) as unknown as typeof fetch;
+  }
+
+  it('says the flight form opens pre-filled only when it does, and sends the date', async () => {
+    global.fetch = partnerService(() => true);
+    render(<BookingCards origin="Paris" destination="Tanger" date="2026-10-03" />);
+    await waitFor(() => expect(screen.getByTestId('compare-flight').getAttribute('href')).toContain('aviasales'));
+    expect(screen.getByText(/s’ouvre sur ce trajet\s+déjà rempli/)).toBeInTheDocument();
+    expect(screen.queryByText(/nous ne pré-remplissons pas ces/)).toBeNull();
+    expect(screen.getByText('Lien affilié · trajet pré-rempli')).toBeInTheDocument();
+    const flightCall = (global.fetch as jest.Mock).mock.calls.map(([u]) => String(u)).find((u) => u.includes('type=flight'));
+    expect(flightCall).toContain('date=2026-10-03');
+  });
+
+  it('looks the flight link up again when the trip changes, and never keeps a link pre-filled for another trip', async () => {
+    global.fetch = partnerService((origin) => origin === 'Paris');
+    const { rerender } = render(<BookingCards origin="Paris" destination="Tanger" />);
+    await waitFor(() => expect(screen.getByTestId('compare-flight').getAttribute('href')).toContain('aviasales'));
+
+    rerender(<BookingCards origin="Utrecht" destination="Tanger" />);
+    await waitFor(() => expect(screen.getByTestId('compare-flight')).toHaveAttribute('href', 'https://www.skyscanner.fr/'));
+    expect(screen.getByText(/nous ne pré-remplissons pas ces/)).toBeInTheDocument();
+  });
+});
+
