@@ -38,11 +38,11 @@ function buildState(
   }
 
   if (phase === 'preparer') {
-    const timing = days === 1 ? 'demain' : days ? \`dans \${days} jours\` : 'bientôt';
+    const timing = days === 1 ? 'demain' : days ? `dans ${days} jours` : 'bientôt';
     return {
       eyebrow: 'Avant le départ',
-      title: \`\${depart} → \${arrivee}\`,
-      body: \`Votre départ est prévu \${timing}. Le plus utile maintenant : vérifier les étapes essentielles avant de partir.\`,
+      title: `${depart} → ${arrivee}`,
+      body: `Votre départ est prévu ${timing}. Le plus utile maintenant : vérifier les étapes essentielles avant de partir.`,
       actions: [
         { label: 'Voir mon voyage', href: '#planifier' },
         { label: 'Préparer mes affaires', href: '#preparer' },
@@ -67,7 +67,7 @@ function buildState(
   return {
     eyebrow: 'Après le passage',
     title: 'Bienvenue dans la suite du voyage',
-    body: \`Votre trajet \${depart} → \${arrivee} est enregistré sur cet appareil. Retrouvez vos repères et services quand vous en avez besoin.\`,
+    body: `Votre trajet ${depart} → ${arrivee} est enregistré sur cet appareil. Retrouvez vos repères et services quand vous en avez besoin.`,
     actions: [
       { label: 'Voir les repères', href: '#maroc' },
       { label: 'Revenir au trajet', href: '#planifier' },
