@@ -99,12 +99,16 @@ export default function RouteSearch() {
   // loading state, then the map or the error, into view (also for a shared
   // link, whose visitor came for that result). Nothing moves when it is
   // already visible, as on a desktop screen.
+  //
+  // Checked again when the result arrives: the map grows from 348 to 645 px
+  // and the browser's scroll anchoring then moved the page 699 px further,
+  // leaving the map above the screen (Forge B02 on the deploy preview).
   useEffect(() => {
-    if (routeStatus !== "loading") return;
+    if (routeStatus === "idle") return;
     const el = resultRef.current;
     if (!el || typeof el.scrollIntoView !== "function") return;
     const { top } = el.getBoundingClientRect();
-    if (top < window.innerHeight - 80) return;
+    if (top >= 0 && top < window.innerHeight - 80) return;
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   }, [routeStatus]);
