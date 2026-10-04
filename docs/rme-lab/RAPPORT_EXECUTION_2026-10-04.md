@@ -23,6 +23,7 @@ Règle maintenue : Claude ne fusionne aucune PR et ne publie rien en production 
 | #226 | Conflit avec `main` réglé (une ligne) | 807 tests |
 | **#241** | Calendrier : Fête de l'Unité (31 octobre) ajoutée, Aïd al-Adha corrigé (27 mai), jamais vide | 6 tests + navigateur ; sources Habous via la presse |
 | **#242** | Hadak : « Je suis à Algésiras, que faire ? » ne donne plus l'heure | 3 tests qui échouent sur l'ancien code |
+| **#244** | Faux avis d'utilisateurs retirés (« Fatima_Paris », 234 votes, faux conseil de sécurité) | test qui échoue sur l'ancien code |
 | **#243** | **Mesure durable** : chaque clic partenaire gardé dans une table en écriture seule | 6 tests ; SQL exécuté sur PostgreSQL 16 (7 cas) |
 
 ## 3. Mesure (étape 3)
@@ -85,7 +86,7 @@ Ordre conseillé : **Agefiph** (via un conseiller Cap emploi ou un expert habili
 - **Tant que Netlify ne publie pas `main`, chaque correction reste invisible** : c'est le risque n°1.
 - Le lien vols est « actif » côté RME, mais l'approbation du programme chez Travelpayouts reste UNKNOWN.
 - Les clés IA de Hadak ont transité par une conversation le 27/09 : à régénérer (déjà noté dans `ADMIN_CHECKLIST.md`).
-- Code inutilisé avec de faux avis d'utilisateurs (`app/api/tips`, « Fatima_Paris », 234 votes) : aucune page ne l'appelle, mais il reste à retirer.
+- Code inutilisé avec de faux avis d'utilisateurs (`app/api/tips`) : retiré dans #244.
 - Paris sportifs : composant présent, même défaut d'hydratation latent que la carte « Vols » si un lien est posé.
 
 ## 9. FOUNDER ACTIONS (dans l'ordre, avec Delphine)
@@ -103,7 +104,8 @@ Ordre conseillé : **Agefiph** (via un conseiller Cap emploi ou un expert habili
    2. #242 ;
    3. #243 ;
    4. #207 ;
-   5. puis la liste du plan OMEGA 10.
+   5. #244 ;
+   6. puis la liste du plan OMEGA 10.
 3. **Mesure durable (15 min)** : suivre `docs/ADMIN_CHECKLIST.md` → « Mesure durable » (Supabase gratuit, un fichier SQL, deux variables).
 4. **Liens eSIM et activités** : poser `AIRALO_AFFILIATE_URL`, `YESIM_AFFILIATE_URL`, `KKDAY_AFFILIATE_URL` et `KLOOK_AFFILIATE_URL` dans Netlify (après #207).
 5. **Google Search Console** : `docs/ADMIN_CHECKLIST.md` → « Google Search Console ».
@@ -113,7 +115,7 @@ Ordre conseillé : **Agefiph** (via un conseiller Cap emploi ou un expert habili
 ## 10. Les 10 prochaines actions de Claude (sans attendre)
 
 1. Vérifier la production, page par page, dès que Netlify a publié `main` (Forge complète).
-2. Retirer le code inutilisé des faux avis (`app/api/tips`).
+2. ~~Retirer les faux avis~~ : fait (#244).
 3. Protéger les paris sportifs du même défaut d'hydratation (dès que Tarek a décidé de les garder).
 4. Pré-remplir aussi le lien ferry si un programme fournit un format de lien documenté.
 5. Publier dans la #243 un tableau de bord SQL prêt à copier : clics par partenaire et par page.
