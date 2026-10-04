@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
+import { storeEvent } from '@/lib/eventStore';
 import { cleanEventProps, isRmeEvent } from '@/lib/rmeEvents';
 
 // Anonymous usage events: one `[rme-event]` line per event in the server logs
-// (Netlify → Logs → Functions), like `[hadak-intent]`. No storage, no cookie,
-// no IP address, and only whitelisted event names with cleaned props.
+// (Netlify → Logs → Functions), like `[hadak-intent]`, kept for good in the
+// `rme_events` table when it is configured (lib/eventStore.ts). No cookie, no
+// IP address, and only whitelisted event names with cleaned props.
 const MAX_BODY_BYTES = 2048;
 
 export async function POST(request: Request) {
@@ -18,6 +20,10 @@ export async function POST(request: Request) {
   }
   if (!isRmeEvent(body?.event)) return NextResponse.json({ error: 'Unknown event' }, { status: 400 });
 
-  console.info('[rme-event]', JSON.stringify({ ...cleanEventProps(body.props), event: body.event }));
+  const props = cleanEventProps(body.props);
+  console.info('[rme-event]', JSON.stringify({ ...props, event: body.event }));
+  // Awaited: a serverless function may be frozen once it has answered.
+  const stored = await storeEvent(body.event, props);
+  if (stored === 'failed') console.warn('[rme-event-store] failed');
   return new NextResponse(null, { status: 204 });
 }
