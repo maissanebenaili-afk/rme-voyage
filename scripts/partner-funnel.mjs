@@ -10,7 +10,7 @@
 
 import { readFileSync } from 'node:fs';
 
-/** Partner id used in lead clicks → path prefix of its page(s). */
+/** Partner id used in contact clicks → path prefix of its page(s). */
 export const PARTNER_PAGES = {
   afarah_nassim: '/afarah-nassim',
   marwa_caftan: '/marwa-caftan',
