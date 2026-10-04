@@ -463,7 +463,7 @@ export default function Home() {
                 <li>Flux d'actualités Maroc</li>
                 <li>Météo Maroc</li>
                 <li>Phrasebook Darija</li>
-                <li>Calculateur Douane</li>
+                <li>Douane : limites officielles</li>
                 <li>SOS Ambassades</li>
                 <li>Calendrier Marocain</li>
                 <li>Calculateur Zakat</li>
