@@ -10,7 +10,7 @@ import {
   MapPin,
   Building2,
 } from 'lucide-react';
-import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
+import { whatsappLink } from '@/lib/partners';
 import { PROPERTIES, getProperty, similarProperties, PROPERTY_TYPES } from '@/lib/properties';
 import { defaultOgImage } from '@/lib/seo';
 import LeadLink from '@/components/LeadLink';
@@ -50,8 +50,9 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
   const primaryPrice = primaryMode === 'vente' ? property.price_sale : property.price_month;
   const priceLabel = primaryMode === 'vente' ? `${primaryPrice?.toLocaleString()} DH` : `${primaryPrice?.toLocaleString()} DH/mois`;
 
+  // The property's own contact (HiDOUR Immobilier), not the caftan/catering number.
   const whatsapp = whatsappLink(
-    MARWA_WHATSAPP,
+    property.contact_whatsapp,
     `Bonjour, je suis intéressé(e) par la propriété: ${property.title} à ${property.location}. Pouvez-vous me donner plus de détails?`
   );
 

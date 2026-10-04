@@ -6,6 +6,7 @@ import type { Caftan, Mode } from '@/lib/caftans';
 import { CONDITIONS } from '@/lib/caftans';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
 import { siteUrl } from '@/lib/siteUrl';
+import LeadLink from '@/components/LeadLink';
 
 const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL'];
 
@@ -77,11 +78,11 @@ export default function CaftanBooking({ caftan }: { caftan: Caftan }) {
         {caftan.dispo ? '✓ Disponible — expédition sous 48 h' : '⌚ Actuellement loué — demandez la liste d\'attente'}
       </p>
 
-      <a href={whatsappLink(MARWA_WHATSAPP, message)} target="_blank" rel="noopener noreferrer"
+      <LeadLink partner="marwa_caftan" channel="whatsapp" href={whatsappLink(MARWA_WHATSAPP, message)} target="_blank" rel="noopener noreferrer"
         className="group mt-4 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-[#0f1f3d] shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105">
         <MessageCircle size={16} className="transition-transform group-hover:scale-110" />
         {caftan.dispo ? 'Vérifier mes dates avec Marwa' : 'Être prévenue du retour'}
-      </a>
+      </LeadLink>
 
       <ul className="mt-5 space-y-2 border-t border-[#f1f5f9] pt-4">
         {CONDITIONS.map((c, idx) => (

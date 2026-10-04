@@ -10,6 +10,8 @@ const VENDOR_PAGES = [
   'app/taza-immobilier/page.tsx',
   'app/taza-immobilier/[id]/page.tsx',
   'app/belisamae/page.tsx',
+  'components/caftan/CaftanBooking.tsx',
+  'components/caftan/CaftanMarketplace.tsx',
 ];
 
 describe('Leads sent to partner businesses are counted', () => {
@@ -33,6 +35,7 @@ describe('Leads sent to partner businesses are counted', () => {
   it.each(VENDOR_PAGES)('%s has no untracked WhatsApp, phone or booking link', (file) => {
     const source = readFileSync(join(process.cwd(), file), 'utf8');
     const rawAnchors = source.match(/<a\s+href=\{[^}]*(whatsapp|devis|contactGeneral|tel:|BELISAMAE_URL)/gi) ?? [];
+    expect(source).not.toMatch(/<a\s+href=\{whatsappLink\(/);
     expect(rawAnchors).toEqual([]);
     expect(source).toContain('<LeadLink');
   });
