@@ -8,6 +8,9 @@ import { act } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { FuelPriceComparator, MoroccanCalendar } from '@/components/TravelWidgets'
 import { FUEL_PRICES } from '@/lib/fuelByCountry'
+import { getPartnerCatalogue } from '@/lib/partnerCatalogue'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 // Tell React this test drives act() itself.
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -48,5 +51,22 @@ describe('prerendered home widgets', () => {
     const { errors, text } = await hydrationErrors(<FuelPriceComparator />, observed + DAY, observed + 60 * DAY)
     expect(errors).toEqual([])
     expect(text).toMatch(/plus de deux semaines/)
+  })
+
+  // Second cause, seen on deploy preview #240: the prerendered page showed the
+  // flights card as "Affilié" (server env var set), the browser as "À activer".
+  it('the home page renders the partner catalogue without server env vars', () => {
+    const before = process.env.TRAVELPAYOUTS_FLIGHT_URL
+    process.env.TRAVELPAYOUTS_FLIGHT_URL = 'https://aviasales.tp.st/test'
+    try {
+      expect(getPartnerCatalogue().find((p) => p.id === 'travelpayouts-flights')?.status).toBe('active')
+      expect(getPartnerCatalogue({}).every((p) => p.status === 'pending' && !p.affiliateUrl)).toBe(true)
+    } finally {
+      if (before === undefined) delete process.env.TRAVELPAYOUTS_FLIGHT_URL
+      else process.env.TRAVELPAYOUTS_FLIGHT_URL = before
+    }
+    const page = readFileSync(join(__dirname, '..', 'app', 'page.tsx'), 'utf8')
+    expect(page).toContain('getPartnerCatalogue({})')
+    expect(page).not.toContain('getPartnerCatalogue()')
   })
 })

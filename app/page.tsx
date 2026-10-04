@@ -417,7 +417,9 @@ export default function Home() {
       {/* Affiliate Comparison — one neutral marketplace layer for every travel vertical */}
       <section className="bg-slate-50 py-12">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <PartnerComparison partners={getPartnerCatalogue()} />
+          {/* Public links first; PartnerComparison asks /api/partners for the
+              configured ones after hydration. */}
+          <PartnerComparison partners={getPartnerCatalogue({})} />
         </div>
       </section>
 
