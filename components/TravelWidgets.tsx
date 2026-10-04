@@ -768,18 +768,21 @@ const HOLIDAYS_2026: HolidayEvent[] = [
   { name: "Début du Ramadan", emoji: "🌙", date: "2026-02-19", type: "islamic" },
 ];
 
-function daysUntil(dateStr: string): number {
+function daysUntil(dateStr: string, now: number): number {
   const target = new Date(dateStr + "T00:00:00");
-  const now = new Date();
-  const diff = target.getTime() - now.getTime();
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  return Math.ceil((target.getTime() - now) / (1000 * 60 * 60 * 24));
 }
 
+// The home page is prerendered once at build time: a countdown computed there
+// is stale by the time a visitor opens it, and React then throws away and
+// re-renders the whole page (error #418). The countdown is therefore computed
+// only in the browser, after hydration.
 export function MoroccanCalendar() {
-  const [, setNow] = useState(new Date());
+  const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 60000);
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(timer);
   }, []);
 
@@ -787,8 +790,9 @@ export function MoroccanCalendar() {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  const nextEvent = sortedHolidays.find((h) => daysUntil(h.date) >= 0);
-  const upcoming = sortedHolidays.filter((h) => daysUntil(h.date) >= -1);
+  const nextEvent = now === null ? undefined : sortedHolidays.find((h) => daysUntil(h.date, now) >= 0);
+  const upcoming = now === null ? sortedHolidays : sortedHolidays.filter((h) => daysUntil(h.date, now) >= -1);
+  const nextDays = nextEvent && now !== null ? daysUntil(nextEvent.date, now) : 0;
 
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
@@ -809,14 +813,12 @@ export function MoroccanCalendar() {
           <p className="mt-1 text-2xl">{nextEvent.emoji}</p>
           <p className="text-lg font-bold text-[#f8fafc]">{nextEvent.name}</p>
           <p className="mt-2 text-4xl font-black text-[#f59e0b]">
-            {daysUntil(nextEvent.date)}
+            {nextDays}
           </p>
           <p className="text-xs text-[#f8fafc]/70">
-            {daysUntil(nextEvent.date) === 0
+            {nextDays === 0
               ? "C'est aujourd'hui!"
-              : `jour${daysUntil(nextEvent.date) > 1 ? "s" : ""} restant${
-                  daysUntil(nextEvent.date) > 1 ? "s" : ""
-                }`}
+              : `jour${nextDays > 1 ? "s" : ""} restant${nextDays > 1 ? "s" : ""}`}
           </p>
         </div>
       )}
@@ -824,7 +826,7 @@ export function MoroccanCalendar() {
       {/* Holiday list */}
       <div className="mt-4 space-y-2">
         {upcoming.map((holiday) => {
-          const days = daysUntil(holiday.date);
+          const days = now === null ? null : daysUntil(holiday.date, now);
           const isNext = nextEvent && nextEvent.date === holiday.date;
           const eventDate = new Date(holiday.date + "T00:00:00");
           return (
@@ -847,15 +849,17 @@ export function MoroccanCalendar() {
                   })}
                 </p>
               </div>
-              <span
-                className={`rounded-full px-2 py-1 text-xs font-bold ${
-                  holiday.type === "islamic"
-                    ? "bg-[#0f1f3d]/10 text-[#0f1f3d]"
-                    : "bg-[#f59e0b]/20 text-[#0f1f3d]"
-                }`}
-              >
-                {days >= 0 ? `J-${days}` : "Passé"}
-              </span>
+              {days !== null && (
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-bold ${
+                    holiday.type === "islamic"
+                      ? "bg-[#0f1f3d]/10 text-[#0f1f3d]"
+                      : "bg-[#f59e0b]/20 text-[#0f1f3d]"
+                  }`}
+                >
+                  {days >= 0 ? `J-${days}` : "Passé"}
+                </span>
+              )}
             </div>
           );
         })}
@@ -1172,9 +1176,12 @@ export function FuelPriceComparator() {
   // Prix auparavant écrits à la main (France 1,89 €, « subventionné » au
   // Maroc…) : remplacés par le bulletin officiel déjà utilisé par le
   // Reality Check, pour qu'une même page n'affiche pas deux prix différents.
-  const [now] = useState(() => Date.now());
+  // Read in the browser only: the page is prerendered at build time, when the
+  // prices may still be fresh (see MoroccanCalendar).
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => setNow(Date.now()), []);
   const expiresAt = datasetExpiry(FUEL_PRICES.observedAt);
-  const fresh = now < expiresAt.getTime();
+  const fresh = now === null || now < expiresAt.getTime();
 
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>

@@ -10,6 +10,8 @@ import {
 import { moroccoTimeZone, moroccoUtcOffset } from '@/lib/moroccoTime';
 import { isHadakLang, newTrace, nextActionsFor, provenanceOf, type AnswerTrace } from '@/lib/hadakGuidance';
 import { detectHadakLanguage } from '@/lib/hadakLanguage';
+import { detectServiceRequest, serviceAnswer } from '@/lib/hadakServices';
+import { searchServices } from '@/lib/servicesSearch';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type OpenAICompatibleResponse = {
@@ -244,7 +246,7 @@ async function handleFootball(msg: string, lang: string, trace: AnswerTrace = ne
 }
 
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'customs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
+type Intent = 'services' | 'weather' | 'time' | 'ferry' | 'docs' | 'customs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
 
 // "cours" alone is left out: "cours du dirham" is a currency question.
 const EDUCATION_RE = /\b(exercices?|devoirs?|resous|resoudre|corrige|correction|reviser|revision|brevet|bac|examen|lecon|equations?|fractions?|theoremes?|conjugaison|grammaire|dissertation|homework|exercise|tamrin|dars)\b|تمرين|درس|امتحان/;
@@ -278,6 +280,9 @@ function detectIntent(msg: string): Intent {
   const m = msg.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   // School work first: "prépare-moi pour le bac" must not become a trip card.
   if (EDUCATION_RE.test(m)) return 'education';
+  // A real place nearby (garage, consulate, station…): before trip, weather,
+  // fuel and clock, which used to answer "garage près de Taza" with the weather.
+  if (detectServiceRequest(msg)) return 'services';
   // Trip planning — "prépare-moi un voyage à X", "safari l X", "je veux aller à X"
   if (/\b(prepare|preparer|planifie|organise|voyage.*\ba\b|safari.*\bl\b|veux.*aller|want.*go|quiero.*ir|trip.*to|bghit.*nmshi|bghit.*nsafr)\b/.test(m)) return 'trip';
   // Weather — broad pattern: temps, meteo, chaud, froid, pluie, soleil, nuageux, brouillard, vent
@@ -322,6 +327,16 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   const time = getMoroccoTime();
   const date = getMoroccoDate();
   const cityKey = detectCity(msg);
+
+  if (intent === 'services') {
+    const request = detectServiceRequest(msg)!;
+    const found = request.place ? await searchServices(request.place, request.category).catch(() => null) : null;
+    if (found?.ok) {
+      trace.live.push('OpenStreetMap');
+      trace.liveOnly = true;
+    }
+    return serviceAnswer(request, found, lang);
+  }
 
   if (intent === 'time') {
     trace.clock = true;
@@ -612,7 +627,7 @@ export async function POST(req: NextRequest) {
     if (local) {
       // Football records its own resolution (cache, router or static text).
       if (intent !== 'football') {
-        const usesLiveData = intent === 'weather' || intent === 'prayer' || intent === 'currency' || intent === 'trip' || intent === 'generic';
+        const usesLiveData = intent === 'services' || intent === 'weather' || intent === 'prayer' || intent === 'currency' || intent === 'trip' || intent === 'generic';
         recordResolution(usesLiveData ? 'EXTERNAL_DATA' : 'DETERMINISTIC_LOCAL', Date.now() - localStarted);
       }
       const trust = provenanceOf(trace);
