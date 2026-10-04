@@ -21,7 +21,7 @@ Aucune de ces actions ne demande de copier un secret dans une conversation.
   - Le compteur de `proxy.ts` reste en place et couvre les quelques secondes de délai avant que Netlify ne bloque.
   - Les deux essais précédents ne l'avaient pas vu : rafales trop courtes (moins que le délai d'environ 10 s de Netlify) et adresses IP différentes.
 
-- **Mesure d'usage** : Netlify → Logs → Functions, filtres `rme-event` (clics partenaires, itinéraires), `hadak-intent` et `hadak-ledger`. Détails : `docs/MONTH1_METRICS.md`.
+- **Mesure d'usage** : Netlify → Logs → Functions, filtres `rme-event` (clics partenaires, itinéraires), `hadak-intent` et `hadak-ledger`. Détails : `docs/MONTH1_METRICS.md`. Ces journaux disparaissent en environ un jour : pour garder les clics, voir « Mesure durable » ci-dessous.
 
 ### Variables d'environnement (audit statique du 27/09/2026)
 
@@ -151,6 +151,18 @@ Test après déploiement :
 4. La conversion n'est visible que dans le tableau de bord du partenaire.
 
 Les paris sportifs (`UNIBET_…`, `BETCLIC_…`, `WINAMAX_…`, `BET365_AFFILIATE_URL`) restent hors activation : secteur régulé (ANJ), décision juridique du propriétaire d'abord.
+
+## Mesure durable des clics (15 min, gratuit)
+
+Sans cela, aucun clic partenaire ne peut être prouvé au-delà d'environ un jour.
+
+1. https://supabase.com → créer un compte puis un projet gratuit (région Europe). Notez le nom du projet, rien d'autre.
+2. Dans le projet : **SQL Editor** → coller tout le fichier `supabase/rme_events.sql` du dépôt → **Run**.
+3. **Project Settings → API** : copier l'adresse du projet (`https://….supabase.co`) et la clé **anon public**. Ne jamais prendre la clé `service_role`.
+4. Netlify → Project configuration → Environment variables : ajouter `RME_EVENTS_SUPABASE_URL` (l'adresse) et `RME_EVENTS_SUPABASE_KEY` (la clé anon). Ne les collez dans aucune conversation.
+5. Redéployer, ouvrir le site, cliquer sur une page, puis Supabase → **Table Editor → rme_events** : une ligne `page_view` doit apparaître.
+
+Cette clé ne permet que d'ajouter un événement connu : elle ne peut ni lire, ni modifier, ni effacer la table. Les requêtes utiles (clics par partenaire, entonnoir par jour) sont à la fin du fichier SQL.
 
 ## Google Search Console
 
