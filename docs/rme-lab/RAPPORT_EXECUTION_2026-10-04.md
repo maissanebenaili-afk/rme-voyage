@@ -24,6 +24,9 @@ Règle maintenue : Claude ne fusionne aucune PR et ne publie rien en production 
 | **#241** | Calendrier : Fête de l'Unité (31 octobre) ajoutée, Aïd al-Adha corrigé (27 mai), jamais vide | 6 tests + navigateur ; sources Habous via la presse |
 | **#242** | Hadak : « Je suis à Algésiras, que faire ? » ne donne plus l'heure | 3 tests qui échouent sur l'ancien code |
 | **#244** | Faux avis d'utilisateurs retirés (« Fatima_Paris », 234 votes, faux conseil de sécurité) | test qui échoue sur l'ancien code |
+| **#245** | Widget douane de l'accueil : ne calcule plus de faux droits (cadeaux « 1 000 MAD » au lieu de 20 000 DH, électronique « 20 % », devises « 10 000 EUR ») | 2 tests qui échouent sur l'ancien code |
+| **#246** | Zakat : le nisab « 85 g d'or ≈ 50 000 MAD » était faux de moitié (environ 103 000 MAD) ; un montant « à payer » s'affichait sous le seuil | 3 tests qui échouent sur l'ancien code |
+| **#247** | SIM : forfaits et tarif d'itinérance inventés retirés (widget + Hadak en 4 langues) ; pièce d'identité obligatoire depuis 2014 (sourcé) | 5 tests qui échouent sur l'ancien code |
 | **#243** | **Mesure durable** : chaque clic partenaire gardé dans une table en écriture seule | 6 tests ; SQL exécuté sur PostgreSQL 16 (7 cas) |
 
 ## 3. Mesure (étape 3)
@@ -105,7 +108,8 @@ Ordre conseillé : **Agefiph** (via un conseiller Cap emploi ou un expert habili
    3. #243 ;
    4. #207 ;
    5. #244 ;
-   6. puis la liste du plan OMEGA 10.
+   6. #245, #246, #247 (fusion successive vérifiée sans conflit) ;
+   7. puis la liste du plan OMEGA 10.
 3. **Mesure durable (15 min)** : suivre `docs/ADMIN_CHECKLIST.md` → « Mesure durable » (Supabase gratuit, un fichier SQL, deux variables).
 4. **Liens eSIM et activités** : poser `AIRALO_AFFILIATE_URL`, `YESIM_AFFILIATE_URL`, `KKDAY_AFFILIATE_URL` et `KLOOK_AFFILIATE_URL` dans Netlify (après #207).
 5. **Google Search Console** : `docs/ADMIN_CHECKLIST.md` → « Google Search Console ».
