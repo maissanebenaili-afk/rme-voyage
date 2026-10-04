@@ -246,7 +246,7 @@ async function handleFootball(msg: string, lang: string, trace: AnswerTrace = ne
 }
 
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'services' | 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
+type Intent = 'services' | 'weather' | 'time' | 'ferry' | 'docs' | 'customs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
 
 // "cours" alone is left out: "cours du dirham" is a currency question.
 const EDUCATION_RE = /\b(exercices?|devoirs?|resous|resoudre|corrige|correction|reviser|revision|brevet|bac|examen|lecon|equations?|fractions?|theoremes?|conjugaison|grammaire|dissertation|homework|exercise|tamrin|dars)\b|تمرين|درس|امتحان/;
@@ -292,6 +292,10 @@ function detectIntent(msg: string): Intent {
   // prayer word must win, or the app answers the clock instead of the
   // prayer times it was actually asked for.
   if (/\b(priere|salat|prayer|salawat|fajr|dhuhr|asr|maghrib|isha|صلاة|موعد الصلاة|adhan|azan|imsakiyya|horaire.*(priere|salat)|quando.*(priere|salat))\b/.test(m)) return 'prayer';
+  // Customs — before documents and currency: "combien d'argent liquide à la
+  // douane" is a customs question, and an AI answer gave travellers the
+  // general 2 000 DH gift limit instead of the 20 000 DH one for MRE.
+  if (/\b(douanes?|douanier|customs|aduanas?|jamarik|diwana|dwana)\b|جمارك|الجمارك|ديوانة/.test(m)) return 'customs';
   // Explicit document words — checked before "ferry": "quels documents pour
   // passer à Tanger Med" names a port but asks about papers. Only unambiguous
   // document words here; "rentrer/entrer" stay in the later docs rule so
@@ -299,7 +303,8 @@ function detectIntent(msg: string): Intent {
   if (/\b(documents?|passeport|passport|visa|papiers?|watha2iq|carte.*(nationale|identite)|laissez.passer)\b/.test(m)) return 'docs';
   // Ferry — "barcelona" is not listed: alone it names the football club far
   // more often; "ferry Barcelona → Nador" still matches on "ferry".
-  if (/\b(ferry|bateau|traversee|boat|algeciras|tanger med|tarifa|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
+  // "Algésiras" is the French spelling (normalised: algesiras).
+  if (/\b(ferry|bateau|traversee|boat|algeciras|algesiras|tanger med|tarifa|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
   // Documents
   if (/\b(document|passeport|passport|cin|visa|permis|papier|watha2iq|carte.*(nationale|identite)|laissez.passer|required.*enter|rentrer|entrer)\b/.test(m)) return 'docs';
   // Currency
@@ -315,7 +320,9 @@ function detectIntent(msg: string): Intent {
   // Time — checked last: "heure/time/maintenant" also appear in questions on
   // another subject ("quelle heure part le ferry", "match ce soir à quelle
   // heure"). The clock only answers when no subject was recognised.
-  if (/\b(heure|time|wa9t|وقت|maintenant|en ce moment|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
+  // "maintenant" alone is not a clock question: "je suis au port, qu'est-ce
+  // que je fais maintenant ?" got the time (Forge H15, 2026-10-04).
+  if (/\b(heure|time|wa9t|وقت|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
   return 'generic';
 }
 
@@ -418,10 +425,25 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   }
 
   if (intent === 'fuel') {
-    if (lang === 'da') return `Carburant f l-Maghrib: essence ≈ 14-15 MAD/l, gasoil ≈ 11-12 MAD/l. Stations-service f kull triq. Shell, Afriquia, Total moujoudin. F l-blad l-b3ida, 3lash t3ammr 9bal ma tmshi.`;
-    if (lang === 'ar') return `أسعار الوقود في المغرب: بنزين ≈ 14-15 درهم/لتر، غازوال ≈ 11-12 درهم/لتر. محطات Shell, Afriquia, Total في كل مكان. في المناطق النائية، ابل بالتعبئة قبل المغادرة.`;
-    if (lang === 'es') return `Combustible en Marruecos: gasolina ≈ 14-15 MAD/l, gasóleo ≈ 11-12 MAD/l. Gasolineras Shell, Afriquia, Total por todo el país. En zonas remotas, llena el depósito antes de salir.`;
-    return `**Carburant au Maroc** : essence ≈ 14-15 MAD/l, gasoil ≈ 11-12 MAD/l. Stations Shell, Afriquia, Total partout. En zone rurale, faites le plein avant de partir — les stations peuvent être espacées.`;
+    // Prix libres, révisés tous les quinze jours : un chiffre sans date devient
+    // faux. Le gasoil était annoncé « 11-12 MAD » alors que la presse marocaine
+    // le relève au-dessus de 16 DH/L le 1er octobre 2026.
+    if (lang === 'da') return `Carburant f l-Maghrib: l-asar hourra w kaytbeddlo kol 15 youm. Nhar 1 octobre 2026, l-presse 3tat l-gasoil fo9 16 DH/l. Tcheck l-prix f l-station. F l-blad l-b3ida, 3ammr 9bal ma tmshi.`;
+    if (lang === 'ar') return `الوقود في المغرب: الأسعار حرة وتتغير كل 15 يوماً. في 1 أكتوبر 2026، ذكرت الصحافة أن الغازوال تجاوز 16 درهماً للتر. تحقق من السعر في المحطة. في المناطق النائية، املأ الخزان قبل المغادرة.`;
+    if (lang === 'es') return `Combustible en Marruecos: precios libres, revisados cada 15 días. El 1 de octubre de 2026 la prensa situaba el gasóleo por encima de 16 MAD/l. Comprueba el precio en la gasolinera. En zonas remotas, llena el depósito antes de salir.`;
+    return `**Carburant au Maroc** : les prix sont libres et changent tous les 15 jours. Le 1er octobre 2026, la presse marocaine relevait le gasoil au-dessus de 16 DH/L. Vérifiez le prix affiché en station. En zone rurale, faites le plein avant de partir.`;
+  }
+
+  if (intent === 'customs') {
+    // Sources primaires lues le 4 octobre 2026 : guide « Marocains du Monde »
+    // de l'ADII (finances.gov.ma, cadeaux < 20 000 DH par année civile) et
+    // Instruction générale des opérations de change 2026 (oc.gov.ma : 2 000 DH
+    // en billets, déclaration des devises dès 100 000 DH). Aucun chiffre sans
+    // source primaire : autres voyageurs, tabac, alcool et parfum renvoyés.
+    if (lang === 'da') return `Douane f l-Maghrib: l-cadeaux l-3a2iliya dyal MRE li khddam f l-kharij: a9al mn 20 000 DH f l-3am, merra f l-3am, bla 7aja tijariya w machi ga3 f naw3 wa7ed (guide rasmi dyal ADII). Dirham cash: ma ktar mn 2 000 DH. Devises: déclaration mn 100 000 DH w fo9 (Office des Changes, IGOC 2026). L-akhrin, tabac, l-kohol w parfum: douane.gov.ma.`;
+    if (lang === 'ar') return `الجمارك المغربية: الهدايا العائلية لمغاربة العالم الذين يعملون بالخارج: أقل من 20 000 درهم في السنة الميلادية، مرة واحدة في السنة، دون طابع تجاري ولا تتركز في نوع واحد (دليل إدارة الجمارك الرسمي). الدرهم نقداً: لا يتجاوز 2 000 درهم. العملات الأجنبية: التصريح إلزامي ابتداءً من 100 000 درهم (مكتب الصرف، التعليمات العامة 2026). باقي المسافرين والتبغ والكحول والعطور: douane.gov.ma.`;
+    if (lang === 'es') return `Aduana marroquí: regalos familiares de un MRE que trabaja en el extranjero: menos de 20 000 MAD por año civil, una vez al año, sin carácter comercial ni concentrados en un solo tipo de artículo (guía oficial de la ADII). Dirhams en efectivo: máximo 2 000 MAD. Divisas: declaración obligatoria desde 100 000 MAD (Office des Changes, IGOC 2026). Otros viajeros, tabaco, alcohol y perfume: douane.gov.ma.`;
+    return `**Douane marocaine** : cadeaux familiaux d'un MRE qui travaille à l'étranger : **moins de 20 000 DH** par année civile, une fois par an, sans caractère commercial et pas sur un seul type d'article (guide officiel de l'ADII). Dirhams en espèces : 2 000 DH au plus. Devises : déclaration obligatoire à partir de **100 000 DH** (Office des Changes, IGOC 2026). Autres voyageurs, tabac, alcool et parfum : douane.gov.ma.`;
   }
 
   if (intent === 'trip') {
