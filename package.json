@@ -13,7 +13,8 @@
     "test:coverage": "jest --coverage",
     "cap:build": "next build && npx cap sync",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "forge": "node scripts/forge/forge.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^7.1.0",
