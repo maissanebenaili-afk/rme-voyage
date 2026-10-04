@@ -807,18 +807,31 @@ export function MoroccanCalendar() {
    6. ZakaatCalculator — Travel zakaat calculator
    ============================================================ */
 const EUR_TO_MAD = 10.8;
-const NISAB_USD = 5000;
-const USD_TO_MAD = 10.0;
+// The nisab was hard-coded as 5 000 USD × 10 = 50 000 MAD and called "85 g of
+// gold", while 85 g of 24-carat gold were worth about 103 000 MAD (2026-10-04):
+// people under the real threshold were told zakat was due. The nisab is now
+// 85 g × a gold price the user can update, prefilled with a dated reading.
+export const NISAB_GOLD_GRAMS = 85;
+export const GOLD_PRICE_READING = {
+  madPerGram: 1213.5, // 24 carats
+  observed: "fin juillet 2026",
+  source: "https://www.goldpricedata.com/fr/gold-rates/morocco/gram/24k/",
+};
+
+export function zakatFor(amountMAD: number, goldMadPerGram: number) {
+  const nisab = NISAB_GOLD_GRAMS * goldMadPerGram;
+  const due = goldMadPerGram > 0 && amountMAD >= nisab;
+  return { nisab, due, zakat: due ? amountMAD * 0.025 : 0 };
+}
 
 export function ZakaatCalculator() {
   const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState<"EUR" | "MAD">("EUR");
+  const [goldPrice, setGoldPrice] = useState(GOLD_PRICE_READING.madPerGram);
 
   const amountMAD =
     currency === "EUR" ? amount * EUR_TO_MAD : amount;
-  const nisabMAD = NISAB_USD * USD_TO_MAD;
-  const zakaat = amountMAD * 0.025;
-  const aboveNisab = amountMAD >= nisabMAD;
+  const { nisab: nisabMAD, due: aboveNisab, zakat: zakaat } = zakatFor(amountMAD, goldPrice);
 
   const fmt = (n: number) =>
     n.toLocaleString("fr-FR", { maximumFractionDigits: 2 });
@@ -864,6 +877,24 @@ export function ZakaatCalculator() {
         </div>
       </div>
 
+      <div className="mt-3">
+        <label htmlFor="tw-gold" className="text-xs font-semibold text-[#0f1f3d]/70">
+          Prix de l&apos;or 24 carats (MAD par gramme)
+        </label>
+        <input
+          id="tw-gold"
+          type="number"
+          value={goldPrice || ""}
+          onChange={(e) => setGoldPrice(Math.max(0, Number(e.target.value)))}
+          className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
+        />
+        <p className="mt-1 text-xs text-[#0f1f3d]/70">
+          Prérempli avec le cours relevé {GOLD_PRICE_READING.observed} (
+          <a href={GOLD_PRICE_READING.source} target="_blank" rel="noopener noreferrer" className="underline">source</a>
+          ) : remplacez-le par le prix du jour.
+        </p>
+      </div>
+
       {/* Nisab status */}
       <div
         className={`mt-4 flex items-center gap-2 rounded-xl p-3 text-sm font-semibold ${
@@ -885,7 +916,7 @@ export function ZakaatCalculator() {
       {/* Result */}
       <div className="mt-3 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f59e0b]/90 p-5 text-center">
         <p className="text-xs uppercase tracking-wide text-[#0f1f3d]/70">
-          Zakat à payer (2.5%)
+          {aboveNisab ? "Zakat à payer (2,5 %)" : "Zakat non due"}
         </p>
         <p className="mt-1 text-3xl font-black text-[#0f1f3d]">
           {fmt(Math.round(zakaat * 100) / 100)}
@@ -899,9 +930,10 @@ export function ZakaatCalculator() {
       </div>
 
       <p className="mt-3 text-xs text-[#0f1f3d]/70">
-        Le nisab correspond à l'équivalent de 85g d'or (≈ {fmt(nisabMAD)} MAD).
-        La zakat est obligatoire si votre capital dépasse ce seuil pendant une
-        année lunaire.
+        Nisab : valeur de {NISAB_GOLD_GRAMS} g d&apos;or, soit {fmt(Math.round(nisabMAD))} MAD au prix indiqué.
+        La zakat est due si votre capital reste au-dessus de ce seuil pendant une
+        année lunaire. Conversion indicative : 1 € = {EUR_TO_MAD} MAD. En cas de
+        doute, demandez à un imam ou à une personne compétente.
       </p>
     </section>
   );
