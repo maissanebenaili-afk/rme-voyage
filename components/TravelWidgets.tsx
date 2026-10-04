@@ -422,8 +422,43 @@ export function DarijaPhrasebook() {
 }
 
 /* ============================================================
-   3. CustomsCalculator — Moroccan douane calculator
+   3. CustomsCalculator — Moroccan customs: sourced limits only
    ============================================================ */
+// Until 2026-10-04 this was a duty calculator with invented rules: gifts
+// duty-free up to 1 000 MAD (MRE: under 20 000 DH a year), electronics taxed
+// 20 % from the first dirham, "currency > 10 000 EUR" (declaration starts at
+// 100 000 DH). No official source gives a flat duty rate a traveller could
+// compute, so the widget states the sourced limits and links to the douane.
+export const CUSTOMS_SOURCES = {
+  adiiMre: "https://www.finances.gov.ma/Publication/adii/2011/8347_mre_douane.pdf",
+  igoc2026: "https://www.oc.gov.ma/sites/default/files/reglementation/pdf/2026-01/IGOC%202026.pdf",
+  douane: "https://www.douane.gov.ma",
+};
+
+const CUSTOMS_FACTS = [
+  {
+    label: "Cadeaux familiaux d'un MRE",
+    value: "moins de 20 000 DH",
+    detail: "par année civile, une fois par an, sans caractère commercial",
+    source: "Guide « Marocains du Monde » de l'ADII",
+    href: CUSTOMS_SOURCES.adiiMre,
+  },
+  {
+    label: "Dirhams en espèces",
+    value: "2 000 DH au plus",
+    detail: "billets de banque marocains",
+    source: "Office des Changes, IGOC 2026",
+    href: CUSTOMS_SOURCES.igoc2026,
+  },
+  {
+    label: "Devises (euros…)",
+    value: "déclaration dès 100 000 DH",
+    detail: "à déclarer à la douane à l'entrée au Maroc",
+    source: "Office des Changes, IGOC 2026",
+    href: CUSTOMS_SOURCES.igoc2026,
+  },
+];
+
 const RESTRICTED_ITEMS = [
   { name: "Alcool (au-delà des quotas)", level: "warning" },
   { name: "Produits du porc", level: "warning" },
@@ -431,121 +466,45 @@ const RESTRICTED_ITEMS = [
   { name: "Armes et munitions", level: "danger" },
   { name: "Médicaments (sans ordonnance)", level: "warning" },
   { name: "Antiquités et objets d'art", level: "warning" },
-  { name: "Devises > 10 000 EUR", level: "danger" },
   { name: "Matériel de reproduction", level: "warning" },
 ];
 
 export function CustomsCalculator() {
-  const [electronics, setElectronics] = useState(0);
-  const [gifts, setGifts] = useState(0);
-  const [personal, setPersonal] = useState(0);
-
-  const DUTY_FREE_PERSONAL = 2000;
-  const DUTY_FREE_GIFTS = 1000;
-  const DUTY_RATE = 0.2;
-
-  const personalExcess = Math.max(0, personal - DUTY_FREE_PERSONAL);
-  const giftsExcess = Math.max(0, gifts - DUTY_FREE_GIFTS);
-  const electronicsDuty = electronics * DUTY_RATE;
-  const totalDuty = electronicsDuty + personalExcess * DUTY_RATE + giftsExcess * DUTY_RATE;
-
-  const currency = (n: number) => `${n.toLocaleString("fr-FR")} MAD`;
-
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
         <Calculator className="text-[#0f1f3d]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Calculateur douane</h2>
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Douane : les limites officielles</h2>
       </div>
       <p className="mt-1 text-sm text-[#0f1f3d]/70">
-        Estimez les droits de douane à l'entrée au Maroc.
+        Ce que disent les textes, avec leur source. Les droits sur un objet précis dépendent de sa nature :
+        RME ne les calcule pas.
       </p>
 
-      {/* Inputs */}
-      <div className="mt-4 space-y-3">
-        <div>
-          <label htmlFor="tw-1" className="text-xs font-semibold text-[#0f1f3d]/70">
-            Électronique (valeur en MAD)
-          </label>
-          <input
-            id="tw-1"
-            type="number"
-            value={electronics || ""}
-            onChange={(e) => setElectronics(Math.max(0, Number(e.target.value)))}
-            placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
-          />
-        </div>
-        <div>
-          <label htmlFor="tw-2" className="text-xs font-semibold text-[#0f1f3d]/70">
-            Cadeaux (valeur en MAD)
-          </label>
-          <input
-            id="tw-2"
-            type="number"
-            value={gifts || ""}
-            onChange={(e) => setGifts(Math.max(0, Number(e.target.value)))}
-            placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
-          />
-          <p className="mt-1 text-xs text-[#0f1f3d]/70">
-            Franchise: {currency(DUTY_FREE_GIFTS)}
-          </p>
-        </div>
-        <div>
-          <label htmlFor="tw-3" className="text-xs font-semibold text-[#0f1f3d]/70">
-            Effets personnels (valeur en MAD)
-          </label>
-          <input
-            id="tw-3"
-            type="number"
-            value={personal || ""}
-            onChange={(e) => setPersonal(Math.max(0, Number(e.target.value)))}
-            placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
-          />
-          <p className="mt-1 text-xs text-[#0f1f3d]/70">
-            Franchise: {currency(DUTY_FREE_PERSONAL)}
-          </p>
-        </div>
-      </div>
+      <dl className="mt-4 space-y-3">
+        {CUSTOMS_FACTS.map((fact) => (
+          <div key={fact.label} className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3">
+            <dt className="text-xs font-semibold text-[#0f1f3d]/70">{fact.label}</dt>
+            <dd className="mt-1">
+              <span className="text-lg font-black text-[#0f1f3d]">{fact.value}</span>
+              <span className="block text-xs text-[#0f1f3d]/70">{fact.detail}</span>
+              <a href={fact.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[#0f1f3d] underline">
+                {fact.source} <ExternalLink size={12} aria-hidden />
+              </a>
+            </dd>
+          </div>
+        ))}
+      </dl>
 
-      {/* Results */}
-      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0f1f3d] to-[#0f1f3d]/90 p-4 text-[#f8fafc]">
-        <p className="text-xs uppercase tracking-wide text-[#f59e0b]">Droits estimés</p>
-        <p className="mt-1 text-3xl font-black text-[#f59e0b]">
-          {currency(Math.round(totalDuty))}
-        </p>
-        <div className="mt-3 space-y-1 border-t border-white/10 pt-3 text-xs">
-          {electronics > 0 && (
-            <div className="flex justify-between">
-              <span className="text-[#f8fafc]/70">Électronique (20%)</span>
-              <span>{currency(Math.round(electronicsDuty))}</span>
-            </div>
-          )}
-          {personalExcess > 0 && (
-            <div className="flex justify-between">
-              <span className="text-[#f8fafc]/70">Personnel (excédent 20%)</span>
-              <span>{currency(Math.round(personalExcess * DUTY_RATE))}</span>
-            </div>
-          )}
-          {giftsExcess > 0 && (
-            <div className="flex justify-between">
-              <span className="text-[#f8fafc]/70">Cadeaux (excédent 20%)</span>
-              <span>{currency(Math.round(giftsExcess * DUTY_RATE))}</span>
-            </div>
-          )}
-          {totalDuty === 0 && (
-            <p className="text-center text-[#f59e0b]">✓ Aucun droit à payer</p>
-          )}
-        </div>
-      </div>
+      <p className="mt-4 text-sm text-[#0f1f3d]">
+        Pour un objet de valeur, un doute ou un autre cas : <a href={CUSTOMS_SOURCES.douane} target="_blank" rel="noopener noreferrer" className="font-semibold underline">douane.gov.ma</a>.
+      </p>
 
       {/* Restricted items */}
       <div className="mt-4">
         <div className="flex items-center gap-2">
           <AlertTriangle size={16} className="text-red-500" />
-          <h3 className="text-sm font-bold text-[#0f1f3d]">Articles restreints</h3>
+          <h3 className="text-sm font-bold text-[#0f1f3d]">À vérifier avant de partir</h3>
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {RESTRICTED_ITEMS.map((item) => (
