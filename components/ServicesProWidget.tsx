@@ -25,12 +25,12 @@ const SERVICES: Record<string, Business[]> = {
   traiteurs: [
     {
       name: 'Afarah Nassim',
-      desc: 'Traiteur franco-marocain · Mariages, fiançailles, baptêmes. Menus authentiques Maroc & fusion.',
-      location: 'Île-de-France & déplacements',
+      desc: 'Traiteur. Menu, prix et conditions à demander directement.',
+      location: 'Zone à demander',
       phone: MARWA_PHONE,
       page: '/afarah-nassim',
       featured: true,
-      tag: 'Profil à confirmer',
+      tag: 'Référencé · aucun accord commercial',
     },
     {
       name: 'Votre traiteur',

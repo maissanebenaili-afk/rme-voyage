@@ -44,8 +44,8 @@ export default function BoutiquePage() {
             </h1>
             <p className="mt-5 text-lg leading-8 text-white/65">
               Des espaces pour découvrir des professionnels et prendre contact. Caftans, bien-être,
-              traiteurs, colis et mobilité — les informations de chaque fiche sont confirmées avec
-              le professionnel concerné.
+              traiteurs, colis et mobilité. Les professionnels sont référencés gratuitement, sans
+              accord commercial : prix et conditions se demandent directement.
             </p>
           </div>
 
@@ -74,7 +74,7 @@ export default function BoutiquePage() {
             </h2>
             <p className="mt-3 max-w-2xl text-[#475569]">
               Explorez des styles pour un mariage ou une soirée, puis demandez les modalités
-              directement au partenaire.
+              directement au professionnel.
             </p>
           </Reveal>
           <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
@@ -83,10 +83,7 @@ export default function BoutiquePage() {
                 Marwa Caftan
               </p>
               <p className="mt-3 text-sm leading-6 text-[#475569]">
-                Les styles, modèles et disponibilités sont présentés à titre indicatif et confirmés directement avec le partenaire.
-              </p>
-              <p className="mt-4 text-xs font-semibold text-[#6b5230]">
-                Photos d’inspiration — modèles non contractuels.
+                RME Voyage ne publie pas de catalogue : modèles, tailles et prix se demandent directement.
               </p>
             </div>
             <Reveal delay={90}>

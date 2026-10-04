@@ -365,7 +365,7 @@ export default function Home() {
               Le Maroc jusqu'à votre porte
             </h2>
             <p className="mt-4 text-lg leading-8 text-[#475569]">
-              Caftans, traiteurs, mobilité et garages — des partenaires vérifiés de la France jusqu'au Maroc.
+              Caftans, traiteurs, mobilité et garages : des professionnels référencés gratuitement, de la France jusqu'au Maroc.
             </p>
           </div>
 

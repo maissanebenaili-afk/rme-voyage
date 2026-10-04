@@ -6,6 +6,7 @@ describe('Boutique partner copy', () => {
 
   it('does not claim unverified partner operations', () => {
     expect(source).not.toMatch(/livrée chez vous en 48 h|adresses vérifiées|5 millions/i);
-    expect(source).toMatch(/confirmées avec\s+le professionnel concerné/);
+    // #227: the old « confirmées avec le professionnel » was itself unproven.
+    expect(source).toMatch(/référencés gratuitement, sans\s+accord commercial/);
   });
 });

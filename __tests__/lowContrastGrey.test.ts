@@ -7,14 +7,12 @@ import { join } from "path";
 const LOW_CONTRAST = "text-[#94a3b8]";
 
 // Still allowed: a disabled button (WCAG exempts inactive controls).
-const ALLOWED = [{ file: "components/caftan/CaftanMarketplace.tsx", marker: "cursor-not-allowed" }];
+const ALLOWED: { file: string; marker: string }[] = [];
 
 const FILES = [
-  "app/marwa-caftan/[id]/page.tsx",
   "components/ServicesProWidget.tsx",
-  "components/caftan/CaftanBooking.tsx",
-  "components/caftan/CaftanGallery.tsx",
-  "components/caftan/CaftanMarketplace.tsx",
+  "components/ReferencedListing.tsx",
+  "components/ListingCard.tsx",
 ];
 
 describe("secondary text on the boutique and pro services keeps AA contrast", () => {

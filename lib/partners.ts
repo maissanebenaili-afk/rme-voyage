@@ -9,6 +9,9 @@ export function whatsappLink(phone: string, message: string) {
   return `https://wa.me/${phone}?text=${encodeURIComponent(`${message}\n\n${RME_SOURCE_SIGNATURE}`)}`;
 }
 
+// HiDOUR Immobilier (Taza) — WhatsApp.
+export const IDOUR_WHATSAPP = '33769200297';
+
 // Belisamae — Mounia, énergéticienne (Reiki, géobiologie).
 export const BELISAMAE_URL = 'https://belisamae.fr';
 export const BELISAMAE_PHONE = '+33686628361';

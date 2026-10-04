@@ -5,13 +5,7 @@ import LeadLink from '@/components/LeadLink';
 import { cleanEventProps } from '@/lib/rmeEvents';
 
 const VENDOR_PAGES = [
-  'app/afarah-nassim/page.tsx',
-  'app/marwa-caftan/page.tsx',
-  'app/taza-immobilier/page.tsx',
-  'app/taza-immobilier/[id]/page.tsx',
-  'app/belisamae/page.tsx',
-  'components/caftan/CaftanBooking.tsx',
-  'components/caftan/CaftanMarketplace.tsx',
+  'components/ReferencedListing.tsx',
   'components/ServicesProWidget.tsx',
   'components/ColisWidget.tsx',
 ];
