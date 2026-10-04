@@ -1,4 +1,6 @@
 /** @jest-environment node */
+import { readFileSync } from 'fs'
+import { join } from 'path'
 import { NextRequest } from 'next/server'
 import { POST } from '../app/api/hadak/route'
 import { GET as rss } from '../app/rss.xml/route'
@@ -38,6 +40,11 @@ describe('Hadak ferry and documents facts', () => {
     const text = await ask('Quels documents pour entrer au Maroc ?')
     expect(text).not.toMatch(/6 mois/)
     expect(text).toMatch(/toute la durée du séjour/)
+  })
+
+  it('the home news widget no longer quotes them either (found by the Forge run on production)', () => {
+    const source = readFileSync(join(process.cwd(), 'components/NewsFeed.tsx'), 'utf8')
+    expect(source).not.toMatch(/6 mois|OFII/)
   })
 
   it('RSS feed no longer quotes the six-month rule or an OFII programme', async () => {
