@@ -157,3 +157,17 @@ Après publication de `main` (avec #245, #246 et #247), on attend 15 sur 16 ; se
 - **Mesure** : `partner_click` (product = flight) divisé par `route_computed`, sur 14 jours, dans `rme_events`.
 - **Seuil** : 2 % ou plus. En dessous de 0,5 %, l'emplacement ou le message sont à revoir.
 - **Préalables** : production à jour, table `rme_events` créée, lien pré-rempli posé.
+
+
+## 13. Après publication : premières corrections (mesurées le 4 octobre à 23 h 13 sur l'aperçu #228, identique à `main` 373ed24)
+
+Aucune PR ouverte (mandat : la publication d'abord).
+
+| # | Question réelle | Réponse de Hadak | Cause | Correction proposée |
+|---|---|---|---|---|
+| 1 | « Combien de **temps** je peux laisser ma voiture française au Maroc ? » | Météo de Casablanca | `temps` déclenche toujours la météo (`app/api/hadak/route.ts`, détection des intentions) | Exclure « combien de temps », « en combien de temps », « temps de… » de la météo |
+| 2 | « Combien coûte le **péage** Tanger Casablanca ? » | Météo de Casablanca | Toute question non reconnue qui cite une ville part vers la météo (`intent === 'generic' && cityKey`) au lieu de l'IA ou d'un « je ne sais pas » | Réserver ce raccourci aux messages sans autre mot que la ville |
+| 3 | « Mon enfant mineur voyage seul au Maroc, il faut quel papier ? » | Passeport seulement | Réponse générique « documents » | Ajouter l'autorisation de sortie du territoire (AST) **après vérification sur service-public.fr** |
+| 4 | Argent liquide en quittant la France, assurance, médicaments | Réponses de l'IA, sans source | Pas de réponse locale | À sourcer ou à renvoyer vers la source officielle |
+
+Les cas 1 et 2 sont des erreurs silencieuses : la personne reçoit une réponse sûre d'elle, mais sur un autre sujet. Chacun deviendra un test de non-régression et un scénario de la Forge.
