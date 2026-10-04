@@ -1,0 +1,28 @@
+name: Truth audit
+
+# Once a week, asks the repository and the public production site:
+#   « Qu'est-ce que RME croit savoir qui est peut-être faux ? »
+#   « Qu'est-ce que RME fait sans le mesurer ? »
+# Read-only: public GET requests, no secret, nothing written. The report goes to
+# this run's summary (Actions → Truth audit). The run stays green: it informs,
+# it does not block anyone's work.
+
+on:
+  schedule:
+    - cron: '23 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Audit de vérité
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run audit
+        run: node scripts/truth-audit.mjs >> "$GITHUB_STEP_SUMMARY" || true
