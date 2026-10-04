@@ -11,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "store:check": "rm -rf .store-check-tmp && tsc --target ES2022 --module commonjs --moduleResolution node --types node --skipLibCheck --outDir .store-check-tmp scripts/store-check.ts && node .store-check-tmp/scripts/store-check.js; code=$?; rm -rf .store-check-tmp; exit $code",
     "cap:build": "next build && npx cap sync",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
