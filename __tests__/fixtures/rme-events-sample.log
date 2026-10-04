@@ -1,0 +1,9 @@
+Oct 04, 10:00:01 AM: a1b2 INFO   [rme-event] {"placement":"layout","page":"/","ref":"google.com","event":"page_view"}
+Oct 04, 10:00:09 AM: a1b2 INFO   [rme-event] {"placement":"layout","page":"/afarah-nassim","ref":"/","event":"page_view"}
+Oct 04, 10:00:20 AM: a1b2 INFO   [rme-event] {"partner":"afarah_nassim","product":"lead","placement":"vendor_whatsapp","page":"/afarah-nassim","event":"partner_click"}
+Oct 04, 10:03:00 AM: c3d4 INFO   [rme-event] {"placement":"layout","page":"/afarah-nassim","ref":"instagram.com","event":"page_view"}
+Oct 04, 10:03:30 AM: c3d4 INFO   [rme-event] {"partner":"afarah_nassim","product":"lead","placement":"vendor_phone","page":"/afarah-nassim","event":"partner_click"}
+Oct 04, 10:05:00 AM: e5f6 INFO   [rme-event] {"placement":"layout","page":"/marwa-caftan/caftan-12","ref":"/marwa-caftan","event":"page_view"}
+Oct 04, 10:06:00 AM: e5f6 INFO   [rme-event] {"partner":"direct_ferries_public","product":"ferry","placement":"booking_cards","page":"/trajet/paris-tanger","event":"partner_click"}
+Oct 04, 10:07:00 AM: e5f6 INFO   [rme-event] {"placement":"layout","page":"/afarah-nassim
+Oct 04, 10:08:00 AM: e5f6 INFO   unrelated line
