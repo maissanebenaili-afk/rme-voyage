@@ -249,7 +249,8 @@ describe("proxy + Supabase session refresh", () => {
     const converter = readFileSync(`${process.cwd()}/components/CurrencyConverter.tsx`, "utf8");
     const host = new URL(converter.match(/RATES_URL = "([^"]+)"/)![1]).origin;
     const csp = (await proxy(buildRequest("/"))).headers.get("Content-Security-Policy") ?? "";
-    expect(csp).toMatch(new RegExp(`connect-src [^;]*${host.replace(/[.]/g, "\\.")}`));
+    const connectSrc = csp.split(";").find((d) => d.trim().startsWith("connect-src")) ?? "";
+    expect(connectSrc.trim().split(/\s+/)).toContain(host);
   });
 
   it("allows the Supabase project origin in connect-src only when configured with https", async () => {
