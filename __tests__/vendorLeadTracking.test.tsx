@@ -12,6 +12,8 @@ const VENDOR_PAGES = [
   'app/belisamae/page.tsx',
   'components/caftan/CaftanBooking.tsx',
   'components/caftan/CaftanMarketplace.tsx',
+  'components/ServicesProWidget.tsx',
+  'components/ColisWidget.tsx',
 ];
 
 describe('Leads sent to partner businesses are counted', () => {

@@ -3,7 +3,7 @@
 import type { AnchorHTMLAttributes } from 'react';
 import { trackPartnerClick } from '@/lib/partnerTracking';
 
-type LeadChannel = 'whatsapp' | 'phone' | 'site';
+type LeadChannel = 'whatsapp' | 'phone' | 'site' | 'email';
 
 // A contact link to a partner business (quote, booking, call). Counts the
 // click in RME's anonymous event log so the leads RME sends can be measured;
