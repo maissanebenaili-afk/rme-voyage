@@ -36,6 +36,9 @@ export function buildFerryAffiliateUrl(
   for (const { provider, envVar } of FERRY_PROVIDERS) {
     const url = verifiedPartnerUrl(process.env[envVar], 'ferry');
     if (url) return { url, provider };
+    // A link that is set but refused (unknown host, http…) would leave the button
+    // on the unpaid public site with no sign of it: say so in the server logs.
+    if (process.env[envVar]?.trim()) console.warn(`[affiliate] ${envVar} is set but refused: host not allowed or not https`);
   }
   return null;
 }
