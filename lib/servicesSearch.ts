@@ -82,6 +82,11 @@ function formatAddress(tags: Record<string, string> | undefined): string | undef
 // 2026-10-04 every production search failed with « Service de recherche
 // indisponible » (3/3: garage Taza, consulat Paris, station Nador). A second
 // public instance is tried before giving up; both get the identifying UA.
+// Each instance gets 10 s: Netlify stops the function at about 30 s, and on
+// the deploy preview an instance that never answered used it all up before
+// the second one was tried.
+const OVERPASS_TIMEOUT_MS = 10_000;
+
 export const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.private.coffee/api/interpreter",
@@ -113,12 +118,20 @@ export async function searchServices(place: string, category: ServiceCategory): 
         },
         body: query,
         next: { revalidate: 86_400 },
+        signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS),
       });
       if (!response.ok) {
         console.warn(`[services] ${new URL(endpoint).hostname} answered ${response.status}`);
         continue;
       }
-      data = (await response.json()) as { elements?: OverpassElement[] };
+      const body = (await response.json()) as { elements?: OverpassElement[]; remark?: string };
+      // Overpass answers 200 with a "remark" when it gave up (timeout, load):
+      // that is a failure, not "nothing around here".
+      if (body.remark && !body.elements?.length) {
+        console.warn(`[services] ${new URL(endpoint).hostname} remark: ${body.remark.slice(0, 80)}`);
+        continue;
+      }
+      data = body;
       break;
     } catch {
       console.warn(`[services] ${new URL(endpoint).hostname} unreachable`);

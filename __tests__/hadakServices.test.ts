@@ -79,3 +79,38 @@ describe('Hadak answers "where is a …" with real places, never from memory', (
     expect(detectServiceRequest(message)?.category ?? null).toBe(category)
   })
 })
+
+describe('services search never turns an Overpass failure into "nothing here"', () => {
+  const originalFetch = global.fetch
+  afterEach(() => { global.fetch = originalFetch })
+
+  it('a 200 with a runtime-error remark and no elements is a failure, so the next server is tried', async () => {
+    const { searchServices } = await import('@/lib/servicesSearch')
+    let overpass = 0
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString())
+      if (url.hostname === 'nominatim.openstreetmap.org') return json([{ lat: '48.85', lon: '2.35' }])
+      overpass += 1
+      return overpass === 1
+        ? json({ elements: [], remark: 'runtime error: Query timed out in "query" at line 2 after 21 seconds.' })
+        : json({ elements: [{ type: 'node', id: 5, lat: 48.84, lon: 2.3, tags: { name: 'Consulat général du Maroc' } }] })
+    }) as unknown as typeof fetch
+    const found = await searchServices('Paris', 'consulate')
+    expect(overpass).toBe(2)
+    expect(found).toMatchObject({ ok: true, results: [expect.objectContaining({ name: 'Consulat général du Maroc' })] })
+  })
+
+  it('gives each server a time limit, so a hanging one cannot use up the function', async () => {
+    const { searchServices } = await import('@/lib/servicesSearch')
+    const signals: Array<AbortSignal | undefined> = []
+    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = new URL(input.toString())
+      if (url.hostname === 'nominatim.openstreetmap.org') return json([{ lat: '35.17', lon: '-2.93' }])
+      signals.push(init?.signal ?? undefined)
+      return json({}, 504)
+    }) as unknown as typeof fetch
+    expect(await searchServices('Nador', 'fuel')).toEqual({ ok: false, reason: 'unavailable' })
+    expect(signals).toHaveLength(2)
+    expect(signals.every((s) => s instanceof AbortSignal)).toBe(true)
+  })
+})
