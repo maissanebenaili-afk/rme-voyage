@@ -618,11 +618,11 @@ const MAX_MESSAGE_CHARS = 1_000;
 // 2026-10-04): it must never produce a figure, price, legal delay, rule,
 // address or phone number; it points to the official source instead.
 const NO_INVENTION: Record<string, string> = {
-  da: `Ma t3tich abadan chi ra9m, taman, ajal 9anouni, 9a3ida dyal douane wla idara, 3onwan wla ra9m telephone: 9oul belli ma 3andekch source m2akkda w 3tih l-site r-rasmi (douane.gov.ma, consulat, service-public.gouv.fr).`,
-  fr: `Ne donne jamais de chiffre, prix, délai légal, règle douanière ou administrative, adresse ou numéro de téléphone : dis que tu n'as pas de source vérifiée et renvoie vers le site officiel (douane.gov.ma, consulat, service-public.gouv.fr).`,
-  en: `Never give a figure, price, legal deadline, customs or administrative rule, address or phone number: say you have no verified source and point to the official site (douane.gov.ma, consulate, service-public.gouv.fr).`,
-  ar: `لا تعطِ أبداً رقماً أو سعراً أو أجلاً قانونياً أو قاعدة جمركية أو إدارية أو عنواناً أو رقم هاتف: قل إنه لا يوجد لديك مصدر موثّق ووجّه إلى الموقع الرسمي (douane.gov.ma، القنصلية، service-public.gouv.fr).`,
-  es: `Nunca des cifras, precios, plazos legales, normas aduaneras o administrativas, direcciones ni teléfonos: di que no tienes una fuente verificada y remite al sitio oficial (douane.gov.ma, consulado, service-public.gouv.fr).`,
+  da: `Ma t3tich abadan chi ra9m, taman, ajal 9anouni, 9a3ida dyal douane wla idara, 3onwan wla ra9m telephone: 9oul belli ma 3andekch source m2akkda w 3tih l-site r-rasmi li kayt3l9 b l-mawdou3 (b7al douane.gov.ma l d-douane, service-public.gouv.fr l l-wra9 f França, l-consulat l l-wra9 l-maghribiya, site dyal charika l chi taman wla wa9t).`,
+  fr: `Ne donne jamais de chiffre, prix, délai légal, règle douanière ou administrative, adresse ou numéro de téléphone : dis que tu n'as pas de source vérifiée et renvoie vers le site officiel qui correspond au sujet (par exemple douane.gov.ma pour la douane marocaine, service-public.gouv.fr pour les démarches françaises, le consulat pour les papiers marocains, le site de l'opérateur pour un prix ou un horaire).`,
+  en: `Never give a figure, price, legal deadline, customs or administrative rule, address or phone number: say you have no verified source and point to the official site that matches the topic (for example douane.gov.ma for Moroccan customs, service-public.gouv.fr for French formalities, the consulate for Moroccan papers, the operator's own site for a price or a timetable).`,
+  ar: `لا تعطِ أبداً رقماً أو سعراً أو أجلاً قانونياً أو قاعدة جمركية أو إدارية أو عنواناً أو رقم هاتف: قل إنه لا يوجد لديك مصدر موثّق ووجّه إلى الموقع الرسمي المناسب للموضوع (مثلاً douane.gov.ma للجمارك المغربية، service-public.gouv.fr للإجراءات الفرنسية، القنصلية للوثائق المغربية، موقع الشركة المعنية للأسعار أو المواعيد).`,
+  es: `Nunca des cifras, precios, plazos legales, normas aduaneras o administrativas, direcciones ni teléfonos: di que no tienes una fuente verificada y remite al sitio oficial que corresponda al tema (por ejemplo douane.gov.ma para la aduana marroquí, service-public.gouv.fr para trámites franceses, el consulado para papeles marroquíes, la web del operador para un precio o un horario).`,
 };
 
 const SYSTEM_PROMPTS: Record<string, string> = {
