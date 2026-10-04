@@ -69,11 +69,11 @@ Un MRE en France qui regarde un bien à Taza :
 | Option | Coût | Nouveau compte | Nouvelle dépendance | Durable |
 |---|---|---|---|---|
 | A. Export manuel quotidien des journaux | 0 €, environ 5 minutes par jour | Non | Non | Oui, si fait chaque jour |
-| B. Netlify Blobs (stockage inclus dans Netlify) | 0 € (offre gratuite, limites à vérifier) | **Non** | 1 (`@netlify/blobs`) | Oui |
+| B. Netlify Blobs (stockage inclus dans Netlify) | 0 € (quotas gratuits INCONNUS ; pas d'incrément atomique) | **Non** | 1 (`@netlify/blobs`) | Oui |
 | C. Supabase (déjà prévu dans le code, **non branché**) | 0 € (offre gratuite) | **Oui** + clés | Non | Oui |
 | D. Netlify Pro | Payant | Non | Non | **Non** (7 jours seulement) |
 
-**Recommandation : B**, comptage par jour, par événement et par partenaire. Aucune donnée personnelle, aucun compte, une seule petite dépendance. **En attendant : A.** Rien n'est construit tant que Tarek n'a pas choisi.
+~~Recommandation : B~~ **Retirée le même jour** après lecture de la documentation officielle : Netlify Blobs n'a pas d'incrément atomique (« last write wins »), et ses quotas gratuits ne sont pas documentés. Voir `OMEGA_TRUTH_ENGINE_2026-10-04.md` §5. **En attendant : A.** Le choix revient à Tarek.
 
 ## 8. Ce que nous pouvons maintenant prouver
 - RME connaissait des données justes, mais affichait des **décisions fausses** à 5 endroits. Ces endroits sont corrigés et testés.
