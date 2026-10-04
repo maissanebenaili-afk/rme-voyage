@@ -193,11 +193,11 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
   ferry: {
     keywords: ['ferry', 'bateau', 'boat', 'traversée', 'crossing', 'barco', 'عبارة', 'باخرة', 'tanger', 'algeciras', 'barcelona', 'tanger-med', 'med'],
     answers: {
-      da: 'L\'ferry kaymchi men Algeciras (España) l Tanger Med wla Ceuta. L\'prix: 80-200€ 3la koll voiture 7sb l\'mawsem. F l\'sif, khessak t\'reserve zmen! Men Barcelona kayn croisières men marra f l\'usbu3.',
-      fr: 'Les ferries vers le Maroc partent d\'Algeciras (Espagne) vers Tanger Med ou Ceuta. Tarifs : 80-200€ par véhicule selon la saison. En été, réserve à l\'avance ! Depuis Barcelone, il y a des croisières hebdomadaires.',
-      en: 'Ferries to Morocco depart from Algeciras (Spain) to Tanger Med or Ceuta. Fares: €80-200 per vehicle depending on season. Book ahead in summer! From Barcelona there are weekly cruises.',
-      ar: 'تعبر العبارات إلى المغرب من الجزيرة الخضراء (إسبانيا) إلى طنجة المتوسط أو سبتة. الأسعار: 80-200 يورو لكل مركبة حسب الموسم. احجز مسبقًا في الصيف! من برشلونة هناك رحلات أسبوعية.',
-      es: 'Los ferris a Marruecos salen desde Algeciras (España) hacia Tánger Med o Ceuta. Tarifas: 80-200€ por vehículo según temporada. ¡Reserva con antelación en verano! Desde Barcelona hay cruceros semanales.',
+      da: "L'ferry: Algeciras → Tanger Med, Tarifa → Tanger Ville (Baleària), Almería → Nador, w Sète/Barcelona → Nador wla Tanger Med (GNV). L'prix kaytbeddel bzaf: qaren 9bel ma tchri. F l'sif, réservi bkri!",
+      fr: "Ferries vers le Maroc : Algeciras → Tanger Med, Tarifa → Tanger Ville (Baleària), Almería → Nador, et Sète/Barcelone → Nador ou Tanger Med (GNV). Les prix varient beaucoup : compare avant d'acheter. En été, réserve à l'avance !",
+      en: 'Ferries to Morocco: Algeciras → Tanger Med, Tarifa → Tanger Ville (Baleària), Almería → Nador, and Sète/Barcelona → Nador or Tanger Med (GNV). Prices vary a lot: compare before buying. Book ahead in summer!',
+      ar: 'العبارات إلى المغرب: الجزيرة الخضراء → طنجة المتوسط، طريفة → طنجة المدينة (Baleària)، ألميريا → الناظور، وسيت/برشلونة → الناظور أو طنجة المتوسط (GNV). الأسعار تتغير كثيراً: قارن قبل الشراء. احجز مسبقاً في الصيف!',
+      es: 'Ferris a Marruecos: Algeciras → Tanger Med, Tarifa → Tánger ciudad (Baleària), Almería → Nador, y Sète/Barcelona → Nador o Tanger Med (GNV). Los precios varían mucho: compara antes de comprar. ¡En verano, reserva con antelación!',
     },
     followups: ['cost', 'documents', 'route'],
   },
@@ -215,11 +215,11 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
   documents: {
     keywords: ['document', 'passeport', 'passport', 'carte', 'card', 'visa', 'وثيقة', 'جواز', 'باسبور', 'documento', 'pasaporte', 'cnie', 'carte grise', 'assurance', 'registration'],
     answers: {
-      da: 'L\'documents li khessak: passeport valide (6 ch\'hour 3la l\'aqal), carte grise dyal l\'voiture, assurance internationale. L\'MRE y9dro ysta3mlo l\'CNIE (carte nationale). Tcheck l\'validité 9bel matmchi! L\'carte verte dyal l\'assurance mohimma f l\'triq.',
-      fr: 'Documents nécessaires : passeport valide (6 mois minimum), carte grise du véhicule, assurance internationale. Les MRE peuvent utiliser la CNIE. Vérifiez la validité avant le départ ! La carte verte d\'assurance est essentielle sur la route.',
-      en: 'Required documents: valid passport (6 months min.), vehicle registration, international insurance. MRE can use the CNIE (Moroccan ID). Check validity before leaving! The green insurance card is essential on the road.',
-      ar: 'الوثائق المطلوبة: جواز سفر ساري (6 أشهر كحد أدنى)، بطاقة السيارة، تأمين دولي. يمكن للمغاربة في الخارج استخدام البطاقة الوطنية (CNIE). تحقق من الصلاحية قبل المغادرة! البطاقة الخضراء للتأمين ضرورية على الطريق.',
-      es: 'Documentos necesarios: pasaporte válido (6 meses mínimo), permiso de circulación, seguro internacional. Los MRE pueden usar la CNIE. ¡Verifica la validez antes de salir! La carta verde de seguro es esencial en la carretera.',
+      da: 'L\'documents li khessak: passeport valide l\'moddat l\'i9ama kamla, carte grise dyal l\'voiture, assurance internationale. L\'MRE y9dro ysta3mlo l\'CNIE (carte nationale). Tcheck l\'validité 9bel matmchi! L\'carte verte dyal l\'assurance mohimma f l\'triq.',
+      fr: 'Documents nécessaires : passeport valide pour toute la durée du séjour, carte grise du véhicule, assurance internationale. Les MRE peuvent utiliser la CNIE. Vérifiez la validité avant le départ ! La carte verte d\'assurance est essentielle sur la route.',
+      en: 'Required documents: passport valid for the whole stay, vehicle registration, international insurance. MRE can use the CNIE (Moroccan ID). Check validity before leaving! The green insurance card is essential on the road.',
+      ar: 'الوثائق المطلوبة: جواز سفر ساري طوال مدة الإقامة، بطاقة السيارة، تأمين دولي. يمكن للمغاربة في الخارج استخدام البطاقة الوطنية (CNIE). تحقق من الصلاحية قبل المغادرة! البطاقة الخضراء للتأمين ضرورية على الطريق.',
+      es: 'Documentos necesarios: pasaporte válido durante toda la estancia, permiso de circulación, seguro internacional. Los MRE pueden usar la CNIE. ¡Verifica la validez antes de salir! La carta verde de seguro es esencial en la carretera.',
     },
     followups: ['customs', 'currency', 'route'],
   },

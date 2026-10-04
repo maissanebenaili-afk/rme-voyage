@@ -348,17 +348,24 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   }
 
   if (intent === 'ferry') {
-    if (lang === 'da') return `Ferry dyal MRE: Algeciras → Tanger Med (1h30, bzzaf compagnies: FRS, Balearia, Trasmediterranea). Tarifa → Tanger Ville (35 min). Barcelona/Genova → Nador (Grimaldi). L-waqt dialhoum: htta 5-6 sa3at f ramadan. Hsen tkon 3andek réservation.`;
-    if (lang === 'ar') return `العبارات للمغاربة في الخارج: الجزيرة الخضراء → طنجة المتوسط (1س30). طريفة → طنجة المدينة (35 دقيقة). برشلونة/جنوة → الناظور (Grimaldi). احجز مسبقاً في موسم الصيف.`;
-    if (lang === 'es') return `Ferry para MRE: Algeciras → Tanger Med (1h30, FRS/Balearia/Trasmediterranea). Tarifa → Tánger ciudad (35 min). Barcelona/Génova → Nador (Grimaldi). Reserva con antelación en verano.`;
-    return `**Ferries pour les MRE** : Algeciras → Tanger Med (1h30, FRS/Balearia/Trasmed). Tarifa → Tanger Ville (35 min). Barcelona/Gênes → Nador (Grimaldi). En été, réservez à l'avance — les traversées affichent complet rapidement.`;
+    // Lignes vérifiées le 4 octobre 2026 (sources secondaires) : Tarifa → Tanger
+    // Ville exploitée par Baleària depuis mai 2025 (FRS s'est retirée) ; Nador
+    // est desservi par GNV (Sète, Barcelone), pas par Grimaldi ; Almería → Nador
+    // est la traversée que prennent 23 pages trajet de RME.
+    if (lang === 'da') return `Ferry dyal MRE: Algeciras → Tanger Med (1h30). Tarifa → Tanger Ville (35-55 min, Baleària mn ma 2025). Almería → Nador. Sète w Barcelona → Nador, Sète, Barcelona w Genova → Tanger Med (GNV). L-khtout w l-compagnies kaytbeddlo: tcheck 3nd l-opérateur. F sif, réservi bkri.`;
+    if (lang === 'ar') return `العبارات لمغاربة العالم: الجزيرة الخضراء → طنجة المتوسط (1س30). طريفة → طنجة المدينة (35-55 دقيقة، Baleària منذ ماي 2025). ألميريا → الناظور. سيت وبرشلونة → الناظور، وسيت وبرشلونة وجنوة → طنجة المتوسط (GNV). الخطوط والشركات تتغير: تحقق لدى الشركة. احجز مسبقاً في الصيف.`;
+    if (lang === 'es') return `Ferry para MRE: Algeciras → Tanger Med (1h30). Tarifa → Tánger ciudad (35-55 min, Baleària desde mayo de 2025). Almería → Nador. Sète y Barcelona → Nador; Sète, Barcelona y Génova → Tanger Med (GNV). Líneas y compañías cambian: compruébalo con la naviera. En verano, reserva con antelación.`;
+    return `**Ferries pour les MRE** : Algeciras → Tanger Med (1h30). Tarifa → Tanger Ville (35-55 min, Baleària depuis mai 2025). Almería → Nador. Sète et Barcelone → Nador ; Sète, Barcelone et Gênes → Tanger Med (GNV). Lignes et compagnies changent : vérifiez auprès de l'opérateur. En été, réservez à l'avance.`;
   }
 
   if (intent === 'docs') {
-    if (lang === 'da') return `Documents li khassak: CIN (wajib l-Magharba) + Passeport. Permis dyal siyaqa marocain maqboul. Voiture: assurance + carte grise. L-Maghrib ma kaytlabu visa l-europiyyin.`;
-    if (lang === 'ar') return `الوثائق الضرورية: بطاقة التعريف الوطنية + جواز السفر. رخصة القيادة المغربية معترف بها. السيارة: تأمين + بطاقة رمادية. المغرب لا يشترط تأشيرة للأوروبيين.`;
-    if (lang === 'es') return `Documentos necesarios: DNI marroquí + pasaporte. El permiso de conducir marroquí es válido. Coche: seguro + carta gris. Marruecos no exige visado a europeos.`;
-    return `**Documents nécessaires** : CIN (obligatoire pour les Marocains) + passeport. Permis de conduire marocain accepté. Pour la voiture : assurance + carte grise. Le Maroc n'exige pas de visa pour les Européens.`;
+    // France Diplomatie, « Entrée / séjour » Maroc (lu le 4 octobre 2026) :
+    // passeport en cours de validité pour le séjour, carte d'identité refusée.
+    // Rien n'est affirmé ici sur les papiers des Marocains : renvoi au consulat.
+    if (lang === 'da') return `Documents: passeport valide l-moddat l-i9ama kamla (France Diplomatie); l-carte d'identité française ma kafyach. L-Magharba: swwlo l-consulat 3la CNIE w passeport. Voiture: carte grise, permis, w assurance li kat9bel l-Maghrib (code MA f carte verte ma mchtob-ch).`;
+    if (lang === 'ar') return `الوثائق: جواز سفر ساري المفعول طوال مدة الإقامة (الخارجية الفرنسية)؛ بطاقة التعريف الفرنسية غير كافية. للمغاربة: استفسروا القنصلية عن البطاقة الوطنية والجواز. السيارة: البطاقة الرمادية، رخصة السياقة، وتأمين يغطي المغرب (رمز MA غير مشطوب في البطاقة الخضراء).`;
+    if (lang === 'es') return `Documentos: pasaporte válido durante toda la estancia (France Diplomatie); el DNI francés no basta. Marroquíes: consulta en tu consulado sobre la CNIE y el pasaporte. Coche: permiso de circulación, carnet de conducir y seguro válido en Marruecos (código MA sin tachar en la carta verde).`;
+    return `**Documents nécessaires** : passeport en cours de validité pour toute la durée du séjour (France Diplomatie) ; la carte d'identité française ne suffit pas. Marocains : renseignez-vous au consulat sur la CNIE et le passeport. Voiture : carte grise, permis et assurance valable au Maroc (code MA non barré sur la carte verte).`;
   }
 
   if (intent === 'currency') {
