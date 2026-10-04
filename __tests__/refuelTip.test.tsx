@@ -34,6 +34,7 @@ describe('refuelTip — where to fill up, from official prices only', () => {
   it('stays silent with one priced country, below 5 %, or once the bulletin has expired', () => {
     expect(refuelTip(run([road([['ES', 700]])]))).toBeNull()
     expect(refuelTip(run([road([['FR', 300], ['PT', 300]])]))).toBeNull() // 2,5 %
+    expect(refuelTip(run([road([['FR', 800], ['ES', 1100]])], '2026-10-10T12:00:00Z'))).toBeNull() // stale prices: no advice
     expect(refuelTip(run([road([['FR', 800], ['ES', 1100]])], '2026-10-20T12:00:00Z'))).toBeNull()
   })
 

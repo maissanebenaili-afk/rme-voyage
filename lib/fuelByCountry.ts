@@ -23,9 +23,16 @@ export interface FuelPriceDataset {
 /** Bulletin hebdomadaire : une semaine manquée est tolérée, pas deux. */
 export const FUEL_PRICE_MAX_AGE_DAYS = 14;
 
+/**
+ * After expiry the last bulletin is still far closer to the pump than any
+ * default (France 2,38 €/L vs a 1,40 €/L non-EU guess): it stays in use for two
+ * more weeks, marked « périmé » with its date, then gives way to the user price.
+ */
+export const FUEL_PRICE_STALE_MAX_AGE_DAYS = 28;
+
 export const FUEL_PRICES = fuelPrices as FuelPriceDataset;
 
-export type PriceSource = 'bulletin' | 'user';
+export type PriceSource = 'bulletin' | 'stale' | 'user';
 
 export interface CountryFuelLine {
   country: string | null;
@@ -46,7 +53,7 @@ export interface FuelByCountryResult {
   roadKm: number;
   seaKm: number;
   fuelTotal: number;
-  dataset: { fresh: boolean; observedAt: string; expiresAt: string; source: string; sourceUrl: string };
+  dataset: { fresh: boolean; stale: boolean; observedAt: string; expiresAt: string; source: string; sourceUrl: string };
 }
 
 function round(value: number, digits: number) {
@@ -75,15 +82,18 @@ export function computeFuelByCountry(input: {
   const dataset = input.dataset ?? FUEL_PRICES;
   const expiresAt = datasetExpiry(dataset.observedAt);
   const fresh = input.now.getTime() < expiresAt.getTime();
+  const staleUntil = new Date(`${dataset.observedAt}T00:00:00Z`);
+  staleUntil.setUTCDate(staleUntil.getUTCDate() + FUEL_PRICE_STALE_MAX_AGE_DAYS);
+  const stale = !fresh && input.now.getTime() < staleUntil.getTime();
   const litersPerKm = nonNegative(input.consumptionPer100Km) / 100;
   const fallback = nonNegative(input.fallbackPricePerLiter);
 
   function priceFor(country: string | null): { pricePerLiter: number; priceSource: PriceSource } {
-    const price = fresh && country ? dataset.prices[country]?.[input.fuelType] : undefined;
+    const price = (fresh || stale) && country ? dataset.prices[country]?.[input.fuelType] : undefined;
     // Le bulletin européen ne couvre pas le Maroc : le prix saisi s'applique,
     // et l'interface le signale comme une hypothèse de l'utilisateur.
     return typeof price === 'number' && price > 0
-      ? { pricePerLiter: price, priceSource: 'bulletin' }
+      ? { pricePerLiter: price, priceSource: fresh ? 'bulletin' : 'stale' }
       : { pricePerLiter: fallback, priceSource: 'user' };
   }
 
@@ -129,6 +139,7 @@ export function computeFuelByCountry(input: {
     fuelTotal: round(countries.reduce((sum, line) => sum + line.cost, 0), 2),
     dataset: {
       fresh,
+      stale,
       observedAt: dataset.observedAt,
       expiresAt: expiresAt.toISOString().slice(0, 10),
       source: dataset.source,
