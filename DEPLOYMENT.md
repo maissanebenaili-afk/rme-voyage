@@ -1,11 +1,20 @@
 # RME Voyage — Déploiement
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Vercel : HISTORICAL** — ancien environnement ; pas une cible de production actuelle.
+>
+> **Preuve de correspondance :** SHA Git associé au déploiement Netlify.
+>
+> **Dernier snapshot de production vérifié pendant le contrôle documentaire :** `7dda27a9dcdb02346dcb27119093e11b587ba52b`. Ce SHA est un instantané daté, pas une valeur permanente.
 
 ## Architecture actuelle
 
 - **Web :** Next.js 16 + React 18
-- **Hébergement :** Netlify (plan gratuit) ; Vercel jusqu'au 27/09/2026
+- **Hébergement :** Netlify
+- **Vercel :** HISTORICAL
 - **APIs :** routes server-side Next.js
 - **PWA :** manifest + service worker
 - **Mobile :** Capacitor 7 préparatoire, projets natifs non encore générés
@@ -23,7 +32,11 @@ npm run build
 
 ## Production web
 
-Le déploiement production est effectué sur Netlify (`netlify.toml` + `@netlify/plugin-nextjs`), depuis un `git archive` de `main` (Claude) ou automatiquement si le dépôt est relié à Netlify.
+Le flux canonique est : `GitHub / main` → déploiement de production Netlify → SHA Git du déploiement → vérification de l'état du déploiement.
+
+Un agent, une PR, un commit ou un build réussi ne constituent pas à eux seuls une preuve de production.
+
+Avant toute conclusion de production, vérifier le commit Git, la branche, la CI pertinente, le déploiement Netlify et le SHA Git associé.
 
 Avant toute mise en production :
 - typecheck ;

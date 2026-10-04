@@ -13,43 +13,75 @@ type Props = {
   crossing?: string;
 };
 
-type ConfiguredPartner = { url: string; provider: string };
+type ConfiguredPartner = { url: string; provider: string; prefilled?: boolean };
+type Trip = { origin: string; destination: string; date?: string };
+
+const LOOKUP_TIMEOUT_MS = 5000;
+// The flight link can open pre-filled on the trip: look it up again when the
+// trip changes, but not on every keystroke.
+const FLIGHT_LOOKUP_DELAY_MS = 400;
+
+async function lookupPartner(type: BookingType, trip: Trip, signal: AbortSignal): Promise<ConfiguredPartner | null> {
+  const params = new URLSearchParams({
+    type,
+    origin: trip.origin || 'Europe',
+    destination: trip.destination || 'Maroc',
+  });
+  if (trip.date) params.set('date', trip.date);
+  const response = await fetch(`/api/affiliates?${params.toString()}`, { signal, cache: 'no-store' });
+  if (!response.ok) return null;
+  const data = await response.json();
+  const url = data.configured && verifiedPartnerUrl(data.affiliateUrl, type);
+  if (!url) return null;
+  const provider = typeof data.provider === 'string' && data.provider ? data.provider : 'unknown';
+  return { url, provider, ...(data.prefilled === true ? { prefilled: true } : {}) };
+}
 
 export default function BookingCards({ origin, destination, date, crossing }: Props) {
   const [partners, setPartners] = useState<Partial<Record<BookingType, ConfiguredPartner>>>({});
-  // Trajet tel qu'il est au montage de la section : le lien partenaire vient
-  // du tableau de bord et ne dépend pas du trajet, l'appel ne doit donc pas
-  // repartir à chaque frappe.
-  const tripAtMount = useRef({ origin, destination });
+  // The ferry link comes from the dashboard and does not depend on the trip.
+  const tripAtMount = useRef<Trip>({ origin, destination, date });
+  const firstFlightLookup = useRef(true);
+
+  // Public comparison links are already usable while these optional lookups run;
+  // an unavailable partner service must never block an ordinary link.
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), LOOKUP_TIMEOUT_MS);
+    lookupPartner('ferry', tripAtMount.current, controller.signal)
+      .then((partner) => {
+        if (partner && !controller.signal.aborted) setPartners((current) => ({ ...current, ferry: partner }));
+      })
+      .catch(() => {});
+    return () => { clearTimeout(timeout); controller.abort(); };
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    // Links are dashboard-generated, not constructed from each keystroke.
-    // Public comparison links are already usable while this optional lookup runs.
-    (['ferry', 'flight'] as const).forEach(async (type) => {
-      try {
-        const params = new URLSearchParams({
-          type,
-          origin: tripAtMount.current.origin || 'Europe',
-          destination: tripAtMount.current.destination || 'Maroc',
-        });
-        const response = await fetch(`/api/affiliates?${params.toString()}`, {
-          signal: controller.signal, cache: 'no-store',
-        });
-        if (!response.ok) return;
-        const data = await response.json();
-        const url = data.configured && verifiedPartnerUrl(data.affiliateUrl, type);
-        if (url && !controller.signal.aborted) {
-          const provider = typeof data.provider === 'string' && data.provider ? data.provider : 'unknown';
-          setPartners((current) => ({ ...current, [type]: { url, provider } }));
-        }
-      } catch {
-        // An unavailable partner service must never block an ordinary link.
-      }
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const delay = firstFlightLookup.current ? 0 : FLIGHT_LOOKUP_DELAY_MS;
+    firstFlightLookup.current = false;
+    // A link pre-filled for another trip is never kept.
+    const dropPrefilled = () => setPartners((current) => {
+      if (!current.flight?.prefilled) return current;
+      const rest = { ...current };
+      delete rest.flight;
+      return rest;
     });
-    return () => { clearTimeout(timeout); controller.abort(); };
-  }, []);
+    const debounce = setTimeout(() => {
+      timeout = setTimeout(() => controller.abort(), LOOKUP_TIMEOUT_MS);
+      lookupPartner('flight', { origin, destination, date }, controller.signal)
+        .then((partner) => {
+          if (controller.signal.aborted) return;
+          if (partner) setPartners((current) => ({ ...current, flight: partner }));
+          else dropPrefilled();
+        })
+        .catch(() => { if (!controller.signal.aborted) dropPrefilled(); });
+    }, delay);
+    return () => { clearTimeout(debounce); clearTimeout(timeout); controller.abort(); };
+  }, [origin, destination, date]);
+
+  const flightPrefilled = Boolean(partners.flight?.prefilled);
 
   return (
     <section className="rounded-3xl border border-sable-300 bg-white p-6 shadow-sm" aria-labelledby="booking-title">
@@ -65,9 +97,19 @@ export default function BookingCards({ origin, destination, date, crossing }: Pr
         </p>
       )}
       <p className="mt-2 text-sm leading-6 text-sable-700">
-        Les comparateurs s’ouvrent dans un nouvel onglet. Renseignez-y votre trajet, vos dates
-        et vos voyageurs pour obtenir les disponibilités et les prix : nous ne pré-remplissons pas ces
-        formulaires, faute de format de lien documenté par les partenaires.
+        {flightPrefilled ? (
+          <>
+            Les comparateurs s’ouvrent dans un nouvel onglet. Le comparateur de vols s’ouvre sur ce trajet
+            déjà rempli : vérifiez-y la date et le nombre de voyageurs. Pour la traversée, renseignez votre
+            trajet, vos dates et vos voyageurs.
+          </>
+        ) : (
+          <>
+            Les comparateurs s’ouvrent dans un nouvel onglet. Renseignez-y votre trajet, vos dates
+            et vos voyageurs pour obtenir les disponibilités et les prix : nous ne pré-remplissons pas ces
+            formulaires, faute de format de lien documenté par les partenaires.
+          </>
+        )}
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {(['ferry', 'flight'] as const).map((type) => {
@@ -81,7 +123,7 @@ export default function BookingCards({ origin, destination, date, crossing }: Pr
                 product: type,
                 placement: 'booking_cards',
                 page: window.location.pathname,
-                context: { has_crossing: Boolean(crossing) },
+                context: { has_crossing: Boolean(crossing), prefilled: Boolean(partner?.prefilled) },
               })}
               data-testid={`compare-${type}`}
               className={`flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>
@@ -89,7 +131,9 @@ export default function BookingCards({ origin, destination, date, crossing }: Pr
               <span className="min-w-0 flex-1">
                 {type === 'ferry' ? 'Comparer les ferries' : 'Comparer les vols'}
                 <span className="mt-2 block text-xs font-normal">
-                  {partner ? 'Lien affilié configuré' : `${type === 'ferry' ? 'Direct Ferries' : 'Skyscanner'} · lien non affilié`}
+                  {partner
+                    ? (partner.prefilled ? 'Lien affilié · trajet pré-rempli' : 'Lien affilié configuré')
+                    : `${type === 'ferry' ? 'Direct Ferries' : 'Skyscanner'} · lien non affilié`}
                 </span>
               </span>
               <ExternalLink size={16} className="mt-1 shrink-0" aria-hidden />

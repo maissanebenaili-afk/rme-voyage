@@ -1,6 +1,18 @@
-# SAFAR Platform API Documentation
+# RME Voyage — API
 
-> **Hébergement de production : Netlify** — https://rme-voyage.netlify.app (depuis le 27/09/2026). **Hébergement historique : Vercel** (compte bloqué ; les mentions de Vercel ci-dessous sont historiques sauf indication contraire). Variables d'environnement : `docs/ADMIN_CHECKLIST.md`.
+ > **Code de référence :** GitHub / `main`.
+>
+> **Production web :** Netlify — https://rme-voyage.netlify.app
+>
+> **Preuve de correspondance :** SHA Git associé au déploiement de production Netlify.
+>
+> **Dernier snapshot de production vérifié pendant le contrôle documentaire :** `7dda27a9dcdb02346dcb27119093e11b587ba52b`.
+>
+> Ce SHA est un instantané daté et doit être revérifié avant toute nouvelle affirmation concernant la production.
+>
+> **Vercel : HISTORICAL** — ancien environnement ; les anciennes URL Vercel ne constituent pas des endpoints de production.
+>
+> **Statuts :** ACTIVE / CONFIGURABLE / LAB / HISTORICAL / NOT VERIFIED. Une documentation ancienne ne suffit pas à établir qu'un endpoint ou une offre est actuellement disponible.
 
 Welcome to the SAFAR (Smart Assistant for African & Mediterranean Routes) API. This document provides comprehensive information about all available endpoints and integration points.
 
@@ -27,72 +39,11 @@ Currently, endpoints use `userId` for user identification. Full JWT authenticati
 
 ## Endpoints
 
-### 1. Chat (`/api/chat`)
+### 1. Legacy Chat (/api/chat) — HISTORICAL / NOT VERIFIED
 
-Main conversational endpoint. Routes user messages to appropriate sub-agents (Navigator, Localizer, Community, Budget, Emergency).
+The former conversational route /api/chat has been removed from the current application. It is not a production endpoint and must not be used as an integration contract.
 
-#### Request
-
-```bash
-POST /api/chat
-Content-Type: application/json
-
-{
-  "message": "What's the best route from Paris to Marrakech?",
-  "userId": "user-123",
-  "language": "en",
-  "conversationHistory": [
-    {
-      "role": "user",
-      "content": "Hello",
-      "timestamp": "2026-09-19T12:00:00Z"
-    }
-  ]
-}
-```
-
-#### Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `message` | string | Yes | User's question/input |
-| `userId` | string | Yes | Unique user identifier |
-| `language` | string | No | Response language (`da`, `fr`, `en`, `ar`, `es`). Default: `en` |
-| `conversationHistory` | array | No | Previous messages for context |
-
-#### Response
-
-```json
-{
-  "success": true,
-  "response": {
-    "text": "From Paris to Marrakech: You can take a flight (2-3h, €80-200) or combine train+ferry (14-18h, €100-150). Most travelers fly from CDG or Orly to Marrakech.",
-    "agent": "NAVIGATOR",
-    "confidence": 0.85,
-    "metadata": {
-      "queryType": "route",
-      "origin": "Paris",
-      "destination": "Marrakech"
-    },
-    "followups": [
-      "Ask about specific modes (ferry, flight, train)",
-      "Request current prices",
-      "Get weather/climate info"
-    ]
-  },
-  "timestamp": "2026-09-19T12:30:45Z"
-}
-```
-
-#### Sub-Agents
-
-| Agent | Triggers | Capabilities |
-|-------|----------|--------------|
-| **NAVIGATOR** | route, direction, ferry, transport, distance | Route planning, ferry schedules, transport options |
-| **LOCALIZER** | prayer, weather, halal, mosque, pharmacy, SIM | Prayer times, weather, local services |
-| **COMMUNITY** | tips, recommend, advice, travelers, experiences | Community recommendations, user tips, ratings |
-| **BUDGET** | cost, budget, price, exchange, currency | Trip budgeting, exchange rates, cost estimation |
-| **EMERGENCY** | emergency, help, police, hospital, accident | Emergency contacts, urgent assistance |
+The old request/response examples for this route are intentionally omitted. Do not recreate an active API URL by replacing the historical host with the current Netlify host.
 
 ---
 
@@ -168,7 +119,7 @@ Content-Type: application/json
 
 ---
 
-### 3. Trips (`/api/trips`)
+### 3. Trips (`/api/trips`) — ACTIVE, sous réserve des contrôles d'authentification actuels
 
 Manage travel itineraries and trip planning.
 
@@ -270,9 +221,9 @@ DELETE /api/trips?tripId=trip-789&userId=user-123
 
 ---
 
-### 4. Hadak (Legacy) (`/api/hadak`)
+### 4. Hadak (`/api/hadak`) — ACTIVE
 
-Legacy endpoint for basic chat. Kept for backward compatibility.
+Current conversational endpoint used by the application.
 
 ```bash
 POST /api/hadak
@@ -284,7 +235,7 @@ Content-Type: application/json
 }
 ```
 
-**Note:** Use `/api/chat` for new implementations.
+**Note:** Do not use the removed `/api/chat` route. This document does not claim an external SDK or stable public API contract beyond the verified route and code.
 
 ---
 
@@ -328,7 +279,9 @@ SAFAR supports 5 languages with dedicated system prompts and keyword detection:
 
 ---
 
-## Subscription Tiers
+## Subscription Tiers — HISTORICAL / NOT VERIFIED
+
+> Les niveaux tarifaires et limites ci-dessous proviennent d'une documentation héritée. Ils ne doivent pas être présentés comme une offre commerciale actuelle sans vérification de la configuration et du produit.
 
 ### Free Tier
 - 10 messages/day
@@ -359,66 +312,17 @@ Real-time updates for:
 
 ```javascript
 // Coming in Phase 2
-const ws = new WebSocket('wss://rme-voyage.vercel.app/ws');
-ws.onmessage = (event) => {
-  const update = JSON.parse(event.data);
-  // Handle real-time updates
-};
+// HISTORICAL / NOT VERIFIED : aucun endpoint WebSocket de production n'est actuellement revendiqué.
+// Ne pas utiliser cet ancien exemple pour déduire une disponibilité en production.
 ```
 
 ---
 
 ## Integration Examples
 
-### JavaScript/TypeScript
+### Historical integration examples — HISTORICAL / NOT VERIFIED
 
-```typescript
-async function askSafar(message: string, userId: string) {
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message,
-      userId,
-      language: 'en'
-    })
-  });
-  
-  const data = await response.json();
-  console.log(data.response.text);
-}
-
-askSafar('Best route to Casablanca?', 'user-123');
-```
-
-### Python
-
-```python
-import requests
-
-response = requests.post(
-  'https://rme-voyage.vercel.app/api/chat',
-  json={
-    'message': 'What are prayer times in Fez?',
-    'userId': 'user-123',
-    'language': 'en'
-  }
-)
-
-print(response.json()['response']['text'])
-```
-
-### cURL
-
-```bash
-curl -X POST https://rme-voyage.vercel.app/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "Ferry from Tangier to Barcelona?",
-    "userId": "user-123",
-    "language": "en"
-  }'
-```
+The former JavaScript, Python and cURL examples for /api/chat have been removed because that route no longer exists. No Netlify URL is substituted. These snippets must not be used as production integration examples.
 
 ---
 

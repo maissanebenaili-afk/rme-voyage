@@ -412,3 +412,92 @@ Prefer providers with official API/affiliate documentation, clear tracking and t
 - accessibility-focused travel programmes;
 - cloud/AI startup credits beyond Google/Vercel.
 
+
+
+---
+
+# MONEY HUNT 360° — verification 2026-10-01
+
+## Current repository baseline
+
+Verified on 2026-10-01 from GitHub main and recent PRs/commits. Main currently points to `ffa88206406aa12cba1e575cf05876a2c0a440dc`. PRs #197 and #198 are shown by GitHub with merge commits, while #200, #201 and #202 remain open. Open PR branches are not production state and are excluded from revenue claims.
+
+## P1 — Affiliate surfaces
+
+### KAYAK Affiliate Network / Whitelabel
+- Status: VERIFIED — offer exists; approval required.
+- Evidence: KAYAK officially offers deeplinks, widgets, search box, Whitelabel and API for flights, hotels, cars and packages. Whitelabel supports embedded/localised experiences and tracking.
+- Revenue: booking/click/ad revenue share; exact RME economics UNVERIFIED.
+- Cost: no fixed upfront fee stated publicly; approval/commercial terms apply.
+- Next human action: submit affiliate application and request Whitelabel/Sandbox terms.
+- Official sources: https://affiliates.kayak.com/ and https://affiliates.kayak.com/whitelabel
+
+### Booking.com Demand API
+- Status: VERIFIED — current API and sandbox; managed-affiliate onboarding required.
+- Prerequisites: Managed Affiliate Partner, Partner Centre access, API key and Affiliate ID.
+- Revenue: travel inventory through content/search/redirect or integrated booking flows; remuneration contract-dependent.
+- Next human action: verify whether RME already has Managed Affiliate status; otherwise begin onboarding.
+- Official sources: https://developers.booking.com/demand and https://developers.booking.com/demand/docs/getting-started/prerequisites
+
+### Airalo Affiliate
+- Status: VERIFIED — current official affiliate offer.
+- Published standard commission: 10% of final sale value after discounts.
+- Payout threshold: 15 USD in current partner material.
+- Next human action: activate/confirm the affiliate application and obtain the real tracked link.
+- Illustrative only: 100 completed sales at 30 USD final sale value would yield 300 USD gross commission before programme-specific adjustments; this is not a forecast.
+- Official source: https://partners.airalo.com/solutions/affiliates
+
+## P2 — Cost reduction
+
+### GitHub for Startups
+- Status: ELIGIBILITY_CHECK — new discovery.
+- GitHub currently advertises up to 10,000 USD in flexible platform credits for qualifying partner-affiliated startups, covering products such as GitHub Enterprise, Copilot, Advanced Security and Actions.
+- This is not automatic for every repository owner; RME eligibility is UNKNOWN until startup/partner affiliation is established.
+- Potential economy: up to 10,000 USD of eligible platform usage, not cash revenue.
+- Next human action: inspect the partner-affiliation route and confirm eligibility.
+- Official source: https://github.com/enterprise/startups
+
+### Google for Startups Cloud
+- Status: ELIGIBILITY_CHECK — retain.
+- Potential economy: up to 2,000 USD for the eligible Start tier; higher programmes have additional conditions.
+- Next human action: verify RME legal entity, age, MVP and prior-credit history before applying.
+- Official source: https://cloud.google.com/startup
+
+## P1/P2 — Treasury
+
+### France Travail ACRE / ARCE
+- Status: ELIGIBILITY_CHECK — rules verified; personal/legal-entity eligibility UNKNOWN.
+- ACRE: eligible new entrepreneurs may receive partial social-contribution exemption; France Travail states that from 2026 the request is made to URSSAF.
+- ARCE: France Travail states capital equal to 60% of remaining ARE rights, paid in two instalments, when conditions including ACRE are met. ARCE is an alternative to maintaining ARE.
+- Critical condition: France Travail states the enterprise must be created/restarted after the employment end and registration with France Travail must precede creation/restart for ARCE eligibility.
+- Therefore do not retrofit an existing company into an ARCE claim.
+- Next human action: ask France Travail to assess the exact entity, creation date and current ARE/ACRE rights.
+- Official sources: https://www.francetravail.fr/candidat/je-creereprends-une-entreprise/aide-a-la-reprise-et-a-la-creation.html and https://www.francetravail.fr/candidat/je-creereprends-une-entreprise/les-aides-financieres-creation-d.html
+
+## Status changes
+- France Tourisme Tech 2026-2027: EXPIRED for immediate action. DGE lists the call from 19 June to 27 September 2026 and the calls page marks it Terminé.
+- French Tech Nova 2026: EXPIRED for this pass because the published deadline was 30 September 2026; no extension verified.
+- Vercel/Open Source: keep out of the active queue; previous verification showed no active basis to pursue it.
+- Netlify remains the current production host; do not migrate infrastructure solely for credits.
+
+## Economic filter — 2026-10-01
+
+| Opportunity | Revenue potential | Economy | Financing | Speed | Initial cost | Human effort | Recurrence | Third-party dependence | Proof |
+|---|---|---|---|---|---|---|---|---|---|
+| KAYAK Whitelabel | booking/click/ad share, rate UNVERIFIED | — | — | P1 after approval | no fixed fee published | Low | Recurring | High | VERIFIED |
+| Booking Demand API | booking commissions, contract-dependent | — | — | P2/onboarding | Low before credentials | Medium | Recurring | High | VERIFIED |
+| Airalo | 10% published standard commission | — | — | P1 after approval | Free application | Low | Per sale | High | VERIFIED |
+| GitHub for Startups | — | up to $10k advertised credits if eligible | — | P2 | Free application | Low | Credit programme | High | Offer VERIFIED / RME eligibility UNKNOWN |
+| Google Cloud Start | — | up to $2k eligible tier | — | P2 | Free application | Low | Credit programme | High | Offer VERIFIED / RME eligibility UNKNOWN |
+| ACRE/ARCE | — | social-charge exemption / capital rights if eligible | Potentially material, eligibility-dependent | P1 only after exact eligibility | None to apply | Medium | One-off | High | Rules VERIFIED / personal eligibility UNKNOWN |
+
+## Immediate execution queue
+1. Airalo — activate affiliate and obtain the real tracked link.
+2. KAYAK — submit affiliate application and request Whitelabel/Sandbox terms.
+3. Booking.com — verify existing Managed Affiliate status; if absent, begin onboarding.
+4. GitHub for Startups — eligibility check.
+5. Google Cloud — eligibility check for the exact RME legal entity.
+6. Direct B2B accommodation — prepare a five-property pilot offer without promising volume.
+
+## Repository note
+The previous register was last reviewed on 2026-09-26. This addendum is append-only and reflects the 2026-10-01 repository state plus current official-source verification. No code, secret, payment, account or deployment changes are authorised by Money Hunt.
