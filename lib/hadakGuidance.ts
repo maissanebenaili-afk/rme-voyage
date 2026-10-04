@@ -116,6 +116,7 @@ const NEXT_BY_INTENT: Record<string, Section[]> = {
   ramadan: ['maroc'],
   currency: ['transfert'],
   football: ['sport'],
+  services: ['route'],
 };
 
 export function isHadakLang(value: unknown): value is HadakLang {

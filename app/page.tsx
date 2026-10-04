@@ -64,7 +64,9 @@ const benefits = [
 
 const stats = [
   { value: '5M+', label: 'MRE en Europe', icon: Users },
-  { value: '€4,8Md', label: 'Envoyés/an Europe → Maroc', icon: Banknote },
+  // Office des changes (via la presse) : plus de 122 milliards de dirhams en
+  // 2025, tous pays. L'ancien « €4,8Md Europe → Maroc » n'avait pas de source.
+  { value: '122 Md DH', label: 'Envoyés par les MRE en 2025', icon: Banknote },
   { value: '19,8M', label: 'Touristes au Maroc (2025)', icon: Globe },
   { value: '15+', label: 'Outils intégrés', icon: TrendingUp },
 ];
@@ -403,7 +405,7 @@ export default function Home() {
               Comparer les transferts EUR → MAD.
             </h2>
             <p className="mt-4 text-lg leading-8 text-[#475569]">
-              5 millions de MRE envoient <strong>€4,8 milliards par an</strong> vers le Maroc.
+              Les MRE ont envoyé <strong>plus de 122 milliards de dirhams</strong> au Maroc en 2025 (Office des changes).
               RME Voyage fournit un taux de change indicatif et des estimations de coûts. Certains liens vers des prestataires peuvent être affiliés.
             </p>
           </div>
