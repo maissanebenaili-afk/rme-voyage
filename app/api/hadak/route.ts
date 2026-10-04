@@ -422,10 +422,13 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   }
 
   if (intent === 'sim') {
-    if (lang === 'da') return `SIM f l-Maghrib: Maroc Telecom, Inwi, Orange. Ghanni bzzaf — 3G/4G f kull blad. Forfait b 10-20 MAD l-jum3a. Khassk passeport bach tshri SIM. eSIM kaytkhdam m3a ba3d les téléphones.`;
-    if (lang === 'ar') return `شرائح SIM في المغرب: اتصالات المغرب، إنوي، أورانج. رخيصة جداً — تغطية 4G في كل مكان. باقة أسبوعية بـ 10-20 درهم. تحتاج جواز السفر للشراء. بعض الهواتف تدعم eSIM.`;
-    if (lang === 'es') return `SIM en Marruecos: Maroc Telecom, Inwi, Orange. Muy barato — cobertura 4G por todo el país. Tarifa semanal por 10-20 MAD. Necesitas pasaporte para comprar. Algunos móviles admiten eSIM.`;
-    return `**SIM au Maroc** : Maroc Telecom, Inwi, Orange. Très abordable — couverture 4G dans tout le pays. Forfait hebdomadaire pour 10-20 MAD. Passeport requis à l'achat. Certains téléphones supportent l'eSIM.`;
+    // Until 2026-10-04: "4G dans tout le pays" (rural gaps exist) and "forfait
+    // hebdomadaire 10-20 MAD" (no source; offers change). Identity check at
+    // purchase: mandatory since 2014-04-01 (Médias24, Le360).
+    if (lang === 'da') return `SIM f l-Maghrib: Maroc Telecom (iam.ma), Orange (orange.ma), inwi (inwi.ma). L-offres kaytbeddlo bzzaf: chouf l-offre dyal daba f site dyalhom. Khassk pièce d'identité (CIN wla passeport) bach tshri SIM (wajib mn 2014). Ba3d les téléphones kaykhdmo b eSIM.`;
+    if (lang === 'ar') return `شرائح SIM في المغرب: اتصالات المغرب (iam.ma)، أورانج (orange.ma)، إنوي (inwi.ma). العروض تتغير كثيراً: قارن العروض الحالية على مواقعهم. يُطلب إثبات هوية رسمي (البطاقة الوطنية أو جواز السفر) عند الشراء، وهو إلزامي منذ 2014. بعض الهواتف تدعم eSIM.`;
+    if (lang === 'es') return `SIM en Marruecos: Maroc Telecom (iam.ma), Orange (orange.ma), inwi (inwi.ma). Las ofertas cambian a menudo: compara las actuales en sus webs. Al comprar se pide un documento de identidad oficial (CIN o pasaporte), obligatorio desde 2014. Algunos móviles admiten eSIM.`;
+    return `**SIM au Maroc** : Maroc Telecom (iam.ma), Orange (orange.ma), inwi (inwi.ma). Les offres changent souvent : comparez celles du moment sur leurs sites. Une pièce d'identité officielle (CIN ou passeport) est demandée à l'achat, obligatoire depuis 2014. Certains téléphones acceptent l'eSIM.`;
   }
 
   if (intent === 'fuel') {

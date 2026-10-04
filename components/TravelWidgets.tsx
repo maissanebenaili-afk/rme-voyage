@@ -807,18 +807,31 @@ export function MoroccanCalendar() {
    6. ZakaatCalculator — Travel zakaat calculator
    ============================================================ */
 const EUR_TO_MAD = 10.8;
-const NISAB_USD = 5000;
-const USD_TO_MAD = 10.0;
+// The nisab was hard-coded as 5 000 USD × 10 = 50 000 MAD and called "85 g of
+// gold", while 85 g of 24-carat gold were worth about 103 000 MAD (2026-10-04):
+// people under the real threshold were told zakat was due. The nisab is now
+// 85 g × a gold price the user can update, prefilled with a dated reading.
+export const NISAB_GOLD_GRAMS = 85;
+export const GOLD_PRICE_READING = {
+  madPerGram: 1213.5, // 24 carats
+  observed: "fin juillet 2026",
+  source: "https://www.goldpricedata.com/fr/gold-rates/morocco/gram/24k/",
+};
+
+export function zakatFor(amountMAD: number, goldMadPerGram: number) {
+  const nisab = NISAB_GOLD_GRAMS * goldMadPerGram;
+  const due = goldMadPerGram > 0 && amountMAD >= nisab;
+  return { nisab, due, zakat: due ? amountMAD * 0.025 : 0 };
+}
 
 export function ZakaatCalculator() {
   const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState<"EUR" | "MAD">("EUR");
+  const [goldPrice, setGoldPrice] = useState(GOLD_PRICE_READING.madPerGram);
 
   const amountMAD =
     currency === "EUR" ? amount * EUR_TO_MAD : amount;
-  const nisabMAD = NISAB_USD * USD_TO_MAD;
-  const zakaat = amountMAD * 0.025;
-  const aboveNisab = amountMAD >= nisabMAD;
+  const { nisab: nisabMAD, due: aboveNisab, zakat: zakaat } = zakatFor(amountMAD, goldPrice);
 
   const fmt = (n: number) =>
     n.toLocaleString("fr-FR", { maximumFractionDigits: 2 });
@@ -864,6 +877,24 @@ export function ZakaatCalculator() {
         </div>
       </div>
 
+      <div className="mt-3">
+        <label htmlFor="tw-gold" className="text-xs font-semibold text-[#0f1f3d]/70">
+          Prix de l&apos;or 24 carats (MAD par gramme)
+        </label>
+        <input
+          id="tw-gold"
+          type="number"
+          value={goldPrice || ""}
+          onChange={(e) => setGoldPrice(Math.max(0, Number(e.target.value)))}
+          className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
+        />
+        <p className="mt-1 text-xs text-[#0f1f3d]/70">
+          Prérempli avec le cours relevé {GOLD_PRICE_READING.observed} (
+          <a href={GOLD_PRICE_READING.source} target="_blank" rel="noopener noreferrer" className="underline">source</a>
+          ) : remplacez-le par le prix du jour.
+        </p>
+      </div>
+
       {/* Nisab status */}
       <div
         className={`mt-4 flex items-center gap-2 rounded-xl p-3 text-sm font-semibold ${
@@ -885,7 +916,7 @@ export function ZakaatCalculator() {
       {/* Result */}
       <div className="mt-3 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f59e0b]/90 p-5 text-center">
         <p className="text-xs uppercase tracking-wide text-[#0f1f3d]/70">
-          Zakat à payer (2.5%)
+          {aboveNisab ? "Zakat à payer (2,5 %)" : "Zakat non due"}
         </p>
         <p className="mt-1 text-3xl font-black text-[#0f1f3d]">
           {fmt(Math.round(zakaat * 100) / 100)}
@@ -899,9 +930,10 @@ export function ZakaatCalculator() {
       </div>
 
       <p className="mt-3 text-xs text-[#0f1f3d]/70">
-        Le nisab correspond à l'équivalent de 85g d'or (≈ {fmt(nisabMAD)} MAD).
-        La zakat est obligatoire si votre capital dépasse ce seuil pendant une
-        année lunaire.
+        Nisab : valeur de {NISAB_GOLD_GRAMS} g d&apos;or, soit {fmt(Math.round(nisabMAD))} MAD au prix indiqué.
+        La zakat est due si votre capital reste au-dessus de ce seuil pendant une
+        année lunaire. Conversion indicative : 1 € = {EUR_TO_MAD} MAD. En cas de
+        doute, demandez à un imam ou à une personne compétente.
       </p>
     </section>
   );
@@ -910,50 +942,15 @@ export function ZakaatCalculator() {
 /* ============================================================
    7. TimeZoneSIM — Time zone + SIM comparator
    ============================================================ */
-const SIM_CARDS = [
-  {
-    name: "Maroc Telecom",
-    emoji: "📞",
-    color: "bg-blue-500",
-    price: "50 MAD",
-    priceEur: "≈ 4.60€",
-    data: "10 Go",
-    voice: "1h",
-    valid: "30 jours",
-    pros: ["Meilleure couverture rurale", "Réseau le plus étendu"],
-    cons: ["Plus cher en data"],
-  },
-  {
-    name: "Orange Maroc",
-    emoji: "🟠",
-    color: "bg-orange-500",
-    price: "30 MAD",
-    priceEur: "≈ 2.80€",
-    data: "5 Go",
-    voice: "30 min",
-    valid: "30 jours",
-    pros: ["Bon rapport qualité-prix", "Bonne couverture villes"],
-    cons: ["Couverture rurale limitée"],
-  },
-  {
-    name: "INWI",
-    emoji: "🟣",
-    color: "bg-purple-500",
-    price: "20 MAD",
-    priceEur: "≈ 1.85€",
-    data: "3 Go",
-    voice: "Illimitées INWI",
-    valid: "7 jours",
-    pros: ["Le moins cher", "Appels illimités INWI→INWI"],
-    cons: ["Data limitée", "Couverture moyenne"],
-  },
+// Until 2026-10-04 this listed three invented plans (prices, GB, minutes,
+// validity, pros and cons) and a single "French operator" roaming tariff
+// (0.012 EUR/MB). Offers change often and French plans differ (some include
+// Morocco): only the operators and their official sites are listed.
+export const SIM_OPERATORS = [
+  { name: "Maroc Telecom", emoji: "📞", url: "https://www.iam.ma" },
+  { name: "Orange Maroc", emoji: "🟠", url: "https://www.orange.ma" },
+  { name: "inwi", emoji: "🟣", url: "https://www.inwi.ma" },
 ];
-
-const ROAMING_COSTS = {
-  dataPerMb: 0.012, // EUR per MB
-  callPerMin: 1.5, // EUR per min
-  sms: 0.3, // EUR per SMS
-};
 
 export function TimeZoneSIM() {
   const [frTime, setFrTime] = useState("");
@@ -1018,77 +1015,41 @@ export function TimeZoneSIM() {
       <h3 className="mt-5 text-sm font-bold text-[#0f1f3d]">
         Cartes SIM locales
       </h3>
+      <p className="mt-1 text-xs text-[#0f1f3d]/70">
+        Trois opérateurs au Maroc. Les offres changent souvent : comparez celles du moment sur leurs sites.
+        À l&apos;achat, une pièce d&apos;identité officielle est demandée (CIN ou passeport), obligatoire depuis 2014 (
+        <a href="https://medias24.com/2014/03/11/les-cartes-sim-pre-payees-et-non-activees-avant-le-1er-avril-seront-desactivees/" target="_blank" rel="noopener noreferrer" className="underline">source</a>
+        ).
+      </p>
       <div className="mt-2 space-y-2">
-        {SIM_CARDS.map((sim) => (
-          <div
-            key={sim.name}
-            className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3 transition-all duration-200 hover:border-[#f59e0b] hover:shadow-sm"
+        {SIM_OPERATORS.map((op) => (
+          <a
+            key={op.name}
+            href={op.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between rounded-xl border border-[#0f1f3d]/10 bg-white p-3 text-sm font-bold text-[#0f1f3d] transition-all duration-200 hover:border-[#f59e0b] hover:shadow-sm"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{sim.emoji}</span>
-                <span className="text-sm font-bold text-[#0f1f3d]">
-                  {sim.name}
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="text-lg font-black text-[#0f1f3d]">
-                  {sim.price}
-                </span>
-                <span className="ml-1 text-xs text-[#0f1f3d]/70">
-                  {sim.priceEur}
-                </span>
-              </div>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <span className="rounded-lg bg-[#0f1f3d]/5 px-2 py-1 text-xs font-semibold text-[#0f1f3d]">
-                📶 {sim.data}
-              </span>
-              <span className="rounded-lg bg-[#0f1f3d]/5 px-2 py-1 text-xs font-semibold text-[#0f1f3d]">
-                📞 {sim.voice}
-              </span>
-              <span className="rounded-lg bg-[#0f1f3d]/5 px-2 py-1 text-xs font-semibold text-[#0f1f3d]">
-                ⏳ {sim.valid}
-              </span>
-            </div>
-            <div className="mt-2 flex gap-3 text-xs">
-              <div className="flex-1">
-                <p className="text-[#0f1f3d]/70">Avantages:</p>
-                {sim.pros.map((p) => (
-                  <p key={p} className="flex items-center gap-1 text-emerald-700">
-                    <Check size={12} /> {p}
-                  </p>
-                ))}
-              </div>
-              <div className="flex-1">
-                <p className="text-[#0f1f3d]/70">Inconvénients:</p>
-                {sim.cons.map((c) => (
-                  <p key={c} className="flex items-center gap-1 text-red-700">
-                    <X size={12} /> {c}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
+            <span className="flex items-center gap-2">
+              <span className="text-xl" aria-hidden>{op.emoji}</span>
+              {op.name}
+            </span>
+            <ExternalLink size={14} aria-hidden />
+          </a>
         ))}
       </div>
 
-      {/* Roaming comparison */}
-      <div className="mt-4 rounded-xl bg-red-50 p-4">
+      {/* Roaming */}
+      <div className="mt-4 rounded-xl bg-amber-50 p-4">
         <div className="flex items-center gap-2">
-          <AlertTriangle size={16} className="text-red-500" />
-          <h3 className="text-sm font-bold text-red-700">
-            Coût du roaming (opérateur FR)
-          </h3>
+          <AlertTriangle size={16} className="text-amber-600" />
+          <h3 className="text-sm font-bold text-amber-800">Avant de partir : votre forfait français</h3>
         </div>
-        <div className="mt-2 space-y-1 text-xs text-red-700">
-          <p>📱 Data: {ROAMING_COSTS.dataPerMb}€/Mo (100 Mo = {ROAMING_COSTS.dataPerMb * 100}€)</p>
-          <p>📞 Appels: {ROAMING_COSTS.callPerMin}€/min</p>
-          <p>💬 SMS: {ROAMING_COSTS.sms}€/SMS</p>
-        </div>
-        <div className="mt-2 rounded-lg bg-red-100 p-2 text-center text-xs font-bold text-red-700">
-          Une SIM locale (20 MAD ≈ 1.85€) équivaut à seulement ~150 Mo en roaming!
-        </div>
+        <p className="mt-2 text-xs text-amber-800">
+          Le Maroc n&apos;est pas dans l&apos;Union européenne : l&apos;itinérance y est facturée à part, sauf si votre
+          forfait l&apos;inclut. Vérifiez dans votre espace client avant le départ, ou coupez les données mobiles à
+          l&apos;arrivée.
+        </p>
       </div>
     </section>
   );
