@@ -71,11 +71,32 @@ async function runApi(base, s) {
   return { status: res.status, text, json };
 }
 
+/**
+ * Visible text of a page, to look for forbidden claims. Not a sanitizer: the
+ * result is only searched, never rendered. Script and style bodies are cut
+ * whatever their case (CodeQL flagged the first, case-sensitive version).
+ */
+export function visibleText(html) {
+  let out = '';
+  let i = 0;
+  const lower = html.toLowerCase();
+  while (i < html.length) {
+    const next = ['<script', '<style'].map((t) => [t, lower.indexOf(t, i)]).filter(([, at]) => at > -1).sort((a, b) => a[1] - b[1])[0];
+    if (!next) { out += html.slice(i); break; }
+    const [tag, at] = next;
+    out += html.slice(i, at);
+    const close = lower.indexOf(`</${tag.slice(1)}`, at);
+    if (close === -1) break;
+    i = lower.indexOf('>', close) + 1 || html.length;
+  }
+  return out.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
+}
+
 async function runPage(base, s) {
   const res = await fetch(`${base}${s.path}`);
   const html = await res.text();
   // Visible text only: drop scripts, styles and tags.
-  const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const text = visibleText(html);
   return { status: res.status, text };
 }
 

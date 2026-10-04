@@ -1,7 +1,7 @@
 /** @jest-environment node */
 // Red team of the Forge: feed it the lies RME actually showed and check that
 // each one is caught, and that honest answers pass.
-import { checkInvariants, loadCorpus, toMarkdown } from '../scripts/forge/core.mjs'
+import { checkInvariants, loadCorpus, toMarkdown, visibleText } from '../scripts/forge/core.mjs'
 
 const corpus = loadCorpus()
 const scenario = (id: string) => corpus.scenarios.find((s: { id: string }) => s.id === id)
@@ -46,10 +46,20 @@ describe('Forge catches the lies RME really showed', () => {
 
   it('the report lists changes between two runs and never counts SKIPPED as PASS', () => {
     const before = { label: 'baseline', results: [{ id: 'B02', verdict: 'FAIL' }] }
-    const after = { label: 'after', base: 'x', at: 't', pass: 1, fail: 0, skipped: 1, families: { action: { PASS: 1, FAIL: 0, SKIPPED: 1 } },
-      results: [{ id: 'B02', family: 'action', verdict: 'PASS', failures: [] }, { id: 'B03', family: 'action', verdict: 'SKIPPED', failures: ['navigateur non disponible'] }] }
+    const after: Parameters<typeof toMarkdown>[0] = { label: 'after', base: 'x', at: 't', pass: 1, fail: 0, skipped: 1, families: { action: { PASS: 1, FAIL: 0, SKIPPED: 1 } },
+      results: [{ id: 'B02', family: 'action', verdict: 'PASS' as const, failures: [] }, { id: 'B03', family: 'action', verdict: 'SKIPPED' as const, failures: ['navigateur non disponible'] }] }
     const md = toMarkdown(after, before)
     expect(md).toMatch(/B02 : FAIL → PASS/)
     expect(md).toMatch(/1 PASS · 0 FAIL · 1 SKIPPED/)
+  })
+})
+
+describe('visibleText', () => {
+  it('drops script and style bodies whatever their case, keeps the visible words', () => {
+    const html = '<p>Avant</p><SCRIPT>var x="€4,8 Md"</SCRIPT ><Style>.a{}</style><b>Après</b>'
+    const text = visibleText(html)
+    expect(text).toMatch(/Avant/)
+    expect(text).toMatch(/Après/)
+    expect(text).not.toMatch(/4,8|var x/)
   })
 })
