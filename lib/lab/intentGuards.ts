@@ -71,6 +71,8 @@ export function returnTrip(raw: string, n: string, facts: TripFacts): { directio
   const europe = ORIGINS.find((o) => new RegExp(`\\b${norm(o.label)}\\b`).test(n));
   const country = n.match(EUROPE_COUNTRY);
   const countryName = country ? (COUNTRY_LABEL[country[1]] ?? country[1].charAt(0).toUpperCase() + country[1].slice(1)) : undefined;
+  // « je rentre à Paris »: the European city is the place being returned to, said after a « to » word.
+  const europeTo = ORIGINS.find((o) => new RegExp(`\\b(?:a|au|vers|pour|to|naar|hacia|ila|l)\\s+${norm(o.label)}\\b`).test(n));
   const toEurope = europe ? { to: europe.label } : countryName ? { to: countryName } : {};
   const said = (m: RegExpMatchArray) => saidAt(raw, n, m.index ?? 0, m[0].length);
 
@@ -84,6 +86,10 @@ export function returnTrip(raw: string, n: string, facts: TripFacts): { directio
   // « je dois rentrer en France demain »: coming back, from a Morocco nobody had to name.
   if (marker && country && !europe && !facts.destination && !facts.origin && !MOROCCO_WORD.test(n)) {
     return { direction: { value: 'return', status: 'INFERENCE', evidence: said(marker), ...toEurope } };
+  }
+  // « je rentre à Paris dimanche »: coming home to a European city, from a Morocco nobody had to name.
+  if (marker && europeTo && !facts.destination && !facts.origin && !MOROCCO_WORD.test(n)) {
+    return { direction: { value: 'return', status: 'INFERENCE', evidence: said(marker), to: europeTo.label } };
   }
   // « retour Casablanca Paris »: a Moroccan city straight followed by a European one.
   if (marker && europe && facts.destination && !facts.origin) {

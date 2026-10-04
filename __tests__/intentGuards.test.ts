@@ -280,6 +280,29 @@ describe("a mode question is settled by its answer, whichever way the user said 
   });
 });
 
+describe("« je rentre à Paris » is coming home to a European city: a return, not a question about Morocco", () => {
+  test.each([
+    ["je rentre à Paris dimanche", "Paris"],
+    ["Je rentre à Bruxelles demain", "Bruxelles"],
+    ["retour à Lyon le 30 août", "Lyon"],
+    ["bghit nrje3 l Paris ghedda", "Paris"],
+  ])("%s", (sentence, to) => {
+    const facts = extractIntent(sentence, TODAY);
+    expect(facts.direction).toMatchObject({ value: "return", status: "INFERENCE", to });
+    expect(facts.destination).toBeUndefined();
+    expect(missingChoices(facts, "fr")).toEqual([]);
+    expect(plan(sentence).actions.map((a) => a.kind)).toEqual(["flight"]);
+    expect(plan(sentence).actions[0].reason).toMatch(new RegExp(`^Retour vers ${to}`));
+    expect(evidenceIsSaid(sentence, facts)).toBe(true);
+  });
+
+  test("not a return: going to Morocco, an outbound round trip, or no sign of coming back", () => {
+    for (const s of ["je rentre au Maroc depuis Paris dimanche", "retour Paris Tanger en août", "je vais à Paris dimanche", "je rentre à Paris après mes vacances au Maroc", "ana f Paris w bghit nrje3 l Nador"]) {
+      expect(extractIntent(s, TODAY).direction).toBeUndefined();
+    }
+  });
+});
+
 describe("known limits, kept visible", () => {
   test("a bare « Tanger Paris » is ambiguous and stays read as a trip to Tanger", () => {
     const facts = extractIntent("Tanger Paris", TODAY);
