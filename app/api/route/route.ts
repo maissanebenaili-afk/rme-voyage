@@ -283,7 +283,7 @@ export async function GET(request: Request) {
   const destination = searchParams.get("destination")?.trim();
 
   if (!origin || !destination) {
-    return Response.json({ error: "Missing origin or destination" }, { status: 400 });
+    return Response.json({ error: "Indiquez une ville de départ et une destination." }, { status: 400 });
   }
 
   const [originPoint, destinationPoint] = await Promise.all([
@@ -292,10 +292,10 @@ export async function GET(request: Request) {
   ]);
 
   if (!originPoint) {
-    return Response.json({ error: 'Origin location not found' }, { status: 404 });
+    return Response.json({ error: 'Ville de départ introuvable. Vérifiez l’orthographe ou ajoutez le pays (ex. « Lyon, France »).' }, { status: 404 });
   }
   if (!destinationPoint) {
-    return Response.json({ error: 'Destination location not found' }, { status: 404 });
+    return Response.json({ error: 'Destination introuvable. Vérifiez l’orthographe ou ajoutez le pays (ex. « Nador, Maroc »).' }, { status: 404 });
   }
 
   const from = lonLat(originPoint);

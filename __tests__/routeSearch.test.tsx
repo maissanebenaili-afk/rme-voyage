@@ -288,3 +288,51 @@ describe('RouteSearch', () => {
     expect(fetchMock.mock.calls.filter((c) => String(c[0]).includes('/api/route'))).toHaveLength(0)
   })
 })
+
+// Measured on a 390×844 phone, 2026-10-04: after « Calculer l'itinéraire » the
+// result started at 912 px, below the screen, and nothing moved.
+describe('RouteSearch result on a phone', () => {
+  afterEach(() => jest.restoreAllMocks())
+
+  it('brings the result into view when it starts below the screen', async () => {
+    global.fetch = jest.fn(() => new Promise(() => {})) as unknown as typeof fetch
+    const scroll = jest.fn()
+    Element.prototype.scrollIntoView = scroll
+    jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 912 } as DOMRect)
+    Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('button', { name: /Calculer l'itinéraire/ }))
+    await waitFor(() => expect(scroll).toHaveBeenCalledWith(expect.objectContaining({ block: 'start' })))
+  })
+
+  it('brings the result back when the page jumped past it as the map arrived', async () => {
+    global.fetch = jest.fn(async () => ({
+      ok: true,
+      json: async () => ({ geometry: [[48.8, 2.3], [35.7, -5.8]], distanceMeters: 1_943_000, durationSeconds: 74_700, legs: [] }),
+    })) as unknown as typeof fetch
+    const scroll = jest.fn()
+    Element.prototype.scrollIntoView = scroll
+    // Visible while loading, then 683 px above the screen once the map is in.
+    const rect = jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 16 } as DOMRect)
+    Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('button', { name: /Calculer l'itinéraire/ }))
+    await screen.findByText(/Calcul en cours/)
+    expect(scroll).not.toHaveBeenCalled()
+    rect.mockReturnValue({ top: -683 } as DOMRect)
+    await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'ready'))
+    expect(scroll).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not move the page when the result is already visible', async () => {
+    global.fetch = jest.fn(() => new Promise(() => {})) as unknown as typeof fetch
+    const scroll = jest.fn()
+    Element.prototype.scrollIntoView = scroll
+    jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 300 } as DOMRect)
+    Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('button', { name: /Calculer l'itinéraire/ }))
+    await screen.findByText(/Calcul en cours/)
+    expect(scroll).not.toHaveBeenCalled()
+  })
+})
