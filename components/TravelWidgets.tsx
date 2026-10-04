@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { daysUntil, upcomingHolidays } from "@/lib/moroccanHolidays";
 import { countryName } from "@/lib/countries";
 import { MOROCCO_EMERGENCY_NUMBERS, MOROCCO_EMERGENCY_SOURCE } from "@/lib/data/emergencyMorocco";
 import { datasetExpiry, FUEL_PRICES } from "@/lib/fuelByCountry";
@@ -748,35 +749,6 @@ export function EmergencyContacts() {
 /* ============================================================
    5. MoroccanCalendar — Islamic & Moroccan holidays with countdown
    ============================================================ */
-type HolidayEvent = {
-  name: string;
-  emoji: string;
-  date: string; // ISO date
-  type: "islamic" | "national";
-};
-
-const HOLIDAYS_2026: HolidayEvent[] = [
-  { name: "Jour de l'An Hégirien", emoji: "🌙", date: "2026-06-17", type: "islamic" },
-  { name: "Al Mawlid Annabaoui", emoji: "🕌", date: "2026-08-25", type: "islamic" },
-  { name: "Fête du Trône", emoji: "👑", date: "2026-07-30", type: "national" },
-  { name: "Fête de la Jeunesse", emoji: "🎉", date: "2026-08-21", type: "national" },
-  { name: "Fête de la Révolution du Roi et du Peuple", emoji: "✊", date: "2026-08-20", type: "national" },
-  { name: "Green March Day", emoji: "🟢", date: "2026-11-06", type: "national" },
-  { name: "Fête de l'Indépendance", emoji: "🇲🇦", date: "2026-11-18", type: "national" },
-  { name: "Aïd al-Fitr", emoji: "🎉", date: "2026-03-20", type: "islamic" },
-  { name: "Aïd al-Adha", emoji: "🐑", date: "2026-05-28", type: "islamic" },
-  { name: "Début du Ramadan", emoji: "🌙", date: "2026-02-19", type: "islamic" },
-];
-
-function daysUntil(dateStr: string, now: number): number {
-  const target = new Date(dateStr + "T00:00:00");
-  return Math.ceil((target.getTime() - now) / (1000 * 60 * 60 * 24));
-}
-
-// The home page is prerendered once at build time: a countdown computed there
-// is stale by the time a visitor opens it, and React then throws away and
-// re-renders the whole page (error #418). The countdown is therefore computed
-// only in the browser, after hydration.
 export function MoroccanCalendar() {
   const [now, setNow] = useState<number | null>(null);
 
@@ -786,12 +758,10 @@ export function MoroccanCalendar() {
     return () => clearInterval(timer);
   }, []);
 
-  const sortedHolidays = [...HOLIDAYS_2026].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-
-  const nextEvent = now === null ? undefined : sortedHolidays.find((h) => daysUntil(h.date, now) >= 0);
-  const upcoming = now === null ? sortedHolidays : sortedHolidays.filter((h) => daysUntil(h.date, now) >= -1);
+  const { holidays: upcoming, religiousPendingYears } = now === null
+    ? { holidays: [], religiousPendingYears: [] }
+    : upcomingHolidays(now);
+  const nextEvent = now === null ? undefined : upcoming.find((h) => daysUntil(h.date, now) >= 0);
   const nextDays = nextEvent && now !== null ? daysUntil(nextEvent.date, now) : 0;
 
   return (
@@ -831,7 +801,7 @@ export function MoroccanCalendar() {
           const eventDate = new Date(holiday.date + "T00:00:00");
           return (
             <div
-              key={holiday.name}
+              key={holiday.date + holiday.name}
               className={`flex items-center gap-3 rounded-xl border p-3 transition-all duration-200 ${
                 isNext
                   ? "border-[#f59e0b] bg-[#f59e0b]/10"
@@ -864,6 +834,12 @@ export function MoroccanCalendar() {
           );
         })}
       </div>
+      {religiousPendingYears.length > 0 && (
+        <p className="mt-3 text-xs text-[#0f1f3d]/70">
+          Fêtes religieuses {religiousPendingYears.join(", ")} (Aïd al-Fitr, Aïd al-Adha…) : dates fixées par le
+          ministère des Habous après l&apos;observation du croissant, ajoutées dès leur annonce.
+        </p>
+      )}
     </section>
   );
 }
