@@ -143,8 +143,18 @@ describe('POST /api/hadak — subject beats weak keywords', () => {
     ['Quelle heure est-il au Maroc ?', /Il est actuellement/],
     ['Can you tell me what time it is in Morocco?', /Il est actuellement/],
     ['Qui va gagner la CAN 2027 ?', /Football marocain/],
+    // Forge H15 (2026-10-04): a traveller at the port got the clock.
+    ["Je suis à Algésiras, qu'est-ce que je fais maintenant ?", /Ferries pour les MRE/],
+    ['Il est quelle heure maintenant ?', /Il est actuellement/],
   ])('%s', async (question, expected) => {
     expect(await ask(question)).toMatch(expected)
+  })
+
+  it.each([
+    "Qu'est-ce que je fais maintenant ?",
+    'Je suis perdu en ce moment, tu peux m’aider ?',
+  ])('does not answer the clock to "%s"', async (question) => {
+    expect(await ask(question)).not.toMatch(/Il est actuellement/)
   })
 })
 

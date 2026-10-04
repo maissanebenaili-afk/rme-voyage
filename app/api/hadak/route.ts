@@ -303,7 +303,8 @@ function detectIntent(msg: string): Intent {
   if (/\b(documents?|passeport|passport|visa|papiers?|watha2iq|carte.*(nationale|identite)|laissez.passer)\b/.test(m)) return 'docs';
   // Ferry — "barcelona" is not listed: alone it names the football club far
   // more often; "ferry Barcelona → Nador" still matches on "ferry".
-  if (/\b(ferry|bateau|traversee|boat|algeciras|tanger med|tarifa|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
+  // "Algésiras" is the French spelling (normalised: algesiras).
+  if (/\b(ferry|bateau|traversee|boat|algeciras|algesiras|tanger med|tarifa|genova|grimaldi|ceuta|balearia|trasmed|crossing|traversia)\b/.test(m)) return 'ferry';
   // Documents
   if (/\b(document|passeport|passport|cin|visa|permis|papier|watha2iq|carte.*(nationale|identite)|laissez.passer|required.*enter|rentrer|entrer)\b/.test(m)) return 'docs';
   // Currency
@@ -319,7 +320,9 @@ function detectIntent(msg: string): Intent {
   // Time — checked last: "heure/time/maintenant" also appear in questions on
   // another subject ("quelle heure part le ferry", "match ce soir à quelle
   // heure"). The clock only answers when no subject was recognised.
-  if (/\b(heure|time|wa9t|وقت|maintenant|en ce moment|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
+  // "maintenant" alone is not a clock question: "je suis au port, qu'est-ce
+  // que je fais maintenant ?" got the time (Forge H15, 2026-10-04).
+  if (/\b(heure|time|wa9t|وقت|quelle heure|what time|hora|zeit|ora)\b/.test(m)) return 'time';
   return 'generic';
 }
 
