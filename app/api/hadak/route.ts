@@ -244,7 +244,7 @@ async function handleFootball(msg: string, lang: string, trace: AnswerTrace = ne
 }
 
 // ── Smart local responder ─────────────────────────────────────────────────
-type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
+type Intent = 'weather' | 'time' | 'ferry' | 'docs' | 'customs' | 'currency' | 'prayer' | 'sim' | 'ramadan' | 'fuel' | 'trip' | 'football' | 'education' | 'generic';
 
 // "cours" alone is left out: "cours du dirham" is a currency question.
 const EDUCATION_RE = /\b(exercices?|devoirs?|resous|resoudre|corrige|correction|reviser|revision|brevet|bac|examen|lecon|equations?|fractions?|theoremes?|conjugaison|grammaire|dissertation|homework|exercise|tamrin|dars)\b|تمرين|درس|امتحان/;
@@ -287,6 +287,10 @@ function detectIntent(msg: string): Intent {
   // prayer word must win, or the app answers the clock instead of the
   // prayer times it was actually asked for.
   if (/\b(priere|salat|prayer|salawat|fajr|dhuhr|asr|maghrib|isha|صلاة|موعد الصلاة|adhan|azan|imsakiyya|horaire.*(priere|salat)|quando.*(priere|salat))\b/.test(m)) return 'prayer';
+  // Customs — before documents and currency: "combien d'argent liquide à la
+  // douane" is a customs question, and an AI answer gave travellers the
+  // general 2 000 DH gift limit instead of the 20 000 DH one for MRE.
+  if (/\b(douanes?|douanier|customs|aduanas?|jamarik|diwana|dwana)\b|جمارك|الجمارك|ديوانة/.test(m)) return 'customs';
   // Explicit document words — checked before "ferry": "quels documents pour
   // passer à Tanger Med" names a port but asks about papers. Only unambiguous
   // document words here; "rentrer/entrer" stay in the later docs rule so
@@ -400,10 +404,23 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   }
 
   if (intent === 'fuel') {
-    if (lang === 'da') return `Carburant f l-Maghrib: essence ≈ 14-15 MAD/l, gasoil ≈ 11-12 MAD/l. Stations-service f kull triq. Shell, Afriquia, Total moujoudin. F l-blad l-b3ida, 3lash t3ammr 9bal ma tmshi.`;
-    if (lang === 'ar') return `أسعار الوقود في المغرب: بنزين ≈ 14-15 درهم/لتر، غازوال ≈ 11-12 درهم/لتر. محطات Shell, Afriquia, Total في كل مكان. في المناطق النائية، ابل بالتعبئة قبل المغادرة.`;
-    if (lang === 'es') return `Combustible en Marruecos: gasolina ≈ 14-15 MAD/l, gasóleo ≈ 11-12 MAD/l. Gasolineras Shell, Afriquia, Total por todo el país. En zonas remotas, llena el depósito antes de salir.`;
-    return `**Carburant au Maroc** : essence ≈ 14-15 MAD/l, gasoil ≈ 11-12 MAD/l. Stations Shell, Afriquia, Total partout. En zone rurale, faites le plein avant de partir — les stations peuvent être espacées.`;
+    // Prix libres, révisés tous les quinze jours : un chiffre sans date devient
+    // faux. Le gasoil était annoncé « 11-12 MAD » alors que la presse marocaine
+    // le relève au-dessus de 16 DH/L le 1er octobre 2026.
+    if (lang === 'da') return `Carburant f l-Maghrib: l-asar hourra w kaytbeddlo kol 15 youm. Nhar 1 octobre 2026, l-presse 3tat l-gasoil fo9 16 DH/l. Tcheck l-prix f l-station. F l-blad l-b3ida, 3ammr 9bal ma tmshi.`;
+    if (lang === 'ar') return `الوقود في المغرب: الأسعار حرة وتتغير كل 15 يوماً. في 1 أكتوبر 2026، ذكرت الصحافة أن الغازوال تجاوز 16 درهماً للتر. تحقق من السعر في المحطة. في المناطق النائية، املأ الخزان قبل المغادرة.`;
+    if (lang === 'es') return `Combustible en Marruecos: precios libres, revisados cada 15 días. El 1 de octubre de 2026 la prensa situaba el gasóleo por encima de 16 MAD/l. Comprueba el precio en la gasolinera. En zonas remotas, llena el depósito antes de salir.`;
+    return `**Carburant au Maroc** : les prix sont libres et changent tous les 15 jours. Le 1er octobre 2026, la presse marocaine relevait le gasoil au-dessus de 16 DH/L. Vérifiez le prix affiché en station. En zone rurale, faites le plein avant de partir.`;
+  }
+
+  if (intent === 'customs') {
+    // Seuils cités par la presse marocaine d'après l'ADII (décret de 2012) ;
+    // le site douane.gov.ma n'était pas lisible pour vérifier. Pas de chiffre
+    // sans source : tabac et alcool restent renvoyés à la douane.
+    if (lang === 'da') return `Douane f l-Maghrib (3la hsab l-ADII, f l-presse): l-cadeaux 7ta 20 000 DH l-MRE (2 000 DH l-akhrin), bla 7aja tijariya. Dirham cash: ma ktar mn 2 000 DH. Devises fo9 100 000 DH khassha déclaration. Parfum: flacon 150 ml. Tabac w l-kohol: swwel l-douane (douane.gov.ma).`;
+    if (lang === 'ar') return `الجمارك المغربية (حسب إدارة الجمارك، كما نقلت الصحافة): الهدايا حتى 20 000 درهم لمغاربة العالم (2 000 درهم لغيرهم)، دون طابع تجاري. الدرهم نقداً: لا يتجاوز 2 000 درهم. العملات الأجنبية فوق ما يعادل 100 000 درهم يجب التصريح بها. العطر: قارورة 150 مل. التبغ والكحول: راجع douane.gov.ma.`;
+    if (lang === 'es') return `Aduana marroquí (según la ADII, citada por la prensa): regalos hasta 20 000 MAD para MRE (2 000 MAD para los demás), sin carácter comercial. Dirhams en efectivo: máximo 2 000 MAD. Divisas por encima del equivalente de 100 000 MAD: declaración obligatoria. Perfume: un frasco de 150 ml. Tabaco y alcohol: consulta douane.gov.ma.`;
+    return `**Douane marocaine** (seuils de l'ADII cités par la presse) : cadeaux jusqu'à **20 000 DH pour les MRE** (2 000 DH pour les autres voyageurs), sans caractère commercial. Dirhams en espèces : 2 000 DH au plus. Devises au-delà de l'équivalent de **100 000 DH** : déclaration obligatoire. Parfum : un flacon de 150 ml. Tabac et alcool : vérifiez sur douane.gov.ma.`;
   }
 
   if (intent === 'trip') {
