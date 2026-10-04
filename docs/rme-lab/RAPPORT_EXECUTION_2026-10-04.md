@@ -128,3 +128,32 @@ Ordre conseillé : **Agefiph** (via un conseiller Cap emploi ou un expert habili
 8. Relancer la Forge sur production après chaque publication.
 9. Préparer les textes de candidature (Agefiph, Initiative) à partir des preuves mesurées.
 10. Écrire un guide sourcé « arrivée au port » (Opération Marhaba) pour Hadak.
+
+
+## 11. Vérification publique (outil prêt, point de départ mesuré)
+
+`docs/rme-lab/prodcheck.js` contrôle en lecture seule, dans un vrai navigateur et par l'API, ce qu'un visiteur voit réellement. Il fait 16 contrôles (accueil, calendrier, douane, zakat, SIM, page jury, partenaires, lien vols, avis, événements, Hadak).
+
+**Production le 4 octobre 2026 à 22 h 48 UTC (commit `8295f7f` du 2 octobre) : 5 sur 16.**
+- Hadak en ligne répond par l'IA à « Quelle franchise douane au Maroc ? » : « 250 USD pour les hommes et… ». C'est un chiffre inventé, servi aux visiteurs. Corrigé par #226, déjà fusionnée mais **pas publiée**.
+- Hadak donne l'heure au voyageur d'Algésiras ; « 4G dans tout le pays » ; « Grimaldi » pour Nador. Ces trois réponses sont corrigées dans `main`, mais pas publiées.
+- Il reste à faire en dehors du code : poser `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE` pour ouvrir le lien vols sur le bon trajet.
+
+Après publication de `main` (avec #245, #246 et #247), on attend 15 sur 16 ; seul le lien vols pré-rempli restera à faire. À relancer : `node docs/rme-lab/prodcheck.js`.
+
+## 12. État business au 4 octobre 2026 (mesuré ou UNKNOWN)
+
+| Maillon | État | Preuve |
+|---|---|---|
+| Version corrigée en ligne | **NON** : production du 2 octobre | Netlify `commit_ref 8295f7f` |
+| Liens affiliés actifs | 1 (vols, Aviasales), non pré-rempli | `/api/partners`, `/api/affiliates` |
+| Clics mesurés et conservés | **NON** : journaux d'environ un jour ; #243 fusionnée, table pas encore créée | code |
+| Programme Aviasales approuvé | UNKNOWN | compte Travelpayouts |
+| Conversions, revenu | UNKNOWN : 0 € prouvé | — |
+| Trafic | UNKNOWN : Search Console non branchée | — |
+
+**Première expérience commerciale proposée** :
+- **Hypothèse** : un visiteur qui calcule un itinéraire clique sur « Comparer les vols ».
+- **Mesure** : `partner_click` (product = flight) divisé par `route_computed`, sur 14 jours, dans `rme_events`.
+- **Seuil** : 2 % ou plus. En dessous de 0,5 %, l'emplacement ou le message sont à revoir.
+- **Préalables** : production à jour, table `rme_events` créée, lien pré-rempli posé.
