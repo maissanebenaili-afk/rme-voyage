@@ -6,7 +6,7 @@
  */
 import { NextRequest } from 'next/server'
 import { POST } from '../app/api/hadak/route'
-import { resetRouterForTests } from '../lib/hadakAiRouter'
+import { completeSentences, resetRouterForTests } from '../lib/hadakAiRouter'
 
 function post(message: string, lang = 'fr') {
   return POST(new NextRequest('http://localhost/api/hadak', {
@@ -105,5 +105,35 @@ describe('Hadak — the AI is told never to invent', () => {
     expect(systems.length).toBeGreaterThan(0)
     expect(systems[0]).toMatch(/douane\.gov\.ma/)
     expect(systems[0]).toMatch(/service-public\.gouv\.fr/)
+  })
+})
+
+describe('Hadak — never shows an answer cut by the token limit', () => {
+  const originalFetch = global.fetch
+  const originalEnv = process.env
+  beforeEach(() => resetRouterForTests())
+  afterEach(() => {
+    global.fetch = originalFetch
+    process.env = originalEnv
+  })
+
+  it('keeps complete sentences only', () => {
+    expect(completeSentences("Je n'ai pas de source vérifiée pour ce tarif. Consulte le site officiel d")).toBe("Je n'ai pas de source vérifiée pour ce tarif.")
+    expect(completeSentences('Consulte le site officiel d')).toBeNull()
+  })
+
+  it('trims a reply the provider cut (finish_reason: length)', async () => {
+    process.env = {
+      ...Object.fromEntries(Object.entries(originalEnv).filter(([k, v]) => !/ANTHROPIC|GROQ|OPENAI|GEMINI|OPENROUTER/i.test(k) && !v?.startsWith('sk-') && !v?.startsWith('gsk_'))),
+      OPENAI_API_KEY: 'test-key',
+    } as unknown as NodeJS.ProcessEnv
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      if (new URL(input.toString()).hostname === 'api.openai.com') {
+        return new Response(JSON.stringify({ choices: [{ message: { content: "Je n'ai pas de source vérifiée pour ce tarif. Consulte le site officiel d" }, finish_reason: 'length' }] }), { status: 200 })
+      }
+      throw new Error('offline')
+    }) as unknown as typeof fetch
+    const a = await ask('Combien coûte le péage Tanger Casablanca ?')
+    expect(a).toBe("Je n'ai pas de source vérifiée pour ce tarif.")
   })
 })
