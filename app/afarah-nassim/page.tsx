@@ -16,6 +16,7 @@ import {
 import { MARWA_PHONE, MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
 import InspirationImage from '@/components/InspirationImage';
 import { INSPIRATION_IMAGES } from '@/lib/inspirationImages';
+import LeadLink from '@/components/LeadLink';
 
 type Formule = {
   id: string;
@@ -152,14 +153,14 @@ function FormuleCard({ f }: { f: Formule }) {
           </ul>
         )}
 
-        <a
+        <LeadLink partner="afarah_nassim" channel="whatsapp"
           href={devis}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#25d366] py-3 text-sm font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851]"
         >
           <MessageCircle size={14} /> Demander un devis
-        </a>
+        </LeadLink>
       </div>
     </div>
   );
@@ -226,20 +227,20 @@ export default function AfarahNassimPage() {
             </div>
 
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
-              <a
+              <LeadLink partner="afarah_nassim" channel="whatsapp"
                 href={contactGeneral}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-full bg-[#25d366] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851]"
               >
                 <MessageCircle size={16} /> WhatsApp
-              </a>
-              <a
+              </LeadLink>
+              <LeadLink partner="afarah_nassim" channel="phone"
                 href={`tel:${MARWA_PHONE}`}
                 className="flex items-center justify-center gap-2 rounded-full border border-white/20 px-7 py-3.5 font-bold text-white transition hover:bg-white/10"
               >
                 <Phone size={15} /> Appeler
-              </a>
+              </LeadLink>
             </div>
           </div>
         </div>
@@ -301,20 +302,20 @@ export default function AfarahNassimPage() {
             les disponibilités, le menu et les conditions directement avec le partenaire.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
+            <LeadLink partner="afarah_nassim" channel="whatsapp"
               href={contactGeneral}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25d366] px-7 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851]"
             >
               <MessageCircle size={16} /> Devis par WhatsApp
-            </a>
-            <a
+            </LeadLink>
+            <LeadLink partner="afarah_nassim" channel="phone"
               href={`tel:${MARWA_PHONE}`}
               className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 font-bold text-white transition hover:bg-white/10"
             >
               <Phone size={15} /> Appeler
-            </a>
+            </LeadLink>
           </div>
         </div>
       </section>
