@@ -26,8 +26,8 @@ Le seuil « moins de 2 sur 5 » vient de Tarek. La zone 2-3 sur 5 et le seuil 4 
 
 | Point | Détail |
 |---|---|
-| Adresse à donner | Aujourd'hui, 3 aperçus répondent (vérifié le 2026-10-04) : `deploy-preview-195`, `-196` et `-198` `--rme-voyage.netlify.app/lab/intention`. **Le plus complet est `-198`** : arabe, partage, état du voyage. **Il lui manque les garde-fous de la PR #199** (retour en Europe, annulation, ville écartée). Pour #199, **aucun aperçu n'existe** (404). |
-| Décision de Tarek | Faire construire un aperçu pour #199 en changeant sa base vers `main`. La fusion de #199 dans `main` a été simulée le 2026-10-04 : **aucun conflit** (14 commits). Sans cela, éviter dans le test les phrases de retour (« je rentre à Paris dimanche »), qui sont mal traitées sur `-198`. |
+| Adresse à donner | **`https://deploy-preview-199--rme-voyage.netlify.app/lab/intention`** (PR #199, commit `3d8758b`, vérifié le 2026-10-04). C'est la version complète : arabe, partage WhatsApp, « Enregistrer ce voyage », « Mon voyage », garde-fous contre les erreurs silencieuses (retour en Europe, annulation, ville écartée) et le correctif « je rentre à Paris dimanche ». L'aperçu est public pour qui a le lien : ne pas le diffuser au-delà des testeurs. |
+| Phrase de retour à vérifier avant les testeurs | « je rentre à Paris dimanche » doit afficher « Retour vers Paris », une action de vol et aucune question « Où ? ». C'est vérifié par les tests, pas encore par un navigateur : l'environnement de cette session n'a pas pu ouvrir l'aperçu dans un navigateur. À regarder une fois sur un téléphone avant le premier testeur. |
 | Version | Noter le numéro de commit de l'aperçu utilisé. Ne rien changer entre deux personnes. |
 | Testeurs | 5 personnes réelles qui voyagent vers le Maroc : famille et MRE, en français et en darija (spec). Idéal : 2 en darija, 2 en français, 1 plus âgée. Pas Tarek, pas quelqu'un qui connaît RME. |
 | Matériel | Leur téléphone, ce document imprimé ou ouvert, un chronomètre. Pas d'enregistrement sans accord clair. |
