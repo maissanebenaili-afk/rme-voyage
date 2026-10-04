@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs'
+import { join } from 'path'
 import { render, screen } from '@testing-library/react'
 import FuelByCountryPanel from '@/components/FuelByCountryPanel'
 import { computeFuelByCountry, refuelTip, type FuelPriceDataset } from '@/lib/fuelByCountry'
@@ -46,5 +48,14 @@ describe('refuelTip — where to fill up, from official prices only', () => {
   it('the panel turns it into one sentence', () => {
     render(<FuelByCountryPanel result={run([road([['FR', 800], ['ES', 1100]])])} fuelType="diesel" />)
     expect(screen.getByText(/coûte 25 % de moins en Espagne qu'en\s+France/)).toBeTruthy()
+  })
+})
+
+describe('flight price input asks for the price with bags', () => {
+  it('labels the field and warns that the lowest fares usually exclude checked bags', () => {
+    // Measured 4 Oct 2026 (Kiwi, family of 4, Paris → Tanger, Aug 2027): 1 349 € without bags, 1 885 € with one bag each.
+    const source = readFileSync(join(process.cwd(), 'components/TripDecisionEngine.tsx'), 'utf8')
+    expect(source).toContain('valises incluses')
+    expect(source).toContain('exclut souvent la valise en soute')
   })
 })

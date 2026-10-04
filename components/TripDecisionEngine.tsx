@@ -134,13 +134,16 @@ export default function TripDecisionEngine() {
             ['Péages (€)', tolls, setTolls, 0, 1000, 5],
             ['Ferry (€)', ferry, setFerry, 0, 1500, 10],
             ['Voyageurs', travelers, setTravelers, 1, 12, 1],
-            ['Avion / personne (€)', flightPerPerson, setFlightPerPerson, 20, 2000, 10],
+            ['Avion / pers., valises incluses (€)', flightPerPerson, setFlightPerPerson, 20, 2000, 10],
           ].map(([label, value, setter, min, max, step]) => (
             <label key={label as string} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
               <span className="font-semibold text-[#334155]">{label as string}</span>
               <input type="number" min={min as number} max={max as number} step={step as number} value={value as number} onChange={(e) => { (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number)); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40" />
             </label>
           ))}
+          <p className="text-xs leading-5 text-[#64748b]">
+            Avion : le prix le plus bas affiché par les comparateurs exclut souvent la valise en soute. Ajoutez-la avant de comparer.
+          </p>
           {byCountry && (
             <label className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
               <span className="font-semibold text-[#334155]">Carburant</span>
