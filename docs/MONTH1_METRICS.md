@@ -21,7 +21,7 @@ Aucune donnée n'est inventée ici. Ce document liste les instruments en place e
 | Signalements de réponses IA | `/api/hadak/report` | logs serveur | 0 € |
 | Charge / latence p50-p95-p99 | `scripts/load-hadak.mjs`, workflow `lot-c-load.yml` | artefacts GitHub Actions, `docs/lot-c/` | 0 € |
 
-\* Depuis le 27/09/2026, ces événements partent vers `/api/events` (`lib/partnerTracking.ts`, liste autorisée dans `lib/rmeEvents.ts`). Chaque événement produit une ligne `[rme-event] {…, event}` dans Netlify → Logs → Functions (filtre `rme-event`). Pas de cookie, pas d'identifiant, pas d'adresse IP dans la ligne ; e-mails et longues suites de chiffres sont retirés. Vercel Analytics est retiré : il ne fonctionnait pas hors Vercel.
+\* Depuis le 27/09/2026, ces événements partent vers `/api/events` (`lib/partnerTracking.ts`, liste autorisée dans `lib/rmeEvents.ts`). Chaque événement produit une ligne `[rme-event] {…, event}` dans Netlify → Logs → Functions (filtre `rme-event`). Pas de cookie, pas d'identifiant, pas d'adresse IP dans la ligne ; e-mails et longues suites de chiffres sont retirés. Vercel Analytics est retiré : il ne fonctionnait pas hors Vercel. Ces lignes disparaissent en environ un jour ; quand `RME_EVENTS_SUPABASE_URL` et `RME_EVENTS_SUPABASE_KEY` sont posées, chaque événement est aussi gardé dans la table `rme_events` (`lib/eventStore.ts`, `supabase/rme_events.sql`).
 
 **Non mesuré aujourd'hui :** le nombre de visiteurs et de pages vues. Netlify Analytics est payant ; le nombre d'itinéraires calculés (`route_computed`) et de questions (`[hadak-intent]`) en tient lieu.
 

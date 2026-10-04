@@ -44,6 +44,8 @@ export default function RouteSearch() {
     | { status: "manual"; url: string }
   >({ status: "idle" });
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
+
   const routeRequestRef = useRef<AbortController | null>(null);
   const pendingSharedRoute = useRef<{ origin: string; destination: string } | null>(null);
 
@@ -91,6 +93,25 @@ export default function RouteSearch() {
   const directionsUrl = validation.valid
     ? buildGoogleMapsDirectionsUrl(origin, destination)
     : null;
+
+  // On a phone the result starts below the button (measured: 912 px on an
+  // 844 px screen), so a click looked like nothing happened. Bring the
+  // loading state, then the map or the error, into view (also for a shared
+  // link, whose visitor came for that result). Nothing moves when it is
+  // already visible, as on a desktop screen.
+  //
+  // Checked again when the result arrives: the map grows from 348 to 645 px
+  // and the browser's scroll anchoring then moved the page 699 px further,
+  // leaving the map above the screen (Forge B02 on the deploy preview).
+  useEffect(() => {
+    if (routeStatus === "idle") return;
+    const el = resultRef.current;
+    if (!el || typeof el.scrollIntoView !== "function") return;
+    const { top } = el.getBoundingClientRect();
+    if (top >= 0 && top < window.innerHeight - 80) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }, [routeStatus]);
 
   async function calculateRoute() {
     if (!validation.valid) return;
@@ -306,14 +327,16 @@ export default function RouteSearch() {
           personnes de votre choix.
         </p>
       </section>
-      {routeStatus !== "idle" && (
-        <InteractiveMapWrapper
-          status={routeStatus}
-          routeGeometry={routeGeometry}
-          routeInfo={routeInfo}
-          errorMessage={routeError}
-        />
-      )}
+      <div ref={resultRef} className="scroll-mt-4">
+        {routeStatus !== "idle" && (
+          <InteractiveMapWrapper
+            status={routeStatus}
+            routeGeometry={routeGeometry}
+            routeInfo={routeInfo}
+            errorMessage={routeError}
+          />
+        )}
+      </div>
       <BookingCards
         origin={origin}
         destination={destination}

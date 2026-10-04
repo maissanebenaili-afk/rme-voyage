@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { daysUntil, upcomingHolidays } from "@/lib/moroccanHolidays";
 import { countryName } from "@/lib/countries";
 import { MOROCCO_EMERGENCY_NUMBERS, MOROCCO_EMERGENCY_SOURCE } from "@/lib/data/emergencyMorocco";
 import { datasetExpiry, FUEL_PRICES } from "@/lib/fuelByCountry";
@@ -421,8 +422,43 @@ export function DarijaPhrasebook() {
 }
 
 /* ============================================================
-   3. CustomsCalculator — Moroccan douane calculator
+   3. CustomsCalculator — Moroccan customs: sourced limits only
    ============================================================ */
+// Until 2026-10-04 this was a duty calculator with invented rules: gifts
+// duty-free up to 1 000 MAD (MRE: under 20 000 DH a year), electronics taxed
+// 20 % from the first dirham, "currency > 10 000 EUR" (declaration starts at
+// 100 000 DH). No official source gives a flat duty rate a traveller could
+// compute, so the widget states the sourced limits and links to the douane.
+export const CUSTOMS_SOURCES = {
+  adiiMre: "https://www.finances.gov.ma/Publication/adii/2011/8347_mre_douane.pdf",
+  igoc2026: "https://www.oc.gov.ma/sites/default/files/reglementation/pdf/2026-01/IGOC%202026.pdf",
+  douane: "https://www.douane.gov.ma",
+};
+
+const CUSTOMS_FACTS = [
+  {
+    label: "Cadeaux familiaux d'un MRE",
+    value: "moins de 20 000 DH",
+    detail: "par année civile, une fois par an, sans caractère commercial",
+    source: "Guide « Marocains du Monde » de l'ADII",
+    href: CUSTOMS_SOURCES.adiiMre,
+  },
+  {
+    label: "Dirhams en espèces",
+    value: "2 000 DH au plus",
+    detail: "billets de banque marocains",
+    source: "Office des Changes, IGOC 2026",
+    href: CUSTOMS_SOURCES.igoc2026,
+  },
+  {
+    label: "Devises (euros…)",
+    value: "déclaration dès 100 000 DH",
+    detail: "à déclarer à la douane à l'entrée au Maroc",
+    source: "Office des Changes, IGOC 2026",
+    href: CUSTOMS_SOURCES.igoc2026,
+  },
+];
+
 const RESTRICTED_ITEMS = [
   { name: "Alcool (au-delà des quotas)", level: "warning" },
   { name: "Produits du porc", level: "warning" },
@@ -430,121 +466,45 @@ const RESTRICTED_ITEMS = [
   { name: "Armes et munitions", level: "danger" },
   { name: "Médicaments (sans ordonnance)", level: "warning" },
   { name: "Antiquités et objets d'art", level: "warning" },
-  { name: "Devises > 10 000 EUR", level: "danger" },
   { name: "Matériel de reproduction", level: "warning" },
 ];
 
 export function CustomsCalculator() {
-  const [electronics, setElectronics] = useState(0);
-  const [gifts, setGifts] = useState(0);
-  const [personal, setPersonal] = useState(0);
-
-  const DUTY_FREE_PERSONAL = 2000;
-  const DUTY_FREE_GIFTS = 1000;
-  const DUTY_RATE = 0.2;
-
-  const personalExcess = Math.max(0, personal - DUTY_FREE_PERSONAL);
-  const giftsExcess = Math.max(0, gifts - DUTY_FREE_GIFTS);
-  const electronicsDuty = electronics * DUTY_RATE;
-  const totalDuty = electronicsDuty + personalExcess * DUTY_RATE + giftsExcess * DUTY_RATE;
-
-  const currency = (n: number) => `${n.toLocaleString("fr-FR")} MAD`;
-
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
       <div className="flex items-center gap-2">
         <Calculator className="text-[#0f1f3d]" size={22} />
-        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Calculateur douane</h2>
+        <h2 className="font-display text-lg font-semibold text-[#0f1f3d]">Douane : les limites officielles</h2>
       </div>
       <p className="mt-1 text-sm text-[#0f1f3d]/70">
-        Estimez les droits de douane à l'entrée au Maroc.
+        Ce que disent les textes, avec leur source. Les droits sur un objet précis dépendent de sa nature :
+        RME ne les calcule pas.
       </p>
 
-      {/* Inputs */}
-      <div className="mt-4 space-y-3">
-        <div>
-          <label htmlFor="tw-1" className="text-xs font-semibold text-[#0f1f3d]/70">
-            Électronique (valeur en MAD)
-          </label>
-          <input
-            id="tw-1"
-            type="number"
-            value={electronics || ""}
-            onChange={(e) => setElectronics(Math.max(0, Number(e.target.value)))}
-            placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
-          />
-        </div>
-        <div>
-          <label htmlFor="tw-2" className="text-xs font-semibold text-[#0f1f3d]/70">
-            Cadeaux (valeur en MAD)
-          </label>
-          <input
-            id="tw-2"
-            type="number"
-            value={gifts || ""}
-            onChange={(e) => setGifts(Math.max(0, Number(e.target.value)))}
-            placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
-          />
-          <p className="mt-1 text-xs text-[#0f1f3d]/70">
-            Franchise: {currency(DUTY_FREE_GIFTS)}
-          </p>
-        </div>
-        <div>
-          <label htmlFor="tw-3" className="text-xs font-semibold text-[#0f1f3d]/70">
-            Effets personnels (valeur en MAD)
-          </label>
-          <input
-            id="tw-3"
-            type="number"
-            value={personal || ""}
-            onChange={(e) => setPersonal(Math.max(0, Number(e.target.value)))}
-            placeholder="0"
-            className="mt-1 w-full rounded-xl border border-[#0f1f3d]/15 bg-white p-3 text-sm font-bold text-[#0f1f3d] outline-none transition focus:border-[#f59e0b]"
-          />
-          <p className="mt-1 text-xs text-[#0f1f3d]/70">
-            Franchise: {currency(DUTY_FREE_PERSONAL)}
-          </p>
-        </div>
-      </div>
+      <dl className="mt-4 space-y-3">
+        {CUSTOMS_FACTS.map((fact) => (
+          <div key={fact.label} className="rounded-xl border border-[#0f1f3d]/10 bg-white p-3">
+            <dt className="text-xs font-semibold text-[#0f1f3d]/70">{fact.label}</dt>
+            <dd className="mt-1">
+              <span className="text-lg font-black text-[#0f1f3d]">{fact.value}</span>
+              <span className="block text-xs text-[#0f1f3d]/70">{fact.detail}</span>
+              <a href={fact.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[#0f1f3d] underline">
+                {fact.source} <ExternalLink size={12} aria-hidden />
+              </a>
+            </dd>
+          </div>
+        ))}
+      </dl>
 
-      {/* Results */}
-      <div className="mt-4 rounded-xl bg-gradient-to-br from-[#0f1f3d] to-[#0f1f3d]/90 p-4 text-[#f8fafc]">
-        <p className="text-xs uppercase tracking-wide text-[#f59e0b]">Droits estimés</p>
-        <p className="mt-1 text-3xl font-black text-[#f59e0b]">
-          {currency(Math.round(totalDuty))}
-        </p>
-        <div className="mt-3 space-y-1 border-t border-white/10 pt-3 text-xs">
-          {electronics > 0 && (
-            <div className="flex justify-between">
-              <span className="text-[#f8fafc]/70">Électronique (20%)</span>
-              <span>{currency(Math.round(electronicsDuty))}</span>
-            </div>
-          )}
-          {personalExcess > 0 && (
-            <div className="flex justify-between">
-              <span className="text-[#f8fafc]/70">Personnel (excédent 20%)</span>
-              <span>{currency(Math.round(personalExcess * DUTY_RATE))}</span>
-            </div>
-          )}
-          {giftsExcess > 0 && (
-            <div className="flex justify-between">
-              <span className="text-[#f8fafc]/70">Cadeaux (excédent 20%)</span>
-              <span>{currency(Math.round(giftsExcess * DUTY_RATE))}</span>
-            </div>
-          )}
-          {totalDuty === 0 && (
-            <p className="text-center text-[#f59e0b]">✓ Aucun droit à payer</p>
-          )}
-        </div>
-      </div>
+      <p className="mt-4 text-sm text-[#0f1f3d]">
+        Pour un objet de valeur, un doute ou un autre cas : <a href={CUSTOMS_SOURCES.douane} target="_blank" rel="noopener noreferrer" className="font-semibold underline">douane.gov.ma</a>.
+      </p>
 
       {/* Restricted items */}
       <div className="mt-4">
         <div className="flex items-center gap-2">
           <AlertTriangle size={16} className="text-red-500" />
-          <h3 className="text-sm font-bold text-[#0f1f3d]">Articles restreints</h3>
+          <h3 className="text-sm font-bold text-[#0f1f3d]">À vérifier avant de partir</h3>
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {RESTRICTED_ITEMS.map((item) => (
@@ -748,47 +708,20 @@ export function EmergencyContacts() {
 /* ============================================================
    5. MoroccanCalendar — Islamic & Moroccan holidays with countdown
    ============================================================ */
-type HolidayEvent = {
-  name: string;
-  emoji: string;
-  date: string; // ISO date
-  type: "islamic" | "national";
-};
-
-const HOLIDAYS_2026: HolidayEvent[] = [
-  { name: "Jour de l'An Hégirien", emoji: "🌙", date: "2026-06-17", type: "islamic" },
-  { name: "Al Mawlid Annabaoui", emoji: "🕌", date: "2026-08-25", type: "islamic" },
-  { name: "Fête du Trône", emoji: "👑", date: "2026-07-30", type: "national" },
-  { name: "Fête de la Jeunesse", emoji: "🎉", date: "2026-08-21", type: "national" },
-  { name: "Fête de la Révolution du Roi et du Peuple", emoji: "✊", date: "2026-08-20", type: "national" },
-  { name: "Green March Day", emoji: "🟢", date: "2026-11-06", type: "national" },
-  { name: "Fête de l'Indépendance", emoji: "🇲🇦", date: "2026-11-18", type: "national" },
-  { name: "Aïd al-Fitr", emoji: "🎉", date: "2026-03-20", type: "islamic" },
-  { name: "Aïd al-Adha", emoji: "🐑", date: "2026-05-28", type: "islamic" },
-  { name: "Début du Ramadan", emoji: "🌙", date: "2026-02-19", type: "islamic" },
-];
-
-function daysUntil(dateStr: string): number {
-  const target = new Date(dateStr + "T00:00:00");
-  const now = new Date();
-  const diff = target.getTime() - now.getTime();
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
-}
-
 export function MoroccanCalendar() {
-  const [, setNow] = useState(new Date());
+  const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 60000);
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(timer);
   }, []);
 
-  const sortedHolidays = [...HOLIDAYS_2026].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-
-  const nextEvent = sortedHolidays.find((h) => daysUntil(h.date) >= 0);
-  const upcoming = sortedHolidays.filter((h) => daysUntil(h.date) >= -1);
+  const { holidays: upcoming, religiousPendingYears } = now === null
+    ? { holidays: [], religiousPendingYears: [] }
+    : upcomingHolidays(now);
+  const nextEvent = now === null ? undefined : upcoming.find((h) => daysUntil(h.date, now) >= 0);
+  const nextDays = nextEvent && now !== null ? daysUntil(nextEvent.date, now) : 0;
 
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
@@ -809,14 +742,12 @@ export function MoroccanCalendar() {
           <p className="mt-1 text-2xl">{nextEvent.emoji}</p>
           <p className="text-lg font-bold text-[#f8fafc]">{nextEvent.name}</p>
           <p className="mt-2 text-4xl font-black text-[#f59e0b]">
-            {daysUntil(nextEvent.date)}
+            {nextDays}
           </p>
           <p className="text-xs text-[#f8fafc]/70">
-            {daysUntil(nextEvent.date) === 0
+            {nextDays === 0
               ? "C'est aujourd'hui!"
-              : `jour${daysUntil(nextEvent.date) > 1 ? "s" : ""} restant${
-                  daysUntil(nextEvent.date) > 1 ? "s" : ""
-                }`}
+              : `jour${nextDays > 1 ? "s" : ""} restant${nextDays > 1 ? "s" : ""}`}
           </p>
         </div>
       )}
@@ -824,12 +755,12 @@ export function MoroccanCalendar() {
       {/* Holiday list */}
       <div className="mt-4 space-y-2">
         {upcoming.map((holiday) => {
-          const days = daysUntil(holiday.date);
+          const days = now === null ? null : daysUntil(holiday.date, now);
           const isNext = nextEvent && nextEvent.date === holiday.date;
           const eventDate = new Date(holiday.date + "T00:00:00");
           return (
             <div
-              key={holiday.name}
+              key={holiday.date + holiday.name}
               className={`flex items-center gap-3 rounded-xl border p-3 transition-all duration-200 ${
                 isNext
                   ? "border-[#f59e0b] bg-[#f59e0b]/10"
@@ -847,19 +778,27 @@ export function MoroccanCalendar() {
                   })}
                 </p>
               </div>
-              <span
-                className={`rounded-full px-2 py-1 text-xs font-bold ${
-                  holiday.type === "islamic"
-                    ? "bg-[#0f1f3d]/10 text-[#0f1f3d]"
-                    : "bg-[#f59e0b]/20 text-[#0f1f3d]"
-                }`}
-              >
-                {days >= 0 ? `J-${days}` : "Passé"}
-              </span>
+              {days !== null && (
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-bold ${
+                    holiday.type === "islamic"
+                      ? "bg-[#0f1f3d]/10 text-[#0f1f3d]"
+                      : "bg-[#f59e0b]/20 text-[#0f1f3d]"
+                  }`}
+                >
+                  {days >= 0 ? `J-${days}` : "Passé"}
+                </span>
+              )}
             </div>
           );
         })}
       </div>
+      {religiousPendingYears.length > 0 && (
+        <p className="mt-3 text-xs text-[#0f1f3d]/70">
+          Fêtes religieuses {religiousPendingYears.join(", ")} (Aïd al-Fitr, Aïd al-Adha…) : dates fixées par le
+          ministère des Habous après l&apos;observation du croissant, ajoutées dès leur annonce.
+        </p>
+      )}
     </section>
   );
 }
@@ -1172,9 +1111,12 @@ export function FuelPriceComparator() {
   // Prix auparavant écrits à la main (France 1,89 €, « subventionné » au
   // Maroc…) : remplacés par le bulletin officiel déjà utilisé par le
   // Reality Check, pour qu'une même page n'affiche pas deux prix différents.
-  const [now] = useState(() => Date.now());
+  // Read in the browser only: the page is prerendered at build time, when the
+  // prices may still be fresh (see MoroccanCalendar).
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => setNow(Date.now()), []);
   const expiresAt = datasetExpiry(FUEL_PRICES.observedAt);
-  const fresh = now < expiresAt.getTime();
+  const fresh = now === null || now < expiresAt.getTime();
 
   return (
     <section className={`${cardBase} ${creamBg} border-[#0f1f3d]/10`}>
