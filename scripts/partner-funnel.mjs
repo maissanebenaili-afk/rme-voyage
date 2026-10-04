@@ -39,10 +39,10 @@ const onPage = (page, prefix) => typeof page === 'string' && (page === prefix ||
 export function partnerFunnel(events) {
   return Object.entries(PARTNER_PAGES).map(([partner, prefix]) => {
     const views = events.filter((e) => e.event === 'page_view' && onPage(e.page, prefix));
-    const leads = events.filter((e) => e.event === 'partner_click' && e.product === 'lead' && e.partner === partner);
+    const contacts = events.filter((e) => e.event === 'partner_click' && e.product === 'contact' && e.partner === partner);
     const byChannel = {};
-    for (const lead of leads) {
-      const channel = String(lead.placement ?? '').replace(/^vendor_/, '') || 'inconnu';
+    for (const contact of contacts) {
+      const channel = String(contact.placement ?? '').replace(/^vendor_/, '') || 'inconnu';
       byChannel[channel] = (byChannel[channel] ?? 0) + 1;
     }
     const sources = {};
@@ -53,10 +53,10 @@ export function partnerFunnel(events) {
     return {
       partner,
       pageViews: views.length,
-      leadClicks: leads.length,
+      contactClicks: contacts.length,
       byChannel,
       // null, not 0 %, when the page was never viewed: no rate exists.
-      clickRate: views.length ? leads.length / views.length : null,
+      clickRate: views.length ? contacts.length / views.length : null,
       sources,
     };
   });
@@ -68,7 +68,7 @@ function format(rows, totalEvents) {
     const rate = r.clickRate === null ? 'pas de visite' : `${Math.round(r.clickRate * 100)} % des visites`;
     const channels = Object.entries(r.byChannel).map(([c, n]) => `${c} ${n}`).join(', ') || 'aucun';
     const sources = Object.entries(r.sources).sort((a, b) => b[1] - a[1]).map(([s, n]) => `${s} ${n}`).join(', ') || 'aucune';
-    lines.push(`${r.partner} : ${r.pageViews} vues de page → ${r.leadClicks} clics de contact (${channels}) · ${rate}`);
+    lines.push(`${r.partner} : ${r.pageViews} vues de page → ${r.contactClicks} clics de contact (${channels}) · ${rate}`);
     lines.push(`  provenance des vues : ${sources}`);
   }
   lines.push('', 'Non mesuré ici : messages réellement envoyés, devis, ventes (à demander au partenaire).');
