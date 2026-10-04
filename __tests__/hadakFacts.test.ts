@@ -35,6 +35,15 @@ describe('Hadak — customs and fuel facts', () => {
     expect(data.response).toMatch(/20[  ,]000/)
     expect(data.response).toMatch(/100[  ,]000/)
     expect(data.response).not.toMatch(/2000 ?€|€ ?2000|6 L de vin/)
+    // Only figures read in a primary source (ADII guide, IGOC 2026): the
+    // press-only perfume quota and "2 000 DH for others" are left out.
+    expect(data.response).not.toMatch(/150 ?ml|autres voyageurs\)/)
+  })
+
+  it('says the MRE gift limit is per calendar year and the declaration starts at 100 000 DH', async () => {
+    const { response } = await ask('Quelle franchise douane au Maroc ?')
+    expect(response).toMatch(/par année civile/)
+    expect(response).toMatch(/à partir de \*\*100 000 DH/)
   })
 
   it('no longer gives the stale 11-12 MAD diesel price, and dates the figure it gives', async () => {

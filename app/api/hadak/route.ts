@@ -414,13 +414,15 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   }
 
   if (intent === 'customs') {
-    // Seuils cités par la presse marocaine d'après l'ADII (décret de 2012) ;
-    // le site douane.gov.ma n'était pas lisible pour vérifier. Pas de chiffre
-    // sans source : tabac et alcool restent renvoyés à la douane.
-    if (lang === 'da') return `Douane f l-Maghrib (3la hsab l-ADII, f l-presse): l-cadeaux 7ta 20 000 DH l-MRE (2 000 DH l-akhrin), bla 7aja tijariya. Dirham cash: ma ktar mn 2 000 DH. Devises fo9 100 000 DH khassha déclaration. Parfum: flacon 150 ml. Tabac w l-kohol: swwel l-douane (douane.gov.ma).`;
-    if (lang === 'ar') return `الجمارك المغربية (حسب إدارة الجمارك، كما نقلت الصحافة): الهدايا حتى 20 000 درهم لمغاربة العالم (2 000 درهم لغيرهم)، دون طابع تجاري. الدرهم نقداً: لا يتجاوز 2 000 درهم. العملات الأجنبية فوق ما يعادل 100 000 درهم يجب التصريح بها. العطر: قارورة 150 مل. التبغ والكحول: راجع douane.gov.ma.`;
-    if (lang === 'es') return `Aduana marroquí (según la ADII, citada por la prensa): regalos hasta 20 000 MAD para MRE (2 000 MAD para los demás), sin carácter comercial. Dirhams en efectivo: máximo 2 000 MAD. Divisas por encima del equivalente de 100 000 MAD: declaración obligatoria. Perfume: un frasco de 150 ml. Tabaco y alcohol: consulta douane.gov.ma.`;
-    return `**Douane marocaine** (seuils de l'ADII cités par la presse) : cadeaux jusqu'à **20 000 DH pour les MRE** (2 000 DH pour les autres voyageurs), sans caractère commercial. Dirhams en espèces : 2 000 DH au plus. Devises au-delà de l'équivalent de **100 000 DH** : déclaration obligatoire. Parfum : un flacon de 150 ml. Tabac et alcool : vérifiez sur douane.gov.ma.`;
+    // Sources primaires lues le 4 octobre 2026 : guide « Marocains du Monde »
+    // de l'ADII (finances.gov.ma, cadeaux < 20 000 DH par année civile) et
+    // Instruction générale des opérations de change 2026 (oc.gov.ma : 2 000 DH
+    // en billets, déclaration des devises dès 100 000 DH). Aucun chiffre sans
+    // source primaire : autres voyageurs, tabac, alcool et parfum renvoyés.
+    if (lang === 'da') return `Douane f l-Maghrib: l-cadeaux l-3a2iliya dyal MRE li khddam f l-kharij: a9al mn 20 000 DH f l-3am, merra f l-3am, bla 7aja tijariya w machi ga3 f naw3 wa7ed (guide rasmi dyal ADII). Dirham cash: ma ktar mn 2 000 DH. Devises: déclaration mn 100 000 DH w fo9 (Office des Changes, IGOC 2026). L-akhrin, tabac, l-kohol w parfum: douane.gov.ma.`;
+    if (lang === 'ar') return `الجمارك المغربية: الهدايا العائلية لمغاربة العالم الذين يعملون بالخارج: أقل من 20 000 درهم في السنة الميلادية، مرة واحدة في السنة، دون طابع تجاري ولا تتركز في نوع واحد (دليل إدارة الجمارك الرسمي). الدرهم نقداً: لا يتجاوز 2 000 درهم. العملات الأجنبية: التصريح إلزامي ابتداءً من 100 000 درهم (مكتب الصرف، التعليمات العامة 2026). باقي المسافرين والتبغ والكحول والعطور: douane.gov.ma.`;
+    if (lang === 'es') return `Aduana marroquí: regalos familiares de un MRE que trabaja en el extranjero: menos de 20 000 MAD por año civil, una vez al año, sin carácter comercial ni concentrados en un solo tipo de artículo (guía oficial de la ADII). Dirhams en efectivo: máximo 2 000 MAD. Divisas: declaración obligatoria desde 100 000 MAD (Office des Changes, IGOC 2026). Otros viajeros, tabaco, alcohol y perfume: douane.gov.ma.`;
+    return `**Douane marocaine** : cadeaux familiaux d'un MRE qui travaille à l'étranger : **moins de 20 000 DH** par année civile, une fois par an, sans caractère commercial et pas sur un seul type d'article (guide officiel de l'ADII). Dirhams en espèces : 2 000 DH au plus. Devises : déclaration obligatoire à partir de **100 000 DH** (Office des Changes, IGOC 2026). Autres voyageurs, tabac, alcool et parfum : douane.gov.ma.`;
   }
 
   if (intent === 'trip') {
