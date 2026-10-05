@@ -9,10 +9,10 @@ const AMAZON_URL =
   'https://www.amazon.fr/s?k=L%27%C3%89quation+du+D%C3%A9sir+Les+Nombres+Interdits+Tarek+Benaili';
 
 const DISMISS_KEY = 'rme-book-ad-dismissed';
-const SHOW_AFTER_MS = 12000;
-// Le hero porte le CTA principal : on n'affiche la pub qu'une fois dépassé.
-const SHOW_AFTER_SCROLL_PX = 700;
-
+// Ancienne version : carte flottante (fixed, bas gauche) après 12 s et 700 px
+// de défilement. Sur téléphone elle passait sur les boutons de la page
+// (« Comparer les vols » mesuré dessous) : elle est désormais posée à la fin
+// de la page, dans le flux, et ne recouvre plus jamais rien.
 function MiniCover() {
   return (
     <div
@@ -54,23 +54,9 @@ export default function BookAd() {
       // Stockage indisponible (navigation privée) : on affiche quand même.
     }
 
-    let elapsed = false;
-    const reveal = () => {
-      if (elapsed && window.scrollY > SHOW_AFTER_SCROLL_PX) {
-        setVisible(true);
-        window.removeEventListener('scroll', reveal);
-      }
-    };
-    const timer = setTimeout(() => {
-      elapsed = true;
-      reveal();
-    }, SHOW_AFTER_MS);
-    window.addEventListener('scroll', reveal, { passive: true });
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('scroll', reveal);
-    };
+    // Après l'affichage : le choix « fermée » n'est connu que du navigateur.
+    const timer = setTimeout(() => setVisible(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   function dismiss() {
@@ -85,16 +71,20 @@ export default function BookAd() {
   if (!visible) return null;
 
   return (
+    // pb-28 : la carte reste au-dessus des boutons flottants (accessibilité,
+    // Hadak) même tout en bas de la page.
+    <div className="px-4 pb-28 pt-6">
     <aside
       aria-label="Publicité"
-      className="fixed bottom-6 left-4 z-40 w-[228px] animate-[fadeIn_.4s_ease-out] rounded-2xl border border-white/10 bg-[#0f1f3d]/95 p-3 shadow-2xl backdrop-blur sm:left-6 sm:w-[252px]"
+      className="relative mx-auto w-full max-w-[22rem] rounded-2xl border border-white/10 bg-[#0f1f3d] p-3 shadow-lg"
     >
       <button
+        type="button"
         onClick={dismiss}
         aria-label="Fermer la publicité"
-        className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full border border-white/15 bg-[#0f1f3d] text-white/50 transition hover:text-white"
+        className="absolute -right-2 -top-2 grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-[#0f1f3d] text-white/60 transition hover:text-white"
       >
-        <X size={12} />
+        <X size={14} />
       </button>
 
       <p className="mb-2 text-[9px] font-bold uppercase tracking-widest text-white/30">
@@ -122,5 +112,6 @@ export default function BookAd() {
         </div>
       </a>
     </aside>
+    </div>
   );
 }

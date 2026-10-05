@@ -46,8 +46,16 @@ export function shortPlace(place: string): string {
   return place.split(',')[0].trim() || place.trim();
 }
 
+/** Mode réellement présent sur l'itinéraire calculé (tronçons de /api/route). */
+export type JourneyMode = 'road' | 'ferry';
+
 export interface JourneyOverview {
   distanceKm: number;
+  /**
+   * Modes lus dans les tronçons calculés, dans l'ordre du trajet. Sans
+   * tronçons, l'itinéraire OSRM est un trajet routier (profil « driving »).
+   */
+  modes: JourneyMode[];
   /** Somme des tronçons routiers calculés (hors traversée), en secondes ; null si inconnue. */
   drivingSeconds: number | null;
   hasFerry: boolean;
@@ -64,8 +72,14 @@ export function journeyOverview(route: ComputedRoute): JourneyOverview {
     : route.durationSeconds > 0 && !ferry
       ? route.durationSeconds
       : null;
+  const modes: JourneyMode[] = legs.length
+    ? Array.from(new Set(legs.map((l): JourneyMode => (l.kind === 'ferry' ? 'ferry' : 'road'))))
+    : route.source === 'osrm'
+      ? ['road']
+      : [];
   return {
     distanceKm: route.distanceKm,
+    modes,
     drivingSeconds,
     hasFerry: Boolean(ferry),
     crossing: ferry ? (ferry.to ? `${ferry.from} → ${ferry.to}` : ferry.from) : null,

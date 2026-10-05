@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 
 import Home from "../app/page";
 
@@ -57,6 +57,9 @@ describe("Homepage branding", () => {
     expect(screen.queryByText(/RME Live/)).toBeNull();
     expect(screen.queryByText(/15\+ widgets/)).toBeNull();
     expect(screen.queryByText(/Un seul outil\. Tout votre voyage/)).toBeNull();
+
+    // « Estimer le coût du trajet » leads to #route: it must be the cost step.
+    expect(within(container.querySelector("#route") as HTMLElement).getByRole("heading", { name: "Le coût" })).toBeInTheDocument();
 
     // Before a route is computed the cost uses example values: the heading must not claim official prices.
     expect(container.querySelector("#route")).not.toHaveTextContent(/prix officiels/);

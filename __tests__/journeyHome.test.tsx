@@ -1,8 +1,10 @@
 import { act, render, screen } from "@testing-library/react";
-import { flagFor, journeyOverview, nextStep, shortPlace } from "@/lib/journey";
+import { crossesToMorocco, flagFor, journeyOverview, nextStep, shortPlace } from "@/lib/journey";
+import { TRIP_STEPS } from "@/components/home/TripNav";
 import { publishRoute, toComputedRoute } from "@/lib/routeContext";
 import JourneySummary from "@/components/home/JourneySummary";
 import ToolDrawer from "@/components/home/ToolDrawer";
+import { resetTravelStoreForTests } from "@/lib/travel/useTravelStorage";
 
 const legs = [
   { kind: "road", from: "Paris", to: "Algésiras", distanceMeters: 1_900_000, durationSeconds: 68_400, countries: [] },
@@ -34,12 +36,48 @@ describe("journey presentation helpers", () => {
   it("points to the cost when the computed route has no crossing", () => {
     const route = toComputedRoute("Paris, France", "Lyon, France", 465_000, 16_000, 0)!;
     expect(journeyOverview(route).drivingSeconds).toBe(16_000);
-    expect(nextStep(route).href).toBe("#route");
+    expect(journeyOverview(route).modes).toEqual(["road"]);
+    expect(nextStep(route)).toEqual({ icon: "cost", label: "Estimer le coût du trajet", href: "#route" });
+    // #route is the cost step on the home page (the « Coût » entry of the trip menu).
+    expect(TRIP_STEPS.find((step) => step.id === "route")?.label).toBe("Coût");
+  });
+
+  it("reads the modes from the computed legs, in trip order, never a car by default", () => {
+    const ferryOnly = toComputedRoute("Algésiras, Espagne", "Tanger, Maroc", 30_000, 0, 0, [
+      { kind: "ferry", from: "Algésiras", to: "Tanger Med", distanceMeters: 30_000, measured: "straight-line" },
+    ])!;
+    expect(journeyOverview(ferryOnly).modes).toEqual(["ferry"]);
+    const full = toComputedRoute("Paris, France", "Tanger, Maroc", 1_971_000, 80_000, 0, legs)!;
+    expect(journeyOverview(full).modes).toEqual(["road", "ferry"]);
+  });
+
+  it("only assumes a crossing when it knows exactly one end is in Morocco", () => {
+    expect(crossesToMorocco("Paris, France", "Tanger, Maroc")).toBe(true);
+    expect(crossesToMorocco("Paris, France", "Lyon, France")).toBe(false);
+    expect(crossesToMorocco("Paris", "Tanger, Maroc")).toBe(false);
   });
 });
 
 describe("JourneySummary", () => {
-  afterEach(() => act(() => publishRoute(null)));
+  // The computed route and the remembered trip both outlive a test: reset them.
+  afterEach(() => {
+    act(() => publishRoute(null));
+    window.localStorage.clear();
+    resetTravelStoreForTests();
+  });
+
+  it("does not announce a car on a computed route without a road leg", () => {
+    render(<JourneySummary />);
+    act(() =>
+      publishRoute(
+        toComputedRoute("Algésiras, Espagne", "Tanger, Maroc", 30_000, 0, 0, [
+          { kind: "ferry", from: "Algésiras", to: "Tanger Med", distanceMeters: 30_000, measured: "straight-line" },
+        ]),
+      ),
+    );
+    expect(screen.getByText("ferry")).toBeInTheDocument();
+    expect(screen.queryByText(/voiture/)).not.toBeInTheDocument();
+  });
 
   it("shows nothing before a route is computed, then the trip and one next step", () => {
     const { container } = render(<JourneySummary />);
@@ -47,6 +85,8 @@ describe("JourneySummary", () => {
 
     act(() => publishRoute(toComputedRoute("Paris, France", "Tanger, Maroc", 1_971_000, 80_000, 0, legs)));
     expect(screen.getByText("1 971 km")).toBeInTheDocument();
+    expect(screen.getByText("voiture")).toBeInTheDocument();
+    expect(screen.getByText("ferry")).toBeInTheDocument();
     expect(screen.getByText(/19 h 45 de conduite, hors traversée/)).toBeInTheDocument();
     const next = screen.getByRole("link", { name: /Prochaine étape.*Vérifier votre traversée/ });
     expect(next).toHaveAttribute("href", "#ferry");
