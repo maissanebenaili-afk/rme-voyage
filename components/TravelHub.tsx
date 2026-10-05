@@ -1,12 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ChevronDown, MapPin, Trash2 } from 'lucide-react';
-import { useComputedRoute } from '@/lib/routeContext';
 import { TRAVEL_PHASES, type TravelPhaseId } from '@/lib/travel/travelPhase';
-import { isValidTravelDate } from '@/lib/travel/travelStorage.migrations';
 import { useTravelPhase } from '@/lib/travel/useTravelPhase';
-import { useTravelStorage } from '@/lib/travel/useTravelStorage';
+import { useRememberComputedTrip } from '@/lib/travel/useRememberComputedTrip';
 import { buildShareUrl } from '@/lib/tripShare';
 
 /** Where each hub entry points on the home page: existing sections, not new content. */
@@ -34,23 +31,8 @@ function statusText(phase: TravelPhaseId, days: number | null, date: string | nu
 }
 
 export default function TravelHub() {
-  const { travel, updateTravel, resetTravel, isHydrated } = useTravelStorage();
+  const { travel, resetTravel, isHydrated, route } = useRememberComputedTrip();
   const { phase, daysUntilDeparture } = useTravelPhase();
-  const route = useComputedRoute();
-
-  // The planner already publishes the computed trip: record it as "my trip".
-  // A date left over from a different trip must not stick to new cities.
-  useEffect(() => {
-    if (!route || !isHydrated) return;
-    updateTravel((prev) => {
-      const sameTrip = prev.villes.depart === route.origin && prev.villes.arrivee === route.destination;
-      const plannerDate = route.date && isValidTravelDate(route.date) ? route.date : null;
-      return {
-        villes: { depart: route.origin, arrivee: route.destination },
-        dateVoyage: plannerDate ?? (sameTrip ? prev.dateVoyage : null),
-      };
-    });
-  }, [route, isHydrated, updateTravel]);
 
   const { depart, arrivee } = travel.villes;
   const hasTrip = isHydrated && (Boolean(depart && arrivee) || travel.dateVoyage !== null);

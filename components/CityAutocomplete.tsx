@@ -13,6 +13,10 @@ type Props = {
   icon?: React.ReactNode;
   /** Longueur max du champ texte ; alignée sur la limite du lien de partage (~120). */
   maxLength?: number;
+  /** « journey » : grande ville sur fond sombre, sans cadre (carte de trajet de l'accueil). */
+  variant?: "form" | "journey";
+  /** Alignement du nom en mode « journey » (la destination se lit à droite). */
+  align?: "left" | "right";
 };
 
 export default function CityAutocomplete({
@@ -23,7 +27,17 @@ export default function CityAutocomplete({
   onSelect,
   icon,
   maxLength = 120,
+  variant = "form",
+  align = "left",
 }: Props) {
+  const journey = variant === "journey";
+  const [focused, setFocused] = useState(false);
+  // En mode « journey », hors saisie : la ville en grand, le pays en petit
+  // dessous (« Paris » / « France »). Le champ garde la valeur complète.
+  const [placeName, ...rest] = value.split(",");
+  const placeCountry = rest.join(",").trim();
+  const showDisplay = journey && !focused && value.trim() !== "";
+  const right = align === "right";
   const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -91,17 +105,25 @@ export default function CityAutocomplete({
 
   return (
     <div ref={containerRef} className="relative">
-      <label className="text-sm font-medium">
-        <span className="flex items-center gap-1 text-xs text-slate-500">
-          {icon ?? <MapPin size={12} />} {label}
+      <label className="block text-sm font-medium">
+        <span className={journey ? `block text-[11px] font-bold uppercase tracking-[.16em] text-white/50 ${right ? "text-right" : ""}` : "flex items-center gap-1 text-xs text-slate-500"}>
+          {journey ? label : <>{icon ?? <MapPin size={12} />} {label}</>}
         </span>
-        <div className="relative mt-1">
+        <div className={journey ? "relative" : "relative mt-1"}>
           <input
             value={value}
             onChange={(e) => handleInputChange(e.target.value)}
-            onFocus={() => suggestions.length > 0 && setOpen(true)}
+            onFocus={() => {
+              setFocused(true);
+              if (suggestions.length > 0) setOpen(true);
+            }}
+            onBlur={() => setFocused(false)}
             onKeyDown={handleKeyDown}
-            className="w-full rounded-xl border p-3 pr-8 min-h-[44px]"
+            className={
+              journey
+                ? `h-[60px] w-full rounded-xl bg-transparent px-1 text-lg font-bold caret-[#f59e0b] placeholder:text-white/40 focus:bg-white/10 focus:px-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] ${right ? "text-right focus:text-left" : ""} ${showDisplay ? "text-transparent" : "text-white"}`
+                : "w-full rounded-xl border p-3 pr-8 min-h-[44px]"
+            }
             aria-label={label}
             placeholder={placeholder}
             autoComplete="off"
@@ -112,6 +134,12 @@ export default function CityAutocomplete({
             aria-activedescendant={activeOptionId}
             maxLength={maxLength}
           />
+          {showDisplay && (
+            <span aria-hidden="true" className={`pointer-events-none absolute inset-0 flex flex-col justify-center px-1 ${right ? "items-end text-right" : ""}`}>
+              <span className="max-w-full truncate text-[1.65rem] font-extrabold leading-tight tracking-tight text-white sm:text-4xl">{placeName.trim()}</span>
+              {placeCountry && <span className="max-w-full truncate text-xs font-semibold text-white/55">{placeCountry}</span>}
+            </span>
+          )}
         </div>
       </label>
 
@@ -119,7 +147,7 @@ export default function CityAutocomplete({
         <ul
           id={listboxId}
           role="listbox"
-          className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-lg"
+          className={`absolute z-30 mt-1 text-slate-900 max-h-56 ${journey ? `w-[min(20rem,80vw)] ${right ? "right-0" : "left-0"}` : "w-full"} overflow-auto rounded-xl border border-slate-200 bg-white shadow-lg`}
         >
           {suggestions.map((s, idx) => (
             <li
@@ -144,9 +172,11 @@ export default function CityAutocomplete({
         </ul>
       )}
 
-      <p className="mt-1 text-xs text-slate-400">
-        Suggestions locales • saisie libre possible
-      </p>
+      {!journey && (
+        <p className="mt-1 text-xs text-slate-400">
+          Suggestions locales • saisie libre possible
+        </p>
+      )}
     </div>
   );
 }

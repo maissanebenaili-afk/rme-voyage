@@ -11,6 +11,8 @@ type Props = {
   date?: string;
   /** « Tarifa → Tanger Ville » lorsque l'itinéraire calculé impose une traversée. */
   crossing?: string;
+  /** Titre gardé pour les lecteurs d'écran seulement (l'accueil l'annonce déjà par « Ferry et vols »). */
+  hideTitle?: boolean;
 };
 
 type ConfiguredPartner = { url: string; provider: string; prefilled?: boolean };
@@ -37,7 +39,7 @@ async function lookupPartner(type: BookingType, trip: Trip, signal: AbortSignal)
   return { url, provider, ...(data.prefilled === true ? { prefilled: true } : {}) };
 }
 
-export default function BookingCards({ origin, destination, date, crossing }: Props) {
+export default function BookingCards({ origin, destination, date, crossing, hideTitle = false }: Props) {
   const [partners, setPartners] = useState<Partial<Record<BookingType, ConfiguredPartner>>>({});
   // The ferry link comes from the dashboard and does not depend on the trip.
   const tripAtMount = useRef<Trip>({ origin, destination, date });
@@ -85,7 +87,7 @@ export default function BookingCards({ origin, destination, date, crossing }: Pr
 
   return (
     <section className="rounded-3xl border border-sable-300 bg-white p-6 shadow-sm" aria-labelledby="booking-title">
-      <h2 id="booking-title" className="font-display text-xl font-semibold text-zellige-800">Comparer les traversées et les vols</h2>
+      <h2 id="booking-title" className={hideTitle ? "sr-only" : "font-display text-xl font-semibold text-zellige-800"}>Comparer les traversées et les vols</h2>
       <p className="mt-2 break-words text-sm text-sable-700">
         {origin || 'Votre départ'} → {destination || 'Votre destination'}{date ? ` · ${date}` : ''}
       </p>
