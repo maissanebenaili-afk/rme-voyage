@@ -17,7 +17,7 @@ describe('PageViewBeacon', () => {
     Object.defineProperty(navigator, 'sendBeacon', { value: beacon, configurable: true });
   });
 
-  it('sends one page_view with the path only, and renders nothing', async () => {
+  it('sends one page_view with the path and its source only, and renders nothing', async () => {
     const { container } = render(<PageViewBeacon />);
     expect(container).toBeEmptyDOMElement();
     expect(beacon).toHaveBeenCalledTimes(1);
@@ -25,7 +25,8 @@ describe('PageViewBeacon', () => {
     expect(url).toBe('/api/events');
     expect(JSON.parse(await readBlob(blob as Blob))).toEqual({
       event: 'page_view',
-      props: { placement: 'layout', page: '/trajet/paris-tanger' },
+      // No referrer in jsdom: the landing view is counted as 'direct'.
+      props: { placement: 'layout', page: '/trajet/paris-tanger', ref: 'direct' },
     });
   });
 

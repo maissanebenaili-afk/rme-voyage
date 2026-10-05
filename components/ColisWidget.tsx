@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Package, Phone, MapPin, Truck, Calculator, CheckCircle2 } from 'lucide-react';
 import { contactMailto } from '@/lib/contact';
+import LeadLink from '@/components/LeadLink';
 
 const joinMailto = contactMailto('Inscription annuaire Colis & Groupage');
 
@@ -64,12 +65,14 @@ function Card({ t }: { t: Transporteur }) {
         </span>
       </div>
 
-      <a
+      <LeadLink
+        partner="colis_transporteur"
+        channel="phone"
         href={`tel:${t.phone}`}
         className="mt-3 flex items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] py-2 text-xs font-bold text-[#0f1f3d] transition hover:border-[#c9903a]/50"
       >
         <Phone size={11} /> Demander un devis
-      </a>
+      </LeadLink>
     </div>
   );
 }
@@ -94,12 +97,15 @@ export default function ColisWidget() {
             </p>
           </div>
           {joinMailto && (
-            <a
+            <LeadLink
+              // A carrier asking to be listed: supply-side interest, not a customer lead.
+              partner="colis_annuaire"
+              channel="email"
               href={joinMailto}
               className="ml-auto hidden whitespace-nowrap rounded-full border border-[#c9903a]/40 bg-[#c9903a]/10 px-3 py-1.5 text-[11px] font-bold text-[#c9903a] transition hover:bg-[#c9903a]/20 sm:block"
             >
               + Rejoindre
-            </a>
+            </LeadLink>
           )}
         </div>
       </div>
@@ -155,9 +161,9 @@ export default function ColisWidget() {
       {joinMailto && (
         <p className="flex items-center justify-center gap-1.5 px-5 pb-4 text-center text-[11px] text-[#475569]">
           <Truck size={10} /> Transporteur ?{' '}
-          <a href={joinMailto} className="text-[#c9903a] hover:underline">
+          <LeadLink partner="colis_annuaire" channel="email" href={joinMailto} className="text-[#c9903a] hover:underline">
             Rejoignez l&apos;annuaire
-          </a>
+          </LeadLink>
         </p>
       )}
     </div>

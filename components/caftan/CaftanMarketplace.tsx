@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { MessageCircle, Percent, ShieldCheck, Camera, Handshake } from 'lucide-react';
 import { COMMISSION } from '@/lib/caftans';
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
+import LeadLink from '@/components/LeadLink';
 
 const ETAPES = [
   { icon: Camera, t: '1. Décrivez votre caftan', d: 'Modèle, taille, état et prix souhaité — deux minutes.' },
@@ -119,14 +120,14 @@ export default function CaftanMarketplace() {
             </div>
 
             {pret ? (
-              <a
+              <LeadLink partner="marwa_caftan" channel="whatsapp"
                 href={whatsappLink(MARWA_WHATSAPP, message)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-[#0f1f3d] shadow-lg shadow-[#25d366]/30 transition-all duration-300 hover:bg-[#1da851] hover:shadow-xl hover:shadow-[#25d366]/40 hover:scale-105"
               >
                 <MessageCircle size={16} className="transition-transform group-hover:scale-110" /> Envoyer mon annonce à Marwa
-              </a>
+              </LeadLink>
             ) : (
               <button
                 type="button"
