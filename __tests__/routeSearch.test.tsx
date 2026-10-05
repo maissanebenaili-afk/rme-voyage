@@ -267,8 +267,14 @@ describe('RouteSearch', () => {
     expect(destination).toHaveValue('Tanger, Maroc')
     expect(screen.getByText('Tanger')).toBeInTheDocument()
     expect(screen.getByText('Maroc')).toBeInTheDocument()
+    // The raw value must be hidden under the big name, not printed twice
+    // (white text used to win over the transparent one).
+    expect(destination).toHaveClass('text-transparent')
+    expect(destination).not.toHaveClass('text-white')
     fireEvent.focus(destination)
     expect(screen.queryByText('Maroc')).not.toBeInTheDocument()
+    expect(destination).toHaveClass('text-white')
+    expect(destination).not.toHaveClass('text-transparent')
   })
 
   it('computes the shared/deep-linked trip instead of only filling the fields', async () => {

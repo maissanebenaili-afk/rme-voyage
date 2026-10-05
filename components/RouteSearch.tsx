@@ -213,7 +213,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
 
           <div className="mt-7 grid grid-cols-[minmax(0,1fr)_minmax(3.25rem,7rem)_minmax(0,1fr)] items-end gap-2">
             <div className="min-w-0">
-              <span aria-hidden="true" className="mb-1 block h-7 text-2xl leading-7">{originFlag ?? ""}</span>
+              <span aria-hidden="true" className="mb-2 block h-7 text-2xl leading-7">{originFlag ?? ""}</span>
               <CityAutocomplete
                 variant="journey"
                 label="Départ"
@@ -231,7 +231,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
               <RouteLine mode={transportMode === "flight" ? "flight" : showsFerry ? "car-ferry" : "car"} />
             </div>
             <div className="min-w-0">
-              <span aria-hidden="true" className="mb-1 block h-7 text-right text-2xl leading-7">{destinationFlag ?? ""}</span>
+              <span aria-hidden="true" className="mb-2 block h-7 text-right text-2xl leading-7">{destinationFlag ?? ""}</span>
               <CityAutocomplete
                 variant="journey"
                 align="right"
@@ -273,8 +273,9 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
                     onClick={() => setTransportMode(value)}
                     className={`inline-flex min-h-9 min-w-11 items-center justify-center gap-1.5 rounded-full px-3 text-sm font-bold transition ${active ? "bg-white text-[#0f1f3d] shadow" : "text-white/70 hover:text-white"}`}
                   >
+                    {value === "car-ferry" && <Car size={14} aria-hidden="true" />}
                     <Icon size={16} aria-hidden="true" />
-                    {value === "car-ferry" && <Car size={14} aria-hidden="true" className="-ml-1" />}
+                    <span aria-hidden="true" className={active ? "inline" : "hidden sm:inline"}>{label}</span>
                   </button>
                 );
               })}
@@ -393,6 +394,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
         <section id="ferry" aria-labelledby="ferry-title" className="mt-12 scroll-mt-20">
           <StepHeader id="ferry-title" step={2} title="Ferry et vols" text="Comparez les traversées et les vols chez les compagnies." />
           <BookingCards
+            hideTitle
             origin={origin}
             destination={destination}
             date={date || undefined}

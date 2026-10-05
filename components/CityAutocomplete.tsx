@@ -121,7 +121,7 @@ export default function CityAutocomplete({
             onKeyDown={handleKeyDown}
             className={
               journey
-                ? `h-[60px] w-full rounded-xl bg-transparent px-1 text-lg font-bold text-white caret-[#f59e0b] placeholder:text-white/40 focus:bg-white/10 focus:px-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] ${right ? "text-right focus:text-left" : ""} ${showDisplay ? "text-transparent" : ""}`
+                ? `h-[60px] w-full rounded-xl bg-transparent px-1 text-lg font-bold caret-[#f59e0b] placeholder:text-white/40 focus:bg-white/10 focus:px-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] ${right ? "text-right focus:text-left" : ""} ${showDisplay ? "text-transparent" : "text-white"}`
                 : "w-full rounded-xl border p-3 pr-8 min-h-[44px]"
             }
             aria-label={label}

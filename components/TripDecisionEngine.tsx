@@ -168,7 +168,7 @@ export default function TripDecisionEngine() {
             <div className="flex justify-between"><span>Avion pour {travelers} pers.</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
           <p className="mt-5 text-xs leading-5 text-[#64748b]">Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.</p>
-          <a href="#booking-title" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">Comparer les ferries et les vols <ArrowRight size={16} /></a>
+          <a href="#ferry" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">Comparer les ferries et les vols <ArrowRight size={16} /></a>
         </div>
       </div>
       {byCountry && <FuelByCountryPanel result={byCountry} fuelType={fuelType} />}
