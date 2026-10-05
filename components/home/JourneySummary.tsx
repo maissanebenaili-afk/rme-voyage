@@ -57,7 +57,7 @@ export default function JourneySummary() {
         className="mt-5 block rounded-3xl bg-white p-4 text-[#0f1f3d] shadow-2xl shadow-black/30 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b] sm:p-5"
       >
         <span className="flex items-center gap-3">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#fff1cc] text-[#b45309]">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#fff1cc] text-[#92400e]">
             <StepIcon size={22} aria-hidden="true" />
           </span>
           <span className="min-w-0 flex-1">
