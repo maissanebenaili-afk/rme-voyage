@@ -92,22 +92,18 @@ export default function TripDecisionEngine() {
   return (
     <section className="overflow-hidden rounded-[2rem] border border-[#dbe4ef] bg-white shadow-sm" aria-labelledby="reality-check-title">
       <div className="bg-[#0f1f3d] p-6 text-white sm:p-8">
-        <div className="flex items-start gap-4">
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#f59e0b] text-[#0f1f3d]">
-            <WalletCards size={23} />
-          </div>
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#fde68a]">RME Reality Check</p>
-            <h2 id="reality-check-title" className="mt-1 text-2xl font-display font-semibold sm:text-3xl">Le coût réel avant de choisir.</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">Pas seulement le prix affiché : carburant, péages, ferry et nombre de voyageurs. Ajustez les hypothèses pour obtenir un ordre de grandeur immédiatement.</p>
-          </div>
-        </div>
+        {/* L'accueil annonce déjà l'étape « Le coût » : le titre reste pour les lecteurs d'écran. */}
+        <h2 id="reality-check-title" className="sr-only">Le coût réel avant de choisir.</h2>
+        <p className="flex items-center gap-2 text-sm font-semibold leading-6 text-white/75">
+          <WalletCards size={18} aria-hidden="true" className="shrink-0 text-[#fcd34d]" />
+          Trois façons de partir, comparées avec vos hypothèses.
+        </p>
 
         {/* Reality Check : chaque mode montre son prix (et sa durée mesurée, si
             un itinéraire réel a été calculé) au lieu d'un simple sélecteur —
             comparer doit se voir, pas se déduire. Aucune durée n'est affichée
             pour l'avion : aucune source réelle de temps de vol n'existe ici. */}
-        <div className="mt-6 grid grid-cols-3 gap-2">
+        <div className="mt-4 grid grid-cols-3 gap-2">
           {([
             ['car', 'Voiture', Car, result.carTrip],
             ['mixed', 'Voiture + ferry', Ship, result.mixedTrip],
