@@ -65,7 +65,7 @@ describe('prerendered home widgets', () => {
       if (before === undefined) delete process.env.TRAVELPAYOUTS_FLIGHT_URL
       else process.env.TRAVELPAYOUTS_FLIGHT_URL = before
     }
-    const page = readFileSync(join(__dirname, '..', 'app', 'page.tsx'), 'utf8')
+    const page = readFileSync(join(__dirname, '..', 'app', 'HomeClient.tsx'), 'utf8')
     expect(page).toContain('getPartnerCatalogue({})')
     expect(page).not.toContain('getPartnerCatalogue()')
   })

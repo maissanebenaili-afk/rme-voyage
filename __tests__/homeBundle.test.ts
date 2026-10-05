@@ -5,7 +5,7 @@ import { join } from "path";
 // initial JavaScript although neither is in the server HTML. They must stay
 // lazy-loaded (next/dynamic) — measured: 1054 KB -> 880 KB of initial JS.
 describe("home page initial bundle", () => {
-  const source = readFileSync(join(__dirname, "..", "app", "page.tsx"), "utf8");
+  const source = readFileSync(join(__dirname, "..", "app", "HomeClient.tsx"), "utf8");
 
   test.each(["HadakAI", "SplashScreen"])("%s is loaded with next/dynamic, not a static import", (name) => {
     expect(source).not.toMatch(new RegExp(`^import ${name} from`, "m"));
