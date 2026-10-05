@@ -1,6 +1,8 @@
-# Boucle de travail autonome (Claude, toutes les 2 heures)
+# Boucle de travail autonome (Claude, toutes les 3 heures)
 
-Ce fichier est le mode d'emploi de la boucle. Son but : faire avancer RME Voyage sans que Tarek serve de relais entre ChatGPT et Claude. Les règles de `CLAUDE.md` passent avant tout ce qui suit.
+Ce fichier est le mode d'emploi de la boucle.
+
+Fonctionnement : une session Claude dédiée, avec le dépôt attaché (modèle économe), est réveillée **toutes les 3 heures** par une Routine. Les sessions neuves lancées par une Routine n'ont pas d'accès en écriture à GitHub (essai du 5 octobre : arrêt au bout de 20 s), d'où la session dédiée. La limite d'usage hebdomadaire du compte est presque atteinte : chaque passage doit rester court. Son but : faire avancer RME Voyage sans que Tarek serve de relais entre ChatGPT et Claude. Les règles de `CLAUDE.md` passent avant tout ce qui suit.
 
 ## Canal avec ChatGPT
 - **PR ouverte en cours** (au 5 octobre 2026 : **#253**). C'est là que passent les consignes et les preuves, tant qu'elle n'est pas fusionnée.
