@@ -1,4 +1,4 @@
-import { BookOpen, ArrowRight, Star } from 'lucide-react';
+import { BookOpen, ArrowRight } from 'lucide-react';
 import { BOOK_URL } from '@/lib/partners';
 
 function Cover({ className = '' }: { className?: string }) {
@@ -73,14 +73,10 @@ export default function BookBanner() {
                 Les Nombres Interdits — Tome 1
               </p>
 
-              <div className="mt-3 flex items-center justify-center gap-2 sm:justify-start">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={12} fill="#f59e0b" className="text-[#f59e0b]" />
-                  ))}
-                </div>
-                <p className="text-sm font-bold text-[#f59e0b]">par Tarek Benaïli</p>
-              </div>
+              {/* Cinq étoiles écrites en dur, sans note de lecteurs derrière, se
+                  lisaient comme un avis : retirées. Une vraie note n'irait ici
+                  qu'avec sa source (ex. Amazon) et sa date. */}
+              <p className="mt-3 text-sm font-bold text-[#f59e0b]">par Tarek Benaïli</p>
 
               <p className="mt-4 max-w-md text-sm leading-6 text-white/65">
                 Le premier tome d&apos;une série où les chiffres cachent ce que les mots taisent.
