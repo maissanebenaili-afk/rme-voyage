@@ -53,7 +53,7 @@ describe("Next Best Action", () => {
   test("by car from Paris: the /trajet page replaces the flight", () => {
     const { actions } = plan("Je rentre à Tanger en août avec les enfants, en voiture depuis Paris");
     expect(actions.map((a) => a.kind)).toEqual(["route", "papers", "sim", "money"]);
-    expect(actions[0]).toMatchObject({ href: "/trajet/paris-tanger", reason: "En voiture depuis Paris : distance, péages, carburant et ferry." });
+    expect(actions[0]).toMatchObject({ href: "/trajet/paris-tanger", reason: "En voiture depuis Paris : distance, durée et carburant ; péages et ferry à ajouter." });
     expect(actions[1].reason).toBe("La liste avant le départ : passeport, CIN, papiers de la voiture.");
   });
 

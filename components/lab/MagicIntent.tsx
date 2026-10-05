@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Bus, Car, Check, FileText, Hotel, Plane, Route, Save, Share2, Smartphone, Sparkles, Wallet } from "lucide-react";
 import { CHECKLIST_PREFIX } from "@/components/TravelChecklist";
 import { extractIntent } from "@/lib/lab/intentFacts";
@@ -101,6 +101,26 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const { travel, updateTravel, isHydrated } = useTravelStorage();
   const t = TEXT[lang];
+  const sentenceRef = useRef<HTMLTextAreaElement>(null);
+  const resultRef = useRef<HTMLElement>(null);
+
+  // The field grows with the sentence: a long sentence was cut after two
+  // lines on a phone (2026-10-05).
+  useEffect(() => {
+    const el = sentenceRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [text]);
+
+  // After "Comprendre", bring the answer to the top of the screen: on a phone
+  // the facts and actions sat below the fold, under the examples.
+  useEffect(() => {
+    const el = resultRef.current;
+    if (!analysed || !el) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView?.({ block: "start", behavior: reduce ? "auto" : "smooth" });
+  }, [analysed]);
 
   const analyse = (sentence: string) => {
     setText(sentence);
@@ -268,6 +288,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
         >
           <label htmlFor="magic-sentence" className="sr-only">{t.title}</label>
           <textarea
+            ref={sentenceRef}
             id="magic-sentence"
             rows={2}
             dir="auto"
@@ -297,7 +318,7 @@ export default function MagicIntent({ partners: initialPartners, routes }: Props
       </section>
 
       {result && (
-        <section aria-live="polite" className="space-y-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section ref={resultRef} aria-live="polite" className="scroll-mt-4 space-y-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           {result.understood.length === 0 ? (
             <p className="text-sm font-semibold text-slate-600">{t.notUnderstood}</p>
           ) : (

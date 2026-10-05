@@ -161,4 +161,29 @@ describe("Magic Button (Lab page)", () => {
     expect(decodeURIComponent(url)).toContain("/lab/intention?q=Je+veux+aller+au+Maroc+ce+week-end");
     open.mockRestore();
   });
+
+  // 2026-10-05, phone 390 × 844: the answer sat under the examples and the
+  // field cut the third line of a long sentence.
+  it("brings the answer to the top of the screen after « Comprendre »", async () => {
+    const scroll = jest.fn();
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scroll;
+    try {
+      await renderPage();
+      ask("Je veux aller au Maroc ce week-end");
+      expect(scroll).toHaveBeenCalledWith(expect.objectContaining({ block: "start" }));
+      const section = scroll.mock.contexts[0] as HTMLElement;
+      expect(section.textContent).toMatch(/J’ai compris/);
+    } finally {
+      Element.prototype.scrollIntoView = original;
+    }
+  });
+
+  it("grows the sentence field with its content", async () => {
+    await renderPage();
+    const field = screen.getByRole("textbox") as HTMLTextAreaElement;
+    Object.defineProperty(field, "scrollHeight", { configurable: true, get: () => 120 });
+    fireEvent.change(field, { target: { value: "Je veux aller au Maroc ce week-end en voiture depuis Lyon avec ma femme et 2 enfants" } });
+    expect(field.style.height).toBe("120px");
+  });
 });

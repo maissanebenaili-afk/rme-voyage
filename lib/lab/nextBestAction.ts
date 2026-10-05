@@ -213,7 +213,8 @@ function baseReason(kind: MagicActionKind, c: Context): string {
     case 'route':
       if (c.car) {
         const from = c.origin ? (fr ? ` depuis ${c.origin}` : ` mn ${c.origin}`) : '';
-        return fr ? `En voiture${from} : distance, péages, carburant et ferry.` : `B tomobil${from}: l-masafa, péage, lissans w ferry.`;
+        // RME computes distance, duration and fuel, not tolls nor the ferry.
+        return fr ? `En voiture${from} : distance, durée et carburant ; péages et ferry à ajouter.` : `B tomobil${from}: l-masafa, l-wa9t w lissans; péage w ferry zidhom nta.`;
       }
       return fr ? `En ferry ${towards(c)} : traversées et ports.` : `B l-babor ${towards(c)}: traversées w l-mwani.`;
     case 'local_transfer': {
