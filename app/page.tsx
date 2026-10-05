@@ -2,28 +2,7 @@
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import {
-  ArrowRight,
-  BadgeCheck,
-  Compass,
-  MapPinned,
-  ShieldCheck,
-  Sparkles,
-  Plane,
-  Ship,
-  Route as RouteIcon,
-  Moon,
-  Wallet,
-  CheckCircle2,
-  Star,
-  Users,
-  Globe,
-  TrendingUp,
-  Banknote,
-} from 'lucide-react';
 import RouteSearch from '@/components/RouteSearch';
-import RouteJourney from '@/components/RouteJourney';
-import TravelHub from '@/components/TravelHub';
 import TripDecisionEngine from '@/components/TripDecisionEngine';
 import PrayerWidget from '@/components/PrayerWidget';
 import ServicesMap from '@/components/ServicesMap';
@@ -47,7 +26,8 @@ import ServicesProWidget from '@/components/ServicesProWidget';
 import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
-import Reveal from '@/components/Reveal';
+import StepHeader from '@/components/home/StepHeader';
+import ToolDrawer from '@/components/home/ToolDrawer';
 
 // Hadak et l'écran d'accueil embarquent framer-motion (~120 Ko). Aucun des
 // deux n'apparaît dans le HTML serveur (le splash démarre masqué, Hadak ne
@@ -56,381 +36,134 @@ import Reveal from '@/components/Reveal';
 const HadakAI = dynamic(() => import('@/components/HadakAI'), { ssr: false });
 const SplashScreen = dynamic(() => import('@/components/SplashScreen'), { ssr: false });
 
-const benefits = [
-  { icon: MapPinned, title: 'Votre itinéraire', text: 'Préparez chaque étape, de votre ville à votre destination au Maroc.' },
-  { icon: Compass, title: 'Vos options', text: 'Route, ferry et vol comparés dans un seul parcours.' },
-  { icon: ShieldCheck, title: 'Vos repères', text: 'Prières, Qibla, services et conseils pour voyager sereinement.' },
-];
+const askHadak = (msg: string) => window.dispatchEvent(new CustomEvent('hadak:open-with-message', { detail: msg }));
 
-const stats = [
-  { value: '5M+', label: 'MRE en Europe', icon: Users },
-  // Office des changes (via la presse) : plus de 122 milliards de dirhams en
-  // 2025, tous pays. L'ancien « €4,8Md Europe → Maroc » n'avait pas de source.
-  { value: '122 Md DH', label: 'Envoyés par les MRE en 2025', icon: Banknote },
-  { value: '19,8M', label: 'Touristes au Maroc (2025)', icon: Globe },
-  { value: '15+', label: 'Outils intégrés', icon: TrendingUp },
-];
-
-const liveTicker = [
-  '🇲🇦 Maroc · Actualités et informations utiles',
-  '🚗 Routes · Trafic, travaux et perturbations',
-  '⛴️ Ferries · Traversées Europe ↔ Maroc',
-  '🇫🇷 France · Informations pratiques pour les MRE',
-  '⚽ Sport · Résultats et rendez-vous',
-  '🌍 International · Les informations à retenir',
-];
-
-const features = [
-  { icon: RouteIcon, title: 'Recherche de trajet', text: 'Trouvez le meilleur itinéraire Europe ↔ Maroc en un clic.' },
-  { icon: Wallet, title: 'Calculateur de budget', text: 'Estimez carburant, péages, ferry et coût total.' },
-  { icon: Ship, title: 'Ferry & vol', text: 'Comparez les traversées et vols avec nos partenaires.' },
-  { icon: Moon, title: 'Horaires de prière', text: 'Prières et Qibla adaptés à votre position GPS.' },
-  { icon: CheckCircle2, title: 'Checklist voyage', text: 'Ne oubliez rien : documents, véhicule, santé, logistique.' },
-  { icon: Sparkles, title: 'Assistant IA Darija', text: 'Posez vos questions en darija, français, arabe, anglais ou espagnol.' },
-];
-
+/*
+ * Accueil V2 : un voyageur ouvre RME, voit son voyage, puis une seule
+ * prochaine étape. Les étapes suivent l'ordre du voyage (route, ferry, coût,
+ * documents, météo, services) ; tout le reste est rangé dans des tiroirs
+ * qui s'ouvrent sur place. Aucune logique métier ni source n'a changé : seuls
+ * l'ordre et la présentation.
+ */
 export default function Home() {
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#eef1f6] text-[#1e293b]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f6f3ec] text-[#0f1f3d]">
       <SplashScreen />
 
-      {/* Hero — the planner itself, not a pitch. Someone who has never heard
-          of RME Voyage sees, in one glance: enter your two cities, get your
-          route/ferry/cost. Waze-style "map first" rather than a headline you
-          have to read before you can act. Muted blue-gray surface with just
-          a whisper of warm horizon tone at the base — navy carries the
-          structure (nav, borders, headings), not a bright full-bleed wash. */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#eef6f1] via-[#eef1ec] to-[#e6dfc9] text-[#0f1f3d]">
-        <div className="absolute -top-24 right-[-10%] -z-10 h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,.14),transparent_70%)] blur-2xl" />
-        <div className="absolute -bottom-16 left-[-8%] -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(35,122,84,.14),transparent_70%)] blur-2xl" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-16 bg-gradient-to-t from-[#f59e0b]/10 to-transparent" />
-
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-8">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#0f1f3d] font-black text-[#f59e0b] shadow-lg shadow-[#0f1f3d]/20">R</span>
-            <span className="text-base font-black tracking-tight sm:text-lg">RME <span className="font-medium text-[#b45309]">Voyage</span></span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-[#334155] transition hover:bg-[#0f1f3d]/5 hover:text-[#0f1f3d] sm:block">Guide</Link>
-            <Link href="/decouvrir" className="hidden rounded-full px-3 py-2 text-sm font-bold text-[#334155] transition hover:bg-[#0f1f3d]/5 hover:text-[#0f1f3d] sm:block">Découvrir</Link>
-            <LanguageSwitcher />
-          </div>
-        </nav>
-
-        <div id="planifier" className="mx-auto max-w-5xl px-4 pb-12 pt-2 sm:px-8 sm:pb-16">
-          <div className="animate-fade-up text-center">
-            <h1 className="text-3xl font-display font-semibold leading-tight tracking-tight sm:text-5xl">
-              Où voulez-vous aller <span className="gradient-text-gold">au Maroc ?</span>
-            </h1>
-            <p className="mx-auto mt-2 max-w-md text-sm text-[#475569] sm:text-base">
-              Entrez vos deux villes : itinéraire, ferry et budget en un instant.
-            </p>
-          </div>
-
-          <div className="mt-6 animate-scale-in">
-            <RouteSearch />
-            <RouteJourney />
-          </div>
-
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs font-bold text-[#475569]">
-            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={15} className="text-[#b45309]" /> Gratuit</span>
-            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={15} className="text-[#b45309]" /> Sans inscription</span>
-            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={15} className="text-[#b45309]" /> Pensé mobile</span>
-          </div>
+      <nav className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-4">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#0f1f3d] font-black text-[#f59e0b]">R</span>
+          <span className="text-base font-black tracking-tight">RME <span className="font-medium text-[#b45309]">Voyage</span></span>
+        </Link>
+        <div className="flex items-center gap-1">
+          <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-slate-600 transition hover:bg-black/5 hover:text-[#0f1f3d] sm:block">Guide</Link>
+          <LanguageSwitcher />
         </div>
-      </section>
+      </nav>
 
-      <TravelHub />
+      <div className="mx-auto max-w-2xl px-4 pb-16">
+        <section id="planifier" className="scroll-mt-4">
+          <h1 className="mb-4 font-display text-[2rem] font-semibold leading-[1.1] tracking-tight sm:text-5xl">
+            Votre voyage <span className="text-[#b45309]">au Maroc</span>, étape par étape.
+          </h1>
+          <RouteSearch />
+        </section>
 
-      {/* Coût — juste après le trajet : DESTINATION → TRAJET → COÛT. Vert
-          Atlas pâle plutôt que gris neutre : une section qu'on identifie
-          d'un coup d'œil, un peu de couleur au lieu du "tout blanc". */}
-      <section id="route" className="scroll-mt-4 border-b border-slate-200 bg-atlas-100 py-10">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
+        <section id="route" aria-labelledby="cout-title" className="mt-12 scroll-mt-4">
+          <StepHeader id="cout-title" step={3} title="Le coût" text="Carburant pays par pays, aux prix officiels." />
           <TripDecisionEngine />
-        </div>
-      </section>
+        </section>
 
-      {/* RME Live — compact, useful, and intentionally secondary to the journey */ }
-      <section aria-label="RME Live" className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2.5 sm:px-8">
-          <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-red-700">
-            🔴 RME Live
-          </span>
-          <div className="min-w-0 overflow-hidden">
-            <div className="flex min-w-max animate-[marquee_32s_linear_infinite] gap-8 text-xs font-semibold text-slate-600">
-              {[...liveTicker, ...liveTicker].map((item, index) => (
-                <span key={index} className="whitespace-nowrap">{item}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Daily Widget — hijri date, Ramadan countdown, personalized weather */}
-      <DailyWidget />
-
-      {/* Benefits Section */}
-      <section className="border-b border-[#e2e8f0] bg-white py-8">
-        <div className="mx-auto grid max-w-6xl gap-6 px-5 sm:grid-cols-3 sm:px-8">
-          {benefits.map(({ icon: Icon, title, text }) => (
-            <article key={title} className="flex gap-4 card-hover">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#e0f2fe] text-[#0369a1]">
-                <Icon size={21} />
-              </span>
-              <div>
-                <h2 className="font-extrabold">{title}</h2>
-                <p className="mt-1 text-sm leading-6 text-[#475569]">{text}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* Hadak AI Section */}
-      <section className="border-y border-amber-100 bg-amber-50/50 py-12">
-        <div className="mx-auto max-w-4xl px-5 sm:px-8">
-          <div className="flex flex-col items-center text-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#f59e0b]">
-                <Sparkles size={22} className="text-[#0f1f3d]" />
-              </div>
-              <div className="text-left">
-                <p className="text-xl font-extrabold text-[#0f1f3d] tracking-tight">Hadak AI</p>
-                <p className="text-xs text-[#92400e] font-semibold">Ton assistant voyage MRE</p>
-              </div>
-            </div>
-            <p className="text-[#334155] text-base max-w-lg">
-              Dis-lui où tu veux aller — il prépare tout : météo, prières, change, ferry, documents.
-            </p>
-            <div className="flex flex-wrap justify-center gap-2.5 mt-1">
-              {[
-                { label: '🗺️ Prépare-moi un voyage à Taza', msg: 'Prépare-moi un voyage à Taza' },
-                { label: '🌤️ Météo à Agadir', msg: 'Météo à Agadir' },
-                { label: '🕌 Prières à Marrakech', msg: 'Horaires de prière à Marrakech' },
-                { label: '💶 Taux dirham', msg: 'Combien vaut 100 euros en dirhams ?' },
-                { label: '⛴️ Ferry Algeciras', msg: 'Ferry Algeciras Tanger' },
-                { label: '⚽ Wydad ce soir ?', msg: 'Qui va gagner le match Wydad ce soir ?' },
-              ].map(({ label, msg }) => (
-                <button
-                  key={msg}
-                  onClick={() => window.dispatchEvent(new CustomEvent('hadak:open-with-message', { detail: msg }))}
-                  className="rounded-full border border-amber-300 bg-white px-4 py-2 text-sm font-semibold text-[#92400e] transition hover:bg-amber-100 hover:border-amber-400"
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Spiritual & Services Section — léger violet Jacaranda, comme le vert
-          Atlas plus haut : une section de plus qui se repère d'un regard. */}
-      <section id="maroc" className="scroll-mt-4 bg-jacaranda-50 py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">En route</p>
-            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">Les repères qui comptent.</h2>
-            <p className="mt-4 text-lg leading-8 text-[#475569]">
-              Prières, Qibla, actualités Maroc et services pratiques pour un voyage serein.
-            </p>
-          </div>
-          <div className="space-y-6">
-            <div className="grid gap-6 lg:grid-cols-2">
-              <PrayerWidget />
-              <QiblaCompass />
-            </div>
-            <CurrencyConverter />
-            <NewsFeed />
-            <ServicesMap />
-            <div id="preparer" className="scroll-mt-4">
-              <TravelChecklist />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="mb-12 text-center">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Tout-en-un</p>
-            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">Un seul outil. Tout votre voyage.</h2>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, text }) => (
-              <article key={title} className="rounded-2xl border border-[#e2e8f0] p-6 card-hover">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#e0f2fe] text-[#0369a1]">
-                  <Icon size={24} />
-                </div>
-                <h3 className="mt-4 text-lg font-extrabold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#475569]">{text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="border-y border-slate-200 bg-white py-20">
-        <div className="mx-auto max-w-4xl px-5 text-center sm:px-8">
-          <h2 className="text-4xl font-display font-semibold tracking-tight text-[#0f1f3d] sm:text-5xl">
-            Partez du bon pied. Préparez maintenant.
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-[#334155]">
-            Gratuit, sans inscription. Tous les outils essentiels pour voyager entre l'Europe et le Maroc.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <a href="#planifier" className="inline-flex items-center gap-2 rounded-full bg-[#f59e0b] px-6 py-3.5 font-extrabold text-[#0f1f3d] transition hover:bg-[#fde68a]">
-              Tester l'application <ArrowRight size={18} />
-            </a>
-            <Link href="/guide" className="rounded-full border border-slate-300 px-6 py-3.5 font-bold text-[#0f1f3d] transition hover:bg-slate-50">
-              Voir le guide
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Widgets Suite Section */}
-      <section className="py-16 bg-gradient-to-b from-[#f5f7fa] to-[#e2e8f0]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#b45309]">Suite d'outils</p>
-            <h2 className="mt-3 font-[family-name:var(--font-jakarta)] text-3xl font-extrabold tracking-tight text-[#0f1f3d] sm:text-4xl">
-              15+ widgets intelligents dans une seule app
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-[#475569]">
-              Hadak ne parle pas seulement — il agit. Chaque widget résout un problème réel de voyage entre l'Europe et le Maroc.
-            </p>
-          </div>
-
-          {/* Weather + Calendar */}
-          <div className="mt-12 grid gap-6 sm:grid-cols-2">
-            <WeatherMorocco />
-            <MoroccanCalendar />
-          </div>
-
-          {/* Darija Phrasebook + Customs */}
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <DarijaPhrasebook />
+        <section id="preparer" aria-labelledby="docs-title" className="mt-12 scroll-mt-4">
+          <StepHeader id="docs-title" step={4} title="Documents et douane" text="Ce qu'il faut avoir avant de partir." />
+          <div className="space-y-4">
+            <TravelChecklist />
             <CustomsCalculator />
           </div>
+        </section>
 
-          {/* Emergency + Zakaat */}
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <section id="meteo" aria-labelledby="meteo-title" className="mt-12 scroll-mt-4">
+          <StepHeader id="meteo-title" step={5} title="La météo" text="À l'arrivée, ville par ville." />
+          <WeatherMorocco />
+        </section>
+
+        <section id="services" aria-labelledby="services-title" className="mt-12 scroll-mt-4">
+          <StepHeader id="services-title" step={6} title="Sur la route" text="Stations, aires et contacts utiles." />
+          <div className="space-y-4">
+            <ServicesMap />
             <EmergencyContacts />
-            <ZakaatCalculator />
           </div>
+        </section>
 
-          {/* TimeZone + Fuel */}
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <TimeZoneSIM />
-            <FuelPriceComparator />
+        <section aria-labelledby="hadak-title" className="mt-12 rounded-3xl bg-[#0f1f3d] p-5 text-white">
+          <h2 id="hadak-title" className="text-lg font-extrabold">Une question sur votre voyage ?</h2>
+          <p className="mt-1 text-sm text-white/70">Hadak répond en français, darija, arabe, anglais ou espagnol.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {[
+              { label: 'Quel ferry pour Tanger ?', msg: 'Ferry Algeciras Tanger' },
+              { label: 'Combien de dirhams pour 100 € ?', msg: 'Combien vaut 100 euros en dirhams ?' },
+              { label: 'Que dit la douane ?', msg: 'Quelle franchise douane au Maroc ?' },
+            ].map(({ label, msg }) => (
+              <button
+                key={msg}
+                type="button"
+                onClick={() => askHadak(msg)}
+                className="min-h-11 rounded-full bg-white/10 px-4 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/20"
+              >
+                {label}
+              </button>
+            ))}
           </div>
+        </section>
 
-          {/* Smart Packing */}
-          <div className="mt-6">
-            <SmartPacking />
-          </div>
-
-          {/* RME Sport — unified match hub */}
-          <div id="sport-tv" className="mt-6 scroll-mt-4"><SportsHub /></div>
-
-          {/* Faical Football Picks */}
-          <div className="mt-6">
-            <FaicalWidget />
-          </div>
-
-          {/* RME TV — discover official/public broadcasts without pretending to host rights-restricted streams */}
-          <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white">
-            <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[.16em] text-[#b45309]">RME TV</p>
-                <h3 className="mt-1 text-2xl font-black tracking-tight text-[#0f1f3d]">Télévision, sport et direct au même endroit.</h3>
-                <p className="mt-1 text-sm leading-6 text-slate-500">Retrouvez les chaînes et diffusions publiques ou officielles, sans reproduire les flux protégés.</p>
-              </div>
-            </div>
-            <div className="p-4 sm:p-5">
+        <section aria-labelledby="outils-title" className="mt-12">
+          <h2 id="outils-title" className="font-display text-2xl font-semibold tracking-tight">Le reste, quand vous en avez besoin</h2>
+          <div className="mt-4 space-y-3">
+            <ToolDrawer id="maroc" icon="🕌" title="Prières et Qibla" text="Horaires, direction de La Mecque, actualités du Maroc">
+              <DailyWidget />
+              <PrayerWidget />
+              <QiblaCompass />
+              <MoroccanCalendar />
+              <NewsFeed />
+            </ToolDrawer>
+            <ToolDrawer id="argent" icon="💶" title="Argent" text="Change, envois d'argent, zakat">
+              <CurrencyConverter />
+              <RemittanceComparator />
+              <ZakaatCalculator />
+            </ToolDrawer>
+            <ToolDrawer id="sur-place" icon="📱" title="Sur place" text="Carte SIM, heure, darija, carburant">
+              <TimeZoneSIM />
+              <DarijaPhrasebook />
+              <FuelPriceComparator />
+              <SmartPacking />
+            </ToolDrawer>
+            <ToolDrawer id="sport-tv" icon="⚽" title="Sport et TV" text="Matchs, chaînes, analyses">
+              <SportsHub />
+              <FaicalWidget />
               <TVWidget />
-            </div>
+            </ToolDrawer>
+            <ToolDrawer id="boutique" icon="🛍️" title="Boutique et services" text="Caftans, traiteurs, colis, garages">
+              <MarwaCaftanWidget />
+              <MouniaWidget />
+              <ColisWidget />
+              <ServicesProWidget />
+              <Link href="/boutique" className="inline-flex min-h-11 items-center rounded-full bg-[#0f1f3d] px-5 text-sm font-extrabold text-white">Voir toute la boutique →</Link>
+            </ToolDrawer>
+            <ToolDrawer id="partenaires" icon="🤝" title="Réserver" text="Vols, hôtels, voitures chez nos partenaires">
+              {/* Public links first; PartnerComparison asks /api/partners for the
+                  configured ones after hydration. */}
+              <PartnerComparison partners={getPartnerCatalogue({})} />
+            </ToolDrawer>
+            <ToolDrawer id="nouvelles" icon="✉️" title="Rester informé" text="Les nouveautés de RME, et le livre de Tarek">
+              <NewsletterSection />
+              <BookBanner />
+            </ToolDrawer>
           </div>
-        </div>
-      </section>
-
-      {/* Boutiques & Services Section */}
-      <section id="services" className="scroll-mt-4 py-16 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#b45309]">Boutiques & Services</p>
-            <h2 className="mt-3 font-[family-name:var(--font-jakarta)] text-3xl font-extrabold tracking-tight text-[#0f1f3d] sm:text-4xl">
-              Le Maroc jusqu'à votre porte
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-[#475569]">
-              Caftans, traiteurs, mobilité et garages — des partenaires vérifiés de la France jusqu'au Maroc.
-            </p>
-          </div>
-
-          <Reveal className="mt-12 grid gap-6 lg:grid-cols-2 lg:items-start">
-            <MarwaCaftanWidget />
-            <MouniaWidget />
-          </Reveal>
-
-          <Reveal className="mt-6" delay={80}>
-            <ColisWidget />
-          </Reveal>
-
-          <Reveal className="mt-6" delay={80}>
-            <ServicesProWidget />
-          </Reveal>
-
-          <div className="mt-10 text-center">
-            <Link
-              href="/boutique"
-              className="inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-7 py-3.5 font-extrabold text-white transition hover:bg-[#1e3a5f]"
-            >
-              Voir toute la Boutique <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Monétisation & transferts — étape commerciale finale, après voyage, outils et services. */}
-      {/* Remittance Section — hero product, investor highlight */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">Produit phare</p>
-            <h2 className="mt-3 text-4xl font-display font-semibold tracking-tight sm:text-5xl">
-              Comparer les transferts EUR → MAD.
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-[#475569]">
-              Les MRE ont envoyé <strong>plus de 122 milliards de dirhams</strong> au Maroc en 2025 (Office des changes).
-              RME Voyage fournit un taux de change indicatif et des estimations de coûts. Certains liens vers des prestataires peuvent être affiliés.
-            </p>
-          </div>
-          <RemittanceComparator />
-        </div>
-      </section>
-
-
-      {/* Affiliate Comparison — one neutral marketplace layer for every travel vertical */}
-      <section className="bg-slate-50 py-12">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          {/* Public links first; PartnerComparison asks /api/partners for the
-              configured ones after hydration. */}
-          <PartnerComparison partners={getPartnerCatalogue({})} />
-        </div>
-      </section>
-
-
-      <BookBanner />
-
-      {/* Newsletter Section */}
-      <NewsletterSection />
+        </section>
+      </div>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50 px-5 py-12 text-[#475569]">
+      <footer className="border-t border-black/5 bg-[#efebe2] px-5 py-12 text-[#475569]">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
@@ -453,29 +186,11 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-[#0f1f3d]">Fonctionnalités</h3>
+              <h3 className="font-bold text-[#0f1f3d]">Partenaires</h3>
               <ul className="mt-3 space-y-2 text-sm">
-                <li>Comparateur Transferts EUR→MAD</li>
-                <li>Recherche de trajet</li>
-                <li>Calculateur de budget</li>
-                <li>Horaires de prière</li>
-                <li>Direction Qibla</li>
-                <li>Flux d'actualités Maroc</li>
-                <li>Météo Maroc</li>
-                <li>Phrasebook Darija</li>
-                <li>Douane : limites officielles</li>
-                <li>SOS Ambassades</li>
-                <li>Calendrier Marocain</li>
-                <li>Calculateur Zakat</li>
-                <li>Smart Packing</li>
-                <li>Assistant Hadak IA</li>
-                <li>Pronos de Faical ⚽</li>
-                <li>TV Gratuite — 20+ chaînes</li>
-                <li><Link href="/marwa-caftan" className="inline-block py-1.5 hover:text-[#0f1f3d]">Marwa Caftan — Location & Vente 👗</Link></li>
-                <li>Traiteurs · Mobilité · Garages</li>
-                <li>Colis &amp; Groupage Maroc 📦</li>
-                <li><Link href="/belisamae" className="inline-block py-1.5 hover:text-[#0f1f3d]">Belisamae — Bien-être 🌿</Link></li>
-                <li><Link href="/afarah-nassim" className="inline-block py-1.5 hover:text-[#0f1f3d]">Afarah Nassim — Traiteur 🍽️</Link></li>
+                <li><Link href="/marwa-caftan" className="inline-block py-1.5 hover:text-[#0f1f3d]">Marwa Caftan</Link></li>
+                <li><Link href="/belisamae" className="inline-block py-1.5 hover:text-[#0f1f3d]">Belisamae</Link></li>
+                <li><Link href="/afarah-nassim" className="inline-block py-1.5 hover:text-[#0f1f3d]">Afarah Nassim</Link></li>
               </ul>
             </div>
             <div>

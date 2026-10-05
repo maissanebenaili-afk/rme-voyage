@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import BookingCards from "./BookingCards";
 import CityAutocomplete from "./CityAutocomplete";
 import InteractiveMapWrapper from "./InteractiveMapWrapper";
-import { Navigation, Calendar, ExternalLink, Share2, Route as RouteIcon } from "lucide-react";
+import { ArrowRight, Car, ExternalLink, MapPin, Plane, Share2, Ship } from "lucide-react";
+import JourneySummary from "./home/JourneySummary";
+import StepHeader from "./home/StepHeader";
+import RouteJourney from "./RouteJourney";
+import { flagFor } from "@/lib/journey";
 import type { CitySuggestion } from "@/lib/geocoding";
 import type { RouteInfo, RoutePoint } from "./InteractiveMap";
 import {
@@ -184,55 +188,73 @@ export default function RouteSearch() {
     scheduleReset();
   }
 
+  const originFlag = flagFor(origin);
+  const destinationFlag = flagFor(destination);
+  const fieldClass =
+    "mt-1 w-full min-h-[44px] rounded-xl border border-white/15 bg-white/10 px-3 text-sm font-semibold text-white [color-scheme:dark] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]";
+
   return (
     <>
-      <section className="rounded-2xl border bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
-          <Navigation size={16} className="text-emerald-600" />
-          Départ et destination
+      <section aria-label="Votre trajet" className="rounded-[28px] bg-[#0f1f3d] p-5 text-white shadow-xl shadow-[#0f1f3d]/25 sm:p-7">
+        <div className="relative pl-10">
+          <span aria-hidden="true" className="absolute bottom-7 left-[15px] top-7 border-l-2 border-dashed border-white/25" />
+          <div className="relative">
+            <span aria-hidden="true" className="absolute -left-10 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/10 text-base ring-1 ring-white/15">
+              {originFlag ?? <span className="h-2 w-2 rounded-full bg-white/70" />}
+            </span>
+            <CityAutocomplete
+              variant="journey"
+              label="Départ"
+              value={origin}
+              placeholder="Ville de départ"
+              onChange={(v) => {
+                setOrigin(v);
+                setOriginCity(null);
+                publishRoute(null);
+              }}
+              onSelect={(result) => setOriginCity(result)}
+            />
+          </div>
+          <div aria-hidden="true" className="my-3 flex items-center gap-2 text-white/45">
+            {transportMode === "flight" ? <Plane size={16} /> : <Car size={16} />}
+            {transportMode !== "flight" && <Ship size={16} />}
+          </div>
+          <div className="relative">
+            <span aria-hidden="true" className="absolute -left-10 top-4 grid h-8 w-8 place-items-center rounded-full bg-[#f59e0b] text-base text-[#0f1f3d]">
+              {destinationFlag ?? <MapPin size={15} />}
+            </span>
+            <CityAutocomplete
+              variant="journey"
+              label="Destination"
+              value={destination}
+              placeholder="Ville d'arrivée"
+              onChange={(v) => {
+                setDestination(v);
+                setDestinationCity(null);
+                publishRoute(null);
+              }}
+              onSelect={(result) => setDestinationCity(result)}
+            />
+          </div>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <CityAutocomplete
-            label="Départ"
-            value={origin}
-            placeholder="Ville de départ"
-            onChange={(v) => {
-              setOrigin(v);
-              setOriginCity(null);
-              publishRoute(null);
-            }}
-            onSelect={(result) => setOriginCity(result)}
-          />
-          <CityAutocomplete
-            label="Destination"
-            value={destination}
-            placeholder="Ville d'arrivée"
-            onChange={(v) => {
-              setDestination(v);
-              setDestinationCity(null);
-              publishRoute(null);
-            }}
-            onSelect={(result) => setDestinationCity(result)}
-          />
-          <label className="text-sm font-medium">
-            <span className="flex items-center gap-1 text-xs text-slate-500">
-              <Calendar size={12} /> Date
-            </span>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <label className="text-[11px] font-bold uppercase tracking-[.14em] text-white/55">
+            Date
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="mt-1 w-full min-h-[44px] rounded-xl border p-3"
+              className={fieldClass}
               aria-label="Date"
             />
           </label>
-          <label className="text-sm font-medium">
-            <span className="text-xs text-slate-500">Mode de transport</span>
+          <label className="text-[11px] font-bold uppercase tracking-[.14em] text-white/55">
+            Mode
             <select
               value={transportMode}
               onChange={(e) => setTransportMode(e.target.value)}
-              className="mt-1 w-full min-h-[44px] rounded-xl border bg-white p-3"
+              className={fieldClass}
               aria-label="Mode de transport"
             >
               <option value="car">Voiture</option>
@@ -243,7 +265,7 @@ export default function RouteSearch() {
         </div>
 
         {(validation.errors.origin || validation.errors.destination || validation.errors.date) && (
-          <ul className="mt-3 space-y-1 text-xs text-terracotta-600">
+          <ul className="mt-3 space-y-1 text-sm font-semibold text-[#fca5a5]">
             {validation.errors.origin && <li>{validation.errors.origin}</li>}
             {validation.errors.destination && <li>{validation.errors.destination}</li>}
             {validation.errors.date && <li>{validation.errors.date}</li>}
@@ -251,32 +273,32 @@ export default function RouteSearch() {
         )}
 
         {transportMode === "flight" && (
-          <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
-            ✈️ La recherche de vols arrive bientôt. En attendant, consultez Google Flights ou Skyscanner.
+          <p className="mt-4 rounded-2xl bg-white/10 px-4 py-3 text-sm text-white/85">
+            ✈️ Comparez les vols juste en dessous, à l’étape « Ferry et vols ».
           </p>
         )}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {/* L'API compose route + traversée pour l'Europe ↔ Maroc : même calcul en « voiture + ferry ». */}
-          {validation.valid && transportMode !== "flight" && (
-            <button
-              type="button"
-              onClick={calculateRoute}
-              disabled={routeStatus === "loading"}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <RouteIcon size={16} />
-              {routeStatus === "loading" ? "Calcul en cours…" : "Calculer l'itinéraire"}
-            </button>
-          )}
+        {/* L'API compose route + traversée pour l'Europe ↔ Maroc : même calcul en « voiture + ferry ». */}
+        {validation.valid && transportMode !== "flight" && (
+          <button
+            type="button"
+            onClick={calculateRoute}
+            disabled={routeStatus === "loading"}
+            className="mt-5 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/20 transition hover:bg-[#fbbf24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {routeStatus === "loading" ? "Calcul en cours…" : <>Voir mon voyage <ArrowRight size={18} aria-hidden="true" /></>}
+          </button>
+        )}
+
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-sm font-semibold text-white/75">
           {directionsUrl && (
             <a
               href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-sable-300 bg-sable-50 px-4 py-2.5 text-sm font-semibold text-zellige-800 transition hover:bg-sable-100"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white"
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={15} aria-hidden="true" />
               Ouvrir dans Google Maps
             </a>
           )}
@@ -284,31 +306,21 @@ export default function RouteSearch() {
             type="button"
             onClick={handleShare}
             disabled={!validation.valid}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-sable-300 bg-sable-50 px-4 py-2.5 text-sm font-semibold text-zellige-800 transition hover:bg-sable-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Share2 size={16} />
+            <Share2 size={15} aria-hidden="true" />
             Partager mon trajet
           </button>
-          {shareState.status === "shared" && (
-            <span className="inline-flex min-h-[44px] items-center text-sm text-zellige-700">
-              Partage effectué !
-            </span>
-          )}
-          {shareState.status === "copied" && (
-            <span className="inline-flex min-h-[44px] items-center text-sm text-zellige-700">
-              Lien copié !
-            </span>
-          )}
-          {shareState.status === "cancelled" && (
-            <span className="inline-flex min-h-[44px] items-center text-sm text-slate-500">
-              Partage annulé.
-            </span>
-          )}
+        </div>
+        <div role="status" className="text-center text-sm font-semibold text-[#fcd34d]">
+          {shareState.status === "shared" && "Partage effectué !"}
+          {shareState.status === "copied" && "Lien copié !"}
+          {shareState.status === "cancelled" && <span className="text-white/60">Partage annulé.</span>}
         </div>
 
         {shareState.status === "manual" && (
           <div className="mt-3">
-            <label className="text-xs font-medium text-slate-500" htmlFor="rme-share-link-fallback">
+            <label className="text-xs font-medium text-white/70" htmlFor="rme-share-link-fallback">
               Copie automatique indisponible — copiez ce lien manuellement :
             </label>
             <input
@@ -317,32 +329,47 @@ export default function RouteSearch() {
               readOnly
               value={shareState.url}
               onFocus={(e) => e.currentTarget.select()}
-              className="mt-1 w-full min-h-[44px] rounded-xl border p-3 text-sm text-slate-600"
+              className="mt-1 w-full min-h-[44px] rounded-xl bg-white p-3 text-sm text-slate-700"
             />
           </div>
         )}
 
-        <p className="mt-3 text-xs text-slate-400">
+        <p className="mt-2 text-center text-xs text-white/45">
           Le lien contient les villes et, si renseignée, la date. Ne le partagez qu’avec les
           personnes de votre choix.
         </p>
       </section>
+      {/* Le résumé du voyage ouvre le résultat : c'est lui qu'on ramène à l'écran. */}
       <div ref={resultRef} className="scroll-mt-4">
+        <JourneySummary />
+        <div className="mt-10">
+        <StepHeader
+          step={1}
+          title="La route"
+          text={routeStatus === "idle" ? "Appuyez sur « Voir mon voyage » pour tracer l’itinéraire." : "Le tracé calculé, étape par étape."}
+        />
         {routeStatus !== "idle" && (
+          <div>
           <InteractiveMapWrapper
             status={routeStatus}
             routeGeometry={routeGeometry}
             routeInfo={routeInfo}
             errorMessage={routeError}
           />
+          <RouteJourney />
+          </div>
         )}
+        </div>
       </div>
+      <section id="ferry" aria-labelledby="ferry-title" className="mt-10 scroll-mt-4">
+      <StepHeader id="ferry-title" step={2} title="Ferry et vols" text="Comparez les traversées et les vols chez les compagnies." />
       <BookingCards
         origin={origin}
         destination={destination}
         date={date || undefined}
         crossing={routeStatus === "ready" ? routeInfo?.ferry : undefined}
       />
+      </section>
     </>
   );
 }

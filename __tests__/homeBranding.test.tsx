@@ -33,18 +33,8 @@ describe("Homepage branding", () => {
     expect(screen.getAllByText(/RME/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Voyage/).length).toBeGreaterThan(0);
 
-    // Hero headline introduced by the planner-first redesign: the real
-    // trip planner sits directly under it, not a marketing pitch.
-    expect(
-      screen.getByRole("heading", {
-        name: /Où voulez-vous aller.*au Maroc/i,
-      }),
-    ).toBeTruthy();
-
-    // Hero subtext describing the value proposition.
-    expect(
-      screen.getByText(/itinéraire, ferry et budget en un instant/i),
-    ).toBeTruthy();
+    // V2: the trip is the hero, the planner sits directly under the headline.
+    expect(screen.getByRole("heading", { level: 1, name: /Votre voyage.*au Maroc/i })).toBeTruthy();
 
     // Legacy product name must not resurface.
     expect(screen.queryByText(/MRE Route/i)).toBeNull();
@@ -53,17 +43,39 @@ describe("Homepage branding", () => {
     expect(screen.queryByText(/Smart Packing IA/i)).toBeNull();
   });
 
-  it("hub links land on existing sections, and the existing modules are all still there", () => {
+  it("follows the trip order and drops the pitch blocks that made the page a catalogue", () => {
     const { container } = render(<Home />);
 
-    for (const anchor of ["planifier", "preparer", "route", "maroc", "sport-tv", "services"]) {
+    // Route and ferry live inside the planner; then cost → documents → weather → services.
+    const steps = ["planifier", "route", "preparer", "meteo", "services"].map((id) => container.querySelector(`#${id}`)!);
+    steps.forEach((el) => expect(el).not.toBeNull());
+    for (let i = 1; i < steps.length; i++) {
+      expect(steps[i - 1].compareDocumentPosition(steps[i]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+
+    // A "🔴 RME Live" banner scrolling generic topics had no live data behind it.
+    expect(screen.queryByText(/RME Live/)).toBeNull();
+    expect(screen.queryByText(/15\+ widgets/)).toBeNull();
+    expect(screen.queryByText(/Un seul outil\. Tout votre voyage/)).toBeNull();
+  });
+
+  it("keeps every existing module, the rest folded into drawers that Hadak links can still reach", () => {
+    const { container } = render(<Home />);
+
+    for (const anchor of ["planifier", "preparer", "route", "maroc", "sport-tv", "services", "argent", "boutique"]) {
       expect(container.querySelectorAll(`#${anchor}`)).toHaveLength(1);
     }
     expect(container.querySelector("#preparer")).toHaveTextContent(/Checklist voyage/i);
     expect(screen.getByText("Liste de bagages intelligente")).toBeInTheDocument();
     expect(container.querySelector("#sport-tv")).toHaveTextContent("Le match, les chaînes, les analyses.");
-    expect(container.querySelector("#services")).toHaveTextContent("MarwaCaftanWidget");
+    expect(container.querySelector("#boutique")).toHaveTextContent("MarwaCaftanWidget");
+    expect(container.querySelector("#argent")).toHaveTextContent("RemittanceComparator");
     expect(screen.getByText("TVWidget")).toBeInTheDocument();
+
+    // Drawers start closed: the home page shows the trip, not 25 widgets.
+    for (const id of ["maroc", "argent", "sport-tv", "boutique"]) {
+      expect(container.querySelector(`details#${id}`)).not.toHaveAttribute("open");
+    }
   });
 
   it("links the privacy policy and terms from every home page visit (store requirement)", () => {
