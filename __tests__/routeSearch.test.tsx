@@ -324,6 +324,18 @@ describe('RouteSearch result on a phone', () => {
     expect(scroll).toHaveBeenCalledTimes(1)
   })
 
+  it('brings the trip summary up when only its title shows at the bottom of the screen', async () => {
+    global.fetch = jest.fn(() => new Promise(() => {})) as unknown as typeof fetch
+    const scroll = jest.fn()
+    Element.prototype.scrollIntoView = scroll
+    jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 693 } as DOMRect)
+    Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/ }))
+    await screen.findByText(/Calcul en cours/)
+    expect(scroll).toHaveBeenCalledWith(expect.objectContaining({ block: 'start' }))
+  })
+
   it('does not move the page when the result is already visible', async () => {
     global.fetch = jest.fn(() => new Promise(() => {})) as unknown as typeof fetch
     const scroll = jest.fn()

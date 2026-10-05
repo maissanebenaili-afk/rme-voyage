@@ -112,7 +112,9 @@ export default function RouteSearch() {
     const el = resultRef.current;
     if (!el || typeof el.scrollIntoView !== "function") return;
     const { top } = el.getBoundingClientRect();
-    if (top >= 0 && top < window.innerHeight - 80) return;
+    // The trip summary opens the result: it must be readable, not just its
+    // title peeking at the bottom (measured at 693 px on an 844 px screen).
+    if (top >= 0 && top < window.innerHeight / 2) return;
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   }, [routeStatus]);
