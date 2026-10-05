@@ -204,11 +204,14 @@ const KNOWLEDGE: Record<TopicKey, Topic> = {
   cost: {
     keywords: ['coût', 'prix', 'budget', 'price', 'cost', 'money', 'argent', 'تكلفة', 'ثمن', 'ميزانية', 'precio', 'coste', 'presupuesto', 'cher', 'ghali'],
     answers: {
-      da: 'L\'budget dyal safari Paris-Tanger: carburant 250-350€, péages 70-100€ f France/España, ferry 80-200€, masakin 50-100€ f l\'leil. Total approximatif: 500-800€ 3la l\'voyage kamla. Kheddem l\'calculette dyal l\'costs fo9!',
-      fr: 'Budget estimé Paris-Tanger : carburant 250-350€, péages 70-100€ en France/Espagne, ferry 80-200€, hébergement 50-100€/nuit. Total approx. : 500-800€ pour le trajet. Utilise le calculateur de coûts en haut !',
-      en: 'Estimated budget Paris-Tangier: fuel €250-350, tolls €70-100 in France/Spain, ferry €80-200, lodging €50-100/night. Approx. total: €500-800. Use the cost calculator at the top!',
-      ar: 'الميزانية المقدرة باريس-طنجة: الوقود 250-350 يورو، الرسوم 70-100 يورو في فرنسا/إسبانيا، العبارة 80-200 يورو، الإقامة 50-100 يورو/ليلة. الإجمالي التقريبي: 500-800 يورو. استخدم حاسبة التكاليف بالأعلى!',
-      es: 'Presupuesto estimado París-Tánger: combustible 250-350€, peajes 70-100€ en Francia/España, ferry 80-200€, alojamiento 50-100€/noche. Total aprox.: 500-800€. ¡Usa la calculadora de costes arriba!',
+      // Invented fuel, toll, ferry and total ranges until 2026-10-05, which
+      // could contradict the fuel cost RME computes from official prices.
+      // Tolls and ferry are not computed.
+      da: 'Budget dyal triq: RME kay7seb l-masafa, l-wa9t w lissans blad b blad b tmnan rasmiyin dyal l-Union européenne (calculette fo9). Péage, ferry w l-mbit ma dakhlinch: zidhom nta f calculette dyal budget.',
+      fr: 'Budget du trajet : RME calcule la distance, la durée et le carburant pays par pays à partir des prix officiels de l\'Union européenne (calculateur en haut de page). Péages, ferry et hébergement ne sont pas compris : ajoutez-les dans le calculateur de budget.',
+      en: 'Trip budget: RME works out distance, duration and fuel country by country from official EU prices (calculator at the top). Tolls, ferry and lodging are not included: add them in the budget calculator.',
+      ar: 'ميزانية الرحلة: يحسب RME المسافة والمدة والوقود بلداً بلداً انطلاقاً من الأسعار الرسمية للاتحاد الأوروبي (الحاسبة في أعلى الصفحة). رسوم الطريق والعبارة والإقامة غير محتسبة: أضفها في حاسبة الميزانية.',
+      es: 'Presupuesto del viaje: RME calcula distancia, duración y combustible país por país con los precios oficiales de la UE (calculadora arriba). Peajes, ferry y alojamiento no están incluidos: añádelos en la calculadora de presupuesto.',
     },
     followups: ['currency', 'fuel', 'documents'],
   },
