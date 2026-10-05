@@ -28,6 +28,7 @@ import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import StepHeader from '@/components/home/StepHeader';
 import ToolDrawer from '@/components/home/ToolDrawer';
+import TripNav from '@/components/home/TripNav';
 
 // Hadak et l'écran d'accueil embarquent framer-motion (~120 Ko). Aucun des
 // deux n'apparaît dans le HTML serveur (le splash démarre masqué, Hadak ne
@@ -47,34 +48,39 @@ const askHadak = (msg: string) => window.dispatchEvent(new CustomEvent('hadak:op
  */
 export default function Home() {
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#f6f3ec] text-[#0f1f3d]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#f6f3ec] text-[#0f1f3d]">
       <SplashScreen />
 
-      <nav className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-4">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#0f1f3d] font-black text-[#f59e0b]">R</span>
-          <span className="text-base font-black tracking-tight">RME <span className="font-medium text-[#b45309]">Voyage</span></span>
-        </Link>
-        <div className="flex items-center gap-1">
-          <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-slate-600 transition hover:bg-black/5 hover:text-[#0f1f3d] sm:block">Guide</Link>
-          <LanguageSwitcher />
-        </div>
-      </nav>
+      <div id="planifier" className="scroll-mt-0">
+        <RouteSearch
+          header={
+            <nav aria-label="Principal" className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-4">
+              <Link href="/" className="flex shrink-0 items-center gap-2.5">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#f59e0b] font-black text-[#0f1f3d]">R</span>
+                <span className="text-base font-black tracking-tight text-white">RME <span className="font-medium text-[#fcd34d]">Voyage</span></span>
+              </Link>
+              <div className="flex items-center gap-1 text-white">
+                <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/75 transition hover:bg-white/10 hover:text-white sm:block">Guide</Link>
+                <LanguageSwitcher />
+              </div>
+            </nav>
+          }
+          title={
+            <h1 className="font-display text-[2.6rem] font-semibold leading-none tracking-tight sm:text-6xl">
+              Votre voyage<span className="sr-only"> au Maroc, étape par étape</span>
+            </h1>
+          }
+          belowHero={<TripNav />}
+        />
+      </div>
 
-      <div className="mx-auto max-w-2xl px-4 pb-16">
-        <section id="planifier" className="scroll-mt-4">
-          <h1 className="mb-4 font-display text-[2rem] font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-            Votre voyage <span className="text-[#b45309]">au Maroc</span>, étape par étape.
-          </h1>
-          <RouteSearch />
-        </section>
-
-        <section id="route" aria-labelledby="cout-title" className="mt-12 scroll-mt-4">
+      <div className="mx-auto max-w-2xl px-5 pb-16">
+        <section id="route" aria-labelledby="cout-title" className="mt-14 scroll-mt-20">
           <StepHeader id="cout-title" step={3} title="Le coût" text="Un ordre de grandeur selon vos hypothèses. Une fois le trajet calculé, le carburant est compté pays par pays." />
           <TripDecisionEngine />
         </section>
 
-        <section id="preparer" aria-labelledby="docs-title" className="mt-12 scroll-mt-4">
+        <section id="preparer" aria-labelledby="docs-title" className="mt-14 scroll-mt-20">
           <StepHeader id="docs-title" step={4} title="Documents et douane" text="Ce qu'il faut avoir avant de partir." />
           <div className="space-y-4">
             <TravelChecklist />
@@ -82,13 +88,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="meteo" aria-labelledby="meteo-title" className="mt-12 scroll-mt-4">
+        <section id="meteo" aria-labelledby="meteo-title" className="mt-14 scroll-mt-20">
           <StepHeader id="meteo-title" step={5} title="La météo" text="À l'arrivée, ville par ville." />
           <WeatherMorocco />
         </section>
 
-        <section id="services" aria-labelledby="services-title" className="mt-12 scroll-mt-4">
-          <StepHeader id="services-title" step={6} title="Sur la route" text="Stations, aires et contacts utiles." />
+        <section id="services" aria-labelledby="services-title" className="mt-14 scroll-mt-20">
+          <StepHeader id="services-title" title="À proximité" text="Services utiles et numéros d'urgence." />
           <div className="space-y-4">
             <ServicesMap />
             <EmergencyContacts />

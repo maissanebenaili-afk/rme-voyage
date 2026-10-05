@@ -1,5 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import RouteSearch from '@/components/RouteSearch'
+import { publishRoute } from '@/lib/routeContext'
+
+// The computed route lives in a module store: start every test without one.
+beforeEach(() => publishRoute(null))
 
 // BookingCards fait de l'affiliation (hors périmètre) : on l'isole pour ne
 // tester que la logique propre à RouteSearch.
@@ -218,7 +222,7 @@ describe('RouteSearch', () => {
     global.fetch = fetchMock as unknown as typeof fetch
 
     render(<RouteSearch />)
-    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Continuer mon voyage/i }))
 
     expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'loading')
     await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'ready'))
@@ -236,7 +240,7 @@ describe('RouteSearch', () => {
     }) as unknown as typeof fetch
 
     render(<RouteSearch />)
-    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Continuer mon voyage/i }))
 
     await waitFor(() => expect(screen.getByTestId('map-mock')).toHaveAttribute('data-status', 'error'))
     expect(screen.getByTestId('map-mock')).toHaveAttribute('data-error', 'Destination introuvable : Nullepart')
@@ -244,9 +248,27 @@ describe('RouteSearch', () => {
 
   it('offers the route calculation in "Voiture + ferry" mode instead of a "coming soon" notice', () => {
     render(<RouteSearch />)
-    fireEvent.change(screen.getByLabelText('Mode de transport'), { target: { value: 'car-ferry' } })
-    expect(screen.getByRole('button', { name: /Voir mon voyage/i })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('radio', { name: 'Voiture + ferry' }))
+    expect(screen.getByRole('radio', { name: 'Voiture + ferry' })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('button', { name: /Continuer mon voyage/i })).toBeInTheDocument()
     expect(screen.queryByText(/arrive bientôt/)).not.toBeInTheDocument()
+  })
+
+  it('keeps one main action: in plane mode it leads to the flight comparison instead of computing a road', () => {
+    render(<RouteSearch />)
+    fireEvent.click(screen.getByRole('radio', { name: 'Avion' }))
+    expect(screen.queryByRole('button', { name: /Continuer mon voyage/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Comparer les vols/ })).toHaveAttribute('href', '#ferry')
+  })
+
+  it('shows the city big and its country small, while the field keeps the full value', () => {
+    render(<RouteSearch />)
+    const destination = screen.getByLabelText('Destination')
+    expect(destination).toHaveValue('Tanger, Maroc')
+    expect(screen.getByText('Tanger')).toBeInTheDocument()
+    expect(screen.getByText('Maroc')).toBeInTheDocument()
+    fireEvent.focus(destination)
+    expect(screen.queryByText('Maroc')).not.toBeInTheDocument()
   })
 
   it('computes the shared/deep-linked trip instead of only filling the fields', async () => {
@@ -301,7 +323,7 @@ describe('RouteSearch result on a phone', () => {
     jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 912 } as DOMRect)
     Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
     render(<RouteSearch />)
-    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Continuer mon voyage/ }))
     await waitFor(() => expect(scroll).toHaveBeenCalledWith(expect.objectContaining({ block: 'start' })))
   })
 
@@ -316,7 +338,7 @@ describe('RouteSearch result on a phone', () => {
     const rect = jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 16 } as DOMRect)
     Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
     render(<RouteSearch />)
-    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Continuer mon voyage/ }))
     await screen.findByText(/Calcul en cours/)
     expect(scroll).not.toHaveBeenCalled()
     rect.mockReturnValue({ top: -683 } as DOMRect)
@@ -331,7 +353,7 @@ describe('RouteSearch result on a phone', () => {
     jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 693 } as DOMRect)
     Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
     render(<RouteSearch />)
-    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Continuer mon voyage/ }))
     await screen.findByText(/Calcul en cours/)
     expect(scroll).toHaveBeenCalledWith(expect.objectContaining({ block: 'start' }))
   })
@@ -343,7 +365,7 @@ describe('RouteSearch result on a phone', () => {
     jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({ top: 300 } as DOMRect)
     Object.defineProperty(window, 'innerHeight', { value: 844, configurable: true })
     render(<RouteSearch />)
-    fireEvent.click(screen.getByRole('button', { name: /Voir mon voyage/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Continuer mon voyage/ }))
     await screen.findByText(/Calcul en cours/)
     expect(scroll).not.toHaveBeenCalled()
   })

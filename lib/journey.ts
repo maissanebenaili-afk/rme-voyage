@@ -19,14 +19,26 @@ function flagEmoji(code: string): string {
   return String.fromCodePoint(...code.toUpperCase().split('').map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
 }
 
-/** Drapeau du pays écrit après la virgule (« Paris, France ») ou d'une ville connue ; sinon null. */
-export function flagFor(place: string): string | null {
+/** Code pays (« FR ») écrit après la virgule ou d'une ville connue ; sinon null. */
+export function countryOf(place: string): string | null {
   const known = CITY_SUGGESTIONS.find((c) => normalize(c.displayName) === normalize(place));
-  if (known) return flagEmoji(known.countryCode);
+  if (known) return known.countryCode.toUpperCase();
   const parts = place.split(',');
   if (parts.length < 2) return null;
-  const code = CODE_BY_NAME.get(normalize(parts[parts.length - 1]));
+  return CODE_BY_NAME.get(normalize(parts[parts.length - 1])) ?? null;
+}
+
+/** Drapeau du pays écrit après la virgule (« Paris, France ») ou d'une ville connue ; sinon null. */
+export function flagFor(place: string): string | null {
+  const code = countryOf(place);
   return code ? flagEmoji(code) : null;
+}
+
+/** Vrai seulement si l'on sait qu'un seul des deux bouts est au Maroc (traversée du détroit). */
+export function crossesToMorocco(origin: string, destination: string): boolean {
+  const a = countryOf(origin);
+  const b = countryOf(destination);
+  return a !== null && b !== null && (a === 'MA') !== (b === 'MA');
 }
 
 /** Nom court d'une ville saisie : « Paris, France » → « Paris ». */

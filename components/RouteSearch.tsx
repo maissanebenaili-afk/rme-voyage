@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import BookingCards from "./BookingCards";
 import CityAutocomplete from "./CityAutocomplete";
 import InteractiveMapWrapper from "./InteractiveMapWrapper";
-import { ArrowRight, Car, ExternalLink, MapPin, Plane, Share2, Ship } from "lucide-react";
+import { ArrowRight, CalendarDays, Car, ExternalLink, Plane, Share2, Ship } from "lucide-react";
+import HeroArt from "./home/HeroArt";
+import RouteLine from "./home/RouteLine";
 import JourneySummary from "./home/JourneySummary";
 import StepHeader from "./home/StepHeader";
 import RouteJourney from "./RouteJourney";
-import { flagFor } from "@/lib/journey";
+import { crossesToMorocco, flagFor } from "@/lib/journey";
 import type { CitySuggestion } from "@/lib/geocoding";
 import type { RouteInfo, RoutePoint } from "./InteractiveMap";
 import {
@@ -18,7 +20,7 @@ import {
   shareTripLink,
   validateRoute,
 } from "@/lib/tripShare";
-import { publishRoute, toComputedRoute } from "@/lib/routeContext";
+import { publishRoute, toComputedRoute, useComputedRoute } from "@/lib/routeContext";
 import { parseRouteLegs } from "@/lib/routeLegs";
 import { trackFunnelEvent } from "@/lib/partnerTracking";
 
@@ -31,7 +33,7 @@ function ferryLabel(legs: unknown): string | undefined {
 
 type RouteCalcStatus = "idle" | "loading" | "error" | "ready";
 
-export default function RouteSearch() {
+export default function RouteSearch({ header, title, belowHero }: { header?: ReactNode; title?: ReactNode; belowHero?: ReactNode } = {}) {
   const [origin, setOrigin] = useState("Paris, France");
   const [destination, setDestination] = useState("Tanger, Maroc");
   const [date, setDate] = useState("");
@@ -57,6 +59,8 @@ export default function RouteSearch() {
   const [routeGeometry, setRouteGeometry] = useState<RoutePoint[] | undefined>(undefined);
   const [routeInfo, setRouteInfo] = useState<RouteInfo | undefined>(undefined);
   const [routeError, setRouteError] = useState<string | undefined>(undefined);
+  // Itinéraire publié et encore valable (toute modification de ville le retire).
+  const route = useComputedRoute();
 
   // Réhydratation depuis un lien partagé (/?from=...&to=...&date=...#planifier)
   // et depuis les pages /trajet/…. Paramètres invalides ou absents ignorés.
@@ -192,186 +196,210 @@ export default function RouteSearch() {
 
   const originFlag = flagFor(origin);
   const destinationFlag = flagFor(destination);
-  const fieldClass =
-    "mt-1 w-full min-h-[44px] rounded-xl border border-white/15 bg-white/10 px-3 text-sm font-semibold text-white [color-scheme:dark] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]";
+  const showsFerry = transportMode === "car-ferry" || (transportMode === "car" && crossesToMorocco(origin, destination));
+  const modes = [
+    { value: "car", label: "Voiture", Icon: Car },
+    { value: "car-ferry", label: "Voiture + ferry", Icon: Ship },
+    { value: "flight", label: "Avion", Icon: Plane },
+  ] as const;
 
   return (
     <>
-      <section aria-label="Votre trajet" className="rounded-[28px] bg-[#0f1f3d] p-5 text-white shadow-xl shadow-[#0f1f3d]/25 sm:p-7">
-        <div className="relative pl-10">
-          <span aria-hidden="true" className="absolute bottom-7 left-[15px] top-7 border-l-2 border-dashed border-white/25" />
-          <div className="relative">
-            <span aria-hidden="true" className="absolute -left-10 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/10 text-base ring-1 ring-white/15">
-              {originFlag ?? <span className="h-2 w-2 rounded-full bg-white/70" />}
-            </span>
-            <CityAutocomplete
-              variant="journey"
-              label="Départ"
-              value={origin}
-              placeholder="Ville de départ"
-              onChange={(v) => {
-                setOrigin(v);
-                setOriginCity(null);
-                publishRoute(null);
-              }}
-              onSelect={(result) => setOriginCity(result)}
-            />
+      <section aria-label="Votre trajet" className="rme-hero relative isolate text-white">
+        <HeroArt />
+        {header && <div className="relative">{header}</div>}
+        <div className="relative mx-auto max-w-2xl px-5 pb-10 pt-2 sm:pb-14 sm:pt-8">
+          {title}
+
+          <div className="mt-7 grid grid-cols-[minmax(0,1fr)_minmax(3.25rem,7rem)_minmax(0,1fr)] items-end gap-2">
+            <div className="min-w-0">
+              <span aria-hidden="true" className="mb-1 block h-7 text-2xl leading-7">{originFlag ?? ""}</span>
+              <CityAutocomplete
+                variant="journey"
+                label="Départ"
+                value={origin}
+                placeholder="Ville de départ"
+                onChange={(v) => {
+                  setOrigin(v);
+                  setOriginCity(null);
+                  publishRoute(null);
+                }}
+                onSelect={(result) => setOriginCity(result)}
+              />
+            </div>
+            <div className="pb-4">
+              <RouteLine mode={transportMode === "flight" ? "flight" : showsFerry ? "car-ferry" : "car"} />
+            </div>
+            <div className="min-w-0">
+              <span aria-hidden="true" className="mb-1 block h-7 text-right text-2xl leading-7">{destinationFlag ?? ""}</span>
+              <CityAutocomplete
+                variant="journey"
+                align="right"
+                label="Destination"
+                value={destination}
+                placeholder="Ville d'arrivée"
+                onChange={(v) => {
+                  setDestination(v);
+                  setDestinationCity(null);
+                  publishRoute(null);
+                }}
+                onSelect={(result) => setDestinationCity(result)}
+              />
+            </div>
           </div>
-          <div aria-hidden="true" className="my-3 flex items-center gap-2 text-white/45">
-            {transportMode === "flight" ? <Plane size={16} /> : <Car size={16} />}
-            {transportMode !== "flight" && <Ship size={16} />}
-          </div>
-          <div className="relative">
-            <span aria-hidden="true" className="absolute -left-10 top-4 grid h-8 w-8 place-items-center rounded-full bg-[#f59e0b] text-base text-[#0f1f3d]">
-              {destinationFlag ?? <MapPin size={15} />}
-            </span>
-            <CityAutocomplete
-              variant="journey"
-              label="Destination"
-              value={destination}
-              placeholder="Ville d'arrivée"
-              onChange={(v) => {
-                setDestination(v);
-                setDestinationCity(null);
-                publishRoute(null);
-              }}
-              onSelect={(result) => setDestinationCity(result)}
-            />
-          </div>
-        </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <label className="text-[11px] font-bold uppercase tracking-[.14em] text-white/55">
-            Date
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className={fieldClass}
-              aria-label="Date"
-            />
-          </label>
-          <label className="text-[11px] font-bold uppercase tracking-[.14em] text-white/55">
-            Mode
-            <select
-              value={transportMode}
-              onChange={(e) => setTransportMode(e.target.value)}
-              className={fieldClass}
-              aria-label="Mode de transport"
-            >
-              <option value="car">Voiture</option>
-              <option value="flight">Avion</option>
-              <option value="car-ferry">Voiture + ferry</option>
-            </select>
-          </label>
-        </div>
-
-        {(validation.errors.origin || validation.errors.destination || validation.errors.date) && (
-          <ul className="mt-3 space-y-1 text-sm font-semibold text-[#fca5a5]">
-            {validation.errors.origin && <li>{validation.errors.origin}</li>}
-            {validation.errors.destination && <li>{validation.errors.destination}</li>}
-            {validation.errors.date && <li>{validation.errors.date}</li>}
-          </ul>
-        )}
-
-        {transportMode === "flight" && (
-          <p className="mt-4 rounded-2xl bg-white/10 px-4 py-3 text-sm text-white/85">
-            ✈️ Comparez les vols juste en dessous, à l’étape « Ferry et vols ».
-          </p>
-        )}
-
-        {/* L'API compose route + traversée pour l'Europe ↔ Maroc : même calcul en « voiture + ferry ». */}
-        {validation.valid && transportMode !== "flight" && (
-          <button
-            type="button"
-            onClick={calculateRoute}
-            disabled={routeStatus === "loading"}
-            className="mt-5 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/20 transition hover:bg-[#fbbf24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {routeStatus === "loading" ? "Calcul en cours…" : <>Voir mon voyage <ArrowRight size={18} aria-hidden="true" /></>}
-          </button>
-        )}
-
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-sm font-semibold text-white/75">
-          {directionsUrl && (
-            <a
-              href={directionsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white"
-            >
-              <ExternalLink size={15} aria-hidden="true" />
-              Ouvrir dans Google Maps
-            </a>
-          )}
-          <button
-            type="button"
-            onClick={handleShare}
-            disabled={!validation.valid}
-            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Share2 size={15} aria-hidden="true" />
-            Partager mon trajet
-          </button>
-        </div>
-        <div role="status" className="text-center text-sm font-semibold text-[#fcd34d]">
-          {shareState.status === "shared" && "Partage effectué !"}
-          {shareState.status === "copied" && "Lien copié !"}
-          {shareState.status === "cancelled" && <span className="text-white/60">Partage annulé.</span>}
-        </div>
-
-        {shareState.status === "manual" && (
-          <div className="mt-3">
-            <label className="text-xs font-medium text-white/70" htmlFor="rme-share-link-fallback">
-              Copie automatique indisponible — copiez ce lien manuellement :
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <label className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/10 pl-4 pr-2 text-sm font-semibold ring-1 ring-white/15 focus-within:ring-2 focus-within:ring-[#f59e0b]">
+              <CalendarDays size={16} aria-hidden="true" className="shrink-0 text-white/70" />
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="min-h-11 min-w-0 bg-transparent text-sm font-semibold text-white [color-scheme:dark] focus:outline-none"
+                aria-label="Date"
+              />
             </label>
-            <input
-              id="rme-share-link-fallback"
-              type="text"
-              readOnly
-              value={shareState.url}
-              onFocus={(e) => e.currentTarget.select()}
-              className="mt-1 w-full min-h-[44px] rounded-xl bg-white p-3 text-sm text-slate-700"
-            />
+            <div role="radiogroup" aria-label="Mode de transport" className="flex rounded-full bg-white/10 p-1 ring-1 ring-white/15">
+              {modes.map(({ value, label, Icon }) => {
+                const active = transportMode === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    aria-label={label}
+                    title={label}
+                    onClick={() => setTransportMode(value)}
+                    className={`inline-flex min-h-9 min-w-11 items-center justify-center gap-1.5 rounded-full px-3 text-sm font-bold transition ${active ? "bg-white text-[#0f1f3d] shadow" : "text-white/70 hover:text-white"}`}
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                    {value === "car-ferry" && <Car size={14} aria-hidden="true" className="-ml-1" />}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
 
-        <p className="mt-2 text-center text-xs text-white/45">
-          Le lien contient les villes et, si renseignée, la date. Ne le partagez qu’avec les
-          personnes de votre choix.
-        </p>
-      </section>
-      {/* Le résumé du voyage ouvre le résultat : c'est lui qu'on ramène à l'écran. */}
-      <div ref={resultRef} className="scroll-mt-4">
-        <JourneySummary />
-        <div className="mt-10">
-        <StepHeader
-          step={1}
-          title="La route"
-          text={routeStatus === "idle" ? "Appuyez sur « Voir mon voyage » pour tracer l’itinéraire." : "Le tracé calculé, étape par étape."}
-        />
-        {routeStatus !== "idle" && (
-          <div>
-          <InteractiveMapWrapper
-            status={routeStatus}
-            routeGeometry={routeGeometry}
-            routeInfo={routeInfo}
-            errorMessage={routeError}
-          />
-          <RouteJourney />
+          {(validation.errors.origin || validation.errors.destination || validation.errors.date) && (
+            <ul className="mt-3 space-y-1 text-sm font-semibold text-[#fca5a5]">
+              {validation.errors.origin && <li>{validation.errors.origin}</li>}
+              {validation.errors.destination && <li>{validation.errors.destination}</li>}
+              {validation.errors.date && <li>{validation.errors.date}</li>}
+            </ul>
+          )}
+
+          {/* Le résumé du voyage ouvre le résultat : c'est lui qu'on ramène à l'écran. */}
+          <div ref={resultRef} className="scroll-mt-4">
+            {routeStatus === "loading" && (
+              <p role="status" className="mt-6 flex items-center gap-2 text-sm font-semibold text-white/80">
+                <span aria-hidden="true" className="h-2 w-2 animate-ping rounded-full bg-[#f59e0b]" /> Calcul de votre voyage…
+              </p>
+            )}
+            <JourneySummary />
           </div>
-        )}
+
+          {/* Une seule action principale. L'API compose route + traversée pour l'Europe ↔ Maroc. */}
+          {transportMode === "flight" ? (
+            <a href="#ferry" className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/25 transition hover:bg-[#fbbf24]">
+              Comparer les vols <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          ) : (
+            validation.valid && !route && (
+              <button
+                type="button"
+                onClick={calculateRoute}
+                disabled={routeStatus === "loading"}
+                className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/25 transition hover:bg-[#fbbf24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {routeStatus === "loading" ? "Calcul en cours…" : <>Continuer mon voyage <ArrowRight size={18} aria-hidden="true" /></>}
+              </button>
+            )
+          )}
+
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1 text-sm font-semibold text-white/70">
+            {directionsUrl && (
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white"
+              >
+                <ExternalLink size={15} aria-hidden="true" />
+                Ouvrir dans Google Maps
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={handleShare}
+              disabled={!validation.valid}
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Share2 size={15} aria-hidden="true" />
+              Partager mon trajet
+            </button>
+          </div>
+          <div role="status" className="text-center text-sm font-semibold text-[#fcd34d]">
+            {shareState.status === "shared" && "Partage effectué !"}
+            {shareState.status === "copied" && "Lien copié !"}
+            {shareState.status === "cancelled" && <span className="text-white/60">Partage annulé.</span>}
+          </div>
+
+          {shareState.status === "manual" && (
+            <div className="mt-3">
+              <label className="text-xs font-medium text-white/70" htmlFor="rme-share-link-fallback">
+                Copie automatique indisponible — copiez ce lien manuellement :
+              </label>
+              <input
+                id="rme-share-link-fallback"
+                type="text"
+                readOnly
+                value={shareState.url}
+                onFocus={(e) => e.currentTarget.select()}
+                className="mt-1 w-full min-h-[44px] rounded-xl bg-white p-3 text-sm text-slate-700"
+              />
+            </div>
+          )}
+
+          <p className="mt-1 text-center text-xs text-white/40">
+            Le lien contient les villes et, si renseignée, la date. Ne le partagez qu’avec les
+            personnes de votre choix.
+          </p>
         </div>
-      </div>
-      <section id="ferry" aria-labelledby="ferry-title" className="mt-10 scroll-mt-4">
-      <StepHeader id="ferry-title" step={2} title="Ferry et vols" text="Comparez les traversées et les vols chez les compagnies." />
-      <BookingCards
-        origin={origin}
-        destination={destination}
-        date={date || undefined}
-        crossing={routeStatus === "ready" ? routeInfo?.ferry : undefined}
-      />
       </section>
+
+      {belowHero}
+
+      <div className="mx-auto max-w-2xl px-5">
+        <section id="la-route" aria-labelledby="la-route-title" className="mt-12 scroll-mt-20">
+          <StepHeader
+            id="la-route-title"
+            step={1}
+            title="La route"
+            text={routeStatus === "idle" ? "Appuyez sur « Continuer mon voyage » pour tracer l’itinéraire." : "Le tracé calculé, étape par étape."}
+          />
+          {routeStatus !== "idle" && (
+            <>
+              <InteractiveMapWrapper
+                status={routeStatus}
+                routeGeometry={routeGeometry}
+                routeInfo={routeInfo}
+                errorMessage={routeError}
+              />
+              <RouteJourney />
+            </>
+          )}
+        </section>
+        <section id="ferry" aria-labelledby="ferry-title" className="mt-12 scroll-mt-20">
+          <StepHeader id="ferry-title" step={2} title="Ferry et vols" text="Comparez les traversées et les vols chez les compagnies." />
+          <BookingCards
+            origin={origin}
+            destination={destination}
+            date={date || undefined}
+            crossing={routeStatus === "ready" ? routeInfo?.ferry : undefined}
+          />
+        </section>
+      </div>
     </>
   );
 }
