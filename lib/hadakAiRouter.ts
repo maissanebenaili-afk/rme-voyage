@@ -342,6 +342,15 @@ function parseRetryAfterMs(response: Response): number {
   return 0;
 }
 
+/** The text up to its last complete sentence, or null when there is none. */
+export function completeSentences(text: string): string | null {
+  const ends = [...text.matchAll(/[.!?…](?=\s|$)/g)];
+  const last = ends.at(-1);
+  if (!last || last.index === undefined) return null;
+  const kept = text.slice(0, last.index + 1).trim();
+  return kept.length >= 20 ? kept : null;
+}
+
 async function callProvider(
   provider: Provider,
   systemPrompt: string,
@@ -393,13 +402,19 @@ async function callProvider(
       }
 
       const data = await response.json() as {
-        choices?: Array<{ message?: { content?: string } }>;
+        choices?: Array<{ message?: { content?: string }; finish_reason?: string }>;
         content?: Array<{ type?: string; text?: string }>;
+        stop_reason?: string;
       };
 
-      const text = provider.kind === 'anthropic'
+      const raw = provider.kind === 'anthropic'
         ? data.content?.find((block) => block.type === 'text')?.text ?? null
         : data.choices?.[0]?.message?.content ?? null;
+      // A reasoning model can spend the token budget before finishing its
+      // answer: "Consulte le site officiel d" reached a user (2026-10-04).
+      // Keep only complete sentences; with none, try the next model.
+      const finish = provider.kind === 'anthropic' ? data.stop_reason : data.choices?.[0]?.finish_reason;
+      const text = raw && (finish === 'length' || finish === 'max_tokens') ? completeSentences(raw) : raw;
 
       if (text) return { text, model, usage: readUsage(data) };
       lastState = 'DEGRADED';
