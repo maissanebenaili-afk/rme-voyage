@@ -70,7 +70,7 @@ export default function Home() {
         </section>
 
         <section id="route" aria-labelledby="cout-title" className="mt-12 scroll-mt-4">
-          <StepHeader id="cout-title" step={3} title="Le coût" text="Carburant pays par pays, aux prix officiels." />
+          <StepHeader id="cout-title" step={3} title="Le coût" text="Un ordre de grandeur selon vos hypothèses. Une fois le trajet calculé, le carburant est compté pays par pays." />
           <TripDecisionEngine />
         </section>
 

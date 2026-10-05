@@ -57,6 +57,9 @@ describe("Homepage branding", () => {
     expect(screen.queryByText(/RME Live/)).toBeNull();
     expect(screen.queryByText(/15\+ widgets/)).toBeNull();
     expect(screen.queryByText(/Un seul outil\. Tout votre voyage/)).toBeNull();
+
+    // Before a route is computed the cost uses example values: the heading must not claim official prices.
+    expect(container.querySelector("#route")).not.toHaveTextContent(/prix officiels/);
   });
 
   it("keeps every existing module, the rest folded into drawers that Hadak links can still reach", () => {
