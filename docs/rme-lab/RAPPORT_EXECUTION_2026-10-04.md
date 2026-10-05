@@ -132,14 +132,14 @@ Ordre conseillé : **Agefiph** (via un conseiller Cap emploi ou un expert habili
 
 ## 11. Vérification publique (outil prêt, point de départ mesuré)
 
-`docs/rme-lab/prodcheck.js` contrôle en lecture seule, dans un vrai navigateur et par l'API, ce qu'un visiteur voit réellement. Il fait 16 contrôles (accueil, calendrier, douane, zakat, SIM, page jury, partenaires, lien vols, avis, événements, Hadak).
+`docs/rme-lab/verif/prodcheck.js` contrôle en lecture seule, dans un vrai navigateur et par l'API, ce qu'un visiteur voit réellement. Il fait 16 contrôles (accueil, calendrier, douane, zakat, SIM, page jury, partenaires, lien vols, avis, événements, Hadak).
 
 **Production le 4 octobre 2026 à 22 h 48 UTC (commit `8295f7f` du 2 octobre) : 5 sur 16.**
 - Hadak en ligne répond par l'IA à « Quelle franchise douane au Maroc ? » : « 250 USD pour les hommes et… ». C'est un chiffre inventé, servi aux visiteurs. Corrigé par #226, déjà fusionnée mais **pas publiée**.
 - Hadak donne l'heure au voyageur d'Algésiras ; « 4G dans tout le pays » ; « Grimaldi » pour Nador. Ces trois réponses sont corrigées dans `main`, mais pas publiées.
 - Il reste à faire en dehors du code : poser `TRAVELPAYOUTS_FLIGHT_DEEPLINK_TEMPLATE` pour ouvrir le lien vols sur le bon trajet.
 
-Après publication de `main` (avec #245, #246 et #247), on attend 15 sur 16 ; seul le lien vols pré-rempli restera à faire. À relancer : `node docs/rme-lab/prodcheck.js`.
+Après publication de `main` (avec #245, #246 et #247), on attend 15 sur 16 ; seul le lien vols pré-rempli restera à faire. À relancer : `node docs/rme-lab/verif/prodcheck.js` (mode d’emploi : `docs/rme-lab/BOUCLE.md`).
 
 ## 12. État business au 4 octobre 2026 (mesuré ou UNKNOWN)
 

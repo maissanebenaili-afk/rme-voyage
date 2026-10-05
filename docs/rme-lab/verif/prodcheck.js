@@ -22,7 +22,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   p.on('pageerror', (e) => errors.push(e.message.slice(0, 90)));
   await p.goto(`${BASE}/`, { waitUntil: 'load', timeout: 90000 });
   await p.waitForTimeout(7000);
-  const home = await p.evaluate(() => document.body.innerText);
+  // textContent, pas innerText : depuis l'accueil V2, calendrier, zakat et SIM
+  // sont dans des tiroirs fermés (<details>), absents d'innerText.
+  const home = await p.evaluate(() => document.body.textContent);
   check('P1', 'Accueil sans erreur React #418', !errors.some((e) => /418/.test(e)), errors.join(' | '));
   check('P2', "Calendrier : Fête de l'Unité, nom français de la Marche Verte", /Fête de l.Unité/.test(home) && !/Green March/.test(home));
   check('P3', 'Douane : limites officielles (20 000 DH, 100 000 DH), plus de faux droits', /moins de 20\s?000 DH/.test(home) && /100\s?000 DH/.test(home) && !/Droits estimés/.test(home));
