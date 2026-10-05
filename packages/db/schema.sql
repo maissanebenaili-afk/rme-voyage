@@ -91,6 +91,7 @@ ALTER TABLE trips ENABLE ROW LEVEL SECURITY;
 ALTER TABLE community_tips ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversation_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE agent_interactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscription_logs ENABLE ROW LEVEL SECURITY;
 
 -- Users can only read/write their own data
 CREATE POLICY "Users can read own data" ON users
@@ -124,6 +125,13 @@ CREATE POLICY "Users can update own tips" ON community_tips
 
 CREATE POLICY "Users can delete own tips" ON community_tips
   FOR DELETE USING (auth.uid() = user_id);
+
+-- Subscription logs: users can read their own subscription history
+CREATE POLICY "Users can read own subscription logs" ON subscription_logs
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own subscription logs" ON subscription_logs
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- Conversation logs: Users can only read/write their own
 CREATE POLICY "Users can read own logs" ON conversation_logs
