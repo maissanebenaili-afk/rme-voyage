@@ -188,6 +188,7 @@ export default function Home() {
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">Boutique ✨</Link></li>
                 <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">Télécharger</Link></li>
                 <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Soutenir le projet 💛</Link></li>
+                <li><Link href="/boutique#livre" className="inline-block py-1.5 hover:text-[#0f1f3d]">Le livre de Tarek 📕</Link></li>
                 <li><a href="/rss.xml" className="inline-block py-1.5 hover:text-[#0f1f3d]">Flux RSS</a></li>
               </ul>
             </div>

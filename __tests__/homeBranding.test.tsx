@@ -84,6 +84,14 @@ describe("Homepage branding", () => {
     }
   });
 
+  it("keeps Tarek's book out of the way: in the « Rester informé » drawer and linked from the footer", () => {
+    const { container } = render(<Home />);
+    // No floating ad any more: the book lives in a closed drawer and on /boutique.
+    expect(container.querySelector("details#nouvelles #livre")).not.toBeNull();
+    expect(container.querySelector("details#nouvelles")).not.toHaveAttribute("open");
+    expect(screen.getByRole("link", { name: /Le livre de Tarek/ })).toHaveAttribute("href", "/boutique#livre");
+  });
+
   it("links the privacy policy and terms from every home page visit (store requirement)", () => {
     render(<Home />);
     expect(screen.getByRole("link", { name: "Confidentialité" })).toHaveAttribute("href", "/api/legal/privacy");

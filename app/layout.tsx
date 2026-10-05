@@ -4,7 +4,6 @@ import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import { Inter, Plus_Jakarta_Sans, Amiri } from 'next/font/google';
 import PWAInstall from '@/components/PWAInstall';
 import Accessibility from '@/components/Accessibility';
-import BookAd from '@/components/BookAd';
 import RegisterSW from './register-sw';
 import PageViewBeacon from '@/components/PageViewBeacon';
 import { siteUrl } from '@/lib/siteUrl';
@@ -135,7 +134,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RegisterSW />
         <PWAInstall />
         <Accessibility />
-        <BookAd />
         <PageViewBeacon />
       </body>
     </html>
