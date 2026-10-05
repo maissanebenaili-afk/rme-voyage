@@ -3,6 +3,7 @@ import {
   ArrowLeft, CalendarCheck, Phone, ExternalLink, Sparkles, Leaf, Home, Heart,
 } from 'lucide-react';
 import { BELISAMAE_PHONE, BELISAMAE_URL } from '@/lib/partners';
+import LeadLink from '@/components/LeadLink';
 
 const ACCOMPAGNEMENTS = [
   {
@@ -67,20 +68,20 @@ export default function BelisamaePage() {
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a
+            <LeadLink partner="belisamae" channel="site"
               href={BELISAMAE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#40634f] px-7 py-3.5 font-bold text-white transition hover:bg-[#33513f]"
             >
               <CalendarCheck size={16} /> Prendre rendez-vous <ExternalLink size={12} />
-            </a>
-            <a
+            </LeadLink>
+            <LeadLink partner="belisamae" channel="phone"
               href={`tel:${BELISAMAE_PHONE}`}
               className="inline-flex items-center justify-center gap-2 rounded-full border border-[#cfd6ca] bg-white/60 px-7 py-3.5 font-bold text-[#40634f] transition hover:bg-white"
             >
               <Phone size={15} /> 06 86 62 83 61
-            </a>
+            </LeadLink>
           </div>
         </div>
       </header>
@@ -142,20 +143,20 @@ export default function BelisamaePage() {
             Prenez rendez-vous en ligne ou appelez directement — en cabinet comme à distance.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
+            <LeadLink partner="belisamae" channel="site"
               href={BELISAMAE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-bold text-[#40634f] transition hover:bg-[#eef3ee]"
             >
               <CalendarCheck size={16} /> Prendre rendez-vous <ExternalLink size={12} />
-            </a>
-            <a
+            </LeadLink>
+            <LeadLink partner="belisamae" channel="phone"
               href={`tel:${BELISAMAE_PHONE}`}
               className="inline-flex items-center gap-2 rounded-full border border-white/25 px-7 py-3.5 font-bold text-white transition hover:bg-white/10"
             >
               <Phone size={15} /> Appeler
-            </a>
+            </LeadLink>
           </div>
         </div>
       </section>

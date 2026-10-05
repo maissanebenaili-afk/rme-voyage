@@ -20,6 +20,7 @@ import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
 import { CAFTANS, OCCASIONS, CONDITIONS, type Caftan, type Mode } from '@/lib/caftans';
 import CaftanVisual, { isIllustration } from '@/components/caftan/CaftanVisual';
 import CaftanMarketplace from '@/components/caftan/CaftanMarketplace';
+import LeadLink from '@/components/LeadLink';
 
 type AgentStep = 'occasion' | 'budget' | 'taille' | 'result';
 
@@ -110,7 +111,7 @@ function AgentChat({ onClose }: { onClose: () => void }) {
                         {c.style} · tarif et disponibilité à confirmer
                       </p>
                     </div>
-                    <a
+                    <LeadLink partner="marwa_caftan" channel="whatsapp"
                       href={whatsappLink(
                         MARWA_WHATSAPP,
                         `Bonjour Marwa, je suis intéressée par le Caftan ${c.name}`
@@ -120,7 +121,7 @@ function AgentChat({ onClose }: { onClose: () => void }) {
                       className="shrink-0 rounded-full bg-[#25d366] px-3 py-1.5 text-[11px] font-black text-[#0f1f3d]"
                     >
                       Demander
-                    </a>
+                    </LeadLink>
                   </div>
                 ))}
               </div>
@@ -213,7 +214,7 @@ function CaftanCard({ c }: { c: Caftan }) {
           Tarif, taille et disponibilité à confirmer avec Marwa.
         </p>
 
-        <a
+        <LeadLink partner="marwa_caftan" channel="whatsapp"
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
@@ -221,7 +222,7 @@ function CaftanCard({ c }: { c: Caftan }) {
         >
           <MessageCircle size={14} className="transition-transform group-hover:scale-110" />
           Demander des informations
-        </a>
+        </LeadLink>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import {
 import { MARWA_WHATSAPP, whatsappLink } from '@/lib/partners';
 import { PROPERTIES, getProperty, similarProperties, PROPERTY_TYPES } from '@/lib/properties';
 import { defaultOgImage } from '@/lib/seo';
+import LeadLink from '@/components/LeadLink';
 
 export async function generateStaticParams() {
   return PROPERTIES.map(p => ({ id: p.id }));
@@ -162,14 +163,14 @@ export default async function PropertyDetail({ params }: { params: Promise<{ id:
               <p className="text-sm text-white/70 mb-4">
                 Contactez-nous pour découvrir cette propriété, obtenir des photos supplémentaires ou discuter des conditions.
               </p>
-              <a
+              <LeadLink partner="taza_immobilier" channel="whatsapp"
                 href={whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25d366] py-3.5 text-sm font-extrabold text-[#0f1f3d] transition hover:bg-[#1da851] mb-4"
               >
                 <MessageCircle size={16} /> Contacter
-              </a>
+              </LeadLink>
               <p className="text-xs text-white/50 text-center">
                 Par WhatsApp — Réponse rapide
               </p>

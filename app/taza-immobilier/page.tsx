@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { whatsappLink } from '@/lib/partners';
 import { PROPERTIES, PROPERTY_TYPES, MODES, IDOUR_WHATSAPP, type Property } from '@/lib/properties';
+import LeadLink from '@/components/LeadLink';
 
 function PropertyCard({ p }: { p: Property }) {
   const [liked, setLiked] = useState(false);
@@ -96,7 +97,7 @@ function PropertyCard({ p }: { p: Property }) {
 
         <p className="mt-3 font-bold text-[#0f1f3d]">{priceLabel}</p>
 
-        <a
+        <LeadLink partner="taza_immobilier" channel="whatsapp"
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
@@ -104,7 +105,7 @@ function PropertyCard({ p }: { p: Property }) {
         >
           <MessageCircle size={14} className="transition-transform group-hover:scale-110" />
           Demander des informations
-        </a>
+        </LeadLink>
       </div>
     </div>
   );
