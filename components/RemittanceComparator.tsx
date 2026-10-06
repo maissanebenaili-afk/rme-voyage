@@ -175,7 +175,8 @@ export default function RemittanceComparator() {
                 <div className="font-bold text-[#0f1f3d]">
                   {estimated ? '≈ ' : ''}{p.received.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} MAD
                 </div>
-                <div className="text-xs text-[#0f1f3d]/75">
+                {/* max-w : sur 390 px, la mention tient sur deux lignes au lieu de pousser « Envoyer » hors de l'écran. */}
+                <div className="ml-auto max-w-[6.5rem] text-xs leading-4 text-[#0f1f3d]/75">
                   {estimated ? 'estimation RME, non vérifiée' : t('remittanceReceived')}
                 </div>
               </div>
