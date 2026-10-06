@@ -351,6 +351,22 @@ export function completeSentences(text: string): string | null {
   return kept.length >= 20 ? kept : null;
 }
 
+/**
+ * Some free models write their reasoning in the answer itself. Faical showed
+ * users "Here's a thinking process: 1. **Analyze User Input:** - Role:
+ * Faical…", hidden instructions included (production, 2026-10-06). <think>
+ * blocks are removed; an answer that still opens like a reasoning trace is
+ * rejected (null), and the router tries the next model.
+ */
+const REASONING_START = /^(?:here'?s (?:a|my) (?:thinking|thought) process|thinking process\s*:|let me (?:think|analy[sz]e|break)|okay,? (?:so|let'?s|let me|the user)|the user (?:wants|is asking|asked)|\**\s*(?:\d+\.\s*)?\**analy[sz]e (?:the )?(?:user|request|input))/i;
+
+export function answerWithoutReasoning(text: string): string | null {
+  const withoutThink = text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+  if (!withoutThink || /<think>/i.test(withoutThink)) return null;
+  if (REASONING_START.test(withoutThink)) return null;
+  return withoutThink;
+}
+
 async function callProvider(
   provider: Provider,
   systemPrompt: string,
@@ -414,7 +430,8 @@ async function callProvider(
       // answer: "Consulte le site officiel d" reached a user (2026-10-04).
       // Keep only complete sentences; with none, try the next model.
       const finish = provider.kind === 'anthropic' ? data.stop_reason : data.choices?.[0]?.finish_reason;
-      const text = raw && (finish === 'length' || finish === 'max_tokens') ? completeSentences(raw) : raw;
+      const answer = raw ? answerWithoutReasoning(raw) : null;
+      const text = answer && (finish === 'length' || finish === 'max_tokens') ? completeSentences(answer) : answer;
 
       if (text) return { text, model, usage: readUsage(data) };
       lastState = 'DEGRADED';
