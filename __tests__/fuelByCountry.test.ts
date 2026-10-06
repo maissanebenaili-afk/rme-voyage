@@ -55,12 +55,22 @@ describe('computeFuelByCountry', () => {
     expect(computeFuelByCountry({ ...base, fuelType: 'petrol95' }).countries[0].pricePerLiter).toBe(1.9)
   })
 
-  it('switches every country to the user price once the bulletin is older than 14 days', () => {
+  it('keeps the expired bulletin for two more weeks, marked stale, instead of a guess', () => {
     expect(datasetExpiry('2026-09-21').toISOString().slice(0, 10)).toBe('2026-10-05')
     const fresh = computeFuelByCountry({ ...base, now: new Date('2026-10-04T23:59:00Z') })
-    const expired = computeFuelByCountry({ ...base, now: new Date('2026-10-05T00:00:00Z') })
-    expect(fresh.dataset.fresh).toBe(true)
-    expect(expired.dataset.fresh).toBe(false)
+    const stale = computeFuelByCountry({ ...base, now: new Date('2026-10-05T00:00:00Z') })
+    expect(fresh.dataset).toMatchObject({ fresh: true, stale: false })
+    expect(stale.dataset).toMatchObject({ fresh: false, stale: true })
+    expect(stale.countries.map((l) => [l.country, l.pricePerLiter, l.priceSource])).toEqual([
+      ['FR', 2.0, 'stale'], ['ES', 1.5, 'stale'], ['MA', 1.2, 'user'],
+    ])
+  })
+
+  it('switches every country to the user price once the bulletin is older than 28 days', () => {
+    const lastStale = computeFuelByCountry({ ...base, now: new Date('2026-10-18T23:59:00Z') })
+    const expired = computeFuelByCountry({ ...base, now: new Date('2026-10-19T00:00:00Z') })
+    expect(lastStale.dataset.stale).toBe(true)
+    expect(expired.dataset).toMatchObject({ fresh: false, stale: false })
     expect(expired.countries.every((line) => line.priceSource === 'user' && line.pricePerLiter === 1.2)).toBe(true)
     expect(expired.fuelTotal).toBe(150) // 2500 km × 0,05 × 1,2
   })

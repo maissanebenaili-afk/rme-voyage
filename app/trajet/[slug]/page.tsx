@@ -214,7 +214,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
                   <td className="py-2 text-right">{formatKm(line.km * 1000)}</td>
                   <td className="py-2 text-right">
                     {eur(line.pricePerLiter, 3)}/L
-                    {line.priceSource === 'user' ? ' (hypothèse)' : ''}
+                    {line.priceSource === 'user' ? ' (hypothèse)' : line.priceSource === 'stale' ? ' (périmé)' : ''}
                   </td>
                   <td className="py-2 text-right font-bold">{eur(line.cost)}</td>
                 </tr>
@@ -233,7 +233,11 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
               Weekly Oil Bulletin
             </a>{' '}
             de la Commission européenne, relevés le {frenchDate(FUEL_PRICES.observedAt)}
-            {fuel.dataset.fresh ? '' : " — ces prix ont plus de deux semaines, vérifiez-les avant de partir"}. Hors
+            {fuel.dataset.fresh
+              ? ''
+              : fuel.dataset.stale
+                ? ' — ces prix ont plus de deux semaines, vérifiez-les avant de partir'
+                : " — bulletin trop ancien : l'hypothèse ci-dessous remplace ses prix partout"}. Hors
             Union européenne, aucune source officielle n'est intégrée : {eur(NON_EU_FALLBACK_PRICE, 2)}/L est une
             hypothèse, à remplacer par le prix que vous constatez. Les stations d'autoroute sont souvent plus chères.
             Péages, billet de ferry, repas et hébergement ne sont pas compris.

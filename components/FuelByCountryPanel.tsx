@@ -1,6 +1,6 @@
 import { Ship } from 'lucide-react';
 import { countryName } from '@/lib/countries';
-import type { FuelByCountryResult, FuelType } from '@/lib/fuelByCountry';
+import { refuelTip, type FuelByCountryResult, type FuelType } from '@/lib/fuelByCountry';
 
 const FUEL_LABELS: Record<FuelType, string> = { diesel: 'gazole', petrol95: 'SP95' };
 
@@ -32,6 +32,7 @@ export default function FuelByCountryPanel({
 }) {
   const usesUserPrice = result.countries.some((line) => line.priceSource === 'user');
   const ferries = result.legs.filter((leg) => leg.kind === 'ferry').length;
+  const tip = refuelTip(result);
   return (
     <div className="border-t border-[#e2e8f0] p-6 sm:p-8" aria-labelledby="fuel-by-country-title">
       <h3 id="fuel-by-country-title" className="text-sm font-extrabold text-[#0f1f3d]">
@@ -64,7 +65,7 @@ export default function FuelByCountryPanel({
                       <td className="py-0.5">{countryName(line.country)}</td>
                       <td className="py-0.5 text-right">{km(line.km)}</td>
                       <td className="py-0.5 text-right">
-                        {eur(line.pricePerLiter, 3)}/L{line.priceSource === 'user' ? ' (votre prix)' : ''}
+                        {eur(line.pricePerLiter, 3)}/L{line.priceSource === 'user' ? ' (votre prix)' : line.priceSource === 'stale' ? ' (UE, périmé)' : ''}
                       </td>
                       <td className="py-0.5 text-right font-semibold">{eur(line.cost)}</td>
                     </tr>
@@ -75,7 +76,14 @@ export default function FuelByCountryPanel({
           ),
         )}
       </ol>
-      <p className="mt-4 text-xs leading-5 text-[#64748b]" data-fuel-dataset={result.dataset.fresh ? 'fresh' : 'expired'}>
+      {tip && (
+        <p className="mt-4 rounded-xl bg-[#ecfdf5] px-4 py-3 text-sm font-semibold text-[#065f46]" data-refuel-tip={tip.cheap}>
+          Le {FUEL_LABELS[fuelType]} coûte {tip.percentCheaper} % de moins en {countryName(tip.cheap)} qu'en{' '}
+          {countryName(tip.dear)} : environ {eur(tip.gapFor50Liters)} d'écart pour 50 litres. Faites vos pleins en{' '}
+          {countryName(tip.cheap)} plutôt qu'en {countryName(tip.dear)} quand c'est possible.
+        </p>
+      )}
+      <p className="mt-4 text-xs leading-5 text-[#64748b]" data-fuel-dataset={result.dataset.fresh ? 'fresh' : result.dataset.stale ? 'stale' : 'expired'}>
         {result.dataset.fresh ? (
           <>
             Prix UE : moyennes nationales TTC du{' '}
@@ -85,13 +93,19 @@ export default function FuelByCountryPanel({
             de la Commission européenne du {frenchDate(result.dataset.observedAt)}, valables jusqu'au{' '}
             {frenchDate(result.dataset.expiresAt)}. Les stations d'autoroute sont souvent plus chères.
           </>
+        ) : result.dataset.stale ? (
+          <>
+            Le bulletin de prix UE du {frenchDate(result.dataset.observedAt)} a expiré le{' '}
+            {frenchDate(result.dataset.expiresAt)} : ses prix, marqués « périmé », restent plus proches de la pompe qu'une
+            estimation. Vérifiez-les avant de partir.
+          </>
         ) : (
           <>
             Le bulletin de prix UE du {frenchDate(result.dataset.observedAt)} a expiré le{' '}
             {frenchDate(result.dataset.expiresAt)} : votre prix est utilisé partout.
           </>
         )}
-        {usesUserPrice && result.dataset.fresh && ' Hors UE (Maroc, Suisse…), votre prix « Carburant (€/L) » est utilisé.'}{' '}
+        {usesUserPrice && (result.dataset.fresh || result.dataset.stale) && ' Hors UE (Maroc, Suisse…), votre prix « Carburant (€/L) » est utilisé.'}{' '}
         Péages{ferries > 1 ? ' et billets des ' + ferries + ' traversées' : ' et billet de ferry'} : vos
         hypothèses globales, non ventilées.
       </p>

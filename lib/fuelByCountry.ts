@@ -23,9 +23,16 @@ export interface FuelPriceDataset {
 /** Bulletin hebdomadaire : une semaine manquée est tolérée, pas deux. */
 export const FUEL_PRICE_MAX_AGE_DAYS = 14;
 
+/**
+ * After expiry the last bulletin is still far closer to the pump than any
+ * default (France 2,38 €/L vs a 1,40 €/L non-EU guess): it stays in use for two
+ * more weeks, marked « périmé » with its date, then gives way to the user price.
+ */
+export const FUEL_PRICE_STALE_MAX_AGE_DAYS = 28;
+
 export const FUEL_PRICES = fuelPrices as FuelPriceDataset;
 
-export type PriceSource = 'bulletin' | 'user';
+export type PriceSource = 'bulletin' | 'stale' | 'user';
 
 export interface CountryFuelLine {
   country: string | null;
@@ -46,7 +53,7 @@ export interface FuelByCountryResult {
   roadKm: number;
   seaKm: number;
   fuelTotal: number;
-  dataset: { fresh: boolean; observedAt: string; expiresAt: string; source: string; sourceUrl: string };
+  dataset: { fresh: boolean; stale: boolean; observedAt: string; expiresAt: string; source: string; sourceUrl: string };
 }
 
 function round(value: number, digits: number) {
@@ -75,15 +82,18 @@ export function computeFuelByCountry(input: {
   const dataset = input.dataset ?? FUEL_PRICES;
   const expiresAt = datasetExpiry(dataset.observedAt);
   const fresh = input.now.getTime() < expiresAt.getTime();
+  const staleUntil = new Date(`${dataset.observedAt}T00:00:00Z`);
+  staleUntil.setUTCDate(staleUntil.getUTCDate() + FUEL_PRICE_STALE_MAX_AGE_DAYS);
+  const stale = !fresh && input.now.getTime() < staleUntil.getTime();
   const litersPerKm = nonNegative(input.consumptionPer100Km) / 100;
   const fallback = nonNegative(input.fallbackPricePerLiter);
 
   function priceFor(country: string | null): { pricePerLiter: number; priceSource: PriceSource } {
-    const price = fresh && country ? dataset.prices[country]?.[input.fuelType] : undefined;
+    const price = (fresh || stale) && country ? dataset.prices[country]?.[input.fuelType] : undefined;
     // Le bulletin européen ne couvre pas le Maroc : le prix saisi s'applique,
     // et l'interface le signale comme une hypothèse de l'utilisateur.
     return typeof price === 'number' && price > 0
-      ? { pricePerLiter: price, priceSource: 'bulletin' }
+      ? { pricePerLiter: price, priceSource: fresh ? 'bulletin' : 'stale' }
       : { pricePerLiter: fallback, priceSource: 'user' };
   }
 
@@ -129,6 +139,7 @@ export function computeFuelByCountry(input: {
     fuelTotal: round(countries.reduce((sum, line) => sum + line.cost, 0), 2),
     dataset: {
       fresh,
+      stale,
       observedAt: dataset.observedAt,
       expiresAt: expiresAt.toISOString().slice(0, 10),
       source: dataset.source,
@@ -139,4 +150,39 @@ export function computeFuelByCountry(input: {
 
 export function hasFerry(legs: RouteLeg[] | undefined): boolean {
   return !!legs?.some((leg) => leg.kind === 'ferry');
+}
+
+export interface RefuelTip {
+  cheap: string;
+  dear: string;
+  /** How much cheaper the cheap country is, in % of the dear one's price. */
+  percentCheaper: number;
+  /** Price gap for 50 litres, a typical fill-up; not the user's tank, which is unknown. */
+  gapFor50Liters: number;
+}
+
+/** Below this gap the advice is not worth a detour or a change of habit. */
+export const REFUEL_TIP_MIN_PERCENT = 5;
+
+/**
+ * Turns the per-country table into a decision: where to fill up. Only official
+ * bulletin prices are compared — never a price typed by the user — so the tip
+ * disappears outside the EU or once the bulletin has expired.
+ */
+export function refuelTip(result: FuelByCountryResult): RefuelTip | null {
+  const official = result.countries.filter(
+    (line): line is CountryFuelLine & { country: string } =>
+      line.priceSource === 'bulletin' && line.country !== null && line.km > 0,
+  );
+  if (official.length < 2) return null;
+  const cheap = official.reduce((a, b) => (b.pricePerLiter < a.pricePerLiter ? b : a));
+  const dear = official.reduce((a, b) => (b.pricePerLiter > a.pricePerLiter ? b : a));
+  const percentCheaper = ((dear.pricePerLiter - cheap.pricePerLiter) / dear.pricePerLiter) * 100;
+  if (percentCheaper < REFUEL_TIP_MIN_PERCENT) return null;
+  return {
+    cheap: cheap.country,
+    dear: dear.country,
+    percentCheaper: Math.round(percentCheaper),
+    gapFor50Liters: round((dear.pricePerLiter - cheap.pricePerLiter) * 50, 0),
+  };
 }
