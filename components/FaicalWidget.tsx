@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
-import { FALLBACK_ANALYSIS_SOURCES, getSportsPartners } from '@/lib/sportsPartners';
+import { FALLBACK_ANALYSIS_SOURCES, paidSportsPartners } from '@/lib/sportsPartners';
+import GamblingNotice from '@/components/GamblingNotice';
 import { Trophy, Zap, ExternalLink, ShieldCheck } from 'lucide-react';
 
 type FormEntry = { w: number; d: number; l: number; last5: string };
@@ -256,27 +257,28 @@ export default function FaicalWidget() {
           <MatchCard key={pick.id} pick={pick} lang={lang} labels={labels} />
         ))}
 
-        {!isNativeApp && <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-4">
+        {!isNativeApp && paidSportsPartners().length > 0 && <div className="rounded-2xl border border-[#f59e0b]/20 bg-[#f59e0b]/5 p-4">
           <div className="flex items-start gap-2">
             <ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#f59e0b]" />
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-[#fde68a]">Partenaires paris sportifs</p>
-              <p className="mt-1 text-[11px] leading-5 text-slate-300">RME ne crée pas les cotes. Les opérateurs affichés sont destinés aux adultes et leur disponibilité dépend du pays. Jouer comporte des risques.</p>
+              <p className="text-xs font-black uppercase tracking-wider text-[#fde68a]">Sites de paris sportifs</p>
+              <p className="mt-1 text-[11px] leading-5 text-slate-300">RME ne crée pas les cotes. La disponibilité des opérateurs dépend du pays.</p>
             </div>
           </div>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {getSportsPartners().map((partner) => (
-              <a key={partner.id} href={partner.url} target="_blank" rel={partner.affiliateUrl ? 'sponsored noopener noreferrer' : 'noopener noreferrer'} onClick={(event) => void openExternal(partner.url, event)} className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
+            {paidSportsPartners().map((partner) => (
+              <a key={partner.id} href={partner.url} target="_blank" rel="sponsored noopener noreferrer" onClick={(event) => void openExternal(partner.url, event)} className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/10 p-3 text-xs font-bold text-white hover:border-[#f59e0b]/40">
                 <span>{partner.name}</span>
-                <span className="text-[9px] font-black uppercase tracking-wide text-[#fde68a]">{partner.status === 'active' ? 'Partenaire' : 'Voir le site'}</span>
+                <span className="text-[9px] font-black uppercase tracking-wide text-[#fde68a]">Partenaire</span>
               </a>
             ))}
           </div>
+          <GamblingNotice className="mt-3" paid />
         </div>}
       </div>
 
       <p className="relative mt-5 text-center text-[11px] text-slate-300">
-        Analyses de matchs à titre informatif. Les liens partenaires sont séparés des analyses et soumis aux règles applicables.
+        Analyses de matchs à titre informatif, sans lien avec les opérateurs de paris.
       </p>
     </section>
   );

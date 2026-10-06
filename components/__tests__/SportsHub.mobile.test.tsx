@@ -26,7 +26,8 @@ describe('SportsHub mobile safety', () => {
   it('does not render sports betting operators in the native app', () => {
     render(<SportsHub />);
 
-    expect(screen.queryByText('Opérateurs sportifs')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sites de paris sportifs')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('gambling-notice')).not.toBeInTheDocument();
     expect(screen.queryByText('Unibet')).not.toBeInTheDocument();
     expect(screen.queryByText('Betclic')).not.toBeInTheDocument();
     expect(screen.queryByText('Winamax')).not.toBeInTheDocument();
