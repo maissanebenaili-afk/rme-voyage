@@ -271,7 +271,10 @@ export async function proxy(request: NextRequest) {
     "font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com",
     "img-src 'self' data: https: blob:",
     // Note: Anthropic API called server-side, not from browser — not needed in CSP
-    `connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com${supabaseConnectSrc()}`,
+    // cdn.jsdelivr.net: the currency converter reads the day's rates there
+    // (fetch only, never scripts); without it the browser blocked the call
+    // and the converter always fell back to fixed rates.
+    `connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com https://cdn.jsdelivr.net${supabaseConnectSrc()}`,
     "frame-src 'self' https://www.openstreetmap.org",
     "frame-ancestors 'none'",
     "object-src 'none'",

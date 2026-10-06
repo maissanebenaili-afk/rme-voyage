@@ -9,6 +9,7 @@ export const RME_EVENTS = [
   'reality_check_used',
   'reality_check_cta',
   'remittance_result_viewed',
+  'services_searched',
   'hadak_next_action',
   'hadak_trust_why',
   'hadak_voice_listen',

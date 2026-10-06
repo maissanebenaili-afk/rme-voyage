@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ArrowRightLeft } from "lucide-react";
 
-const rates: Record<string, number> = {
+// Fixed rates, used only when the live source cannot be reached (and then said so).
+// They were 3 to 9 % off the market on 3 Oct 2026 (MAD 10.8 vs 11.18, CAD 1.47 vs 1.60).
+const FIXED_RATES: Record<string, number> = {
   EUR: 1,
   MAD: 10.8,
   USD: 1.08,
@@ -29,15 +31,62 @@ const currencies = [
 
 const quickAmounts = [50, 100, 200, 500, 1000];
 
+// Same free, keyless source as the remittance comparator (app/api/remittance), so one
+// page never shows two different EUR→MAD rates.
+const RATES_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
+
+type LiveRates = { date: string; rates: Record<string, number> };
+
+/** Live rates for every listed currency, or null if one is missing: never a partial mix. */
+export function parseLiveRates(data: unknown): LiveRates | null {
+  const body = data as { date?: unknown; eur?: Record<string, unknown> };
+  if (typeof body?.date !== "string" || !body.eur) return null;
+  const rates: Record<string, number> = { EUR: 1 };
+  for (const { code } of currencies) {
+    if (code === "EUR") continue;
+    const value = body.eur[code.toLowerCase()];
+    if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return null;
+    rates[code] = value;
+  }
+  return { date: body.date, rates };
+}
+
+function frenchDate(isoDate: string) {
+  return new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${isoDate}T00:00:00Z`));
+}
+
 export default function CurrencyConverter() {
   const [amount, setAmount] = useState(100);
   const [from, setFrom] = useState("EUR");
   const [to, setTo] = useState("MAD");
+  const [live, setLive] = useState<LiveRates | null>(null);
+  const [liveFailed, setLiveFailed] = useState(false);
+
+  useEffect(() => {
+    if (typeof fetch !== "function") {
+      setLiveFailed(true);
+      return;
+    }
+    const controller = new AbortController();
+    fetch(RATES_URL, { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("rates"))))
+      .then((data) => {
+        const parsed = parseLiveRates(data);
+        if (parsed) setLive(parsed);
+        else setLiveFailed(true);
+      })
+      .catch((error: Error) => {
+        if (error.name !== "AbortError") setLiveFailed(true);
+      });
+    return () => controller.abort();
+  }, []);
+
+  const rates = live?.rates ?? FIXED_RATES;
 
   const result = useMemo(() => {
     const eurAmount = amount / rates[from];
     return eurAmount * rates[to];
-  }, [amount, from, to]);
+  }, [amount, from, to, rates]);
 
   function swap() {
     setFrom(to);
@@ -129,8 +178,12 @@ export default function CurrencyConverter() {
         </div>
       </div>
 
-      <p className="mt-3 text-xs text-slate-400">
-        Taux indicatifs (mise à jour manuelle). Vérifiez auprès de votre banque pour le taux exact.
+      <p className="mt-3 text-xs text-slate-500" data-rates={live ? "live" : liveFailed ? "fixed" : "loading"}>
+        {live
+          ? `Taux de marché du ${frenchDate(live.date)} (source publique fawazahmed0/currency-api), hors frais : votre banque ou votre service de transfert appliquera sa propre marge.`
+          : liveFailed
+            ? "Taux fixes, non à jour : la source en ligne ne répond pas. Ne vous en servez pas pour décider d'un envoi."
+            : "Chargement du taux du jour…"}
       </p>
     </section>
   );
