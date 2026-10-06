@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import { FALLBACK_ANALYSIS_SOURCES, getSportsPartners } from '@/lib/sportsPartners';
+import GamblingNotice from '@/components/GamblingNotice';
 import { Trophy, Zap, ExternalLink, ShieldCheck } from 'lucide-react';
 
 type FormEntry = { w: number; d: number; l: number; last5: string };
@@ -260,8 +261,8 @@ export default function FaicalWidget() {
           <div className="flex items-start gap-2">
             <ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#f59e0b]" />
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-[#fde68a]">Partenaires paris sportifs</p>
-              <p className="mt-1 text-[11px] leading-5 text-slate-300">RME ne crée pas les cotes. Les opérateurs affichés sont destinés aux adultes et leur disponibilité dépend du pays. Jouer comporte des risques.</p>
+              <p className="text-xs font-black uppercase tracking-wider text-[#fde68a]">Sites de paris sportifs</p>
+              <p className="mt-1 text-[11px] leading-5 text-slate-300">RME ne crée pas les cotes. La disponibilité des opérateurs dépend du pays.</p>
             </div>
           </div>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -272,11 +273,12 @@ export default function FaicalWidget() {
               </a>
             ))}
           </div>
+          <GamblingNotice className="mt-3" paid={getSportsPartners().some((p) => p.status === 'active')} />
         </div>}
       </div>
 
       <p className="relative mt-5 text-center text-[11px] text-slate-300">
-        Analyses de matchs à titre informatif. Les liens partenaires sont séparés des analyses et soumis aux règles applicables.
+        Analyses de matchs à titre informatif, sans lien avec les opérateurs de paris.
       </p>
     </section>
   );
