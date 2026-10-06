@@ -1,4 +1,4 @@
-import { BookOpen, ArrowRight, Star } from 'lucide-react';
+import { BookOpen, ArrowRight } from 'lucide-react';
 import { BOOK_URL } from '@/lib/partners';
 
 function Cover({ className = '' }: { className?: string }) {
@@ -36,7 +36,10 @@ function Cover({ className = '' }: { className?: string }) {
 
 export default function BookBanner() {
   return (
-    <section className="bg-[#0b1220] py-14" style={{ containerType: 'inline-size' }}>
+    // id « livre » : lien du pied de page de l'accueil (/boutique#livre). La
+    // publicité flottante sur toutes les pages a été retirée à la demande du
+    // fondateur ; le livre vit ici, dans la Boutique et le tiroir de l'accueil.
+    <section id="livre" aria-label="Le livre de Tarek Benaïli" className="scroll-mt-20 bg-[#0b1220] py-14" style={{ containerType: 'inline-size' }}>
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-[#c8202c]/25 bg-gradient-to-br from-[#16203a] via-[#121a2e] to-[#0f1524] p-6 shadow-2xl sm:p-9">
           <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[#c8202c]/20 blur-3xl" />
@@ -70,14 +73,10 @@ export default function BookBanner() {
                 Les Nombres Interdits — Tome 1
               </p>
 
-              <div className="mt-3 flex items-center justify-center gap-2 sm:justify-start">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={12} fill="#f59e0b" className="text-[#f59e0b]" />
-                  ))}
-                </div>
-                <p className="text-sm font-bold text-[#f59e0b]">par Tarek Benaïli</p>
-              </div>
+              {/* Cinq étoiles écrites en dur, sans note de lecteurs derrière, se
+                  lisaient comme un avis : retirées. Une vraie note n'irait ici
+                  qu'avec sa source (ex. Amazon) et sa date. */}
+              <p className="mt-3 text-sm font-bold text-[#f59e0b]">par Tarek Benaïli</p>
 
               <p className="mt-4 max-w-md text-sm leading-6 text-white/65">
                 Le premier tome d&apos;une série où les chiffres cachent ce que les mots taisent.

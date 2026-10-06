@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { siteUrl } from '@/lib/siteUrl';
+import { formatKm, getRoutePage } from '@/lib/routePages';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -126,7 +127,7 @@ const innovations = [
   'Compas Qibla avec géolocalisation GPS temps réel',
   'Calculateur de budget adaptatif (carburant, péages, ferry)',
   'Packliste intelligente basée sur destination, saison et type de voyage',
-  'Convertisseur de devises en temps réel (MAD, EUR, USD, GBP)',
+  'Convertisseur de devises (MAD, EUR, USD, GBP…)',
   'Horaires de prière calculés par position GPS',
   'PWA installable avec mode hors-ligne',
   'Accessibilité malvoyant: contraste élevé, aria-labels, navigation clavier',
@@ -136,6 +137,14 @@ const innovations = [
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
+
+// A jury can check every line: no superlative, no "real time" the converter
+// did not have, and the distance read from RME's own computed route (was a
+// hand-typed "2100 km"; the computed route says about 1 939 km).
+const PARIS_TANGER = (() => {
+  const route = getRoutePage('paris-tanger');
+  return route ? formatKm(route.distanceMeters) : 'près de 2 000 km';
+})();
 
 export default function JuryPack() {
   const [showQr, setShowQr] = useState(false);
@@ -170,12 +179,12 @@ export default function JuryPack() {
         {/* Pitch */}
         <div className="mb-12 rounded-3xl border border-[#f59e0b]/15 bg-white/5 p-8 text-center sm:p-12">
           <p className="text-lg font-medium leading-relaxed text-white/90 sm:text-xl">
-            RME Voyage est la première plateforme d'assistance voyage pour les Marocains
-            de l'étranger, combinant un assistant IA en Darija, des outils de voyage
-            intelligents et une accessibilité totale — le tout en une seule PWA installable.
+            RME Voyage est une plateforme d'assistance voyage pour les Marocains de
+            l'étranger qui réunit un assistant IA en Darija, le coût réel du trajet pays
+            par pays et des réglages d'accessibilité — le tout dans une PWA installable.
           </p>
           <p className="mt-4 text-sm text-[#f59e0b]">
-            De Paris à Tanger, 2100 km de sérénité.
+            De Paris à Tanger : {PARIS_TANGER} de route calculés (hors traversée).
           </p>
         </div>
 

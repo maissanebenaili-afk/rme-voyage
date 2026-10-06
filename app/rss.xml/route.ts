@@ -6,9 +6,9 @@ const newsItems = [
     date: "2026-06-01",
   },
   {
-    title: "Passeport : validité 6 mois",
+    title: "Passeport valide pour tout le séjour",
     description:
-      "Le Maroc exige un passeport valide 6 mois après la date d'entrée. Vérifiez votre passeport dès maintenant.",
+      "Pour entrer au Maroc, le passeport doit être valide pendant tout le séjour ; la carte d'identité française ne suffit pas (France Diplomatie). Vérifiez votre passeport dès maintenant.",
     date: "2026-01-15",
   },
   {
@@ -18,9 +18,9 @@ const newsItems = [
     date: "2026-03-10",
   },
   {
-    title: "Aides au voyage MRE",
+    title: "Opération Marhaba",
     description:
-      "Le programme MRE de l'OFII propose des services d'accompagnement pour les Marocains résidant à l'étranger. Renseignez-vous sur vos droits.",
+      "Pendant l'été, la Fondation Mohammed V pour la Solidarité accueille les Marocains résidant à l'étranger dans des espaces d'accueil sur le trajet, en Europe et au Maroc.",
     date: "2026-02-20",
   },
 ];

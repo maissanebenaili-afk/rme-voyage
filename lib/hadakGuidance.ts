@@ -52,11 +52,13 @@ const SECTIONS: Record<Section, { destination: string; label: Record<HadakLang, 
     destination: '/#route',
     label: { fr: 'Calculer mon trajet', da: '7seb triq dyali', en: 'Plan my route', ar: 'احسب مساري', es: 'Calcular mi ruta' },
     reason: {
-      fr: 'Distance, péages, carburant et ferry calculés pour votre trajet.',
-      da: 'L-masafa, péage, lissans w ferry dyal triq dyalk.',
-      en: 'Distance, tolls, fuel and ferry worked out for your trip.',
-      ar: 'المسافة والرسوم والوقود والعبارة لرحلتك.',
-      es: 'Distancia, peajes, combustible y ferry para tu viaje.',
+      // RME computes distance, duration and fuel per country; tolls and the
+      // ferry ticket are not computed (the route page says so): 2026-10-05.
+      fr: 'Distance, durée et carburant pays par pays (prix officiels) ; péages et ferry à ajouter.',
+      da: 'L-masafa, l-wa9t w lissans blad b blad (tmnan rasmiyin); péage w ferry zidhom nta.',
+      en: 'Distance, duration and fuel country by country (official prices); add tolls and ferry yourself.',
+      ar: 'المسافة والمدة والوقود بلداً بلداً (أسعار رسمية)؛ أضف رسوم الطريق والعبارة بنفسك.',
+      es: 'Distancia, duración y combustible país por país (precios oficiales); añade peajes y ferry.',
     },
   },
   preparer: {
@@ -116,6 +118,7 @@ const NEXT_BY_INTENT: Record<string, Section[]> = {
   ramadan: ['maroc'],
   currency: ['transfert'],
   football: ['sport'],
+  services: ['route'],
 };
 
 export function isHadakLang(value: unknown): value is HadakLang {

@@ -144,9 +144,14 @@ function verifiedEnvUrl(value: string | undefined, allowedHosts: string[]): stri
   }
 }
 
-export function getPartnerCatalogue(): PartnerCatalogueEntry[] {
+// `env` defaults to the server environment. Client components pass `{}`: the
+// browser cannot read these variables, so a page prerendered with them would
+// not match the browser render (React error #418).
+export function getPartnerCatalogue(
+  env: Record<string, string | undefined> = process.env,
+): PartnerCatalogueEntry[] {
   return seeds.map(({ allowedHosts, ...seed }) => {
-    const affiliateUrl = verifiedEnvUrl(process.env[seed.envVar], allowedHosts);
+    const affiliateUrl = verifiedEnvUrl(env[seed.envVar], allowedHosts);
     return {
       ...seed,
       status: affiliateUrl ? "active" : "pending",

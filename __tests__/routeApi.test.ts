@@ -103,7 +103,7 @@ describe("GET /api/route", () => {
     const data = await response.json();
 
     expect(response.status).toBe(404);
-    expect(data.error).toMatch(/Origin location not found/);
+    expect(data.error).toMatch(/Ville de départ introuvable/);
   });
 
   it("returns 404 when OSRM finds no route between the two points", async () => {
