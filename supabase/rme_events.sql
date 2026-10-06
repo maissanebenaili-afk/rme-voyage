@@ -23,7 +23,7 @@ drop policy if exists rme_events_insert_only on public.rme_events;
 create policy rme_events_insert_only on public.rme_events
   for insert to anon
   with check (
-    event in ('page_view', 'partner_click', 'route_computed', 'reality_check_used', 'reality_check_cta', 'remittance_result_viewed', 'hadak_next_action', 'hadak_trust_why', 'hadak_voice_listen', 'hadak_voice_input')
+    event in ('page_view', 'partner_click', 'route_computed', 'reality_check_used', 'reality_check_cta', 'remittance_result_viewed', 'services_searched', 'hadak_next_action', 'hadak_trust_why', 'hadak_voice_listen', 'hadak_voice_input')
     and jsonb_typeof(props) = 'object'
     and pg_column_size(props) < 2048
   );
