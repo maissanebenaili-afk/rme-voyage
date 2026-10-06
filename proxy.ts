@@ -174,9 +174,22 @@ export async function proxy(request: NextRequest) {
   // overwrites X-User-ID with the userId validated from the session JWT (or strips
   // it), so route handlers never see a client-forged value.
   const supabaseConfigured = isSupabaseConfigured();
-  const { response, userId: sessionUserId } = supabaseConfigured
-    ? await updateSession(request)
-    : { response: NextResponse.next(), userId: null };
+  // Lien de trajet partagé (/?from=…&to=…) : servi par /partage, qui porte l'aperçu
+  // WhatsApp du trajet. Fait ici et non dans next.config : la réécriture de
+  // next.config n'est pas appliquée à l'accueil statique sur Netlify. L'accueil
+  // sans paramètres reste statique. Les en-têtes de sécurité ci-dessous s'appliquent.
+  const isSharedTripLink =
+    pathname === '/' &&
+    request.method === 'GET' &&
+    request.nextUrl.searchParams.has('from') &&
+    request.nextUrl.searchParams.has('to');
+  const shareTarget = request.nextUrl.clone();
+  shareTarget.pathname = '/partage';
+  const { response, userId: sessionUserId } = isSharedTripLink
+    ? { response: NextResponse.rewrite(shareTarget), userId: null }
+    : supabaseConfigured
+      ? await updateSession(request)
+      : { response: NextResponse.next(), userId: null };
 
   // Enforce authentication for trips API. With Supabase configured, identity is
   // exactly what updateSession() above just verified from the session JWT — a
