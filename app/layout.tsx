@@ -8,6 +8,7 @@ import RegisterSW from './register-sw';
 import PageViewBeacon from '@/components/PageViewBeacon';
 import { siteUrl } from '@/lib/siteUrl';
 import { siteVerification } from '@/lib/siteVerification';
+import { NETLIFY_HEAD_COMMENT_CLEANUP } from '@/lib/netlifyHeadComment';
 
 // Fallback fonts (kept for RTL Arabic + safety net); primary display/body
 // identity fonts (Boska + General Sans) load via Fontshare <link> below.
@@ -91,6 +92,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${inter.variable} ${jakarta.variable} ${amiri.variable}`}>
       <head>
+        {/* Avant tout le reste : retire le commentaire que Netlify insère en
+            production, sinon React lève l'erreur #418 (lib/netlifyHeadComment). */}
+        <script dangerouslySetInnerHTML={{ __html: NETLIFY_HEAD_COMMENT_CLEANUP }} />
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="" />
         <link
