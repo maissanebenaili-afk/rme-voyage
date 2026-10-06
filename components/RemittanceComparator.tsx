@@ -14,7 +14,8 @@ interface Provider {
   time: string;
   affiliateUrl: string | null;
   isAffiliate: boolean;
-  costBasis: 'estimated';
+  /** 'quoted' only for a provider's own dated quote; RME estimates are never ranked. */
+  costBasis: 'estimated' | 'quoted';
 }
 
 interface RemittanceData {
@@ -121,27 +122,33 @@ export default function RemittanceComparator() {
       )}
 
       {/* Results table */}
-      {!loading && !error && data && (
+      {!loading && !error && data && (() => {
+        // Estimated fees and margins are RME's guesses: no podium, no "best", alphabetical order.
+        const estimated = data.providers.some((p) => p.costBasis !== 'quoted');
+        const providers = estimated
+          ? [...data.providers].sort((a, b) => a.name.localeCompare(b.name))
+          : data.providers;
+        return (
         <div className="space-y-3">
-          {data.providers.map((p, i) => (
+          {providers.map((p, i) => (
             <div
               key={p.id}
               className={`flex items-center gap-4 rounded-xl border px-4 py-3 ${
-                i === 0
+                !estimated && i === 0
                   ? 'border-[#d4af37] bg-[#d4af37]/8'
                   : 'border-[#0f1f3d]/10 bg-white'
               }`}
             >
               {/* Rank */}
               <span className="text-lg font-bold text-[#0f1f3d]/75 w-6 shrink-0">
-                {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}
+                {estimated ? '·' : i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}
               </span>
 
               {/* Provider name + best badge */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-[#0f1f3d]">{p.name}</span>
-                  {i === 0 && (
+                  {!estimated && i === 0 && (
                     <span className="text-xs font-medium bg-[#d4af37] text-[#0f1f3d] rounded-full px-2 py-0.5">
                       {t('remittanceBest')}
                     </span>
@@ -166,9 +173,11 @@ export default function RemittanceComparator() {
               {/* MAD received */}
               <div className="text-right shrink-0">
                 <div className="font-bold text-[#0f1f3d]">
-                  {p.received.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} MAD
+                  {estimated ? '≈ ' : ''}{p.received.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} MAD
                 </div>
-                <div className="text-xs text-[#0f1f3d]/75">{t('remittanceReceived')}</div>
+                <div className="text-xs text-[#0f1f3d]/75">
+                  {estimated ? 'estimation RME, non vérifiée' : t('remittanceReceived')}
+                </div>
               </div>
 
               {/* CTA */}
@@ -198,7 +207,8 @@ export default function RemittanceComparator() {
             </div>
           ))}
         </div>
-      )}
+        );
+      })()}
     </section>
   );
 }
