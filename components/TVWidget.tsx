@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import { Tv, Radio, ExternalLink, Signal, MapPin } from 'lucide-react';
+import { featuredMatchTiming, parisDay, type MatchTiming } from '@/lib/featuredMatch';
 
 type Channel = {
   name: string;
@@ -12,6 +13,8 @@ type Channel = {
   url: string;
   sport?: boolean;
   live?: boolean;
+  /** Lien propre au match mis en avant : masqué une fois le match joué. */
+  featuredMatch?: boolean;
 };
 
 const CHANNELS: Record<string, Channel[]> = {
@@ -24,8 +27,8 @@ const CHANNELS: Record<string, Channel[]> = {
     { name: 'Chada TV', flag: '🇲🇦', desc: 'Musique & culture marocaine', url: 'https://www.youtube.com/@ChadaTVOfficiel/streams', live: true },
   ],
   sport: [
-    { name: '🇲🇦 Maroc–Gabon · Arryadia TNT', flag: '⚽', desc: 'Diffusion officielle au Maroc — TNT', url: 'https://www.snrt.ma/fr/node/4070', sport: true, live: true },
-    { name: 'beIN SPORTS · Maroc–Gabon', flag: '⚽', desc: 'Page officielle du match — diffusion selon territoire', url: 'https://www.beinsports.com/en-mena/football/africa-cup-of-nations-qualification/morocco-vs-gabon-2026-09-25', sport: true, live: true },
+    { name: '🇲🇦 Maroc–Gabon · Arryadia TNT', flag: '⚽', desc: 'Diffusion officielle au Maroc — TNT', url: 'https://www.snrt.ma/fr/node/4070', sport: true, featuredMatch: true },
+    { name: 'beIN SPORTS · Maroc–Gabon', flag: '⚽', desc: 'Page officielle du match — diffusion selon territoire', url: 'https://www.beinsports.com/en-mena/football/africa-cup-of-nations-qualification/morocco-vs-gabon-2026-09-25', sport: true, featuredMatch: true },
     { name: 'beIN SPORTS France', flag: '⚽', desc: 'Scores, directs et programme officiel', url: 'https://www.beinsports.com/fr-fr/scores', sport: true, live: true },
     { name: 'Arryadia / SNRT', flag: '⚽', desc: 'Programme sport officiel SNRT', url: 'https://www.snrt.ma/fr/arryadia', sport: true, live: true },
     { name: 'SSC Sport', flag: '⚽', desc: 'Sport arabe — site officiel', url: 'https://www.ssc.sa/ar/tv', sport: true },
@@ -55,9 +58,6 @@ const TABS = [
 
 type TabKey = typeof TABS[number]['key'];
 
-function isTonightMatchDay() {
-  return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()) === '25/09/2026';
-}
 
 function ChannelCard({ ch, openExternal }: { ch: Channel; openExternal: (url: string, event: React.MouseEvent<HTMLAnchorElement>) => void }) {
   return (
@@ -102,10 +102,14 @@ export default function TVWidget() {
     await Browser.open({ url });
   };
 
+  // 'played' par défaut : tant que la date n'est pas lue, rien n'annonce le match.
+  const [timing, setTiming] = useState<MatchTiming>('played');
+
   useEffect(() => {
     setIsNativeApp(Capacitor.isNativePlatform());
+    setTiming(featuredMatchTiming(parisDay()));
   }, []);
-  const showTonight = isTonightMatchDay();
+  const showTonight = timing === 'today';
 
   return (
     <div className="rounded-3xl border border-[#e2e8f0] bg-white overflow-hidden shadow-sm">
@@ -155,7 +159,7 @@ export default function TVWidget() {
 
       {/* Channel grid */}
       <div className="p-4 grid gap-2.5 sm:grid-cols-2">
-        {CHANNELS[tab].map((ch) => (
+        {CHANNELS[tab].filter((ch) => !ch.featuredMatch || timing !== 'played').map((ch) => (
           <ChannelCard key={ch.name + ch.url} ch={ch} openExternal={openExternal} />
         ))}
       </div>
