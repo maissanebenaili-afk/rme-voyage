@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { GOLD_PRICE_READING, goldReadingIsStale, NISAB_GOLD_GRAMS, ZakaatCalculator, zakatFor } from '@/components/TravelWidgets'
+import { GOLD_PRICE_READING, eurToMadFrom, goldReadingIsStale, NISAB_GOLD_GRAMS, ZakaatCalculator, zakatFor } from '@/components/TravelWidgets'
 
 describe('zakat nisab', () => {
   it('is 85 g of gold at the given price, not a fixed 50 000 MAD', () => {
@@ -49,5 +49,33 @@ describe('zakat with an old gold reading', () => {
     expect(goldReadingIsStale('2026-08-10', GOLD_PRICE_READING.madPerGram)).toBe(false)
     expect(goldReadingIsStale('2026-10-06', GOLD_PRICE_READING.madPerGram)).toBe(true)
     expect(goldReadingIsStale('2026-10-06', 1250)).toBe(false)
+  })
+})
+
+// 2026-10-06 : la Zakat convertissait à 10,8 en dur alors que le convertisseur
+// de la même page affichait le taux du jour (11,03).
+describe('zakat uses the live EUR → MAD rate', () => {
+  const originalFetch = global.fetch
+  afterEach(() => { global.fetch = originalFetch })
+
+  it('reads the day rate and says so', async () => {
+    global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ date: '2026-10-06', eur: { mad: 11.03 } }) })) as unknown as typeof fetch
+    render(<ZakaatCalculator />)
+    fireEvent.change(screen.getByLabelText(/Prix de l.or/), { target: { value: '1213.5' } })
+    // 9 400 € : 101 520 MAD à 10,8 (sous le nisab de 103 147,5) mais 103 682 MAD à 11,03 (au-dessus).
+    fireEvent.change(screen.getByLabelText(/Épargne/), { target: { value: '9400' } })
+    expect(await screen.findByText(/taux de marché du 2026-10-06/)).toBeInTheDocument()
+    expect(document.body.textContent).toMatch(/Zakat à payer/)
+  })
+
+  it('falls back to the fixed rate, labelled as not current', () => {
+    global.fetch = jest.fn(async () => { throw new Error('offline') }) as unknown as typeof fetch
+    render(<ZakaatCalculator />)
+    expect(document.body.textContent).toMatch(/taux fixe indicatif, non à jour/)
+  })
+
+  it('rejects an absurd rate', () => {
+    expect(eurToMadFrom({ date: '2026-10-06', eur: { mad: 0.09 } })).toBeNull()
+    expect(eurToMadFrom({ date: '2026-10-06', eur: { mad: 11.03 } })).toEqual({ rate: 11.03, date: '2026-10-06' })
   })
 })

@@ -1,4 +1,4 @@
-import { geocodePlace, type LatLon } from "@/lib/serverGeocode";
+import { GeocodeUnavailable, geocodePlace, type LatLon } from "@/lib/serverGeocode";
 import { overnightStops as stopsOnRoute, type OvernightStop } from "@/lib/overnight";
 import stopoverHubs from "@/lib/data/stopoverHubs.json";
 import { countryNear, splitByCountry } from "@/lib/countryLookup";
@@ -301,10 +301,19 @@ export async function GET(request: Request) {
     return Response.json({ error: "Indiquez une ville de départ et une destination." }, { status: 400 });
   }
 
-  const [originPoint, destinationPoint] = await Promise.all([
-    geocodePlace(origin),
-    geocodePlace(destination),
-  ]);
+  let originPoint: LatLon | null;
+  let destinationPoint: LatLon | null;
+  try {
+    [originPoint, destinationPoint] = await Promise.all([geocodePlace(origin), geocodePlace(destination)]);
+  } catch (error) {
+    if (error instanceof GeocodeUnavailable) {
+      return Response.json(
+        { error: "Le service de cartes est momentanément indisponible. Réessayez dans une minute." },
+        { status: 503 },
+      );
+    }
+    throw error;
+  }
 
   if (!originPoint) {
     return Response.json({ error: 'Ville de départ introuvable. Vérifiez l’orthographe ou ajoutez le pays (ex. « Lyon, France »).' }, { status: 404 });

@@ -29,6 +29,13 @@ function normalizedTokens(value: string): string[] {
  * and sends an identifying User-Agent as Nominatim's usage policy asks:
  * https://operations.osmfoundation.org/policies/nominatim/
  */
+/**
+ * Nominatim n'a pas répondu (limite de débit 429, panne 5xx, réseau). Distinct
+ * de « lieu introuvable » : jusqu'au 2026-10-06, une surcharge passagère
+ * affichait « Ville de départ introuvable » pour Paris ou Madrid.
+ */
+export class GeocodeUnavailable extends Error {}
+
 export async function geocodePlace(place: string): Promise<LatLon | null> {
   const url = new URL("https://nominatim.openstreetmap.org/search");
   url.searchParams.set("q", place);
@@ -42,8 +49,10 @@ export async function geocodePlace(place: string): Promise<LatLon | null> {
       "user-agent": `RME-Voyage/1.0 (${siteUrl})`,
     },
     next: { revalidate: 86_400 },
+  }).catch(() => {
+    throw new GeocodeUnavailable();
   });
-  if (!response.ok) return null;
+  if (!response.ok) throw new GeocodeUnavailable();
 
   const results = (await response.json()) as NominatimResult[];
   // « Ville, Pays » : seul le nom de la ville est contrôlé. Le pays a déjà servi
