@@ -33,7 +33,7 @@ const quickAmounts = [50, 100, 200, 500, 1000];
 
 // Same free, keyless source as the remittance comparator (app/api/remittance), so one
 // page never shows two different EUR→MAD rates.
-const RATES_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
+export const RATES_URL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
 
 type LiveRates = { date: string; rates: Record<string, number> };
 

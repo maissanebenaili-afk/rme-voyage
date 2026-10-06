@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { daysUntil, upcomingHolidays } from "@/lib/moroccanHolidays";
+import { RATES_URL } from "@/components/CurrencyConverter";
 import { countryName } from "@/lib/countries";
 import { MOROCCO_EMERGENCY_NUMBERS, MOROCCO_EMERGENCY_SOURCE } from "@/lib/data/emergencyMorocco";
 import { datasetExpiry, FUEL_PRICES } from "@/lib/fuelByCountry";
@@ -806,7 +807,18 @@ export function MoroccanCalendar() {
 /* ============================================================
    6. ZakaatCalculator — Travel zakaat calculator
    ============================================================ */
-const EUR_TO_MAD = 10.8;
+// Secours seulement : la Zakat lit le même taux du jour que le convertisseur
+// (jusqu'au 2026-10-06 elle gardait 10,8 en dur quand le convertisseur de la
+// même page affichait 11,03 : 2 % d'écart sur un seuil religieux).
+export const EUR_TO_MAD_FALLBACK = 10.8;
+
+/** Taux EUR → MAD du jour lu dans la réponse publique, ou null. */
+export function eurToMadFrom(data: unknown): { rate: number; date: string } | null {
+  const body = data as { date?: unknown; eur?: { mad?: unknown } };
+  const rate = body?.eur?.mad;
+  if (typeof body?.date !== "string" || typeof rate !== "number" || !Number.isFinite(rate) || rate < 5 || rate > 20) return null;
+  return { rate, date: body.date };
+}
 // The nisab was hard-coded as 5 000 USD × 10 = 50 000 MAD and called "85 g of
 // gold", while 85 g of 24-carat gold were worth about 103 000 MAD (2026-10-04):
 // people under the real threshold were told zakat was due. The nisab is now
@@ -846,6 +858,18 @@ export function ZakaatCalculator() {
   }, []);
   const staleGold = goldReadingIsStale(today, goldPrice);
   const toConfirm = staleGold ? " — à confirmer avec le prix du jour" : "";
+
+  const [liveRate, setLiveRate] = useState<{ rate: number; date: string } | null>(null);
+  useEffect(() => {
+    if (typeof fetch !== "function") return;
+    const controller = new AbortController();
+    fetch(RATES_URL, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setLiveRate(eurToMadFrom(data)))
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
+  const EUR_TO_MAD = liveRate?.rate ?? EUR_TO_MAD_FALLBACK;
 
   const amountMAD =
     currency === "EUR" ? amount * EUR_TO_MAD : amount;
@@ -959,7 +983,11 @@ export function ZakaatCalculator() {
       <p className="mt-3 text-xs text-[#0f1f3d]/70">
         Nisab : valeur de {NISAB_GOLD_GRAMS} g d&apos;or, soit {fmt(Math.round(nisabMAD))} MAD au prix indiqué.
         La zakat est due si votre capital reste au-dessus de ce seuil pendant une
-        année lunaire. Conversion indicative : 1 € = {EUR_TO_MAD} MAD. En cas de
+        année lunaire.{" "}
+        {liveRate
+          ? `Conversion au taux de marché du ${liveRate.date} : 1 € = ${fmt(liveRate.rate)} MAD.`
+          : `Conversion à un taux fixe indicatif, non à jour : 1 € = ${EUR_TO_MAD_FALLBACK} MAD.`}{" "}
+        En cas de
         doute, demandez à un imam ou à une personne compétente.
       </p>
     </section>
