@@ -26,7 +26,24 @@ describe("privacy policy matches the app", () => {
   });
 
   test("does not promise things the app does not do", () => {
-    expect(policy).not.toMatch(/Supabase|serveurs EU|mot de passe|Exporter vos données|commissions de réservation/i);
+    expect(policy).not.toMatch(/serveurs EU|mot de passe|Exporter vos données|commissions de réservation|Effacer mon voyage/i);
+  });
+
+  // Supabase n'apparaît que pour ce que le code y envoie vraiment : le journal
+  // d'événements (lib/eventStore.ts), jamais des comptes ou des profils.
+  test("names Supabase only as the event journal the code really writes to", () => {
+    expect(read("lib/eventStore.ts")).toMatch(/supabase/i);
+    const mentions = policy.match(/[^.<>]*Supabase[^.<>]*/g) ?? [];
+    expect(mentions.length).toBeGreaterThan(0);
+    for (const sentence of mentions) expect(sentence).toMatch(/événements|base de données/);
+    expect(policy).not.toMatch(/compte[^.]*Supabase|Supabase[^.]*compte/i);
+  });
+
+  // 2026-10-06 : ces services recevaient l'adresse IP sans être nommés.
+  test("names every third party contacted when the home page opens", () => {
+    expect(policy).toContain("cdn.jsdelivr.net");
+    expect(policy).toContain("tile.openstreetmap.org");
+    expect(policy).toMatch(/Aladhan[^<]*Hégire|Hégire[^<]*Aladhan/);
   });
 
   test("does not point to a contact address on an unregistered domain", () => {
