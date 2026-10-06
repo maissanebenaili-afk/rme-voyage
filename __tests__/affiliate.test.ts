@@ -84,3 +84,18 @@ describe('Approved partner links', () => {
       expect(verifiedPartnerUrl(url, 'flight')).toBeNull();
     });
 });
+
+describe('Ferry partner link refused silently', () => {
+  const original = { ...process.env };
+  afterEach(() => { process.env = { ...original }; jest.restoreAllMocks(); });
+
+  it('logs the variable name, never its value, when a set link is refused', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    delete process.env.GNV_AFFILIATE_URL;
+    delete process.env.FRS_AFFILIATE_URL;
+    process.env.DIRECT_FERRIES_AFFILIATE_URL = 'https://connect.directferries.com/?ref=secret123';
+    expect(buildFerryAffiliateUrl({ origin: 'Paris', destination: 'Tanger' })).toBeNull();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('DIRECT_FERRIES_AFFILIATE_URL'));
+    expect(warn.mock.calls.flat().join(' ')).not.toContain('secret123');
+  });
+});

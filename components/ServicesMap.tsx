@@ -5,6 +5,7 @@ import { Fuel, Moon, Utensils, Building, Bed, Wrench, LoaderCircle, AlertCircle,
 import CityAutocomplete from "./CityAutocomplete";
 import ServicesMapViewWrapper from "./ServicesMapViewWrapper";
 import type { ServiceCategory, ServicePoint } from "@/app/api/services/route";
+import { trackFunnelEvent } from "@/lib/partnerTracking";
 
 type SearchStatus = "idle" | "loading" | "error" | "ready";
 
@@ -59,6 +60,13 @@ export default function ServicesMap() {
       setCenter(data.center);
       setResults(data.results);
       setStatus("ready");
+      // A need expressed on the road (a garage, a consulate…): only the category and how
+      // many places were found, never the place typed by the traveller.
+      trackFunnelEvent({
+        event: "services_searched",
+        placement: "services_map",
+        data: { category, results: Array.isArray(data.results) ? data.results.length : 0 },
+      });
     } catch (error) {
       if ((error as Error).name === "AbortError") return;
       setErrorMessage("Recherche indisponible. Vérifiez votre connexion et réessayez.");

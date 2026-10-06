@@ -255,6 +255,17 @@ describe("proxy + Supabase session refresh", () => {
     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://rme-voyage.com");
   });
 
+  it("lets the browser reach every host a client component fetches (CSP connect-src)", async () => {
+    // The converter's day rates were blocked in production: its host was
+    // missing here, so the browser refused the call and it showed fixed rates.
+    const { readFileSync } = await import("fs");
+    const converter = readFileSync(`${process.cwd()}/components/CurrencyConverter.tsx`, "utf8");
+    const host = new URL(converter.match(/RATES_URL = "([^"]+)"/)![1]).origin;
+    const csp = (await proxy(buildRequest("/"))).headers.get("Content-Security-Policy") ?? "";
+    const connectSrc = csp.split(";").find((d) => d.trim().startsWith("connect-src")) ?? "";
+    expect(connectSrc.trim().split(/\s+/)).toContain(host);
+  });
+
   it("allows the Supabase project origin in connect-src only when configured with https", async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co/some/path";
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";

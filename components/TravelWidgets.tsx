@@ -816,7 +816,17 @@ export const GOLD_PRICE_READING = {
   madPerGram: 1213.5, // 24 carats
   observed: "fin juillet 2026",
   source: "https://www.goldpricedata.com/fr/gold-rates/morocco/gram/24k/",
+  // Un mois après « fin juillet » : au-delà, le relevé n'est plus le cours du
+  // jour, et le verdict (dû / non dû) n'est donné que « à confirmer ».
+  staleAfter: "2026-08-31",
 };
+
+// 2026-10-06 : avec le relevé de juillet, le calculateur affichait un verdict
+// ferme (« Zakat non obligatoire ») sur une obligation religieuse, alors que
+// le seuil suit le cours de l'or.
+export function goldReadingIsStale(today: string, goldPrice: number) {
+  return goldPrice === GOLD_PRICE_READING.madPerGram && today > GOLD_PRICE_READING.staleAfter;
+}
 
 export function zakatFor(amountMAD: number, goldMadPerGram: number) {
   const nisab = NISAB_GOLD_GRAMS * goldMadPerGram;
@@ -828,6 +838,14 @@ export function ZakaatCalculator() {
   const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState<"EUR" | "MAD">("EUR");
   const [goldPrice, setGoldPrice] = useState(GOLD_PRICE_READING.madPerGram);
+  // Lu après le montage (pas de différence serveur / navigateur) ; d'ici là,
+  // le relevé est traité comme ancien.
+  const [today, setToday] = useState("9999-12-31");
+  useEffect(() => {
+    setToday(new Date().toISOString().slice(0, 10));
+  }, []);
+  const staleGold = goldReadingIsStale(today, goldPrice);
+  const toConfirm = staleGold ? " — à confirmer avec le prix du jour" : "";
 
   const amountMAD =
     currency === "EUR" ? amount * EUR_TO_MAD : amount;
@@ -893,6 +911,12 @@ export function ZakaatCalculator() {
           <a href={GOLD_PRICE_READING.source} target="_blank" rel="noopener noreferrer" className="underline">source</a>
           ) : remplacez-le par le prix du jour.
         </p>
+        {staleGold && (
+          <p role="alert" className="mt-2 rounded-lg bg-amber-100 p-2 text-xs font-bold text-amber-900">
+            Ce cours date de {GOLD_PRICE_READING.observed} : le seuil peut avoir changé. Le résultat ci-dessous
+            reste à confirmer tant que vous n&apos;avez pas saisi le prix du jour.
+          </p>
+        )}
       </div>
 
       {/* Nisab status */}
@@ -909,14 +933,17 @@ export function ZakaatCalculator() {
           <X size={18} className="text-[#0f1f3d]/70" />
         )}
         {aboveNisab
-          ? `Au-dessus du nisab (${fmt(nisabMAD)} MAD)`
-          : `Sous le nisab (${fmt(nisabMAD)} MAD) — Zakat non obligatoire`}
+          ? `Au-dessus du nisab (${fmt(nisabMAD)} MAD)${toConfirm}`
+          : staleGold
+            ? `Sous le nisab (${fmt(nisabMAD)} MAD)${toConfirm}`
+            : `Sous le nisab (${fmt(nisabMAD)} MAD) — Zakat non obligatoire`}
       </div>
 
       {/* Result */}
       <div className="mt-3 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f59e0b]/90 p-5 text-center">
         <p className="text-xs uppercase tracking-wide text-[#0f1f3d]/70">
           {aboveNisab ? "Zakat à payer (2,5 %)" : "Zakat non due"}
+          {staleGold ? " (à confirmer)" : ""}
         </p>
         <p className="mt-1 text-3xl font-black text-[#0f1f3d]">
           {fmt(Math.round(zakaat * 100) / 100)}

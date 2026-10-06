@@ -294,3 +294,38 @@ describe('LOT B — resilience and routing invariants', () => {
     expect(getProviderHealth().groq.state).toBe('AVAILABLE');
   });
 });
+
+describe('reasoning never reaches a user', () => {
+  const leak =
+    "Here's a thinking process: 1. **Analyze User Input:** - Role: Faical, charismatic football pundit from RME - Output requirements: exactly 1 probable result.";
+
+  it('rejects an answer that is a reasoning trace and uses the next model (Faical leak, 2026-10-06)', async () => {
+    setEnv({ AI_ROUTER_FREE_ONLY: 'true', GROQ_API_KEY: 'groq-test' });
+    let call = 0;
+    global.fetch = jest.fn(async () => {
+      call += 1;
+      return call === 1
+        ? mockJson({ choices: [{ message: { content: leak }, finish_reason: 'length' }] })
+        : mockJson({ choices: [{ message: { content: 'Berkane gagne 1-0 : meilleure forme récente.' }, finish_reason: 'stop' }] });
+    }) as unknown as typeof fetch;
+    const result = await routeHadakAI({ message: 'Match', systemPrompt: 'Tu es Faical' });
+    expect(result.text).toBe('Berkane gagne 1-0 : meilleure forme récente.');
+    expect(result.text).not.toMatch(/thinking process|Analyze User Input/i);
+  });
+
+  it('removes <think> blocks and keeps the answer after them', async () => {
+    setEnv({ AI_ROUTER_FREE_ONLY: 'true', GROQ_API_KEY: 'groq-test' });
+    global.fetch = jest.fn(async () =>
+      mockJson({ choices: [{ message: { content: '<think>The user asks about ferries.</think>Consultez frs.es et aml.es pour les horaires.' } }] }),
+    ) as unknown as typeof fetch;
+    const result = await routeHadakAI({ message: 'ferry', systemPrompt: 'Hadak' });
+    expect(result.text).toBe('Consultez frs.es et aml.es pour les horaires.');
+  });
+
+  it('keeps ordinary answers untouched', async () => {
+    setEnv({ AI_ROUTER_FREE_ONLY: 'true', GROQ_API_KEY: 'groq-test' });
+    global.fetch = jest.fn(async () => mockJson({ choices: [{ message: { content: 'Analyse : Wydad favori à domicile.' } }] })) as unknown as typeof fetch;
+    const result = await routeHadakAI({ message: 'Wydad', systemPrompt: 'Faical' });
+    expect(result.text).toBe('Analyse : Wydad favori à domicile.');
+  });
+});

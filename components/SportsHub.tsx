@@ -6,6 +6,7 @@ import { Browser } from '@capacitor/browser';
 import { Share } from '@capacitor/share';
 import { ExternalLink, Radio, Trophy, BarChart3, ShieldCheck } from 'lucide-react';
 import { FALLBACK_ANALYSIS_SOURCES, getSportsPartners } from '@/lib/sportsPartners';
+import { featuredMatchTiming, parisDay, type MatchTiming } from '@/lib/featuredMatch';
 
 const MATCH = {
   home: 'Maroc',
@@ -23,7 +24,8 @@ const CHANNELS = [
 ];
 
 export default function SportsHub() {
-  const [today, setToday] = useState(false);
+  // 'played' par défaut : tant que la date n'est pas lue, rien n'annonce le match.
+  const [timing, setTiming] = useState<MatchTiming>('played');
   const [isNativeApp, setIsNativeApp] = useState(false);
 
   const openExternal = async (url: string, event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -44,8 +46,7 @@ export default function SportsHub() {
 
   useEffect(() => {
     setIsNativeApp(Capacitor.isNativePlatform());
-    const d = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-    setToday(d === '25/09/2026');
+    setTiming(featuredMatchTiming(parisDay()));
   }, []);
 
   return (
@@ -57,7 +58,7 @@ export default function SportsHub() {
             <h2 className="mt-1 text-2xl font-black text-white sm:text-3xl">Le match, les chaînes, les analyses.</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Un point d'entrée unique vers les diffuseurs officiels, les analyses disponibles et les opérateurs partenaires.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">{isNativeApp && <button type="button" onClick={shareMatch} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black tracking-wide text-white/80">Partager</button>}<div className="flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-emerald-200"><Radio size={12} className="animate-pulse" /> Direct officiel</div></div>
+          <div className="flex flex-wrap items-center gap-2">{isNativeApp && <button type="button" onClick={shareMatch} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black tracking-wide text-white/80">Partager</button>}<div className="flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-emerald-200"><Radio size={12} /> Diffuseurs officiels</div></div>
         </div>
       </div>
 
@@ -65,11 +66,11 @@ export default function SportsHub() {
         <article className="rounded-2xl border border-white/10 bg-white/5 p-5">
           <div className="flex items-center justify-between gap-3">
             <span className="rounded-full bg-[#f59e0b]/15 px-2.5 py-1 text-[10px] font-black uppercase text-[#fde68a]">{MATCH.competition}</span>
-            {today && <span className="rounded-full bg-red-500/15 px-2.5 py-1 text-[10px] font-black uppercase text-red-200">Ce soir</span>}
+            {timing === 'today' && <span className="rounded-full bg-red-500/15 px-2.5 py-1 text-[10px] font-black uppercase text-red-200">Ce soir</span>}
           </div>
           <div className="mt-6 flex items-center justify-between gap-3 text-center">
             <div className="flex-1"><div className="text-3xl">🇲🇦</div><p className="mt-2 text-lg font-black text-white">{MATCH.home}</p></div>
-            <div className="shrink-0"><p className="text-xs font-bold text-slate-300">COUP D'ENVOI</p><p className="mt-1 text-2xl font-black text-[#f59e0b]">{MATCH.kickoff}</p></div>
+            <div className="shrink-0">{timing === 'played' ? <p className="text-xs font-black text-slate-300">MATCH JOUÉ</p> : <><p className="text-xs font-bold text-slate-300">COUP D'ENVOI</p><p className="mt-1 text-2xl font-black text-[#f59e0b]">{MATCH.kickoff}</p></>}</div>
             <div className="flex-1"><div className="text-3xl">🇬🇦</div><p className="mt-2 text-lg font-black text-white">{MATCH.away}</p></div>
           </div>
           <p className="mt-4 text-center text-xs text-slate-300">{MATCH.date} · {MATCH.venue}</p>

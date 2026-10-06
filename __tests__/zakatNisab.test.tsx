@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { GOLD_PRICE_READING, NISAB_GOLD_GRAMS, ZakaatCalculator, zakatFor } from '@/components/TravelWidgets'
+import { GOLD_PRICE_READING, goldReadingIsStale, NISAB_GOLD_GRAMS, ZakaatCalculator, zakatFor } from '@/components/TravelWidgets'
 
 describe('zakat nisab', () => {
   it('is 85 g of gold at the given price, not a fixed 50 000 MAD', () => {
@@ -23,5 +23,31 @@ describe('zakat nisab', () => {
     fireEvent.change(screen.getByLabelText(/Prix de l.or/), { target: { value: '500' } })
     expect(document.body.textContent).toMatch(/Zakat à payer/)
     expect(document.body.textContent).toMatch(/1\s?500/)
+  })
+})
+
+// 2026-10-06 : le relevé de l'or (fin juillet) donnait un verdict ferme.
+describe('zakat with an old gold reading', () => {
+  afterEach(() => jest.useRealTimers())
+
+  it('flags the verdict « à confirmer » until the user types the price of the day', () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] }).setSystemTime(new Date('2026-10-06T12:00:00Z'))
+    render(<ZakaatCalculator />)
+    fireEvent.change(screen.getByLabelText(/Devise/), { target: { value: 'MAD' } })
+    fireEvent.change(screen.getByLabelText(/Épargne/), { target: { value: '60000' } })
+    expect(screen.getByRole('alert').textContent).toMatch(/fin juillet 2026/)
+    expect(document.body.textContent).toMatch(/à confirmer/)
+    expect(document.body.textContent).not.toMatch(/Zakat non obligatoire/)
+
+    fireEvent.change(screen.getByLabelText(/Prix de l.or/), { target: { value: '1250' } })
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/à confirmer/)
+    expect(document.body.textContent).toMatch(/Zakat non obligatoire/)
+  })
+
+  it('treats the reading as fresh during the month it was taken', () => {
+    expect(goldReadingIsStale('2026-08-10', GOLD_PRICE_READING.madPerGram)).toBe(false)
+    expect(goldReadingIsStale('2026-10-06', GOLD_PRICE_READING.madPerGram)).toBe(true)
+    expect(goldReadingIsStale('2026-10-06', 1250)).toBe(false)
   })
 })
