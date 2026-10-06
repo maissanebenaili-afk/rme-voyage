@@ -1,6 +1,6 @@
 import type { RmeEventName, RmeEventProps } from '@/lib/rmeEvents';
 
-export type PartnerProduct = 'ferry' | 'flight' | 'transfer' | 'hotel' | 'car_rental' | 'other';
+export type PartnerProduct = 'ferry' | 'flight' | 'transfer' | 'hotel' | 'car_rental' | 'contact' | 'other';
 
 export type PartnerClickEvent = {
   partner: string;

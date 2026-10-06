@@ -1,7 +1,5 @@
 import { MetadataRoute } from 'next';
 import { siteUrl } from '@/lib/siteUrl';
-import { CAFTANS } from '@/lib/caftans';
-import { PROPERTIES } from '@/lib/properties';
 import { ROUTE_PAGES } from '@/lib/routePages';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -82,18 +80,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
-    })),
-    ...CAFTANS.map(c => ({
-      url: `${baseUrl}/marwa-caftan/${c.id}`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    })),
-    ...PROPERTIES.map(p => ({
-      url: `${baseUrl}/taza-immobilier/${p.id}`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
     })),
   ];
 }

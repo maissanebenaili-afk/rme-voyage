@@ -1,17 +1,12 @@
 import type { Metadata } from 'next';
 import { defaultOgImage } from '@/lib/seo';
 
+// Only what RME can stand behind (issue #227): no price, delivery time,
+// guarantee or quality claim that the business has not published itself.
 export const metadata: Metadata = {
-  title: 'Belisamae — Énergéticienne, Reiki & Géobiologie',
-  description:
-    'Un accompagnement énergétique personnalisé pour traverser les moments de mal-être, apaiser les blessures émotionnelles et retrouver un équilibre intérieur. En cabinet ou à distance.',
-  keywords: ['Belisamae', 'Reiki', 'énergéticienne', 'géobiologie', 'bioénergie', 'bien-être'],
-  openGraph: {
-    title: 'Belisamae — Se libérer. Comprendre. Avancer.',
-    description:
-      'Bioénergie, Reiki et géobiologie. Un accompagnement personnalisé, en cabinet ou à distance.',
-    type: 'website', images: [defaultOgImage],
-  },
+  title: 'Belisamae — Reiki et géobiologie',
+  description: 'Contact de Belisamae, référencé gratuitement sur RME Voyage. Séances et tarifs sur son site.',
+  openGraph: { title: 'Belisamae — Reiki et géobiologie', description: 'Contact de Belisamae, référencé gratuitement sur RME Voyage. Séances et tarifs sur son site.', type: 'website', images: [defaultOgImage] },
 };
 
 export default function BelisamaeLayout({ children }: { children: React.ReactNode }) {

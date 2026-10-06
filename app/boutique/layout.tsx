@@ -4,7 +4,7 @@ import { defaultOgImage } from '@/lib/seo';
 export const metadata: Metadata = {
   title: 'La Boutique — Partenaires MRE de la France au Maroc',
   description:
-    'Caftans marocains en location, bien-être et Reiki, traiteurs, envoi de colis et groupage vers le Maroc, garages et mobilité. Des partenaires vérifiés pour les Marocains d\'Europe.',
+    'Caftans marocains en location, bien-être et Reiki, traiteurs, envoi de colis et groupage vers le Maroc, garages et mobilité. Des professionnels référencés gratuitement pour les Marocains d\'Europe.',
   keywords: [
     'caftan location',
     'colis Maroc',

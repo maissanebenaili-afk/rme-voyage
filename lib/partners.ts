@@ -2,9 +2,15 @@
 export const MARWA_WHATSAPP = '33782722869';
 export const MARWA_PHONE = '+33782722869';
 
+/** Signature added to every prefilled message, so a partner can count the requests RME brings. */
+export const RME_SOURCE_SIGNATURE = '(vu sur RME Voyage)';
+
 export function whatsappLink(phone: string, message: string) {
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(`${message}\n\n${RME_SOURCE_SIGNATURE}`)}`;
 }
+
+// HiDOUR Immobilier (Taza) — WhatsApp.
+export const IDOUR_WHATSAPP = '33769200297';
 
 // Belisamae — Mounia, énergéticienne (Reiki, géobiologie).
 export const BELISAMAE_URL = 'https://belisamae.fr';

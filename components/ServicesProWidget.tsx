@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Phone, Globe, MapPin, Star, ExternalLink, Bike, ArrowRight } from 'lucide-react';
 import { MARWA_PHONE } from '@/lib/partners';
 import { contactMailto } from '@/lib/contact';
+import LeadLink from '@/components/LeadLink';
 
 const joinMailto = contactMailto('Rejoindre l\'annuaire Services Pro');
 
@@ -24,12 +25,12 @@ const SERVICES: Record<string, Business[]> = {
   traiteurs: [
     {
       name: 'Afarah Nassim',
-      desc: 'Traiteur franco-marocain · Mariages, fiançailles, baptêmes. Menus authentiques Maroc & fusion.',
-      location: 'Île-de-France & déplacements',
+      desc: 'Traiteur. Menu, prix et conditions à demander directement.',
+      location: 'Zone à demander',
       phone: MARWA_PHONE,
       page: '/afarah-nassim',
       featured: true,
-      tag: 'Profil à confirmer',
+      tag: 'Référencé · aucun accord commercial',
     },
     {
       name: 'Votre traiteur',
@@ -85,12 +86,15 @@ function BusinessCard({ b }: { b: Business }) {
 
       <div className="flex gap-2">
         {b.phone && (
-          <a
+          <LeadLink
+            // Partner id from its page (/afarah-nassim → afarah_nassim), as on the page itself.
+            partner={b.page ? b.page.slice(1).replace(/-/g, '_') : 'services_pro'}
+            channel="phone"
             href={`tel:${b.phone}`}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#e2e8f0] py-2 text-xs font-bold text-[#0f1f3d] hover:border-[#c9903a]/50 transition"
           >
             <Phone size={11} /> Appeler
-          </a>
+          </LeadLink>
         )}
         {b.page && (
           <Link
