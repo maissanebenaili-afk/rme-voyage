@@ -46,6 +46,19 @@ describe("middleware", () => {
     expect(response.headers.get("Content-Security-Policy")).not.toContain("unsafe-eval");
   });
 
+  it("réécrit un lien de trajet partagé (/?from&to) vers /partage, en gardant les en-têtes de sécurité", async () => {
+    const response = await proxy(buildRequest("/?from=Paris&to=Tanger"));
+
+    expect(response.headers.get("x-middleware-rewrite")).toContain("/partage?from=Paris&to=Tanger");
+    expect(response.headers.get("X-Frame-Options")).toBe("DENY");
+    expect(response.headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+  });
+
+  it("laisse l'accueil sans paramètres (ou avec un seul) statique", async () => {
+    expect((await proxy(buildRequest("/"))).headers.get("x-middleware-rewrite")).toBeNull();
+    expect((await proxy(buildRequest("/?from=Paris"))).headers.get("x-middleware-rewrite")).toBeNull();
+  });
+
   it("allows same-origin microphone (Hadak voice) but keeps camera disabled", async () => {
     const response = await proxy(buildRequest("/"));
 
