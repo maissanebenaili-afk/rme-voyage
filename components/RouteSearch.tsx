@@ -371,6 +371,36 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
 
       {belowHero}
 
+      {routeStatus === "ready" && (
+        <section aria-labelledby="next-step-title" className="mx-auto max-w-2xl px-5 pt-5">
+          <div className="rounded-3xl border border-[#0f1f3d]/10 bg-white p-4 shadow-[0_12px_40px_rgba(15,31,61,0.08)] sm:p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-[#a84f2b]">Étape suivante</p>
+                <h2 id="next-step-title" className="mt-1 text-lg font-extrabold text-[#0f1f3d]">
+                  Votre itinéraire est calculé. Vérifions maintenant ce qui peut vous faire économiser du temps ou de l'argent.
+                </h2>
+              </div>
+              <span className="inline-flex w-fit shrink-0 items-center rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">Route vérifiée</span>
+            </div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+              <a href="#ferry" className="group rounded-2xl bg-[#0f1f3d] p-3 text-white transition hover:-translate-y-0.5 hover:bg-[#172b52] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]">
+                <span className="block text-sm font-extrabold">{routeInfo?.ferry ? "Comparer la traversée" : "Comparer transport"}</span>
+                <span className="mt-1 block text-xs text-white/65">Voir les options disponibles</span>
+              </a>
+              <a href="#route" className="group rounded-2xl border border-[#0f1f3d]/10 bg-[#f6f3ec] p-3 text-[#0f1f3d] transition hover:-translate-y-0.5 hover:border-[#f59e0b]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]">
+                <span className="block text-sm font-extrabold">Vérifier le coût</span>
+                <span className="mt-1 block text-xs text-slate-600">Carburant et hypothèses</span>
+              </a>
+              <a href="#preparer" className="group rounded-2xl border border-[#0f1f3d]/10 bg-white p-3 text-[#0f1f3d] transition hover:-translate-y-0.5 hover:border-[#f59e0b]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b]">
+                <span className="block text-sm font-extrabold">Préparer les documents</span>
+                <span className="mt-1 block text-xs text-slate-600">Checklist et douane</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
       <div className="mx-auto max-w-2xl px-5">
         <section id="la-route" aria-labelledby="la-route-title" className="mt-12 scroll-mt-20">
           <StepHeader
