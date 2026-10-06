@@ -2,6 +2,7 @@
 
 import { ArrowRight, BedDouble, Car, Clock3, ExternalLink, RotateCcw, Ship, Wallet } from 'lucide-react';
 import { hotelSearchUrl } from '@/lib/overnight';
+import { trackPartnerClick } from '@/lib/partnerTracking';
 import { journeyOverview, nextStep, shortPlace } from '@/lib/journey';
 import { formatDuration } from '@/lib/routePages';
 import { useRememberComputedTrip } from '@/lib/travel/useRememberComputedTrip';
@@ -68,21 +69,28 @@ export default function JourneySummary() {
             {route.overnight.map((stop) => (
               <li key={stop.name + stop.afterSeconds} className="flex flex-wrap items-center justify-between gap-2 text-sm">
                 <span className="text-white/85">
-                  Nuit vers <strong className="text-white">{stop.name.split(',')[0]}</strong>, après ≈ {formatDuration(stop.afterSeconds)} de route
+                  Étape recommandée : <strong className="text-white">{stop.name.split(',')[0]}</strong>, après ≈ {formatDuration(stop.afterSeconds)} de route
                 </span>
                 <a
                   href={hotelSearchUrl(stop.name)}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackPartnerClick({
+                    partner: 'Booking (recherche)',
+                    product: 'hotel',
+                    placement: 'overnight_stop',
+                    page: window.location.pathname,
+                    context: { affiliate_active: false },
+                  })}
                   className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#fde68a] px-3 text-xs font-extrabold text-[#0f1f3d]"
                 >
-                  Hôtels <ExternalLink size={13} aria-hidden="true" />
+                  Chercher un hôtel <ExternalLink size={13} aria-hidden="true" />
                 </a>
               </li>
             ))}
           </ul>
           <p className="mt-2 text-[11px] leading-4 text-white/60">
-            Découpage RME en journées d&apos;au plus 11 h de conduite. Hôtels : recherche Booking, lien non affilié.
+            Découpage RME en journées d&apos;au plus 11 h de conduite. Disponibilités non vérifiées par RME : recherche Booking, lien non affilié.
           </p>
         </div>
       )}

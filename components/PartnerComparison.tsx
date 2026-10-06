@@ -17,6 +17,16 @@ const categoryMeta: Record<PartnerCategory, { label: string; icon: typeof Ship }
   insurance: { label: "Assurance", icon: ShieldCheck },
 };
 
+// Sans lien affilié configuré, ces entrées pointent vers la page d'inscription
+// des éditeurs Travelpayouts : rien à réserver pour un voyageur. Elles ne
+// s'affichent qu'une fois le lien partenaire actif (constaté le 2026-10-06 :
+// « Vols, hôtels, voitures chez nos partenaires » menait à cette inscription).
+const PUBLISHER_SIGNUP = /^https:\/\/(www\.)?travelpayouts\.com\//;
+
+export function travelerFacing(partner: PartnerCatalogueEntry): boolean {
+  return partner.status === "active" || !PUBLISHER_SIGNUP.test(partner.publicUrl);
+}
+
 export default function PartnerComparison({ partners: initialPartners }: { partners: PartnerCatalogueEntry[] }) {
   const [partners, setPartners] = useState(initialPartners);
 
@@ -33,7 +43,8 @@ export default function PartnerComparison({ partners: initialPartners }: { partn
     return () => controller.abort();
   }, []);
 
-  if (!partners.length) return null;
+  const visible = partners.filter(travelerFacing);
+  if (!visible.length) return null;
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="partner-comparison-title">
@@ -48,7 +59,7 @@ export default function PartnerComparison({ partners: initialPartners }: { partn
       </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {partners.map((partner) => {
+        {visible.map((partner) => {
           const { icon: Icon, label } = categoryMeta[partner.category];
           const href = partner.affiliateUrl ?? partner.publicUrl;
           const active = partner.status === "active";
@@ -73,14 +84,14 @@ export default function PartnerComparison({ partners: initialPartners }: { partn
                   <Icon size={19} aria-hidden />
                 </span>
                 <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${active ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-                  {active ? "Affilié" : "À activer"}
+                  {active ? "Affilié" : "Lien public"}
                 </span>
               </div>
               <p className="mt-4 text-xs font-bold uppercase tracking-wide text-slate-500">{label}</p>
               <h3 className="mt-1 font-extrabold text-[#0f1f3d]">{partner.name}</h3>
               <p className="mt-2 text-sm leading-5 text-slate-600">{partner.description}</p>
               <p className="mt-4 text-xs font-semibold text-slate-500">
-                {active ? "Lien partenaire configuré" : "Lien public en attendant l'affiliation"}
+                {active ? "Lien partenaire : RME peut toucher une commission" : "Lien public, sans commission"}
               </p>
             </a>
           );
