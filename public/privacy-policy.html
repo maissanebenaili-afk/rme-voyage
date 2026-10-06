@@ -18,7 +18,7 @@
 </head>
 <body>
   <h1>Politique de confidentialité</h1>
-  <p class="date">Dernière mise à jour : 27 septembre 2026</p>
+  <p class="date">Dernière mise à jour : 6 octobre 2026</p>
 
   <div class="summary">
     <p><strong>En bref :</strong> RME Voyage fonctionne sans compte. Votre voyage (villes, date, checklist) reste enregistré sur votre appareil. Nous ne vendons aucune donnée, nous n'utilisons pas d'identifiant publicitaire et la mesure d'audience se fait sans cookie ni identifiant. Certaines fonctions envoient des informations à des services tiers, décrits ci-dessous, uniquement quand vous les utilisez.</p>
@@ -35,7 +35,7 @@
     <li>la ville choisie pour la météo ;</li>
     <li>le fait d'avoir fermé un bandeau (installation de l'application, présentation d'un livre).</li>
   </ul>
-  <p>Vous pouvez tout effacer avec le bouton « Effacer mon voyage » ou en supprimant les données de l'application (ou du site) dans les réglages de votre téléphone ou de votre navigateur.</p>
+  <p>Vous pouvez tout effacer en supprimant les données de l'application (ou du site) dans les réglages de votre téléphone ou de votre navigateur.</p>
 
   <h2>3. Ce qui est envoyé, et à qui</h2>
   <table>
@@ -52,6 +52,16 @@
         <td>Calcul d'itinéraire, recherche de services sur la route</td>
         <td>Les villes ou lieux que vous saisissez</td>
         <td>Nos serveurs, qui interrogent OpenStreetMap (Nominatim, Overpass) et OSRM pour le tracé.</td>
+      </tr>
+      <tr>
+        <td>Affichage de la carte (après un calcul d'itinéraire ou une recherche de services)</td>
+        <td>Adresse IP et zone de carte affichée</td>
+        <td>Votre navigateur charge directement les images de la carte depuis les serveurs d'OpenStreetMap (tile.openstreetmap.org).</td>
+      </tr>
+      <tr>
+        <td>Ouverture de l'accueil : date de l'Hégire et taux de change du jour</td>
+        <td>Adresse IP et informations techniques de la requête (aucune position)</td>
+        <td>Aladhan (api.aladhan.com) pour la date de l'Hégire ; jsDelivr (cdn.jsdelivr.net), qui distribue les taux de change publics utilisés par le convertisseur.</td>
       </tr>
       <tr>
         <td>Questions posées à l'assistant Hadak</td>
@@ -75,8 +85,8 @@
       </tr>
       <tr>
         <td>Mesure d'audience</td>
-        <td>Quelques actions dans l'application (itinéraire calculé, clic vers un partenaire avec le nom du partenaire, suggestion choisie, page concernée)</td>
-        <td>Journal d'événements anonyme de RME, hébergé par Netlify : sans cookie, sans identifiant, sans adresse IP enregistrée avec l'événement. Les villes, e-mails et numéros ne sont jamais envoyés.</td>
+        <td>Pages vues (avec le nom du site d'où vous venez) et quelques actions dans l'application (itinéraire calculé, clic vers un partenaire avec le nom du partenaire, suggestion choisie, page concernée)</td>
+        <td>Journal d'événements anonyme de RME : enregistré dans les journaux de notre hébergeur Netlify et, lorsqu'elle est activée, dans notre base de données chez Supabase. Sans cookie, sans identifiant, sans adresse IP enregistrée avec l'événement. Les villes, e-mails et numéros ne sont jamais envoyés.</td>
       </tr>
       <tr>
         <td>Chaque utilisation</td>
