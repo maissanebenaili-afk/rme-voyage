@@ -65,9 +65,10 @@ describe('JourneySummary overnight block', () => {
     )
     const block = screen.getByTestId('overnight')
     expect(block.textContent).toMatch(/En 2 jours : une nuit en route/)
-    expect(block.textContent).toMatch(/Nuit vers Burgos, après ≈ 10 h 22 de route/)
+    expect(block.textContent).toMatch(/Étape recommandée : Burgos, après ≈ 10 h 22 de route/)
+    expect(block.textContent).toMatch(/Disponibilités non vérifiées/)
     expect(block.textContent).toMatch(/lien non affilié/)
-    expect(screen.getByRole('link', { name: /Hôtels/ })).toHaveAttribute('href', hotelSearchUrl('Burgos, Espagne'))
+    expect(screen.getByRole('link', { name: /Chercher un hôtel/ })).toHaveAttribute('href', hotelSearchUrl('Burgos, Espagne'))
   })
 
   it('shows no overnight block on a short trip', () => {

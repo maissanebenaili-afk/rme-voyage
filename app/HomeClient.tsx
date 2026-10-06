@@ -155,7 +155,7 @@ export default function HomeClient() {
               <ServicesProWidget />
               <Link href="/boutique" className="inline-flex min-h-11 items-center rounded-full bg-[#0f1f3d] px-5 text-sm font-extrabold text-white">Voir toute la boutique →</Link>
             </ToolDrawer>
-            <ToolDrawer id="partenaires" icon="🤝" title="Réserver" text="Vols, hôtels, voitures chez nos partenaires">
+            <ToolDrawer id="partenaires" icon="🤝" title="Réserver" text="Ferries, vols, eSIM, bagages : les liens utiles">
               {/* Public links first; PartnerComparison asks /api/partners for the
                   configured ones after hydration. */}
               <PartnerComparison partners={getPartnerCatalogue({})} />

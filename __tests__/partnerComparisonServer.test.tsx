@@ -45,6 +45,23 @@ describe("PartnerComparison", () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
     expect(card()).toHaveAttribute("href", "https://www.directferries.fr/");
-    expect(within(card()).getByText("À activer")).toBeInTheDocument();
+    expect(within(card()).getByText("Lien public")).toBeInTheDocument();
+  });
+
+  // 2026-10-06 : « hôtels, voitures chez nos partenaires » menait à la page
+  // d'inscription des éditeurs Travelpayouts.
+  test("hides a pending network entry that only leads to the publisher signup page", () => {
+    global.fetch = jest.fn().mockRejectedValue(new Error("offline")) as unknown as typeof fetch;
+    const hotels: PartnerCatalogueEntry = { ...pending, id: "travelpayouts-hotels", name: "Travelpayouts · Hôtels", category: "hotel", publicUrl: "https://www.travelpayouts.com/", envVar: "TRAVELPAYOUTS_HOTEL_URL" };
+    render(<PartnerComparison partners={[pending, hotels]} />);
+    expect(screen.queryByText(/Travelpayouts · Hôtels/)).not.toBeInTheDocument();
+    expect(card()).toBeInTheDocument();
+  });
+
+  test("shows the network entry once its affiliate link is active", () => {
+    global.fetch = jest.fn().mockRejectedValue(new Error("offline")) as unknown as typeof fetch;
+    const hotels: PartnerCatalogueEntry = { ...pending, id: "travelpayouts-hotels", name: "Travelpayouts · Hôtels", category: "hotel", publicUrl: "https://www.travelpayouts.com/", envVar: "TRAVELPAYOUTS_HOTEL_URL", status: "active", affiliateUrl: "https://tp.media/r?x=1" };
+    render(<PartnerComparison partners={[hotels]} />);
+    expect(screen.getByRole("link", { name: /Travelpayouts · Hôtels/ })).toHaveAttribute("href", "https://tp.media/r?x=1");
   });
 });
