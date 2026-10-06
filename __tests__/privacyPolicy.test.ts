@@ -34,7 +34,7 @@ describe("privacy policy matches the app", () => {
   });
 
   test("names the controller shown in the app footer", () => {
-    expect(read("app/page.tsx")).toContain("Nova Presta");
+    expect(read("app/HomeClient.tsx")).toContain("Nova Presta");
     expect(policy).toContain("Nova Presta");
   });
 });
