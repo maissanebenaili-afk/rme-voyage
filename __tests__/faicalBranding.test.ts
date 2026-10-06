@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const files = ['app/page.tsx', 'app/api/faical/route.ts', 'components/FaicalWidget.tsx'];
+const files = ['app/HomeClient.tsx', 'app/api/faical/route.ts', 'components/FaicalWidget.tsx'];
 
 describe('Faical branding', () => {
   const source = files
