@@ -18,8 +18,10 @@ const PROVIDERS = [
     fee: 2.49,
     time: '24h',
     affiliateEnvKey: 'WORLDREMIT_AFFILIATE_URL',
-    deepLinkFn: (amount: number) =>
-      `https://www.worldremit.com/en/moneytransfer?selectedSendingCountryCode=FR&selectedReceivingCountryCode=MA&selectedSendingCurrencyCode=EUR&selectedReceivingCurrencyCode=MAD&amount=${amount}`,
+    // L'ancien lien pré-rempli (/en/moneytransfer?…) menait à « Page not found »
+    // (vérifié le 2026-10-06). /fr est la page officielle « depuis la France » ;
+    // le montant n'y est pas pré-rempli.
+    deepLinkFn: () => 'https://www.worldremit.com/fr',
   },
   {
     id: 'remitly',

@@ -45,3 +45,18 @@ describe("remittance affiliate links", () => {
     expect(provider.affiliateUrl).toMatch(/^https:\/\/wise\.com\/gb\/send-money\//);
   });
 });
+
+// 2026-10-06 : le bouton « Envoyer » de WorldRemit menait à « Page not found ».
+describe("remittance links that were dead", () => {
+  const originalFetch = global.fetch;
+  afterEach(() => { global.fetch = originalFetch; });
+
+  test("WorldRemit opens its official page for senders in France, not the dead /en/moneytransfer link", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ eur: { mad: 10.8 } }) }) as unknown as typeof fetch;
+    const res = await GET(new NextRequest("http://localhost/api/remittance?amount=500"));
+    const body = (await res.json()) as { providers: Provider[] };
+    const wr = body.providers.find((p) => p.id === "worldremit")!;
+    expect(wr.affiliateUrl).toBe("https://www.worldremit.com/fr");
+    expect(wr.affiliateUrl).not.toMatch(/moneytransfer/);
+  });
+});

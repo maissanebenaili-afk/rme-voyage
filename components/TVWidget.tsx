@@ -32,7 +32,7 @@ const CHANNELS: Record<string, Channel[]> = {
     { name: 'beIN SPORTS France', flag: '⚽', desc: 'Scores, directs et programme officiel', url: 'https://www.beinsports.com/fr-fr/scores', sport: true, live: true },
     { name: 'Arryadia / SNRT', flag: '⚽', desc: 'Programme sport officiel SNRT', url: 'https://www.snrt.ma/fr/arryadia', sport: true, live: true },
     { name: 'SSC Sport', flag: '⚽', desc: 'Sport arabe — site officiel', url: 'https://www.ssc.sa/ar/tv', sport: true },
-    { name: 'Al Kass Sport', flag: '⚽', desc: 'Sport & football Qatar — site officiel', url: 'https://www.alkass.net/live', sport: true },
+    { name: 'Al Kass Sport', flag: '⚽', desc: 'Sport & football Qatar — site officiel', url: 'https://www.alkass.net/', sport: true },
   ],
   arabe: [
     { name: 'Al Jazeera', flag: '🌍', desc: 'Info monde en arabe', url: 'https://www.aljazeera.net/', live: true },
