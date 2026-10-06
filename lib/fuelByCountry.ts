@@ -140,3 +140,38 @@ export function computeFuelByCountry(input: {
 export function hasFerry(legs: RouteLeg[] | undefined): boolean {
   return !!legs?.some((leg) => leg.kind === 'ferry');
 }
+
+export interface RefuelTip {
+  cheap: string;
+  dear: string;
+  /** How much cheaper the cheap country is, in % of the dear one's price. */
+  percentCheaper: number;
+  /** Price gap for 50 litres, a typical fill-up; not the user's tank, which is unknown. */
+  gapFor50Liters: number;
+}
+
+/** Below this gap the advice is not worth a detour or a change of habit. */
+export const REFUEL_TIP_MIN_PERCENT = 5;
+
+/**
+ * Turns the per-country table into a decision: where to fill up. Only official
+ * bulletin prices are compared — never a price typed by the user — so the tip
+ * disappears outside the EU or once the bulletin has expired.
+ */
+export function refuelTip(result: FuelByCountryResult): RefuelTip | null {
+  const official = result.countries.filter(
+    (line): line is CountryFuelLine & { country: string } =>
+      line.priceSource === 'bulletin' && line.country !== null && line.km > 0,
+  );
+  if (official.length < 2) return null;
+  const cheap = official.reduce((a, b) => (b.pricePerLiter < a.pricePerLiter ? b : a));
+  const dear = official.reduce((a, b) => (b.pricePerLiter > a.pricePerLiter ? b : a));
+  const percentCheaper = ((dear.pricePerLiter - cheap.pricePerLiter) / dear.pricePerLiter) * 100;
+  if (percentCheaper < REFUEL_TIP_MIN_PERCENT) return null;
+  return {
+    cheap: cheap.country,
+    dear: dear.country,
+    percentCheaper: Math.round(percentCheaper),
+    gapFor50Liters: round((dear.pricePerLiter - cheap.pricePerLiter) * 50, 0),
+  };
+}
