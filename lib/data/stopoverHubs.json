@@ -1,0 +1,285 @@
+{
+ "source": "Coordonnées OpenStreetMap (Nominatim), relevées le 2026-10-06. Villes étapes des corridors Europe ↔ Maroc : grandes villes sur ou près des autoroutes.",
+ "hubs": [
+  {
+   "name": "Lyon, France",
+   "lat": 45.7578,
+   "lon": 4.832
+  },
+  {
+   "name": "Bordeaux, France",
+   "lat": 44.8412,
+   "lon": -0.58
+  },
+  {
+   "name": "Toulouse, France",
+   "lat": 43.6045,
+   "lon": 1.4442
+  },
+  {
+   "name": "Montpellier, France",
+   "lat": 43.6112,
+   "lon": 3.8767
+  },
+  {
+   "name": "Narbonne, France",
+   "lat": 43.1838,
+   "lon": 3.0042
+  },
+  {
+   "name": "Perpignan, France",
+   "lat": 42.6985,
+   "lon": 2.8953
+  },
+  {
+   "name": "Bayonne, France",
+   "lat": 43.4945,
+   "lon": -1.4737
+  },
+  {
+   "name": "Orléans, France",
+   "lat": 47.9027,
+   "lon": 1.9086
+  },
+  {
+   "name": "Tours, France",
+   "lat": 47.39,
+   "lon": 0.6889
+  },
+  {
+   "name": "Poitiers, France",
+   "lat": 46.5803,
+   "lon": 0.3402
+  },
+  {
+   "name": "Limoges, France",
+   "lat": 45.8354,
+   "lon": 1.2645
+  },
+  {
+   "name": "Clermont-Ferrand, France",
+   "lat": 45.7775,
+   "lon": 3.0819
+  },
+  {
+   "name": "Valence, France",
+   "lat": 44.9332,
+   "lon": 4.8921
+  },
+  {
+   "name": "Nîmes, France",
+   "lat": 43.8374,
+   "lon": 4.3601
+  },
+  {
+   "name": "Reims, France",
+   "lat": 49.2578,
+   "lon": 4.0319
+  },
+  {
+   "name": "Dijon, France",
+   "lat": 47.3216,
+   "lon": 5.0415
+  },
+  {
+   "name": "Metz, France",
+   "lat": 49.1197,
+   "lon": 6.1764
+  },
+  {
+   "name": "Paris, France",
+   "lat": 48.8589,
+   "lon": 2.32
+  },
+  {
+   "name": "Bruxelles, Belgique",
+   "lat": 50.8467,
+   "lon": 4.3525
+  },
+  {
+   "name": "Luxembourg, Luxembourg",
+   "lat": 49.6113,
+   "lon": 6.1298
+  },
+  {
+   "name": "Mulhouse, France",
+   "lat": 47.7467,
+   "lon": 7.339
+  },
+  {
+   "name": "Burgos, Espagne",
+   "lat": 42.3448,
+   "lon": -3.6812
+  },
+  {
+   "name": "Vitoria-Gasteiz, Espagne",
+   "lat": 42.8506,
+   "lon": -2.6614
+  },
+  {
+   "name": "Valladolid, Espagne",
+   "lat": 41.62,
+   "lon": -4.726
+  },
+  {
+   "name": "Madrid, Espagne",
+   "lat": 40.4168,
+   "lon": -3.7035
+  },
+  {
+   "name": "Saragosse, Espagne",
+   "lat": 41.6916,
+   "lon": -0.9101
+  },
+  {
+   "name": "Lérida, Espagne",
+   "lat": 41.6148,
+   "lon": 0.6268
+  },
+  {
+   "name": "Tarragone, Espagne",
+   "lat": 41.1172,
+   "lon": 1.2546
+  },
+  {
+   "name": "Barcelone, Espagne",
+   "lat": 41.3826,
+   "lon": 2.1771
+  },
+  {
+   "name": "Valence, Espagne",
+   "lat": 39.4697,
+   "lon": -0.3763
+  },
+  {
+   "name": "Alicante, Espagne",
+   "lat": 38.3436,
+   "lon": -0.4882
+  },
+  {
+   "name": "Murcie, Espagne",
+   "lat": 37.9348,
+   "lon": -1.1131
+  },
+  {
+   "name": "Albacete, Espagne",
+   "lat": 38.9951,
+   "lon": -1.8559
+  },
+  {
+   "name": "Almería, Espagne",
+   "lat": 36.8686,
+   "lon": -2.312
+  },
+  {
+   "name": "Grenade, Espagne",
+   "lat": 37.1735,
+   "lon": -3.5995
+  },
+  {
+   "name": "Jaén, Espagne",
+   "lat": 37.7729,
+   "lon": -3.7883
+  },
+  {
+   "name": "Cordoue, Espagne",
+   "lat": 37.8846,
+   "lon": -4.776
+  },
+  {
+   "name": "Séville, Espagne",
+   "lat": 37.3886,
+   "lon": -5.9953
+  },
+  {
+   "name": "Málaga, Espagne",
+   "lat": 36.7648,
+   "lon": -4.4422
+  },
+  {
+   "name": "Salamanque, Espagne",
+   "lat": 40.9652,
+   "lon": -5.664
+  },
+  {
+   "name": "Mérida, Espagne",
+   "lat": 38.9543,
+   "lon": -6.3505
+  },
+  {
+   "name": "Saint-Sébastien, Espagne",
+   "lat": 43.3224,
+   "lon": -1.9839
+  },
+  {
+   "name": "Algésiras, Espagne",
+   "lat": 36.1312,
+   "lon": -5.4474
+  },
+  {
+   "name": "Gênes, Italie",
+   "lat": 44.4073,
+   "lon": 8.9339
+  },
+  {
+   "name": "Nice, France",
+   "lat": 43.7009,
+   "lon": 7.2684
+  },
+  {
+   "name": "Tanger, Maroc",
+   "lat": 35.7626,
+   "lon": -5.8295
+  },
+  {
+   "name": "Tétouan, Maroc",
+   "lat": 35.576,
+   "lon": -5.3613
+  },
+  {
+   "name": "Rabat, Maroc",
+   "lat": 34.0218,
+   "lon": -6.8409
+  },
+  {
+   "name": "Casablanca, Maroc",
+   "lat": 33.5945,
+   "lon": -7.62
+  },
+  {
+   "name": "Fès, Maroc",
+   "lat": 34.0347,
+   "lon": -5.0162
+  },
+  {
+   "name": "Meknès, Maroc",
+   "lat": 33.8984,
+   "lon": -5.5322
+  },
+  {
+   "name": "Kénitra, Maroc",
+   "lat": 34.2646,
+   "lon": -6.5702
+  },
+  {
+   "name": "Nador, Maroc",
+   "lat": 35.1736,
+   "lon": -2.9368
+  },
+  {
+   "name": "Oujda, Maroc",
+   "lat": 34.6779,
+   "lon": -1.9293
+  },
+  {
+   "name": "Marrakech, Maroc",
+   "lat": 31.6258,
+   "lon": -7.9892
+  },
+  {
+   "name": "Taza, Maroc",
+   "lat": 34.2302,
+   "lon": -4.0101
+  }
+ ]
+}

@@ -154,7 +154,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
       setRouteStatus("ready");
       // Alimente le Reality Check et le budget avec la distance mesurée.
       publishRoute(
-        toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds, Date.now(), data.legs, date || undefined),
+        toComputedRoute(origin, destination, data.distanceMeters, data.durationSeconds, Date.now(), data.legs, date || undefined, data.overnight),
       );
       trackFunnelEvent({
         event: "route_computed",
