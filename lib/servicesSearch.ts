@@ -1,4 +1,4 @@
-import { geocodePlace } from "@/lib/serverGeocode";
+import { GeocodeUnavailable, geocodePlace } from "@/lib/serverGeocode";
 import { siteUrl } from "@/lib/siteUrl";
 
 /**
@@ -97,7 +97,13 @@ export type ServicesSearch =
   | { ok: false; reason: "not_found" | "unavailable" };
 
 export async function searchServices(place: string, category: ServiceCategory): Promise<ServicesSearch> {
-  const center = await geocodePlace(place);
+  let center: Awaited<ReturnType<typeof geocodePlace>>;
+  try {
+    center = await geocodePlace(place);
+  } catch (error) {
+    if (error instanceof GeocodeUnavailable) return { ok: false, reason: "unavailable" };
+    throw error;
+  }
   if (!center) return { ok: false, reason: "not_found" };
 
   const filter = OVERPASS_FILTERS[category];
