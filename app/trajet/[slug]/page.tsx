@@ -82,7 +82,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
   const others = ROUTE_PAGES.routes.filter((other) => other.slug !== route.slug).slice(0, 6);
 
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#fffdf8] text-[#0f1f3d]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#f6f3ec] text-[#0f1f3d]">
       {/* Un seul fil d'Ariane par page, décrivant cette page précise. */}
       <script
         type="application/ld+json"
@@ -104,7 +104,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
         }}
       />
 
-      <header className="bg-[#0f1f3d] px-5 py-10 text-white sm:px-8">
+      <header className="bg-[#0a1730] bg-[radial-gradient(circle_at_85%_110%,rgba(245,158,11,0.45),transparent_55%)] px-5 pb-12 pt-8 text-white sm:px-8">
         <div className="mx-auto max-w-4xl">
           <nav aria-label="Fil d'Ariane" className="text-xs font-semibold uppercase tracking-[.16em] text-[#fde68a]">
             <Link href="/" className="inline-block py-1 hover:underline">
@@ -132,12 +132,12 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
                 value: ferry ? `${ferry.from} → ${ferry.to}` : eur(fuel.fuelTotal),
               },
             ].map(({ icon: Icon, label, value }) => (
-              <div key={label} className="rounded-2xl bg-white/5 p-4">
+              <div key={label} className="rounded-2xl bg-white/[0.07] p-4 ring-1 ring-white/10">
                 <dt className="flex items-center gap-2 text-xs text-white/60">
                   <Icon size={15} aria-hidden="true" />
                   {label}
                 </dt>
-                <dd className="mt-1 text-lg font-bold">{value}</dd>
+                <dd className="mt-1 text-xl font-extrabold">{value}</dd>
               </div>
             ))}
           </dl>
@@ -152,7 +152,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
           <ol className="mt-4 space-y-3">
             {fuel.legs.map((leg, index) =>
               leg.kind === 'ferry' ? (
-                <li key={index} className="flex items-start gap-3 rounded-2xl bg-[#eff6ff] p-4 text-sm text-[#1e3a5f]">
+                <li key={index} className="flex items-start gap-3 rounded-3xl bg-[#eff6ff] p-4 text-sm text-[#1e3a5f]">
                   <Ship size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
                   <span>
                     <strong>
@@ -168,7 +168,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
                   </span>
                 </li>
               ) : (
-                <li key={index} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-[#e2e8f0]">
+                <li key={index} className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-black/5">
                   <div className="flex flex-wrap justify-between gap-2 font-semibold">
                     <span>
                       {leg.from} → {leg.to}
@@ -241,7 +241,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
 
           <Link
             href={planUrl}
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-5 py-3 text-sm font-extrabold text-white hover:bg-[#1e3a5f]"
+            className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-2xl bg-[#f59e0b] px-6 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/10 transition hover:bg-[#fbbf24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f1f3d]"
           >
             Calculer ce trajet avec mes hypothèses <ArrowRight size={16} aria-hidden="true" />
           </Link>
@@ -272,7 +272,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
               {route.crossings.map((crossing) => (
                 <li
                   key={`${crossing.from}-${crossing.to}`}
-                  className="flex flex-wrap justify-between gap-2 rounded-xl bg-white p-3 shadow-sm ring-1 ring-[#e2e8f0]"
+                  className="flex flex-wrap justify-between gap-2 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5"
                 >
                   <span className="font-semibold">
                     {crossing.from} → {crossing.to}
