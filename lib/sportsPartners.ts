@@ -82,3 +82,12 @@ export const FALLBACK_ANALYSIS_SOURCES = [
     url: 'https://www.windrawwin.com/tips/',
   },
 ] as const;
+
+/**
+ * Décision du fondateur (2026-10-06) : un site de paris n'est affiché que s'il
+ * rapporte à RME, c'est-à-dire avec un lien affilié réel et validé. Sans lien
+ * affilié, aucun opérateur de paris n'apparaît.
+ */
+export function paidSportsPartners(): SportsPartner[] {
+  return getSportsPartners().filter((partner) => partner.status === 'active');
+}
