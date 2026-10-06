@@ -1,4 +1,6 @@
 import { geocodePlace, type LatLon } from "@/lib/serverGeocode";
+import { overnightStops as stopsOnRoute, type OvernightStop } from "@/lib/overnight";
+import stopoverHubs from "@/lib/data/stopoverHubs.json";
 import { countryNear, splitByCountry } from "@/lib/countryLookup";
 import { haversineMeters, type LonLat } from "@/lib/geo";
 import {
@@ -190,6 +192,15 @@ function legsFromRoad(from: string, to: string, road: OsrmRoad): { legs: RouteLe
   return { legs, meters, seconds };
 }
 
+/** Étapes de nuit sur les tronçons en voiture (traversées exclues). */
+function overnightStops(roads: OsrmRoad[]): OvernightStop[] {
+  const steps = roads.flatMap((road) =>
+    (road.steps.length ? road.steps : [{ mode: "driving", name: "", distance: road.distance, duration: road.duration, coordinates: road.coordinates }])
+      .filter((step) => step.mode !== "ferry"),
+  );
+  return stopsOnRoute(steps, stopoverHubs.hubs);
+}
+
 function toLeaflet(coordinates: LonLat[]) {
   // OSRM/GeoJSON coordinates are [lon, lat]; Leaflet wants [lat, lon].
   return coordinates.map(([lon, lat]) => [lat, lon]);
@@ -201,12 +212,14 @@ async function directRoute(origin: string, destination: string, from: LonLat, to
     return Response.json({ error: NO_ROAD_ERROR }, { status: 404 });
   }
   const { legs, meters, seconds } = legsFromRoad(origin, destination, road);
+  const overnight = overnightStops([road]);
   return Response.json({
     geometry: toLeaflet(road.coordinates),
     // Distance et durée routières : hors traversées éventuelles.
     distanceMeters: meters,
     durationSeconds: seconds,
     legs,
+    ...(overnight.length ? { overnight } : {}),
   });
 }
 
@@ -260,6 +273,7 @@ async function crossingRoute(
   const before = legsFromRoad(origin, best.departure.name, first);
   const after = legsFromRoad(best.arrival.name, destination, last);
   const legs: RouteLeg[] = [...before.legs, ferry, ...after.legs];
+  const overnight = overnightStops([first, last]);
 
   return Response.json({
     // Le segment port → port est tracé en ligne droite entre les deux tronçons.
@@ -268,6 +282,7 @@ async function crossingRoute(
     distanceMeters: before.meters + after.meters,
     durationSeconds: before.seconds + after.seconds,
     legs,
+    ...(overnight.length ? { overnight } : {}),
     crossings: candidates.map((c) => ({
       from: c.departure.name,
       to: c.arrival.name,

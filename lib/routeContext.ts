@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { parseRouteLegs, type RouteLeg } from '@/lib/routeLegs';
+import { parseOvernightStops, type OvernightStop } from '@/lib/overnight';
 
 /**
  * Contexte de trajet partagé côté client : RouteSearch publie l'itinéraire
@@ -22,6 +23,8 @@ export interface ComputedRoute {
   legs?: RouteLeg[];
   /** Date de départ saisie (AAAA-MM-JJ), si renseignée. */
   date?: string;
+  /** Étapes de nuit proposées par /api/route sur un long trajet. */
+  overnight?: OvernightStop[];
 }
 
 type Listener = () => void;
@@ -54,6 +57,7 @@ export function toComputedRoute(
   now: number = Date.now(),
   legs?: unknown,
   date?: string,
+  overnight?: unknown,
 ): ComputedRoute | null {
   if (typeof distanceMeters !== 'number' || !Number.isFinite(distanceMeters) || distanceMeters <= 0) {
     return null;
@@ -71,6 +75,7 @@ export function toComputedRoute(
     computedAt: now,
     ...(parseRouteLegs(legs) ? { legs: parseRouteLegs(legs)! } : {}),
     ...(typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { date } : {}),
+    ...(parseOvernightStops(overnight) ? { overnight: parseOvernightStops(overnight)! } : {}),
   };
 }
 

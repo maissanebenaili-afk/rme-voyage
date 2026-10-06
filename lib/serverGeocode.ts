@@ -9,6 +9,8 @@ type NominatimResult = {
   lat: string;
   lon: string;
   display_name?: string;
+  /** Noms de la ville dans toutes les langues (name, name:fr, name:nl…). */
+  namedetails?: Record<string, string>;
 };
 
 function normalizedTokens(value: string): string[] {
@@ -32,6 +34,7 @@ export async function geocodePlace(place: string): Promise<LatLon | null> {
   url.searchParams.set("q", place);
   url.searchParams.set("format", "jsonv2");
   url.searchParams.set("limit", "3");
+  url.searchParams.set("namedetails", "1");
 
   const response = await fetch(url, {
     headers: {
@@ -43,14 +46,21 @@ export async function geocodePlace(place: string): Promise<LatLon | null> {
   if (!response.ok) return null;
 
   const results = (await response.json()) as NominatimResult[];
-  const queryTokens = normalizedTokens(place);
+  // « Ville, Pays » : seul le nom de la ville est contrôlé. Le pays a déjà servi
+  // à la recherche, mais Nominatim l'écrit dans la langue locale : « Madrid,
+  // Espagne » revenait « Madrid, …, España » et était refusé (constaté en
+  // production le 2026-10-06 pour Madrid, Milan, Anvers, Düsseldorf).
+  const cityPart = place.includes(",") ? place.slice(0, place.indexOf(",")) : place;
+  const queryTokens = normalizedTokens(cityPart);
 
   // Nominatim can return a nearby/fuzzy match for a typo or nonsense query.
-  // Never silently turn that into a route: when the user supplied meaningful
-  // tokens, require every one of them to appear in the returned place name.
+  // Never silently turn that into a route: every token of the city name must
+  // appear in the returned place name or one of its names in other languages
+  // (Anvers = Antwerpen, Milan = Milano).
   const first = results.find((result) => {
     if (!result.display_name || queryTokens.length === 0) return true;
-    const displayTokens = new Set(normalizedTokens(result.display_name));
+    const names = [result.display_name, ...Object.values(result.namedetails ?? {})].join(" ");
+    const displayTokens = new Set(normalizedTokens(names));
     return queryTokens.every((token) => displayTokens.has(token));
   });
   if (!first) return null;

@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowRight, Car, Clock3, RotateCcw, Ship, Wallet } from 'lucide-react';
+import { ArrowRight, BedDouble, Car, Clock3, ExternalLink, RotateCcw, Ship, Wallet } from 'lucide-react';
+import { hotelSearchUrl } from '@/lib/overnight';
 import { journeyOverview, nextStep, shortPlace } from '@/lib/journey';
 import { formatDuration } from '@/lib/routePages';
 import { useRememberComputedTrip } from '@/lib/travel/useRememberComputedTrip';
@@ -56,6 +57,35 @@ export default function JourneySummary() {
           </span>
         )}
       </p>
+      {route.overnight && route.overnight.length > 0 && (
+        // Un trajet de 20 h ne se fait pas d'une traite : où couper, sur le tracé réel.
+        <div className="mt-4 rounded-2xl bg-white/10 p-4 text-white ring-1 ring-white/15" data-testid="overnight">
+          <p className="flex items-center gap-2 text-sm font-extrabold">
+            <BedDouble size={17} aria-hidden="true" className="shrink-0 text-[#fde68a]" />
+            En {route.overnight.length + 1} jours : {route.overnight.length === 1 ? 'une nuit' : `${route.overnight.length} nuits`} en route
+          </p>
+          <ul className="mt-2 space-y-2">
+            {route.overnight.map((stop) => (
+              <li key={stop.name + stop.afterSeconds} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span className="text-white/85">
+                  Nuit vers <strong className="text-white">{stop.name.split(',')[0]}</strong>, après ≈ {formatDuration(stop.afterSeconds)} de route
+                </span>
+                <a
+                  href={hotelSearchUrl(stop.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#fde68a] px-3 text-xs font-extrabold text-[#0f1f3d]"
+                >
+                  Hôtels <ExternalLink size={13} aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-[11px] leading-4 text-white/60">
+            Découpage RME en journées d&apos;au plus 11 h de conduite. Hôtels : recherche Booking, lien non affilié.
+          </p>
+        </div>
+      )}
       <a
         href={step.href}
         className="mt-5 block rounded-3xl bg-white p-4 text-[#0f1f3d] shadow-2xl shadow-black/30 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b] sm:p-5"

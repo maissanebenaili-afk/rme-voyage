@@ -1,6 +1,6 @@
 {
   "source": "Itinéraires calculés par /api/route (OpenStreetMap : Nominatim, OSRM) ; traversées Espagne ↔ Maroc composées par RME",
-  "generatedAt": "2026-09-26",
+  "generatedAt": "2026-10-06",
   "routes": [
     {
       "slug": "amsterdam-al-hoceima",
@@ -8,15 +8,15 @@
       "destination": "Al Hoceïma, Maroc",
       "originCity": "Amsterdam",
       "destinationCity": "Al Hoceïma",
-      "distanceMeters": 2448113,
-      "durationSeconds": 97519,
+      "distanceMeters": 2447933,
+      "durationSeconds": 97500,
       "legs": [
         {
           "kind": "road",
           "from": "Amsterdam, Pays-Bas",
           "to": "Almería",
           "distanceMeters": 2309361.7999999993,
-          "durationSeconds": 89074.80000000005,
+          "durationSeconds": 89076.60000000005,
           "countries": [
             {
               "country": "NL",
@@ -47,12 +47,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Al Hoceïma, Maroc",
-          "distanceMeters": 138751.19999999992,
-          "durationSeconds": 8444.6,
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
           "countries": [
             {
               "country": "MA",
-              "meters": 138751
+              "meters": 138571
             }
           ]
         }
@@ -61,19 +61,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2448113,
+          "roadMeters": 2447933,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2711934,
+          "roadMeters": 2711757,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2729595,
+          "roadMeters": 2729418,
           "seaMeters": 30642
         }
       ]
@@ -84,15 +84,15 @@
       "destination": "Nador, Maroc",
       "originCity": "Amsterdam",
       "destinationCity": "Nador",
-      "distanceMeters": 2322708,
-      "durationSeconds": 90217,
+      "distanceMeters": 2323107,
+      "durationSeconds": 90256,
       "legs": [
         {
           "kind": "road",
           "from": "Amsterdam, Pays-Bas",
           "to": "Almería",
           "distanceMeters": 2309361.7999999993,
-          "durationSeconds": 89074.80000000005,
+          "durationSeconds": 89076.60000000005,
           "countries": [
             {
               "country": "NL",
@@ -123,12 +123,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -137,19 +137,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2322708,
+          "roadMeters": 2323107,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2822247,
+          "roadMeters": 2821347,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2839908,
+          "roadMeters": 2839007,
           "seaMeters": 30642
         }
       ]
@@ -160,15 +160,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Amsterdam",
       "destinationCity": "Tanger",
-      "distanceMeters": 2444510,
-      "durationSeconds": 94710,
+      "distanceMeters": 2447269,
+      "durationSeconds": 94956,
       "legs": [
         {
           "kind": "road",
           "from": "Amsterdam, Pays-Bas",
           "to": "Tarifa",
-          "distanceMeters": 2441712.899999999,
-          "durationSeconds": 94471.99999999996,
+          "distanceMeters": 2441715.099999999,
+          "durationSeconds": 94473.89999999995,
           "countries": [
             {
               "country": "NL",
@@ -184,7 +184,7 @@
             },
             {
               "country": "ES",
-              "meters": 1138579
+              "meters": 1138581
             }
           ]
         },
@@ -199,12 +199,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -213,31 +213,31 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2444510,
+          "roadMeters": 2447269,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2468321,
+          "roadMeters": 2471591,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2718128,
+          "roadMeters": 2721394,
           "seaMeters": 178584
         }
       ]
     },
     {
-      "slug": "anvers-nador",
+      "slug": "anvers-al-hoceima",
       "origin": "Anvers, Belgique",
-      "destination": "Nador, Maroc",
+      "destination": "Al Hoceïma, Maroc",
       "originCity": "Anvers",
-      "destinationCity": "Nador",
-      "distanceMeters": 2163260,
-      "durationSeconds": 83138,
+      "destinationCity": "Al Hoceïma",
+      "distanceMeters": 2288484,
+      "durationSeconds": 90419,
       "legs": [
         {
           "kind": "road",
@@ -256,7 +256,79 @@
             },
             {
               "country": "ES",
-              "meters": 929386
+              "meters": 929385
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Al Hoceïma, Maroc",
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 138571
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2288485,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2552309,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2569970,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "anvers-nador",
+      "origin": "Anvers, Belgique",
+      "destination": "Nador, Maroc",
+      "originCity": "Anvers",
+      "destinationCity": "Nador",
+      "distanceMeters": 2163659,
+      "durationSeconds": 83176,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Anvers, Belgique",
+          "to": "Almería",
+          "distanceMeters": 2149913.6999999993,
+          "durationSeconds": 81996.30000000003,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 109067
+            },
+            {
+              "country": "FR",
+              "meters": 1111462
+            },
+            {
+              "country": "ES",
+              "meters": 929385
             }
           ]
         },
@@ -271,12 +343,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -285,19 +357,155 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2163260,
+          "roadMeters": 2163659,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2662799,
+          "roadMeters": 2661899,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2680459,
+          "roadMeters": 2679559,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "anvers-tanger",
+      "origin": "Anvers, Belgique",
+      "destination": "Tanger, Maroc",
+      "originCity": "Anvers",
+      "destinationCity": "Tanger",
+      "distanceMeters": 2287821,
+      "durationSeconds": 87876,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Anvers, Belgique",
+          "to": "Tarifa",
+          "distanceMeters": 2282266.999999999,
+          "durationSeconds": 87393.59999999995,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 109059
+            },
+            {
+              "country": "FR",
+              "meters": 1034694
+            },
+            {
+              "country": "ES",
+              "meters": 1138514
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2287821,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2312143,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2561946,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "barcelone-al-hoceima",
+      "origin": "Barcelone, Espagne",
+      "destination": "Al Hoceïma, Maroc",
+      "originCity": "Barcelone",
+      "destinationCity": "Al Hoceïma",
+      "distanceMeters": 918948,
+      "durationSeconds": 39596,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Barcelone, Espagne",
+          "to": "Almería",
+          "distanceMeters": 780377.3,
+          "durationSeconds": 31173.09999999999,
+          "countries": [
+            {
+              "country": "ES",
+              "meters": 780377
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Al Hoceïma, Maroc",
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 138571
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 918948,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 1385247,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 1402390,
           "seaMeters": 30642
         }
       ]
@@ -308,8 +516,8 @@
       "destination": "Nador, Maroc",
       "originCity": "Barcelone",
       "destinationCity": "Nador",
-      "distanceMeters": 793724,
-      "durationSeconds": 32315,
+      "distanceMeters": 794123,
+      "durationSeconds": 32352,
       "legs": [
         {
           "kind": "road",
@@ -335,12 +543,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -349,20 +557,84 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 793723,
+          "roadMeters": 794123,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1495738,
+          "roadMeters": 1494837,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1512883,
+          "roadMeters": 1511980,
           "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "barcelone-tanger",
+      "origin": "Barcelone, Espagne",
+      "destination": "Tanger, Maroc",
+      "originCity": "Barcelone",
+      "destinationCity": "Tanger",
+      "distanceMeters": 1120241,
+      "durationSeconds": 45994,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Barcelone, Espagne",
+          "to": "Tarifa",
+          "distanceMeters": 1114687.2000000002,
+          "durationSeconds": 45511.399999999994,
+          "countries": [
+            {
+              "country": "ES",
+              "meters": 1114687
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 1120241,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 1145081,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1192409,
+          "seaMeters": 178584
         }
       ]
     },
@@ -372,15 +644,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Bologne",
       "destinationCity": "Tanger",
-      "distanceMeters": 2244261,
-      "durationSeconds": 88723,
+      "distanceMeters": 2247017,
+      "durationSeconds": 88933,
       "legs": [
         {
           "kind": "road",
           "from": "Bologne, Italie",
           "to": "Tarifa",
-          "distanceMeters": 2241464.299999999,
-          "durationSeconds": 88485.5,
+          "distanceMeters": 2241463.399999999,
+          "durationSeconds": 88450.4,
           "countries": [
             {
               "country": "IT",
@@ -396,7 +668,7 @@
             },
             {
               "country": "ES",
-              "meters": 1264019
+              "meters": 1264018
             }
           ]
         },
@@ -411,12 +683,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -425,19 +697,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2244262,
+          "roadMeters": 2247018,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2268589,
+          "roadMeters": 2271857,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2315920,
+          "roadMeters": 2319186,
           "seaMeters": 178584
         }
       ]
@@ -448,15 +720,15 @@
       "destination": "Agadir, Maroc",
       "originCity": "Bordeaux",
       "destinationCity": "Agadir",
-      "distanceMeters": 2146966,
+      "distanceMeters": 2146968,
       "durationSeconds": 84061,
       "legs": [
         {
           "kind": "road",
           "from": "Bordeaux, France",
           "to": "Tarifa",
-          "distanceMeters": 1353910.5000000005,
-          "durationSeconds": 52774.70000000001,
+          "distanceMeters": 1353912.7000000004,
+          "durationSeconds": 52774.80000000001,
           "countries": [
             {
               "country": "FR",
@@ -464,7 +736,7 @@
             },
             {
               "country": "ES",
-              "meters": 1138106
+              "meters": 1138109
             }
           ]
         },
@@ -493,13 +765,13 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2146965,
+          "roadMeters": 2146967,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2161162,
+          "roadMeters": 2161164,
           "seaMeters": 28805
         },
         {
@@ -511,20 +783,20 @@
       ]
     },
     {
-      "slug": "bordeaux-tanger",
+      "slug": "bordeaux-casablanca",
       "origin": "Bordeaux, France",
-      "destination": "Tanger, Maroc",
+      "destination": "Casablanca, Maroc",
       "originCity": "Bordeaux",
-      "destinationCity": "Tanger",
-      "distanceMeters": 1356708,
-      "durationSeconds": 53013,
+      "destinationCity": "Casablanca",
+      "distanceMeters": 1698894,
+      "durationSeconds": 67029,
       "legs": [
         {
           "kind": "road",
           "from": "Bordeaux, France",
           "to": "Tarifa",
-          "distanceMeters": 1353910.5000000005,
-          "durationSeconds": 52774.70000000001,
+          "distanceMeters": 1353912.7000000004,
+          "durationSeconds": 52774.80000000001,
           "countries": [
             {
               "country": "FR",
@@ -532,151 +804,7 @@
             },
             {
               "country": "ES",
-              "meters": 1138106
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 2797
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 1356708,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 1380519,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 1592562,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "bruxelles-al-hoceima",
-      "origin": "Bruxelles, Belgique",
-      "destination": "Al Hoceïma, Maroc",
-      "originCity": "Bruxelles",
-      "destinationCity": "Al Hoceïma",
-      "distanceMeters": 2252092,
-      "durationSeconds": 89019,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Bruxelles, Belgique",
-          "to": "Almería",
-          "distanceMeters": 2113340.899999999,
-          "durationSeconds": 80573.90000000004,
-          "countries": [
-            {
-              "country": "BE",
-              "meters": 88330
-            },
-            {
-              "country": "FR",
-              "meters": 1095624
-            },
-            {
-              "country": "ES",
-              "meters": 929386
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "distanceMeters": 178584,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Nador (Beni Ansar)",
-          "to": "Al Hoceïma, Maroc",
-          "distanceMeters": 138751.19999999992,
-          "durationSeconds": 8444.6,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 138751
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2252092,
-          "seaMeters": 178584
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2515913,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2533574,
-          "seaMeters": 30642
-        }
-      ]
-    },
-    {
-      "slug": "bruxelles-casablanca",
-      "origin": "Bruxelles, Belgique",
-      "destination": "Casablanca, Maroc",
-      "originCity": "Bruxelles",
-      "destinationCity": "Casablanca",
-      "distanceMeters": 2590673,
-      "durationSeconds": 100225,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Bruxelles, Belgique",
-          "to": "Tarifa",
-          "distanceMeters": 2245691.9999999986,
-          "durationSeconds": 85971.09999999995,
-          "countries": [
-            {
-              "country": "BE",
-              "meters": 88324
-            },
-            {
-              "country": "FR",
-              "meters": 1018856
-            },
-            {
-              "country": "ES",
-              "meters": 1138512
+              "meters": 1138109
             }
           ]
         },
@@ -705,122 +833,46 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2590673,
+          "roadMeters": 1698894,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2604869,
+          "roadMeters": 1713090,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2729339,
+          "roadMeters": 1799794,
           "seaMeters": 178584
         }
       ]
     },
     {
-      "slug": "bruxelles-nador",
-      "origin": "Bruxelles, Belgique",
-      "destination": "Nador, Maroc",
-      "originCity": "Bruxelles",
-      "destinationCity": "Nador",
-      "distanceMeters": 2126687,
-      "durationSeconds": 81716,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Bruxelles, Belgique",
-          "to": "Almería",
-          "distanceMeters": 2113340.899999999,
-          "durationSeconds": 80573.90000000004,
-          "countries": [
-            {
-              "country": "BE",
-              "meters": 88330
-            },
-            {
-              "country": "FR",
-              "meters": 1095624
-            },
-            {
-              "country": "ES",
-              "meters": 929386
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "distanceMeters": 178584,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Nador (Beni Ansar)",
-          "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 13346
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2126687,
-          "seaMeters": 178584
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2626226,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2643887,
-          "seaMeters": 30642
-        }
-      ]
-    },
-    {
-      "slug": "bruxelles-tanger",
-      "origin": "Bruxelles, Belgique",
+      "slug": "bordeaux-tanger",
+      "origin": "Bordeaux, France",
       "destination": "Tanger, Maroc",
-      "originCity": "Bruxelles",
+      "originCity": "Bordeaux",
       "destinationCity": "Tanger",
-      "distanceMeters": 2248489,
-      "durationSeconds": 86209,
+      "distanceMeters": 1359467,
+      "durationSeconds": 53257,
       "legs": [
         {
           "kind": "road",
-          "from": "Bruxelles, Belgique",
+          "from": "Bordeaux, France",
           "to": "Tarifa",
-          "distanceMeters": 2245691.9999999986,
-          "durationSeconds": 85971.09999999995,
+          "distanceMeters": 1353912.7000000004,
+          "durationSeconds": 52774.80000000001,
           "countries": [
             {
-              "country": "BE",
-              "meters": 88324
-            },
-            {
               "country": "FR",
-              "meters": 1018856
+              "meters": 215804
             },
             {
               "country": "ES",
-              "meters": 1138512
+              "meters": 1138109
             }
           ]
         },
@@ -835,12 +887,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -849,20 +901,524 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2248489,
+          "roadMeters": 1359467,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2272300,
+          "roadMeters": 1383789,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2522107,
+          "roadMeters": 1595828,
           "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "bruxelles-al-hoceima",
+      "origin": "Bruxelles, Belgique",
+      "destination": "Al Hoceïma, Maroc",
+      "originCity": "Bruxelles",
+      "destinationCity": "Al Hoceïma",
+      "distanceMeters": 2257019,
+      "durationSeconds": 89155,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Bruxelles, Belgique",
+          "to": "Almería",
+          "distanceMeters": 2118447.899999999,
+          "durationSeconds": 80732.30000000003,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 93428
+            },
+            {
+              "country": "FR",
+              "meters": 1095631
+            },
+            {
+              "country": "ES",
+              "meters": 929389
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Al Hoceïma, Maroc",
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 138571
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2257019,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2520843,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2538504,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "bruxelles-casablanca",
+      "origin": "Bruxelles, Belgique",
+      "destination": "Casablanca, Maroc",
+      "originCity": "Bruxelles",
+      "destinationCity": "Casablanca",
+      "distanceMeters": 2595782,
+      "durationSeconds": 100383,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Bruxelles, Belgique",
+          "to": "Tarifa",
+          "distanceMeters": 2250801.199999999,
+          "durationSeconds": 86129.59999999995,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 93422
+            },
+            {
+              "country": "FR",
+              "meters": 1018862
+            },
+            {
+              "country": "ES",
+              "meters": 1138518
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Casablanca, Maroc",
+          "distanceMeters": 344981.1,
+          "durationSeconds": 14253.699999999999,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 344981
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2595782,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2609978,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2734446,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "bruxelles-fes",
+      "origin": "Bruxelles, Belgique",
+      "destination": "Fès, Maroc",
+      "originCity": "Bruxelles",
+      "destinationCity": "Fès",
+      "distanceMeters": 2447763,
+      "durationSeconds": 96180,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Bruxelles, Belgique",
+          "to": "Almería",
+          "distanceMeters": 2118447.899999999,
+          "durationSeconds": 80732.30000000003,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 93428
+            },
+            {
+              "country": "FR",
+              "meters": 1095631
+            },
+            {
+              "country": "ES",
+              "meters": 929389
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Fès, Maroc",
+          "distanceMeters": 329314.9,
+          "durationSeconds": 15447.8,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 329315
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2447763,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2655898,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2670094,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "bruxelles-nador",
+      "origin": "Bruxelles, Belgique",
+      "destination": "Nador, Maroc",
+      "originCity": "Bruxelles",
+      "destinationCity": "Nador",
+      "distanceMeters": 2132193,
+      "durationSeconds": 81912,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Bruxelles, Belgique",
+          "to": "Almería",
+          "distanceMeters": 2118447.899999999,
+          "durationSeconds": 80732.30000000003,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 93428
+            },
+            {
+              "country": "FR",
+              "meters": 1095631
+            },
+            {
+              "country": "ES",
+              "meters": 929389
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Nador, Maroc",
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 13746
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2132193,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2630433,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2648093,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "bruxelles-oujda",
+      "origin": "Bruxelles, Belgique",
+      "destination": "Oujda, Maroc",
+      "originCity": "Bruxelles",
+      "destinationCity": "Oujda",
+      "distanceMeters": 2273126,
+      "durationSeconds": 89418,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Bruxelles, Belgique",
+          "to": "Almería",
+          "distanceMeters": 2118447.899999999,
+          "durationSeconds": 80732.30000000003,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 93428
+            },
+            {
+              "country": "FR",
+              "meters": 1095631
+            },
+            {
+              "country": "ES",
+              "meters": 929389
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Oujda, Maroc",
+          "distanceMeters": 154678.59999999995,
+          "durationSeconds": 8685.299999999997,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 154679
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2273126,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2969911,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2984107,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "bruxelles-tanger",
+      "origin": "Bruxelles, Belgique",
+      "destination": "Tanger, Maroc",
+      "originCity": "Bruxelles",
+      "destinationCity": "Tanger",
+      "distanceMeters": 2256355,
+      "durationSeconds": 86612,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Bruxelles, Belgique",
+          "to": "Tarifa",
+          "distanceMeters": 2250801.199999999,
+          "durationSeconds": 86129.59999999995,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 93422
+            },
+            {
+              "country": "FR",
+              "meters": 1018862
+            },
+            {
+              "country": "ES",
+              "meters": 1138518
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2256355,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2280677,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2530480,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "charleroi-nador",
+      "origin": "Charleroi, Belgique",
+      "destination": "Nador, Maroc",
+      "originCity": "Charleroi",
+      "destinationCity": "Nador",
+      "distanceMeters": 2069221,
+      "durationSeconds": 79129,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Charleroi, Belgique",
+          "to": "Almería",
+          "distanceMeters": 2055475.3999999994,
+          "durationSeconds": 77950.00000000004,
+          "countries": [
+            {
+              "country": "BE",
+              "meters": 54784
+            },
+            {
+              "country": "FR",
+              "meters": 1071318
+            },
+            {
+              "country": "ES",
+              "meters": 929374
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Nador, Maroc",
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 13746
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2069221,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2605715,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2623375,
+          "seaMeters": 30642
         }
       ]
     },
@@ -872,19 +1428,19 @@
       "destination": "Nador, Maroc",
       "originCity": "Cologne",
       "destinationCity": "Nador",
-      "distanceMeters": 2138798,
-      "durationSeconds": 82937,
+      "distanceMeters": 2139202,
+      "durationSeconds": 82975,
       "legs": [
         {
           "kind": "road",
           "from": "Cologne, Allemagne",
           "to": "Almería",
-          "distanceMeters": 2125451.6999999993,
-          "durationSeconds": 81795.30000000003,
+          "distanceMeters": 2125456.3999999994,
+          "durationSeconds": 81795.80000000003,
           "countries": [
             {
               "country": "DE",
-              "meters": 171811
+              "meters": 171815
             },
             {
               "country": "LU",
@@ -911,12 +1467,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -925,19 +1481,95 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2138797,
+          "roadMeters": 2139202,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2805384,
+          "roadMeters": 2804486,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2823045,
+          "roadMeters": 2822147,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "dusseldorf-nador",
+      "origin": "Düsseldorf, Allemagne",
+      "destination": "Nador, Maroc",
+      "originCity": "Düsseldorf",
+      "destinationCity": "Nador",
+      "distanceMeters": 2172476,
+      "durationSeconds": 83813,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Düsseldorf, Allemagne",
+          "to": "Almería",
+          "distanceMeters": 2158730.5999999996,
+          "durationSeconds": 82633.30000000003,
+          "countries": [
+            {
+              "country": "DE",
+              "meters": 205078
+            },
+            {
+              "country": "LU",
+              "meters": 45207
+            },
+            {
+              "country": "FR",
+              "meters": 979046
+            },
+            {
+              "country": "ES",
+              "meters": 929399
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Nador, Maroc",
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 13746
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2172476,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2814019,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2831679,
           "seaMeters": 30642
         }
       ]
@@ -948,15 +1580,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Düsseldorf",
       "destinationCity": "Tanger",
-      "distanceMeters": 2437179,
-      "durationSeconds": 92584,
+      "distanceMeters": 2439941,
+      "durationSeconds": 92831,
       "legs": [
         {
           "kind": "road",
           "from": "Düsseldorf, Allemagne",
           "to": "Tarifa",
-          "distanceMeters": 2434382.299999999,
-          "durationSeconds": 92346.49999999996,
+          "distanceMeters": 2434387.299999999,
+          "durationSeconds": 92348.29999999996,
           "countries": [
             {
               "country": "DE",
@@ -968,11 +1600,11 @@
             },
             {
               "country": "FR",
-              "meters": 1019033
+              "meters": 1019036
             },
             {
               "country": "ES",
-              "meters": 1138709
+              "meters": 1138712
             }
           ]
         },
@@ -987,12 +1619,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -1001,19 +1633,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2437179,
+          "roadMeters": 2439941,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2460990,
+          "roadMeters": 2464263,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2567491,
+          "roadMeters": 2570762,
           "seaMeters": 178584
         }
       ]
@@ -1024,15 +1656,15 @@
       "destination": "Casablanca, Maroc",
       "originCity": "Francfort-sur-le-Main",
       "destinationCity": "Casablanca",
-      "distanceMeters": 2777774,
-      "durationSeconds": 107029,
+      "distanceMeters": 2777773,
+      "durationSeconds": 107028,
       "legs": [
         {
           "kind": "road",
           "from": "Francfort-sur-le-Main, Allemagne",
           "to": "Tarifa",
-          "distanceMeters": 2432793.2999999993,
-          "durationSeconds": 92775.09999999999,
+          "distanceMeters": 2432792.3999999994,
+          "durationSeconds": 92774.79999999999,
           "countries": [
             {
               "country": "DE",
@@ -1044,7 +1676,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263706
+              "meters": 1263705
             }
           ]
         },
@@ -1073,13 +1705,13 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2777774,
+          "roadMeters": 2777773,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2792486,
+          "roadMeters": 2792487,
           "seaMeters": 28805
         },
         {
@@ -1096,15 +1728,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Francfort-sur-le-Main",
       "destinationCity": "Tanger",
-      "distanceMeters": 2435590,
-      "durationSeconds": 93013,
+      "distanceMeters": 2438346,
+      "durationSeconds": 93257,
       "legs": [
         {
           "kind": "road",
           "from": "Francfort-sur-le-Main, Allemagne",
           "to": "Tarifa",
-          "distanceMeters": 2432793.2999999993,
-          "durationSeconds": 92775.09999999999,
+          "distanceMeters": 2432792.3999999994,
+          "durationSeconds": 92774.79999999999,
           "countries": [
             {
               "country": "DE",
@@ -1116,7 +1748,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263706
+              "meters": 1263705
             }
           ]
         },
@@ -1131,12 +1763,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -1145,19 +1777,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2435590,
+          "roadMeters": 2438346,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2459918,
+          "roadMeters": 2463186,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2507248,
+          "roadMeters": 2510514,
           "seaMeters": 178584
         }
       ]
@@ -1168,15 +1800,15 @@
       "destination": "Casablanca, Maroc",
       "originCity": "Genève",
       "destinationCity": "Casablanca",
-      "distanceMeters": 2235025,
+      "distanceMeters": 2235024,
       "durationSeconds": 87862,
       "legs": [
         {
           "kind": "road",
           "from": "Genève, Suisse",
           "to": "Tarifa",
-          "distanceMeters": 1890044.200000001,
-          "durationSeconds": 73608.19999999998,
+          "distanceMeters": 1890043.3000000007,
+          "durationSeconds": 73607.89999999998,
           "countries": [
             {
               "country": "CH",
@@ -1188,7 +1820,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263620
+              "meters": 1263619
             }
           ]
         },
@@ -1217,7 +1849,7 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2235025,
+          "roadMeters": 2235024,
           "seaMeters": 30642
         },
         {
@@ -1229,42 +1861,34 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2171731,
+          "roadMeters": 2171732,
           "seaMeters": 178584
         }
       ]
     },
     {
-      "slug": "la-haye-tanger",
-      "origin": "La Haye, Pays-Bas",
+      "slug": "grenoble-tanger",
+      "origin": "Grenoble, France",
       "destination": "Tanger, Maroc",
-      "originCity": "La Haye",
+      "originCity": "Grenoble",
       "destinationCity": "Tanger",
-      "distanceMeters": 2411348,
-      "durationSeconds": 92909,
+      "distanceMeters": 1744349,
+      "durationSeconds": 68454,
       "legs": [
         {
           "kind": "road",
-          "from": "La Haye, Pays-Bas",
+          "from": "Grenoble, France",
           "to": "Tarifa",
-          "distanceMeters": 2408550.4999999986,
-          "durationSeconds": 92670.99999999996,
+          "distanceMeters": 1738794.5000000005,
+          "durationSeconds": 67971.9,
           "countries": [
             {
-              "country": "NL",
-              "meters": 84612
-            },
-            {
-              "country": "BE",
-              "meters": 150629
-            },
-            {
               "country": "FR",
-              "meters": 1034743
+              "meters": 475227
             },
             {
               "country": "ES",
-              "meters": 1138566
+              "meters": 1263567
             }
           ]
         },
@@ -1279,12 +1903,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -1293,19 +1917,95 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2411348,
+          "roadMeters": 1744349,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2435159,
+          "roadMeters": 1769188,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2684965,
+          "roadMeters": 1816517,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "la-haye-tanger",
+      "origin": "La Haye, Pays-Bas",
+      "destination": "Tanger, Maroc",
+      "originCity": "La Haye",
+      "destinationCity": "Tanger",
+      "distanceMeters": 2416543,
+      "durationSeconds": 93414,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "La Haye, Pays-Bas",
+          "to": "Tarifa",
+          "distanceMeters": 2410988.799999999,
+          "durationSeconds": 92931.89999999995,
+          "countries": [
+            {
+              "country": "NL",
+              "meters": 87037
+            },
+            {
+              "country": "BE",
+              "meters": 150630
+            },
+            {
+              "country": "FR",
+              "meters": 1034748
+            },
+            {
+              "country": "ES",
+              "meters": 1138574
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2416543,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2440865,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2690668,
           "seaMeters": 178584
         }
       ]
@@ -1316,8 +2016,8 @@
       "destination": "Nador, Maroc",
       "originCity": "Liège",
       "destinationCity": "Nador",
-      "distanceMeters": 2101902,
-      "durationSeconds": 80736,
+      "distanceMeters": 2102301,
+      "durationSeconds": 80774,
       "legs": [
         {
           "kind": "road",
@@ -1355,12 +2055,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -1369,19 +2069,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2101902,
+          "roadMeters": 2102301,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2687095,
+          "roadMeters": 2686198,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2704756,
+          "roadMeters": 2703859,
           "seaMeters": 30642
         }
       ]
@@ -1392,8 +2092,8 @@
       "destination": "Nador, Maroc",
       "originCity": "Lille",
       "destinationCity": "Nador",
-      "distanceMeters": 2041164,
-      "durationSeconds": 78073,
+      "distanceMeters": 2041563,
+      "durationSeconds": 78110,
       "legs": [
         {
           "kind": "road",
@@ -1423,12 +2123,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -1437,19 +2137,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2041164,
+          "roadMeters": 2041563,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2540703,
+          "roadMeters": 2539803,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2558363,
+          "roadMeters": 2557463,
           "seaMeters": 30642
         }
       ]
@@ -1460,15 +2160,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Lille",
       "destinationCity": "Tanger",
-      "distanceMeters": 2162966,
-      "durationSeconds": 82566,
+      "distanceMeters": 2165725,
+      "durationSeconds": 82811,
       "legs": [
         {
           "kind": "road",
           "from": "Lille, France",
           "to": "Tarifa",
-          "distanceMeters": 2160168.799999999,
-          "durationSeconds": 82328.09999999995,
+          "distanceMeters": 2160170.999999999,
+          "durationSeconds": 82328.19999999995,
           "countries": [
             {
               "country": "FR",
@@ -1476,7 +2176,7 @@
             },
             {
               "country": "ES",
-              "meters": 1138402
+              "meters": 1138404
             }
           ]
         },
@@ -1491,12 +2191,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -1505,19 +2205,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2162966,
+          "roadMeters": 2165725,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2186777,
+          "roadMeters": 2190047,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2436583,
+          "roadMeters": 2439850,
           "seaMeters": 178584
         }
       ]
@@ -1535,8 +2235,8 @@
           "kind": "road",
           "from": "Lyon, France",
           "to": "Tarifa",
-          "distanceMeters": 1743713.3000000005,
-          "durationSeconds": 68352.5,
+          "distanceMeters": 1743712.4000000004,
+          "durationSeconds": 68352.2,
           "countries": [
             {
               "country": "FR",
@@ -1544,7 +2244,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263474
+              "meters": 1263473
             }
           ]
         },
@@ -1573,7 +2273,7 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2088694,
+          "roadMeters": 2088693,
           "seaMeters": 30642
         },
         {
@@ -1591,13 +2291,149 @@
       ]
     },
     {
+      "slug": "lyon-fes",
+      "origin": "Lyon, France",
+      "destination": "Fès, Maroc",
+      "originCity": "Lyon",
+      "destinationCity": "Fès",
+      "distanceMeters": 1738717,
+      "durationSeconds": 69462,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Lyon, France",
+          "to": "Almería",
+          "distanceMeters": 1409402.4999999993,
+          "durationSeconds": 54013.89999999999,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 480166
+            },
+            {
+              "country": "ES",
+              "meters": 929236
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Fès, Maroc",
+          "distanceMeters": 329314.9,
+          "durationSeconds": 15447.8,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 329315
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1738717,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2148810,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2163523,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "lyon-marrakech",
+      "origin": "Lyon, France",
+      "destination": "Marrakech, Maroc",
+      "originCity": "Lyon",
+      "destinationCity": "Marrakech",
+      "distanceMeters": 2317647,
+      "durationSeconds": 91579,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Lyon, France",
+          "to": "Tarifa",
+          "distanceMeters": 1743712.4000000004,
+          "durationSeconds": 68352.2,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 480240
+            },
+            {
+              "country": "ES",
+              "meters": 1263473
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Marrakech, Maroc",
+          "distanceMeters": 573935.0000000003,
+          "durationSeconds": 23226.599999999995,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 573935
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2317648,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2332361,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2254355,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
       "slug": "lyon-nador",
       "origin": "Lyon, France",
       "destination": "Nador, Maroc",
       "originCity": "Lyon",
       "destinationCity": "Nador",
-      "distanceMeters": 1422749,
-      "durationSeconds": 55156,
+      "distanceMeters": 1423148,
+      "durationSeconds": 55193,
       "legs": [
         {
           "kind": "road",
@@ -1627,12 +2463,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -1641,19 +2477,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1422749,
+          "roadMeters": 1423148,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2124764,
+          "roadMeters": 2123862,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2141908,
+          "roadMeters": 2141005,
           "seaMeters": 30642
         }
       ]
@@ -1715,13 +2551,13 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2462823,
+          "roadMeters": 2462822,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2477535,
+          "roadMeters": 2477536,
           "seaMeters": 28805
         }
       ]
@@ -1732,15 +2568,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Lyon",
       "destinationCity": "Tanger",
-      "distanceMeters": 1746511,
-      "durationSeconds": 68590,
+      "distanceMeters": 1749266,
+      "durationSeconds": 68835,
       "legs": [
         {
           "kind": "road",
           "from": "Lyon, France",
           "to": "Tarifa",
-          "distanceMeters": 1743713.3000000005,
-          "durationSeconds": 68352.5,
+          "distanceMeters": 1743712.4000000004,
+          "durationSeconds": 68352.2,
           "countries": [
             {
               "country": "FR",
@@ -1748,7 +2584,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263474
+              "meters": 1263473
             }
           ]
         },
@@ -1763,12 +2599,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -1777,19 +2613,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1746511,
+          "roadMeters": 1749267,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1770838,
+          "roadMeters": 1774106,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1818168,
+          "roadMeters": 1821435,
           "seaMeters": 178584
         }
       ]
@@ -1801,18 +2637,18 @@
       "originCity": "Madrid",
       "destinationCity": "Casablanca",
       "distanceMeters": 1029548,
-      "durationSeconds": 42925,
+      "durationSeconds": 42924,
       "legs": [
         {
           "kind": "road",
           "from": "Madrid, Espagne",
           "to": "Tarifa",
-          "distanceMeters": 684567.3000000002,
-          "durationSeconds": 28671,
+          "distanceMeters": 684566.4000000001,
+          "durationSeconds": 28670.7,
           "countries": [
             {
               "country": "ES",
-              "meters": 684567
+              "meters": 684566
             }
           ]
         },
@@ -1864,19 +2700,19 @@
       "destination": "Tanger, Maroc",
       "originCity": "Madrid",
       "destinationCity": "Tanger",
-      "distanceMeters": 687365,
-      "durationSeconds": 28909,
+      "distanceMeters": 690120,
+      "durationSeconds": 29153,
       "legs": [
         {
           "kind": "road",
           "from": "Madrid, Espagne",
           "to": "Tarifa",
-          "distanceMeters": 684567.3000000002,
-          "durationSeconds": 28671,
+          "distanceMeters": 684566.4000000001,
+          "durationSeconds": 28670.7,
           "countries": [
             {
               "country": "ES",
-              "meters": 684567
+              "meters": 684566
             }
           ]
         },
@@ -1891,12 +2727,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -1905,19 +2741,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 687365,
+          "roadMeters": 690121,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 711692,
+          "roadMeters": 714960,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 952613,
+          "roadMeters": 955880,
           "seaMeters": 178584
         }
       ]
@@ -1928,15 +2764,15 @@
       "destination": "Casablanca, Maroc",
       "originCity": "Marseille",
       "destinationCity": "Casablanca",
-      "distanceMeters": 1954874,
-      "durationSeconds": 78111,
+      "distanceMeters": 1954873,
+      "durationSeconds": 78110,
       "legs": [
         {
           "kind": "road",
           "from": "Marseille, France",
           "to": "Tarifa",
-          "distanceMeters": 1609892.5000000005,
-          "durationSeconds": 63857,
+          "distanceMeters": 1609891.6000000003,
+          "durationSeconds": 63856.700000000004,
           "countries": [
             {
               "country": "FR",
@@ -1944,7 +2780,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263624
+              "meters": 1263623
             }
           ]
         },
@@ -1973,7 +2809,7 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1954874,
+          "roadMeters": 1954873,
           "seaMeters": 30642
         },
         {
@@ -1991,13 +2827,149 @@
       ]
     },
     {
+      "slug": "marseille-fes",
+      "origin": "Marseille, France",
+      "destination": "Fès, Maroc",
+      "originCity": "Marseille",
+      "destinationCity": "Fès",
+      "distanceMeters": 1604897,
+      "durationSeconds": 64966,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Marseille, France",
+          "to": "Almería",
+          "distanceMeters": 1275581.6999999993,
+          "durationSeconds": 49518.39999999999,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 346221
+            },
+            {
+              "country": "ES",
+              "meters": 929361
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Fès, Maroc",
+          "distanceMeters": 329314.9,
+          "durationSeconds": 15447.8,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 329315
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1604897,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2014989,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2029702,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "marseille-marrakech",
+      "origin": "Marseille, France",
+      "destination": "Marrakech, Maroc",
+      "originCity": "Marseille",
+      "destinationCity": "Marrakech",
+      "distanceMeters": 2183827,
+      "durationSeconds": 87083,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Marseille, France",
+          "to": "Tarifa",
+          "distanceMeters": 1609891.6000000003,
+          "durationSeconds": 63856.700000000004,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 346269
+            },
+            {
+              "country": "ES",
+              "meters": 1263623
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Marrakech, Maroc",
+          "distanceMeters": 573935.0000000003,
+          "durationSeconds": 23226.599999999995,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 573935
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2183827,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2198541,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2120534,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
       "slug": "marseille-nador",
       "origin": "Marseille, France",
       "destination": "Nador, Maroc",
       "originCity": "Marseille",
       "destinationCity": "Nador",
-      "distanceMeters": 1288928,
-      "durationSeconds": 50660,
+      "distanceMeters": 1289327,
+      "durationSeconds": 50698,
       "legs": [
         {
           "kind": "road",
@@ -2027,12 +2999,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -2041,19 +3013,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1288928,
+          "roadMeters": 1289327,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1990943,
+          "roadMeters": 1990041,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2008087,
+          "roadMeters": 2007184,
           "seaMeters": 30642
         }
       ]
@@ -2115,7 +3087,7 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2329002,
+          "roadMeters": 2329001,
           "seaMeters": 30642
         },
         {
@@ -2132,15 +3104,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Marseille",
       "destinationCity": "Tanger",
-      "distanceMeters": 1612690,
-      "durationSeconds": 64095,
+      "distanceMeters": 1615446,
+      "durationSeconds": 64339,
       "legs": [
         {
           "kind": "road",
           "from": "Marseille, France",
           "to": "Tarifa",
-          "distanceMeters": 1609892.5000000005,
-          "durationSeconds": 63857,
+          "distanceMeters": 1609891.6000000003,
+          "durationSeconds": 63856.700000000004,
           "countries": [
             {
               "country": "FR",
@@ -2148,7 +3120,7 @@
             },
             {
               "country": "ES",
-              "meters": 1263624
+              "meters": 1263623
             }
           ]
         },
@@ -2163,12 +3135,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -2177,38 +3149,114 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1612690,
+          "roadMeters": 1615446,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1637017,
+          "roadMeters": 1640285,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1684347,
+          "roadMeters": 1687614,
           "seaMeters": 178584
         }
       ]
     },
     {
-      "slug": "milan-tanger",
+      "slug": "milan-beni-mellal",
       "origin": "Milan, Italie",
-      "destination": "Tanger, Maroc",
+      "destination": "Béni Mellal, Maroc",
       "originCity": "Milan",
-      "destinationCity": "Tanger",
-      "distanceMeters": 2085810,
-      "durationSeconds": 82548,
+      "destinationCity": "Béni Mellal",
+      "distanceMeters": 2340397,
+      "durationSeconds": 99193,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Milan, Italie",
+          "to": "Almería",
+          "distanceMeters": 1748701.8999999994,
+          "durationSeconds": 67936.90000000002,
+          "countries": [
+            {
+              "country": "IT",
+              "meters": 288084
+            },
+            {
+              "country": "FR",
+              "meters": 525789
+            },
+            {
+              "country": "MC",
+              "meters": 5251
+            },
+            {
+              "country": "ES",
+              "meters": 929578
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Béni Mellal, Maroc",
+          "distanceMeters": 591695.5999999999,
+          "durationSeconds": 31256.000000000015,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 591696
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2340397,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2634593,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2649307,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "milan-casablanca",
+      "origin": "Milan, Italie",
+      "destination": "Casablanca, Maroc",
+      "originCity": "Milan",
+      "destinationCity": "Casablanca",
+      "distanceMeters": 2427993,
+      "durationSeconds": 96529,
       "legs": [
         {
           "kind": "road",
           "from": "Milan, Italie",
           "to": "Tarifa",
-          "distanceMeters": 2083012.7000000007,
-          "durationSeconds": 82309.89999999998,
+          "distanceMeters": 2083011.8000000005,
+          "durationSeconds": 82275.19999999998,
           "countries": [
             {
               "country": "IT",
@@ -2224,7 +3272,83 @@
             },
             {
               "country": "ES",
-              "meters": 1263832
+              "meters": 1263831
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Casablanca, Maroc",
+          "distanceMeters": 344981.1,
+          "durationSeconds": 14253.699999999999,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 344981
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2427993,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2442707,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2364700,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "milan-tanger",
+      "origin": "Milan, Italie",
+      "destination": "Tanger, Maroc",
+      "originCity": "Milan",
+      "destinationCity": "Tanger",
+      "distanceMeters": 2088566,
+      "durationSeconds": 82758,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Milan, Italie",
+          "to": "Tarifa",
+          "distanceMeters": 2083011.8000000005,
+          "durationSeconds": 82275.19999999998,
+          "countries": [
+            {
+              "country": "IT",
+              "meters": 288104
+            },
+            {
+              "country": "FR",
+              "meters": 525825
+            },
+            {
+              "country": "MC",
+              "meters": 5252
+            },
+            {
+              "country": "ES",
+              "meters": 1263831
             }
           ]
         },
@@ -2239,12 +3363,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -2253,19 +3377,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2085810,
+          "roadMeters": 2088566,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2110137,
+          "roadMeters": 2113405,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2157468,
+          "roadMeters": 2160734,
           "seaMeters": 178584
         }
       ]
@@ -2276,8 +3400,8 @@
       "destination": "Nador, Maroc",
       "originCity": "Montpellier",
       "destinationCity": "Nador",
-      "distanceMeters": 1128321,
-      "durationSeconds": 44681,
+      "distanceMeters": 1128721,
+      "durationSeconds": 44719,
       "legs": [
         {
           "kind": "road",
@@ -2307,12 +3431,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -2321,726 +3445,46 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1128321,
+          "roadMeters": 1128721,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1830336,
+          "roadMeters": 1829434,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1847481,
+          "roadMeters": 1846577,
           "seaMeters": 30642
         }
       ]
     },
     {
-      "slug": "nantes-tanger",
-      "origin": "Nantes, France",
-      "destination": "Tanger, Maroc",
-      "originCity": "Nantes",
-      "destinationCity": "Tanger",
-      "distanceMeters": 1704127,
-      "durationSeconds": 65521,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Nantes, France",
-          "to": "Tarifa",
-          "distanceMeters": 1701329.6000000003,
-          "durationSeconds": 65283.5,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 563098
-            },
-            {
-              "country": "ES",
-              "meters": 1138232
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 2797
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 1704127,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 1727938,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 1939981,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "nice-tanger",
-      "origin": "Nice, France",
-      "destination": "Tanger, Maroc",
-      "originCity": "Nice",
-      "destinationCity": "Tanger",
-      "distanceMeters": 1770530,
-      "durationSeconds": 69975,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Nice, France",
-          "to": "Tarifa",
-          "distanceMeters": 1767733.1000000008,
-          "durationSeconds": 69737.3,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 503922
-            },
-            {
-              "country": "ES",
-              "meters": 1263811
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 2797
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 1770530,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 1794858,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 1842188,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "paris-agadir",
-      "origin": "Paris, France",
-      "destination": "Agadir, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Agadir",
-      "distanceMeters": 2729152,
-      "durationSeconds": 105457,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 797746
-            },
-            {
-              "country": "ES",
-              "meters": 1138351
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Agadir, Maroc",
-          "distanceMeters": 793054.9999999999,
-          "durationSeconds": 31286.100000000006,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 793055
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2729151,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2743348,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2867817,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "paris-al-hoceima",
-      "origin": "Paris, France",
-      "destination": "Al Hoceïma, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Al Hoceïma",
-      "distanceMeters": 1942497,
-      "durationSeconds": 77219,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Almería",
-          "distanceMeters": 1803745.4999999995,
-          "durationSeconds": 68774.20000000003,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 874489
-            },
-            {
-              "country": "ES",
-              "meters": 929256
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "distanceMeters": 178584,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Nador (Beni Ansar)",
-          "to": "Al Hoceïma, Maroc",
-          "distanceMeters": 138751.19999999992,
-          "durationSeconds": 8444.6,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 138751
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 1942497,
-          "seaMeters": 178584
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2206318,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2223978,
-          "seaMeters": 30642
-        }
-      ]
-    },
-    {
-      "slug": "paris-beni-mellal",
-      "origin": "Paris, France",
-      "destination": "Béni Mellal, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Béni Mellal",
-      "distanceMeters": 2487678,
-      "durationSeconds": 96314,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 797746
-            },
-            {
-              "country": "ES",
-              "meters": 1138351
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Béni Mellal, Maroc",
-          "distanceMeters": 551581.7,
-          "durationSeconds": 22142.6,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 551582
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2487678,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2501874,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2395441,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "paris-casablanca",
-      "origin": "Paris, France",
-      "destination": "Casablanca, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Casablanca",
-      "distanceMeters": 2281078,
-      "durationSeconds": 88425,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 797746
-            },
-            {
-              "country": "ES",
-              "meters": 1138351
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Casablanca, Maroc",
-          "distanceMeters": 344981.1,
-          "durationSeconds": 14253.699999999999,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 344981
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2281078,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2295274,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2419744,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "paris-fes",
-      "origin": "Paris, France",
-      "destination": "Fès, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Fès",
-      "distanceMeters": 2133060,
-      "durationSeconds": 84222,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Almería",
-          "distanceMeters": 1803745.4999999995,
-          "durationSeconds": 68774.20000000003,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 874489
-            },
-            {
-              "country": "ES",
-              "meters": 929256
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "distanceMeters": 178584,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Nador (Beni Ansar)",
-          "to": "Fès, Maroc",
-          "distanceMeters": 329314.9,
-          "durationSeconds": 15447.8,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 329315
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2133060,
-          "seaMeters": 178584
-        },
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2341194,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2355390,
-          "seaMeters": 28805
-        }
-      ]
-    },
-    {
-      "slug": "paris-marrakech",
-      "origin": "Paris, France",
-      "destination": "Marrakech, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Marrakech",
-      "distanceMeters": 2510032,
-      "durationSeconds": 97398,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 797746
-            },
-            {
-              "country": "ES",
-              "meters": 1138351
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Marrakech, Maroc",
-          "distanceMeters": 573935.0000000003,
-          "durationSeconds": 23226.599999999995,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 573935
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2510032,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2524228,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2648698,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "paris-meknes",
-      "origin": "Paris, France",
-      "destination": "Meknès, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Meknès",
-      "distanceMeters": 2285131,
-      "durationSeconds": 89109,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 797746
-            },
-            {
-              "country": "ES",
-              "meters": 1138351
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "distanceMeters": 30642,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Tanger Ville",
-          "to": "Meknès, Maroc",
-          "distanceMeters": 349033.99999999994,
-          "durationSeconds": 14937.4,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 349034
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2285131,
-          "seaMeters": 30642
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2299327,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 2189286,
-          "seaMeters": 178584
-        }
-      ]
-    },
-    {
-      "slug": "paris-nador",
-      "origin": "Paris, France",
-      "destination": "Nador, Maroc",
-      "originCity": "Paris",
-      "destinationCity": "Nador",
-      "distanceMeters": 1817092,
-      "durationSeconds": 69916,
-      "legs": [
-        {
-          "kind": "road",
-          "from": "Paris, France",
-          "to": "Almería",
-          "distanceMeters": 1803745.4999999995,
-          "durationSeconds": 68774.20000000003,
-          "countries": [
-            {
-              "country": "FR",
-              "meters": 874489
-            },
-            {
-              "country": "ES",
-              "meters": 929256
-            }
-          ]
-        },
-        {
-          "kind": "ferry",
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "distanceMeters": 178584,
-          "measured": "straight-line"
-        },
-        {
-          "kind": "road",
-          "from": "Nador (Beni Ansar)",
-          "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
-          "countries": [
-            {
-              "country": "MA",
-              "meters": 13346
-            }
-          ]
-        }
-      ],
-      "crossings": [
-        {
-          "from": "Almería",
-          "to": "Nador (Beni Ansar)",
-          "roadMeters": 1817092,
-          "seaMeters": 178584
-        },
-        {
-          "from": "Algeciras",
-          "to": "Tanger Med",
-          "roadMeters": 2316631,
-          "seaMeters": 28805
-        },
-        {
-          "from": "Tarifa",
-          "to": "Tanger Ville",
-          "roadMeters": 2334291,
-          "seaMeters": 30642
-        }
-      ]
-    },
-    {
-      "slug": "paris-oujda",
-      "origin": "Paris, France",
+      "slug": "montpellier-oujda",
+      "origin": "Montpellier, France",
       "destination": "Oujda, Maroc",
-      "originCity": "Paris",
+      "originCity": "Montpellier",
       "destinationCity": "Oujda",
-      "distanceMeters": 1958424,
-      "durationSeconds": 77460,
+      "distanceMeters": 1269654,
+      "durationSeconds": 52225,
       "legs": [
         {
           "kind": "road",
-          "from": "Paris, France",
+          "from": "Montpellier, France",
           "to": "Almería",
-          "distanceMeters": 1803745.4999999995,
-          "durationSeconds": 68774.20000000003,
+          "distanceMeters": 1114975.0999999996,
+          "durationSeconds": 43539.49999999999,
           "countries": [
             {
               "country": "FR",
-              "meters": 874489
+              "meters": 185749
             },
             {
               "country": "ES",
-              "meters": 929256
+              "meters": 929227
             }
           ]
         },
@@ -3069,19 +3513,971 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1958424,
+          "roadMeters": 1269653,
           "seaMeters": 178584
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2655207,
+          "roadMeters": 2168395,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2669403,
+          "roadMeters": 2183109,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "nantes-tanger",
+      "origin": "Nantes, France",
+      "destination": "Tanger, Maroc",
+      "originCity": "Nantes",
+      "destinationCity": "Tanger",
+      "distanceMeters": 1706886,
+      "durationSeconds": 65766,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Nantes, France",
+          "to": "Tarifa",
+          "distanceMeters": 1701331.8000000005,
+          "durationSeconds": 65283.600000000006,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 563098
+            },
+            {
+              "country": "ES",
+              "meters": 1138234
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 1706886,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 1731208,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1943247,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "nice-tanger",
+      "origin": "Nice, France",
+      "destination": "Tanger, Maroc",
+      "originCity": "Nice",
+      "destinationCity": "Tanger",
+      "distanceMeters": 1773286,
+      "durationSeconds": 70220,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Nice, France",
+          "to": "Tarifa",
+          "distanceMeters": 1767732.2000000007,
+          "durationSeconds": 69737,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 503922
+            },
+            {
+              "country": "ES",
+              "meters": 1263810
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 1773286,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 1798126,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1845454,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-agadir",
+      "origin": "Paris, France",
+      "destination": "Agadir, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Agadir",
+      "distanceMeters": 2730473,
+      "durationSeconds": 105498,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Agadir, Maroc",
+          "distanceMeters": 793054.9999999999,
+          "durationSeconds": 31286.100000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 793055
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2730473,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2744669,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2869136,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-al-hoceima",
+      "origin": "Paris, France",
+      "destination": "Al Hoceïma, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Al Hoceïma",
+      "distanceMeters": 1943635,
+      "durationSeconds": 77238,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Almería",
+          "distanceMeters": 1805064.5999999996,
+          "durationSeconds": 68814.50000000001,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 875807
+            },
+            {
+              "country": "ES",
+              "meters": 929257
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Al Hoceïma, Maroc",
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 138571
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1943636,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2207460,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2225121,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "paris-beni-mellal",
+      "origin": "Paris, France",
+      "destination": "Béni Mellal, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Béni Mellal",
+      "distanceMeters": 2489000,
+      "durationSeconds": 96354,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Béni Mellal, Maroc",
+          "distanceMeters": 551581.7,
+          "durationSeconds": 22142.6,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 551582
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2488999,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2503195,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2396760,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-casablanca",
+      "origin": "Paris, France",
+      "destination": "Casablanca, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Casablanca",
+      "distanceMeters": 2282399,
+      "durationSeconds": 88465,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Casablanca, Maroc",
+          "distanceMeters": 344981.1,
+          "durationSeconds": 14253.699999999999,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 344981
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2282399,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2296595,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2421063,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-el-jadida",
+      "origin": "Paris, France",
+      "destination": "El Jadida, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "El Jadida",
+      "distanceMeters": 2380640,
+      "durationSeconds": 92079,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "El Jadida, Maroc",
+          "distanceMeters": 443221.5999999999,
+          "durationSeconds": 17867.699999999997,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 443222
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2380639,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2394835,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2519303,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-fes",
+      "origin": "Paris, France",
+      "destination": "Fès, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Fès",
+      "distanceMeters": 2134379,
+      "durationSeconds": 84262,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Almería",
+          "distanceMeters": 1805064.5999999996,
+          "durationSeconds": 68814.50000000001,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 875807
+            },
+            {
+              "country": "ES",
+              "meters": 929257
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Fès, Maroc",
+          "distanceMeters": 329314.9,
+          "durationSeconds": 15447.8,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 329315
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2134379,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2342515,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2356711,
+          "seaMeters": 28805
+        }
+      ]
+    },
+    {
+      "slug": "paris-kenitra",
+      "origin": "Paris, France",
+      "destination": "Kénitra, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Kénitra",
+      "distanceMeters": 2138916,
+      "durationSeconds": 82908,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Kénitra, Maroc",
+          "distanceMeters": 201498.09999999998,
+          "durationSeconds": 8695.999999999998,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 201498
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2138916,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2153112,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2323831,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-khouribga",
+      "origin": "Paris, France",
+      "destination": "Khouribga, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Khouribga",
+      "distanceMeters": 2391472,
+      "durationSeconds": 92591,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Khouribga, Maroc",
+          "distanceMeters": 454054.4999999999,
+          "durationSeconds": 18379.2,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 454054
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2391472,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2405668,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2530136,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-marrakech",
+      "origin": "Paris, France",
+      "destination": "Marrakech, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Marrakech",
+      "distanceMeters": 2511353,
+      "durationSeconds": 97438,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Marrakech, Maroc",
+          "distanceMeters": 573935.0000000003,
+          "durationSeconds": 23226.599999999995,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 573935
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2511353,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2525549,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2650017,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-meknes",
+      "origin": "Paris, France",
+      "destination": "Meknès, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Meknès",
+      "distanceMeters": 2286452,
+      "durationSeconds": 89149,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Tarifa",
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 799064
+            },
+            {
+              "country": "ES",
+              "meters": 1138354
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Meknès, Maroc",
+          "distanceMeters": 349033.99999999994,
+          "durationSeconds": 14937.4,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 349034
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2286452,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2300648,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2190605,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "paris-nador",
+      "origin": "Paris, France",
+      "destination": "Nador, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Nador",
+      "distanceMeters": 1818810,
+      "durationSeconds": 69994,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Almería",
+          "distanceMeters": 1805064.5999999996,
+          "durationSeconds": 68814.50000000001,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 875807
+            },
+            {
+              "country": "ES",
+              "meters": 929257
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Nador, Maroc",
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 13746
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1818810,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2317050,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2334710,
+          "seaMeters": 30642
+        }
+      ]
+    },
+    {
+      "slug": "paris-oujda",
+      "origin": "Paris, France",
+      "destination": "Oujda, Maroc",
+      "originCity": "Paris",
+      "destinationCity": "Oujda",
+      "distanceMeters": 1959743,
+      "durationSeconds": 77500,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Paris, France",
+          "to": "Almería",
+          "distanceMeters": 1805064.5999999996,
+          "durationSeconds": 68814.50000000001,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 875807
+            },
+            {
+              "country": "ES",
+              "meters": 929257
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Oujda, Maroc",
+          "distanceMeters": 154678.59999999995,
+          "durationSeconds": 8685.299999999997,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 154679
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1959743,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2656528,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2670724,
           "seaMeters": 28805
         }
       ]
@@ -3092,23 +4488,23 @@
       "destination": "Rabat, Maroc",
       "originCity": "Paris",
       "destinationCity": "Rabat",
-      "distanceMeters": 2184243,
-      "durationSeconds": 84656,
+      "distanceMeters": 2185565,
+      "durationSeconds": 84696,
       "legs": [
         {
           "kind": "road",
           "from": "Paris, France",
           "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
           "countries": [
             {
               "country": "FR",
-              "meters": 797746
+              "meters": 799064
             },
             {
               "country": "ES",
-              "meters": 1138351
+              "meters": 1138354
             }
           ]
         },
@@ -3137,19 +4533,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2184243,
+          "roadMeters": 2185564,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2198439,
+          "roadMeters": 2199761,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2322314,
+          "roadMeters": 2323633,
           "seaMeters": 178584
         }
       ]
@@ -3160,23 +4556,23 @@
       "destination": "Tanger, Maroc",
       "originCity": "Paris",
       "destinationCity": "Tanger",
-      "distanceMeters": 1938894,
-      "durationSeconds": 74409,
+      "distanceMeters": 1942972,
+      "durationSeconds": 74694,
       "legs": [
         {
           "kind": "road",
           "from": "Paris, France",
           "to": "Tarifa",
-          "distanceMeters": 1936096.6000000008,
-          "durationSeconds": 74171.39999999995,
+          "distanceMeters": 1937417.9000000006,
+          "durationSeconds": 74211.79999999996,
           "countries": [
             {
               "country": "FR",
-              "meters": 797746
+              "meters": 799064
             },
             {
               "country": "ES",
-              "meters": 1138351
+              "meters": 1138354
             }
           ]
         },
@@ -3191,12 +4587,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -3205,19 +4601,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1938894,
+          "roadMeters": 1942972,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1962705,
+          "roadMeters": 1967294,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2212511,
+          "roadMeters": 2217097,
           "seaMeters": 178584
         }
       ]
@@ -3228,23 +4624,23 @@
       "destination": "Taza, Maroc",
       "originCity": "Paris",
       "destinationCity": "Taza",
-      "distanceMeters": 2020449,
-      "durationSeconds": 79834,
+      "distanceMeters": 2021768,
+      "durationSeconds": 79875,
       "legs": [
         {
           "kind": "road",
           "from": "Paris, France",
           "to": "Almería",
-          "distanceMeters": 1803745.4999999995,
-          "durationSeconds": 68774.20000000003,
+          "distanceMeters": 1805064.5999999996,
+          "durationSeconds": 68814.50000000001,
           "countries": [
             {
               "country": "FR",
-              "meters": 874489
+              "meters": 875807
             },
             {
               "country": "ES",
-              "meters": 929256
+              "meters": 929257
             }
           ]
         },
@@ -3273,19 +4669,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2020449,
+          "roadMeters": 2021768,
           "seaMeters": 178584
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2445315,
+          "roadMeters": 2446636,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2459511,
+          "roadMeters": 2460832,
           "seaMeters": 28805
         }
       ]
@@ -3296,23 +4692,23 @@
       "destination": "Tétouan, Maroc",
       "originCity": "Paris",
       "destinationCity": "Tétouan",
-      "distanceMeters": 1979157,
-      "durationSeconds": 76890,
+      "distanceMeters": 1978462,
+      "durationSeconds": 76783,
       "legs": [
         {
           "kind": "road",
           "from": "Paris, France",
           "to": "Algeciras",
-          "distanceMeters": 1915801.9,
-          "durationSeconds": 73122.80000000002,
+          "distanceMeters": 1917123.1999999997,
+          "durationSeconds": 73160.00000000003,
           "countries": [
             {
               "country": "FR",
-              "meters": 797756
+              "meters": 799074
             },
             {
               "country": "ES",
-              "meters": 1118046
+              "meters": 1118049
             }
           ]
         },
@@ -3327,12 +4723,12 @@
           "kind": "road",
           "from": "Tanger Med",
           "to": "Tétouan, Maroc",
-          "distanceMeters": 63355.40000000001,
-          "durationSeconds": 3767.6,
+          "distanceMeters": 61339.200000000004,
+          "durationSeconds": 3622.999999999999,
           "countries": [
             {
               "country": "MA",
-              "meters": 63355
+              "meters": 61339
             }
           ]
         }
@@ -3341,19 +4737,19 @@
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1979157,
+          "roadMeters": 1978462,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1995072,
+          "roadMeters": 1997970,
           "seaMeters": 30642
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2156986,
+          "roadMeters": 2158129,
           "seaMeters": 178584
         }
       ]
@@ -3364,8 +4760,8 @@
       "destination": "Al Hoceïma, Maroc",
       "originCity": "Rotterdam",
       "destinationCity": "Al Hoceïma",
-      "distanceMeters": 2388587,
-      "durationSeconds": 94541,
+      "distanceMeters": 2388406,
+      "durationSeconds": 94520,
       "legs": [
         {
           "kind": "road",
@@ -3403,12 +4799,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Al Hoceïma, Maroc",
-          "distanceMeters": 138751.19999999992,
-          "durationSeconds": 8444.6,
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
           "countries": [
             {
               "country": "MA",
-              "meters": 138751
+              "meters": 138571
             }
           ]
         }
@@ -3417,19 +4813,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2388587,
+          "roadMeters": 2388407,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2652408,
+          "roadMeters": 2652231,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2670069,
+          "roadMeters": 2669892,
           "seaMeters": 30642
         }
       ]
@@ -3440,8 +4836,8 @@
       "destination": "Nador, Maroc",
       "originCity": "Rotterdam",
       "destinationCity": "Nador",
-      "distanceMeters": 2263182,
-      "durationSeconds": 87239,
+      "distanceMeters": 2263581,
+      "durationSeconds": 87276,
       "legs": [
         {
           "kind": "road",
@@ -3479,12 +4875,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -3493,46 +4889,54 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2263182,
+          "roadMeters": 2263581,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2762721,
+          "roadMeters": 2761821,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2780382,
+          "roadMeters": 2779481,
           "seaMeters": 30642
         }
       ]
     },
     {
-      "slug": "strasbourg-tanger",
-      "origin": "Strasbourg, France",
+      "slug": "rotterdam-tanger",
+      "origin": "Rotterdam, Pays-Bas",
       "destination": "Tanger, Maroc",
-      "originCity": "Strasbourg",
+      "originCity": "Rotterdam",
       "destinationCity": "Tanger",
-      "distanceMeters": 2236367,
-      "durationSeconds": 86809,
+      "distanceMeters": 2387743,
+      "durationSeconds": 91977,
       "legs": [
         {
           "kind": "road",
-          "from": "Strasbourg, France",
+          "from": "Rotterdam, Pays-Bas",
           "to": "Tarifa",
-          "distanceMeters": 2233569.399999999,
-          "durationSeconds": 86571.09999999998,
+          "distanceMeters": 2382188.999999999,
+          "durationSeconds": 91494.09999999996,
           "countries": [
             {
+              "country": "NL",
+              "meters": 58270
+            },
+            {
+              "country": "BE",
+              "meters": 150628
+            },
+            {
               "country": "FR",
-              "meters": 969887
+              "meters": 1034733
             },
             {
               "country": "ES",
-              "meters": 1263683
+              "meters": 1138558
             }
           ]
         },
@@ -3547,12 +4951,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -3561,19 +4965,87 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2236367,
+          "roadMeters": 2387743,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2260694,
+          "roadMeters": 2412065,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2308024,
+          "roadMeters": 2661868,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "strasbourg-tanger",
+      "origin": "Strasbourg, France",
+      "destination": "Tanger, Maroc",
+      "originCity": "Strasbourg",
+      "destinationCity": "Tanger",
+      "distanceMeters": 2239122,
+      "durationSeconds": 87053,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Strasbourg, France",
+          "to": "Tarifa",
+          "distanceMeters": 2233568.499999999,
+          "durationSeconds": 86570.69999999997,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 969887
+            },
+            {
+              "country": "ES",
+              "meters": 1263682
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Tanger, Maroc",
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 5554
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2239123,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2263962,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2311291,
           "seaMeters": 178584
         }
       ]
@@ -3584,15 +5056,15 @@
       "destination": "Casablanca, Maroc",
       "originCity": "Toulouse",
       "destinationCity": "Casablanca",
-      "distanceMeters": 1808584,
-      "durationSeconds": 70896,
+      "distanceMeters": 1808586,
+      "durationSeconds": 70899,
       "legs": [
         {
           "kind": "road",
           "from": "Toulouse, France",
           "to": "Tarifa",
-          "distanceMeters": 1463602.4000000006,
-          "durationSeconds": 56641.80000000001,
+          "distanceMeters": 1463604.6000000003,
+          "durationSeconds": 56645.20000000001,
           "countries": [
             {
               "country": "FR",
@@ -3600,7 +5072,7 @@
             },
             {
               "country": "ES",
-              "meters": 1138430
+              "meters": 1138433
             }
           ]
         },
@@ -3629,20 +5101,88 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1808583,
+          "roadMeters": 1808585,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1822779,
+          "roadMeters": 1822782,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1679843,
+          "roadMeters": 1781598,
           "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "toulouse-fes",
+      "origin": "Toulouse, France",
+      "destination": "Fès, Maroc",
+      "originCity": "Toulouse",
+      "destinationCity": "Fès",
+      "distanceMeters": 1494915,
+      "durationSeconds": 60565,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Toulouse, France",
+          "to": "Almería",
+          "distanceMeters": 1165600.3999999994,
+          "durationSeconds": 45116.89999999999,
+          "countries": [
+            {
+              "country": "FR",
+              "meters": 236279
+            },
+            {
+              "country": "ES",
+              "meters": 929321
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Fès, Maroc",
+          "distanceMeters": 329314.9,
+          "durationSeconds": 15447.8,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 329315
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 1494915,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 1868702,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 1882898,
+          "seaMeters": 28805
         }
       ]
     },
@@ -3652,15 +5192,15 @@
       "destination": "Tanger, Maroc",
       "originCity": "Toulouse",
       "destinationCity": "Tanger",
-      "distanceMeters": 1466400,
-      "durationSeconds": 56880,
+      "distanceMeters": 1469159,
+      "durationSeconds": 57128,
       "legs": [
         {
           "kind": "road",
           "from": "Toulouse, France",
           "to": "Tarifa",
-          "distanceMeters": 1463602.4000000006,
-          "durationSeconds": 56641.80000000001,
+          "distanceMeters": 1463604.6000000003,
+          "durationSeconds": 56645.20000000001,
           "countries": [
             {
               "country": "FR",
@@ -3668,7 +5208,7 @@
             },
             {
               "country": "ES",
-              "meters": 1138430
+              "meters": 1138433
             }
           ]
         },
@@ -3683,12 +5223,12 @@
           "kind": "road",
           "from": "Tanger Ville",
           "to": "Tanger, Maroc",
-          "distanceMeters": 2797.2,
-          "durationSeconds": 237.79999999999998,
+          "distanceMeters": 5553.999999999999,
+          "durationSeconds": 482.50000000000006,
           "countries": [
             {
               "country": "MA",
-              "meters": 2797
+              "meters": 5554
             }
           ]
         }
@@ -3697,19 +5237,19 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1466400,
+          "roadMeters": 1469159,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1490211,
+          "roadMeters": 1493481,
           "seaMeters": 28805
         },
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 1472611,
+          "roadMeters": 1577632,
           "seaMeters": 178584
         }
       ]
@@ -3720,15 +5260,15 @@
       "destination": "Casablanca, Maroc",
       "originCity": "Turin",
       "destinationCity": "Casablanca",
-      "distanceMeters": 2318804,
+      "distanceMeters": 2318802,
       "durationSeconds": 92329,
       "legs": [
         {
           "kind": "road",
           "from": "Turin, Italie",
           "to": "Tarifa",
-          "distanceMeters": 1973822.500000001,
-          "durationSeconds": 78075.49999999997,
+          "distanceMeters": 1973821.0000000007,
+          "durationSeconds": 78075.19999999997,
           "countries": [
             {
               "country": "IT",
@@ -3736,11 +5276,11 @@
             },
             {
               "country": "FR",
-              "meters": 613230
+              "meters": 613229
             },
             {
               "country": "ES",
-              "meters": 1263686
+              "meters": 1263685
             }
           ]
         },
@@ -3769,7 +5309,7 @@
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2318804,
+          "roadMeters": 2318802,
           "seaMeters": 30642
         },
         {
@@ -3781,8 +5321,156 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2255510,
+          "roadMeters": 2255509,
           "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "turin-khouribga",
+      "origin": "Turin, Italie",
+      "destination": "Khouribga, Maroc",
+      "originCity": "Turin",
+      "destinationCity": "Khouribga",
+      "distanceMeters": 2427876,
+      "durationSeconds": 96454,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Turin, Italie",
+          "to": "Tarifa",
+          "distanceMeters": 1973821.0000000007,
+          "durationSeconds": 78075.19999999997,
+          "countries": [
+            {
+              "country": "IT",
+              "meters": 96906
+            },
+            {
+              "country": "FR",
+              "meters": 613229
+            },
+            {
+              "country": "ES",
+              "meters": 1263685
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "distanceMeters": 30642,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Tanger Ville",
+          "to": "Khouribga, Maroc",
+          "distanceMeters": 454054.4999999999,
+          "durationSeconds": 18379.2,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 454054
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2427875,
+          "seaMeters": 30642
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2442589,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2364582,
+          "seaMeters": 178584
+        }
+      ]
+    },
+    {
+      "slug": "utrecht-al-hoceima",
+      "origin": "Utrecht, Pays-Bas",
+      "destination": "Al Hoceïma, Maroc",
+      "originCity": "Utrecht",
+      "destinationCity": "Al Hoceïma",
+      "distanceMeters": 2415589,
+      "durationSeconds": 95876,
+      "legs": [
+        {
+          "kind": "road",
+          "from": "Utrecht, Pays-Bas",
+          "to": "Almería",
+          "distanceMeters": 2277017.999999999,
+          "durationSeconds": 87452.70000000006,
+          "countries": [
+            {
+              "country": "NL",
+              "meters": 85431
+            },
+            {
+              "country": "BE",
+              "meters": 150640
+            },
+            {
+              "country": "FR",
+              "meters": 1111516
+            },
+            {
+              "country": "ES",
+              "meters": 929431
+            }
+          ]
+        },
+        {
+          "kind": "ferry",
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "distanceMeters": 178584,
+          "measured": "straight-line"
+        },
+        {
+          "kind": "road",
+          "from": "Nador (Beni Ansar)",
+          "to": "Al Hoceïma, Maroc",
+          "distanceMeters": 138570.79999999996,
+          "durationSeconds": 8423.1,
+          "countries": [
+            {
+              "country": "MA",
+              "meters": 138571
+            }
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "from": "Almería",
+          "to": "Nador (Beni Ansar)",
+          "roadMeters": 2415589,
+          "seaMeters": 178584
+        },
+        {
+          "from": "Algeciras",
+          "to": "Tanger Med",
+          "roadMeters": 2679413,
+          "seaMeters": 28805
+        },
+        {
+          "from": "Tarifa",
+          "to": "Tanger Ville",
+          "roadMeters": 2697074,
+          "seaMeters": 30642
         }
       ]
     },
@@ -3792,8 +5480,8 @@
       "destination": "Nador, Maroc",
       "originCity": "Utrecht",
       "destinationCity": "Nador",
-      "distanceMeters": 2290364,
-      "durationSeconds": 88595,
+      "distanceMeters": 2290763,
+      "durationSeconds": 88632,
       "legs": [
         {
           "kind": "road",
@@ -3831,12 +5519,12 @@
           "kind": "road",
           "from": "Nador (Beni Ansar)",
           "to": "Nador, Maroc",
-          "distanceMeters": 13346.199999999999,
-          "durationSeconds": 1142,
+          "distanceMeters": 13745.5,
+          "durationSeconds": 1179.3999999999996,
           "countries": [
             {
               "country": "MA",
-              "meters": 13346
+              "meters": 13746
             }
           ]
         }
@@ -3845,19 +5533,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 2290364,
+          "roadMeters": 2290763,
           "seaMeters": 178584
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 2789903,
+          "roadMeters": 2789003,
           "seaMeters": 28805
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 2807564,
+          "roadMeters": 2806663,
           "seaMeters": 30642
         }
       ]
@@ -3909,19 +5597,19 @@
         {
           "from": "Almería",
           "to": "Nador (Beni Ansar)",
-          "roadMeters": 576023,
+          "roadMeters": 576024,
           "seaMeters": 178584
         },
         {
           "from": "Tarifa",
           "to": "Tanger Ville",
-          "roadMeters": 1474766,
+          "roadMeters": 1474765,
           "seaMeters": 30642
         },
         {
           "from": "Algeciras",
           "to": "Tanger Med",
-          "roadMeters": 1489478,
+          "roadMeters": 1489479,
           "seaMeters": 28805
         }
       ]

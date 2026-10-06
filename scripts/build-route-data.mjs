@@ -81,6 +81,33 @@ const CORRIDORS = [
   ['Bologne, Italie', 'Tanger, Maroc'],
   ['Valence, Espagne', 'Oujda, Maroc'],
   ['Madrid, Espagne', 'Casablanca, Maroc'],
+  // Élargissement du 6 octobre 2026 : couples diaspora → villes d'origine
+  // encore absents (Rif depuis la Belgique, l'Allemagne et l'Espagne ;
+  // Tadla et Chaouia depuis l'Italie ; villes moyennes depuis la France).
+  ['Bruxelles, Belgique', 'Fès, Maroc'],
+  ['Bruxelles, Belgique', 'Oujda, Maroc'],
+  ['Charleroi, Belgique', 'Nador, Maroc'],
+  ['Anvers, Belgique', 'Al Hoceïma, Maroc'],
+  ['Anvers, Belgique', 'Tanger, Maroc'],
+  ['Rotterdam, Pays-Bas', 'Tanger, Maroc'],
+  ['Utrecht, Pays-Bas', 'Al Hoceïma, Maroc'],
+  ['Düsseldorf, Allemagne', 'Nador, Maroc'],
+  ['Barcelone, Espagne', 'Tanger, Maroc'],
+  ['Barcelone, Espagne', 'Al Hoceïma, Maroc'],
+  ['Milan, Italie', 'Casablanca, Maroc'],
+  ['Milan, Italie', 'Béni Mellal, Maroc'],
+  ['Turin, Italie', 'Khouribga, Maroc'],
+  ['Lyon, France', 'Marrakech, Maroc'],
+  ['Lyon, France', 'Fès, Maroc'],
+  ['Marseille, France', 'Fès, Maroc'],
+  ['Marseille, France', 'Marrakech, Maroc'],
+  ['Montpellier, France', 'Oujda, Maroc'],
+  ['Grenoble, France', 'Tanger, Maroc'],
+  ['Toulouse, France', 'Fès, Maroc'],
+  ['Bordeaux, France', 'Casablanca, Maroc'],
+  ['Paris, France', 'Kénitra, Maroc'],
+  ['Paris, France', 'El Jadida, Maroc'],
+  ['Paris, France', 'Khouribga, Maroc'],
 ];
 
 /** « Paris, France » → « paris ». */
