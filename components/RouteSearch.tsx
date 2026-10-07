@@ -302,7 +302,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
 
           {/* Une seule action principale. L'API compose route + traversée pour l'Europe ↔ Maroc. */}
           {transportMode === "flight" ? (
-            <a href="#ferry" className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/25 transition hover:bg-[#fbbf24]">
+            <a href="#ferry" className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl gloss-amber bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d]">
               Comparer les vols <ArrowRight size={18} aria-hidden="true" />
             </a>
           ) : (
@@ -311,7 +311,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
                 type="button"
                 onClick={calculateRoute}
                 disabled={routeStatus === "loading"}
-                className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] shadow-lg shadow-black/25 transition hover:bg-[#fbbf24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-70"
+                className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl gloss-amber bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {routeStatus === "loading" ? "Calcul en cours…" : <>Continuer mon voyage <ArrowRight size={18} aria-hidden="true" /></>}
               </button>
