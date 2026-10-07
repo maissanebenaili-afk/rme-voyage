@@ -31,6 +31,11 @@ function title(route: RoutePage) {
   return `${route.originCity} → ${route.destinationCity} en voiture : distance, durée et budget`;
 }
 
+// Titre de l'onglet et des résultats Google : plus court que le H1, pour ne pas être tronqué.
+function metaTitle(route: RoutePage) {
+  return `${route.originCity} → ${route.destinationCity} en voiture : distance et budget`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -45,7 +50,7 @@ export async function generateMetadata({
     (ferry ? `, via la traversée ${ferry.from} → ${ferry.to}` : '') +
     `. Coût du carburant pays par pays, calculé sur les prix officiels de l'Union européenne.`;
   return {
-    title: title(route),
+    title: metaTitle(route),
     description,
     alternates: { canonical: `/trajet/${route.slug}` },
     openGraph: {

@@ -184,6 +184,7 @@ export default function HomeClient() {
               <ul className="mt-3 space-y-2 text-sm">
                 <li><Link href="/" className="inline-block py-1.5 hover:text-[#0f1f3d]">Accueil</Link></li>
                 <li><Link href="/guide" className="inline-block py-1.5 hover:text-[#0f1f3d]">Guide</Link></li>
+                <li><Link href="/trajet" className="inline-block py-1.5 hover:text-[#0f1f3d]">Tous les trajets en voiture</Link></li>
                 <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Découvrir</Link></li>
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">Boutique ✨</Link></li>
                 <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">Télécharger</Link></li>
