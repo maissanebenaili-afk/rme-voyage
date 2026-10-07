@@ -86,7 +86,7 @@ export default function BookingCards({ origin, destination, date, crossing, hide
   const flightPrefilled = Boolean(partners.flight?.prefilled);
 
   return (
-    <section className="rounded-3xl border border-sable-300 bg-white p-6 shadow-sm" aria-labelledby="booking-title">
+    <section className="depth-card rounded-3xl border border-sable-300 bg-white p-6" aria-labelledby="booking-title">
       <h2 id="booking-title" className={hideTitle ? "sr-only" : "font-display text-xl font-semibold text-zellige-800"}>Comparer les traversées et les vols</h2>
       <p className="mt-2 break-words text-sm text-sable-700">
         {origin || 'Votre départ'} → {destination || 'Votre destination'}{date ? ` · ${date}` : ''}
@@ -128,7 +128,7 @@ export default function BookingCards({ origin, destination, date, crossing, hide
                 context: { has_crossing: Boolean(crossing), prefilled: Boolean(partner?.prefilled) },
               })}
               data-testid={`compare-${type}`}
-              className={`flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>
+              className={`gloss-dark flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>
               <Icon size={22} className="mt-1 shrink-0" aria-hidden />
               <span className="min-w-0 flex-1">
                 {type === 'ferry' ? 'Comparer les ferries' : 'Comparer les vols'}

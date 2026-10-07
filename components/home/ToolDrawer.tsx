@@ -27,7 +27,7 @@ export default function ToolDrawer({ id, icon, title, text, children }: { id: st
   }, [id]);
 
   return (
-    <details ref={ref} id={id} className="group scroll-mt-4 rounded-2xl bg-white shadow-sm ring-1 ring-black/5 open:ring-[#0f1f3d]/15">
+    <details ref={ref} id={id} className="depth-card group scroll-mt-4 rounded-2xl bg-white ring-1 ring-black/5 open:ring-[#0f1f3d]/15">
       <summary className="flex min-h-16 cursor-pointer list-none items-center gap-3 rounded-2xl px-4 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0369a1] [&::-webkit-details-marker]:hidden">
         <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#f6f3ec] text-xl">{icon}</span>
         <span className="min-w-0 flex-1">

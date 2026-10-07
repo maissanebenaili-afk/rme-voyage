@@ -107,7 +107,7 @@ export default function JourneySummary() {
             <span className="block text-lg font-extrabold leading-snug">{step.label}</span>
           </span>
         </span>
-        <span className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#0f1f3d] text-base font-extrabold text-white">
+        <span className="gloss-dark mt-4 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#0f1f3d] text-base font-extrabold text-white">
           Continuer <ArrowRight size={18} aria-hidden="true" />
         </span>
       </a>
