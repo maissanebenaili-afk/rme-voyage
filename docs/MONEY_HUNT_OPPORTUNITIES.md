@@ -501,3 +501,63 @@ Verified on 2026-10-01 from GitHub main and recent PRs/commits. Main currently p
 
 ## Repository note
 The previous register was last reviewed on 2026-09-26. This addendum is append-only and reflects the 2026-10-01 repository state plus current official-source verification. No code, secret, payment, account or deployment changes are authorised by Money Hunt.
+
+---
+
+# MONEY HUNT 360° — verification 2026-10-08
+
+## P1 — Discover Cars affiliate
+
+Type: Car rental affiliate / widget / deep links / XML API  
+RME fit: Very high — directly relevant to Europe ↔ Morocco road travel and existing route pages.  
+Status: VERIFIED — official programme and current terms confirmed 2026-10-08.  
+Published economics: Discover Cars currently advertises approximately EUR 20 average commission per completed booking on its French affiliate page. Its official terms specify 70% of Discover Cars' profit on car rentals and 30% of profit on Full Coverage, with a 365-day cookie. The commission is based on Discover Cars' profit, not the customer's total booking value.  
+Cost: free application.  
+Tracking: unique affiliate links; reports available through the affiliate account.  
+Important constraints: cancelled/refunded bookings do not qualify; paid traffic/PPC, display ads and certain prohibited traffic sources are excluded; payout conditions include a completed rental and a minimum accumulated amount under the terms.  
+Action:
+1. Apply directly or via an accepted affiliate network.
+2. Obtain the real tracked/deep link.
+3. Give the exact link to the technical owner for integration into relevant RME route/booking surfaces.
+4. Verify one production click before treating the integration as active.
+5. Verify the first completed booking before counting revenue.
+Illustrative economics only: 1 completed qualifying booking at the advertised average would be about EUR 20 gross commission; 10 would be about EUR 200. This is not a forecast and actual commission depends on Discover Cars' profit, booking conditions and attribution.
+Official sources:
+https://www.discovercars.com/fr/affiliate
+https://www.discovercars.com/affiliate-conditions
+Priority: P1
+
+## P1 — Omio affiliate: current terms reconfirmed
+
+Type: Train + bus + flight affiliate / deeplinks / widgets / Search API  
+RME fit: Very high.  
+Status: VERIFIED offer; TO_APPLY for RME account.  
+Current official information confirmed 2026-10-08: registration is free; Omio provides unique tracking links, widgets, deeplinks and Search API. Application review is stated as within 14 business days. Commission is performance-based and varies by promoted market and resulting ROI; the exact RME rate remains UNVERIFIED until onboarding. Payment is by bank transfer 30–60 days after invoice approval, with a EUR 100 threshold before transfer.  
+Action:
+1. Apply.
+2. Obtain current market-specific commercial terms.
+3. Start with deeplinks/widgets on high-intent route pages.
+4. Measure redirects and bookings before considering Search API work.
+Official source:
+https://www.omio.com/affiliate
+Priority: P1
+
+## Economic filter — 2026-10-08
+
+| Opportunity | Revenue potential | Economy | Financing | Speed | Initial cost | Human effort | Recurrence | Third-party dependence | Proof |
+|---|---|---|---|---|---|---|---|---|---|
+| Discover Cars | ~EUR 20 advertised average/completed booking; actual RME revenue unproven | — | — | Fast after acceptance | Free application | Low | Per completed rental; 365-day attribution | High | Official terms VERIFIED |
+| Omio | Performance commission; exact rate UNVERIFIED | — | — | Application review stated ≤14 business days | Free application | Low | Per qualifying redirect/booking | High | Official programme VERIFIED |
+
+## Immediate queue after this verification
+
+1. Discover Cars — apply and obtain tracked link.
+2. Airalo — activate and obtain tracked link.
+3. Omio — apply and obtain current terms/link.
+4. KAYAK — affiliate application + Whitelabel terms.
+5. Booking.com — verify Managed Affiliate status/onboarding.
+6. Direct B2B accommodation — prepare five-property pilot.
+
+No revenue is counted until a partner accepts RME, a tracked link is active, a qualifying customer action occurs, and the resulting commission is visible/validated.
+
+Repository note: this section is append-only. No product code, secret, payment, account or deployment was changed by Money Hunt.
