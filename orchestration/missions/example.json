@@ -1,0 +1,16 @@
+{
+  "missionId": "example-readonly-audit",
+  "objective": "Audit the repository for deterministic replay and provenance risks. Do not modify code.",
+  "mode": "read-only",
+  "agents": [
+    "jules",
+    "openhands"
+  ],
+  "proofRequired": true,
+  "constraints": [
+    "Do not write to main.",
+    "Do not expose secrets.",
+    "Separate observations from hypotheses.",
+    "Cite exact files and reproducible evidence."
+  ]
+}
