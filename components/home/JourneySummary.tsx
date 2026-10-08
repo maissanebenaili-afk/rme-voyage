@@ -2,7 +2,7 @@
 
 import { ArrowRight, BedDouble, Car, Clock3, ExternalLink, RotateCcw, Ship, Wallet } from 'lucide-react';
 import { hotelSearchUrl } from '@/lib/overnight';
-import { trackPartnerClick } from '@/lib/partnerTracking';
+import { trackFunnelEvent, trackPartnerClick } from '@/lib/partnerTracking';
 import { journeyOverview, nextStep, shortPlace } from '@/lib/journey';
 import { formatDuration } from '@/lib/routePages';
 import { useRememberComputedTrip } from '@/lib/travel/useRememberComputedTrip';
@@ -96,6 +96,8 @@ export default function JourneySummary() {
       )}
       <a
         href={step.href}
+        // Mesure anonyme : quelle prochaine étape est suivie (ferry ou coût), jamais de ville.
+        onClick={() => trackFunnelEvent({ event: 'hadak_next_action', placement: 'journey_summary', data: { action: step.icon } })}
         className="mt-5 block rounded-3xl bg-white p-4 text-[#0f1f3d] shadow-2xl shadow-black/30 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f59e0b] sm:p-5"
       >
         <span className="flex items-center gap-3">
