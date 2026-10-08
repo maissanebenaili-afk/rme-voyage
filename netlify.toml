@@ -3,6 +3,9 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  # Économie de crédits : pas de build si seuls docs, tests ou scripts changent.
+  # Code 0 = on saute le build ; code 1 (ou erreur, ex. premier build) = on construit.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- app components lib public netlify proxy.ts config.ts package.json package-lock.json next.config.mjs tailwind.config.ts postcss.config.mjs netlify.toml"
 
 [build.environment]
   NODE_VERSION = "20"
