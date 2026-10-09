@@ -638,3 +638,51 @@ Sources officielles vérifiées 2026-10-09 :
 - Aucune candidature, création de compte, communication externe ou intégration produit n'est effectuée par cet addendum.
 
 Règle comptable inchangée : 0 € de revenus reconnus tant qu'une commission RME n'est pas visible et validée par le partenaire.
+
+
+---
+
+# MONEY HUNT 360° — lot d'exécution B2B préparé 2026-10-09
+
+## Décision opérationnelle
+
+Démarrer par un micro-lot de cinq hébergements à Casablanca et Marrakech, deux destinations présentes dans le catalogue public de Welcome Pickups. Ce sont des PROSPECTS À QUALIFIER, pas des partenaires acquis ni des clients Welcome Pickups confirmés. Aucun message n'a été envoyé. Avant contact, confirmer que le programme Ambassador accepte les apporteurs RME et que les hébergements ciblés peuvent être attribués au compte.
+
+## Lot pilote — cinq établissements avec coordonnées professionnelles publiques
+
+| Prospect | Ville | Signal vérifiable | Contact professionnel public | Source officielle / preuve | Priorité |
+|---|---|---|---|---|---|
+| Le Casablanca Hôtel | Casablanca | 68 chambres/suites, restaurants, spa et espaces événementiels ; potentiel de clientèle entrante et transferts | resa@lecasablanca-hotel.com ; +212 5226-49797 | https://www.lecasablanca-hotel.com/fr/ | P1 à qualifier |
+| Mövenpick Hotel Casablanca | Casablanca | Hôtel de centre-ville ; indique que les transferts peuvent être organisés sur demande | hotel.casablanca.reservation@movenpick.com ; +212 522 48 80 00 | https://movenpick.accor.com/fr/africa/morocco/casablanca/hotel-casablanca.html | P1 à qualifier |
+| L’Hôtel Marrakech | Marrakech | Hébergement dans la médina ; coordonnées de contact et réservation publiques | contact@l-hotelmarrakech.com ; +212 524 387 880 | https://www.l-hotelmarrakech.com/contact/ | P1 à qualifier |
+| Mövenpick Hotel Mansour Eddahbi Marrakech | Marrakech | Hôtel à Hivernage, à environ 4 km de l’aéroport ; transferts privés organisables sur demande | hotel.marrakech.reservations@movenpick.com ; +212 524 339 100 | https://movenpick.accor.com/fr/africa/morocco/marrakech/marrakech/location.html | P1 à qualifier |
+| Adam Park Marrakech Hotel & Spa | Marrakech | Hôtel dans la zone touristique de l’Agdal ; contacts réservation et e-commerce publiés | resa@adamparkmarrakech.com ; ecommerce@adamparkmarrakech.com ; +212 524 35 11 00 | https://www.adamparkmarrakech.com/en/ | P2 à qualifier |
+
+## Angle commercial à tester
+
+Proposition de valeur à préparer, sans promesse de volume : « RME aide les voyageurs Europe ↔ Maroc à préparer leur trajet et à trouver les services utiles à l'arrivée. Nous souhaitons tester si un parcours d'information sur les transferts peut vous apporter des demandes qualifiées. Nous proposons un pilote limité, mesuré et sans exclusivité ; aucune estimation de réservations n'est garantie. »
+
+Le programme Welcome Pickups rémunère l'apport de partenaires qui génèrent des transferts effectivement réalisés, selon sa classification et ses conditions. Il ne faut pas présenter l'offre comme une commission garantie pour l'hôtel, ni prétendre que ces cinq établissements ont déjà accepté.
+
+## Conditions avant envoi
+
+1. Vérifier l'inscription et le barème Ambassador, l'attribution des partenaires, la couverture effective de chaque destination et les règles de conformité.
+2. Tarek valide explicitement le texte exact et les destinataires avant tout contact externe.
+3. Une fois le contact autorisé, envoyer un lot limité et enregistrer la date, le destinataire professionnel, le statut de réponse et la prochaine action.
+4. Ne compter aucun revenu avant validation du partenaire, transfert achevé et commission visible dans le compte.
+
+## Filtre économique — lot B2B
+
+| Élément | Évaluation |
+|---|---|
+| Revenu potentiel | Barème Welcome Pickups publié, mais revenu RME actuel = 0 € ; attribution et activité réelles inconnues |
+| Économie potentielle | Aucune économie directe démontrée |
+| Financement potentiel | Aucun |
+| Vitesse | Quelques jours pour qualifier le canal ; délai de conversion inconnu |
+| Coût initial | Aucun frais de candidature annoncé ; temps de qualification à limiter |
+| Effort humain | Faible si le pilote est limité à cinq contacts |
+| Récurrence | Possible pour les transferts de partenaires hôteliers admissibles, dans la fenêtre prévue au programme |
+| Dépendance | Forte : approbation, destination, classification, attribution et transferts réalisés |
+| Niveau de preuve | Coordonnées et services vérifiés sur sites officiels ; aucune réponse commerciale ni revenu constaté |
+
+Aucun contact externe, candidature, compte, paiement, intégration de code ou déploiement n'a été effectué par cette préparation.
