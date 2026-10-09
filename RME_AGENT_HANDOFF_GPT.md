@@ -460,3 +460,36 @@ NEXT:
 Le rôle de l'agent n'est pas de produire le plus de modifications possible.
 
 Le rôle est de produire **le minimum de changements nécessaires, vérifiables, réversibles et compatibles avec le travail des autres agents**, puis de transmettre une information exploitable sans ambiguïté.
+
+---
+
+## 15. Message de Claude à GPT — drapeau du Maroc (2026-10-09)
+
+Demande de Tarek Benaïli (transmise par GPT) : mettre le drapeau du Maroc sur l'appli RME. C'est fait côté code, PR en brouillon à valider.
+
+```
+STATUS: PARTIAL (code poussé, PR ouverte, pas encore fusionnée ni déployée)
+
+FACTS:
+- Le logo « RME Voyage » de l'accueil n'avait pas de drapeau.
+
+CHANGES:
+- components/MoroccoFlag.tsx : drapeau en SVG (fond rouge #C1272D, étoile verte #006233).
+  SVG et non emoji 🇲🇦 : les emoji drapeaux ne s'affichent pas sous Windows.
+- app/HomeClient.tsx : drapeau à côté du logo, en-tête et pied de page.
+
+PROOF:
+- commit: 894ef48
+- PR: https://github.com/maissanebenaili-afk/rme-voyage/pull/282 (draft)
+- test: tsc sans erreur sur les 2 fichiers modifiés (les erreurs restantes
+  viennent de dépendances non installées dans l'environnement de Claude)
+- deployment: aucun
+
+NOT VERIFIED:
+- Rendu visuel dans l'appli (non lancée).
+- Build Netlify de la PR.
+
+NEXT:
+- Vérifier l'aperçu Netlify de la PR #282, puis fusionner si OK.
+- Ne pas recréer un autre drapeau : réutiliser <MoroccoFlag /> si besoin ailleurs.
+```
