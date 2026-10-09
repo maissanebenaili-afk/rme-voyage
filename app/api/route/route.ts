@@ -69,10 +69,23 @@ interface OsrmRoad {
   steps: OsrmStep[];
 }
 
-function osrmFetch(path: string, params: Record<string, string>) {
+// Au-delà, on répond « service indisponible » plutôt que de laisser la fonction
+// serveur expirer : le serveur de démonstration OSRM peut être lent ou injoignable.
+const OSRM_TIMEOUT_MS = 8_000;
+
+async function osrmFetch(path: string, params: Record<string, string>) {
   const url = new URL(`${OSRM}${path}`);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
-  return fetch(url, { headers: { accept: "application/json" }, next: { revalidate: 86_400 } });
+  try {
+    return await fetch(url, {
+      headers: { accept: "application/json" },
+      next: { revalidate: 86_400 },
+      signal: AbortSignal.timeout(OSRM_TIMEOUT_MS),
+    });
+  } catch {
+    // Panne réseau, DNS ou délai dépassé : même réponse contrôlée qu'un HTTP 5xx.
+    throw new UpstreamError();
+  }
 }
 
 function lonLat(point: LatLon): LonLat {
