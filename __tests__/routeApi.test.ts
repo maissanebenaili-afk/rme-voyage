@@ -123,6 +123,53 @@ describe("GET /api/route", () => {
     expect(response.status).toBe(404);
   });
 
+  it("answers 502 with a French error when OSRM is unreachable (network rejection), not a crash", async () => {
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") {
+        return jsonResponse(url.searchParams.get("q") === "A" ? [{ lat: "1", lon: "1" }] : [{ lat: "2", lon: "2" }]);
+      }
+      throw new TypeError("fetch failed");
+    }) as unknown as typeof fetch;
+
+    const response = await GET(new Request("http://localhost/api/route?origin=A&destination=B"));
+    const data = await response.json();
+
+    expect(response.status).toBe(502);
+    expect(data.error).toMatch(/indisponible/);
+  });
+
+  it("answers 502 when OSRM answers with a server error", async () => {
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") {
+        return jsonResponse(url.searchParams.get("q") === "A" ? [{ lat: "1", lon: "1" }] : [{ lat: "2", lon: "2" }]);
+      }
+      return new Response("bad gateway", { status: 502 });
+    }) as unknown as typeof fetch;
+
+    const response = await GET(new Request("http://localhost/api/route?origin=A&destination=B"));
+
+    expect(response.status).toBe(502);
+  });
+
+  it("gives OSRM a bounded time to answer", async () => {
+    const seen: (AbortSignal | null | undefined)[] = [];
+    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = new URL(input.toString());
+      if (url.hostname === "nominatim.openstreetmap.org") {
+        return jsonResponse(url.searchParams.get("q") === "A" ? [{ lat: "1", lon: "1" }] : [{ lat: "2", lon: "2" }]);
+      }
+      seen.push(init?.signal);
+      return jsonResponse({ code: "NoRoute" });
+    }) as unknown as typeof fetch;
+
+    await GET(new Request("http://localhost/api/route?origin=A&destination=B"));
+
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((signal) => signal instanceof AbortSignal)).toBe(true);
+  });
+
   it("refuses an origin and destination that geocode to the same place", async () => {
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input.toString());
