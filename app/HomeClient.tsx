@@ -29,6 +29,7 @@ import BookBanner from '@/components/BookBanner';
 import StepHeader from '@/components/home/StepHeader';
 import ToolDrawer from '@/components/home/ToolDrawer';
 import TripNav from '@/components/home/TripNav';
+import MoroccoFlag from '@/components/MoroccoFlag';
 
 // Hadak et l'écran d'accueil embarquent framer-motion (~120 Ko). Aucun des
 // deux n'apparaît dans le HTML serveur (le splash démarre masqué, Hadak ne
@@ -58,6 +59,7 @@ export default function HomeClient() {
               <Link href="/" className="flex shrink-0 items-center gap-2.5">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#f59e0b] font-black text-[#0f1f3d]">R</span>
                 <span className="text-base font-black tracking-tight text-white">RME <span className="font-medium text-[#fcd34d]">Voyage</span></span>
+                <MoroccoFlag />
               </Link>
               <div className="flex items-center gap-1 text-white">
                 <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/75 transition hover:bg-white/10 hover:text-white sm:block">Guide</Link>
@@ -176,6 +178,7 @@ export default function HomeClient() {
               <div className="flex items-center gap-2 text-lg font-black text-[#0f1f3d]">
                 <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f59e0b] text-sm text-[#0f1f3d]">R</span>
                 RME Voyage
+                <MoroccoFlag className="h-5 w-7" />
               </div>
               <p className="mt-3 text-sm">Votre compagnon de route entre l'Europe, le Maroc et les communautés du monde.</p>
             </div>
