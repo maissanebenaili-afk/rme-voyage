@@ -1,0 +1,58 @@
+{
+  "about": "RME Product Forge corpus. Each scenario is a real user intent with invariants that must hold. Invariants say what must never be shown (a false claim, an invented place, a clock instead of an answer), not an exact text. Source of each invariant: the bug it caught, with its date.",
+  "forbiddenEverywhere": [
+    { "re": "€4,8 ?Md|4,8 milliards", "why": "unsourced remittance volume (2026-10-04)" },
+    { "re": "Grimaldi\\)?[^.]{0,20}Nador|Nador \\(Grimaldi", "why": "Nador is served by GNV, not Grimaldi (2026-10-04)" },
+    { "re": "programme MRE de l'OFII", "why": "no source found (2026-10-04)" }
+  ],
+  "scenarios": [
+    { "id": "H01", "family": "truth", "kind": "hadak", "message": "Quelle franchise douane au Maroc ?", "noAi": true, "mustMatch": ["20[  ,.]?000"], "mustNotMatch": ["2000 ?€", "6 L de vin"], "why": "AI gave the general 2 000 DH gift limit to MRE (theirs is 20 000 DH)" },
+    { "id": "H02", "family": "truth", "kind": "hadak", "message": "Combien d'argent liquide je peux passer à la douane ?", "noAi": true, "mustMatch": ["100[  ,.]?000"] },
+    { "id": "H03", "family": "truth", "kind": "hadak", "message": "Prix du gasoil au Maroc ?", "mustNotMatch": ["11-12"], "why": "diesel was above 16 DH/L on 2026-10-01" },
+    { "id": "H04", "family": "truth", "kind": "hadak", "message": "Quel ferry pour Nador ?", "mustNotMatch": ["Grimaldi"] },
+    { "id": "H05", "family": "truth", "kind": "hadak", "message": "Quels documents pour entrer au Maroc ?", "mustNotMatch": ["6 mois"], "why": "France Diplomatie: passport valid for the stay" },
+    { "id": "H06", "family": "action", "kind": "hadak", "message": "Je cherche un garage près de Taza", "noAi": true, "mustNotMatch": ["Météo", "°C"], "why": "answered Taza's weather" },
+    { "id": "H07", "family": "action", "kind": "hadak", "message": "Où trouver une station essence près de Nador ?", "noAi": true, "mustNotMatch": ["MAD/l"], "why": "answered a fuel price" },
+    { "id": "H08", "family": "truth", "kind": "hadak", "message": "Je cherche un consulat à Paris", "noAi": true, "mustNotMatch": ["\\+33", "Rue de l'Université", "Rue de Berri"], "why": "AI invented two different addresses by language" },
+    { "id": "H09", "family": "truth", "kind": "hadak", "message": "Ambassade du Maroc à Madrid", "noAi": true },
+    { "id": "H10", "family": "action", "kind": "hadak", "message": "Où est la mosquée la plus proche à Fès ?", "noAi": true },
+    { "id": "H11", "family": "function", "kind": "hadak", "message": "Quel temps fait-il à Tanger ?", "mustMatch": ["Tanger", "°C"] },
+    { "id": "H12", "family": "function", "kind": "hadak", "message": "Horaires de prière à Fès", "mustMatch": ["Fajr|Horaires"] },
+    { "id": "H13", "family": "function", "kind": "hadak", "message": "Combien vaut 100 euros en dirhams ?", "mustMatch": ["MAD"] },
+    { "id": "H14", "family": "function", "kind": "hadak", "message": "Quelle heure est-il au Maroc ?", "mustMatch": ["\\d\\d:\\d\\d"] },
+    { "id": "H15", "family": "action", "kind": "hadak", "message": "Je suis à Algésiras, qu'est-ce que je fais maintenant ?", "mustNotMatch": ["^Il est actuellement"], "why": "a traveller at the port got the clock (known gap, not fixed yet)" },
+    { "id": "H16", "family": "function", "kind": "hadak", "message": "Quelle carte SIM acheter au Maroc ?", "mustMatch": ["Maroc Telecom|Inwi|Orange"] },
+    { "id": "H17", "family": "action", "kind": "hadak", "lang": "da", "message": "garage près de Taza", "noAi": true, "mustNotMatch": ["°C"] },
+    { "id": "H18", "family": "truth", "kind": "hadak", "lang": "en", "message": "What is the Moroccan customs allowance?", "noAi": true },
+    { "id": "H19", "family": "truth", "kind": "hadak", "lang": "es", "message": "¿Qué documentos necesito para entrar en Marruecos?", "mustNotMatch": ["6 meses"] },
+    { "id": "H20", "family": "action", "kind": "hadak", "message": "Je cherche un garage", "mustMatch": ["ville"], "why": "no town: ask for it, never guess" },
+    { "id": "H21", "family": "function", "kind": "hadak", "message": "Prix de l'essence au Maroc", "mustMatch": ["Carburant"], "mustNotMatch": ["autour de"] },
+    { "id": "H22", "family": "truth", "kind": "hadak", "message": "Quelle compagnie fait Tarifa Tanger ?", "mustNotMatch": ["FRS"], "why": "FRS left Tarifa → Tanger Ville in May 2025" },
+    { "id": "H23", "family": "function", "kind": "hadak", "message": "Je veux aller à Taza", "mustMatch": ["Taza"] },
+    { "id": "H24", "family": "function", "kind": "hadak", "message": "@@LONG@@", "expectStatus": 413 },
+
+    { "id": "A01", "family": "function", "kind": "api", "path": "/api/route?origin=Paris&destination=Tanger", "expectStatus": 200, "jsonMin": { "distanceMeters": 1500000 } },
+    { "id": "A02", "family": "ux", "kind": "api", "path": "/api/route?origin=Paris&destination=Xyzqwv", "expectStatus": 404, "mustNotMatch": ["not found"], "why": "English error on a French site" },
+    { "id": "A03", "family": "ux", "kind": "api", "path": "/api/route?origin=Paris", "expectStatus": 400, "mustNotMatch": ["Missing"] },
+    { "id": "A04", "family": "function", "kind": "api", "path": "/api/services?place=Taza&category=garage", "expectStatus": 200, "why": "3/3 searches failed on 2026-10-04" },
+    { "id": "A05", "family": "function", "kind": "api", "path": "/api/services?place=Paris&category=consulate", "expectStatus": 200 },
+    { "id": "A06", "family": "function", "kind": "api", "path": "/api/services?place=Nador&category=fuel", "expectStatus": 200 },
+    { "id": "A07", "family": "ux", "kind": "api", "path": "/api/services?place=Nullepartxyzq&category=fuel", "expectStatus": 404, "mustNotMatch": ["not found"] },
+    { "id": "A08", "family": "truth", "kind": "api", "path": "/api/remittance?amount=500", "expectStatus": 200, "mustMatch": ["costBasis"] },
+    { "id": "A09", "family": "function", "kind": "api", "path": "/robots.txt", "expectStatus": 200, "mustMatch": ["Sitemap:"] },
+    { "id": "A10", "family": "function", "kind": "api", "path": "/sitemap.xml", "expectStatus": 200, "mustMatch": ["/trajet/paris-tanger"] },
+
+    { "id": "P01", "family": "truth", "kind": "page", "path": "/", "why": "home text against forbiddenEverywhere" },
+    { "id": "P02", "family": "commercial", "kind": "page", "path": "/marwa-caftan", "mustNotMatch": ["\\d+ ?€", "Collection exclusive", "10 ?%"], "why": "invented caftan catalogue (#227)" },
+    { "id": "P03", "family": "commercial", "kind": "page", "path": "/afarah-nassim", "mustNotMatch": ["halal certifiée", "dès \\d+ ?€"] },
+    { "id": "P04", "family": "commercial", "kind": "page", "path": "/taza-immobilier", "mustNotMatch": ["\\d[\\d  ]* ?DH", "m²"], "why": "fictitious properties (#227)" },
+    { "id": "P05", "family": "truth", "kind": "page", "path": "/trajet/paris-tanger", "mustMatch": ["Weekly Oil Bulletin"] },
+
+    { "id": "B01", "family": "ux", "kind": "browser", "flow": "load", "path": "/", "noPageErrors": true, "why": "React #418 hydration error on every load" },
+    { "id": "B02", "family": "action", "kind": "browser", "flow": "route", "origin": "Paris, France", "destination": "Tanger, Maroc", "resultInView": true, "why": "result 912 px down on an 844 px phone, nothing moved" },
+    { "id": "B03", "family": "ux", "kind": "browser", "flow": "route", "origin": "Paris", "destination": "Xyzqwv", "errorInView": true, "mustNotMatch": ["not found"] },
+    { "id": "B04", "family": "commercial", "kind": "browser", "flow": "remittance", "path": "/", "noPodiumOnEstimates": true, "why": "🥇 crowned on invented fees (#219)" },
+    { "id": "B05", "family": "commercial", "kind": "browser", "flow": "text", "path": "/boutique", "mustNotMatch": ["Partenaire\\b(?! de RME)", "Collection exclusive"], "why": "businesses badged Partenaire without agreement (#227)" },
+    { "id": "B06", "family": "ux", "kind": "browser", "flow": "measure", "path": "/", "why": "home length in phone screens (measure, not pass/fail)" }
+  ]
+}
