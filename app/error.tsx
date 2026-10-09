@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 /**
  * Filet de sécurité : si une page plante côté navigateur, le voyageur ne voit
@@ -11,15 +11,20 @@ import { useEffect, useRef } from 'react';
  */
 const AUTO_RETRY_DELAY_MS = 600;
 
-export default function ErrorPage({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
-  const autoRetried = useRef(false);
+// Au niveau du module, pas dans le composant : si la page replante après la
+// nouvelle tentative, ce composant est recréé et un garde interne serait remis
+// à zéro (boucle sans fin). Ici, une seule relance automatique par chargement.
+let autoRetried = false;
 
+export default function ErrorPage({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   useEffect(() => {
     // Aucune donnée perso : seulement l'erreur technique, pour les journaux du navigateur.
     console.error(error);
-    if (autoRetried.current) return;
-    autoRetried.current = true;
-    const timer = setTimeout(retry, AUTO_RETRY_DELAY_MS);
+    if (autoRetried) return;
+    const timer = setTimeout(() => {
+      autoRetried = true; // consommé seulement si la relance part vraiment
+      retry();
+    }, AUTO_RETRY_DELAY_MS);
     return () => clearTimeout(timer);
   }, [error, retry]);
 
