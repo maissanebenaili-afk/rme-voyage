@@ -561,3 +561,80 @@ Priority: P1
 No revenue is counted until a partner accepts RME, a tracked link is active, a qualifying customer action occurs, and the resulting commission is visible/validated.
 
 Repository note: this section is append-only. No product code, secret, payment, account or deployment was changed by Money Hunt.
+
+
+---
+
+# MONEY HUNT 360° — vérification 2026-10-09
+
+## P1 — Welcome Pickups Ambassador : barème officiel désormais vérifié
+
+Type : apport d'affaires B2B pour transferts aéroport, hôtels et locations de vacances.  
+Adéquation RME : forte pour l'offre de transfert et les partenaires d'hébergement du corridor Europe ↔ Maroc, sous réserve des villes effectivement desservies.  
+Statut : PROGRAMME ET BARÈME VÉRIFIÉS sur les pages officielles consultées le 2026-10-09 ; inscription et éligibilité du compte RME/Tarek à compléter.
+
+Barème officiel :
+- Hôtels et locations saisonnières Cluster A : 100 € après le premier transfert achevé ; 200 € supplémentaires lorsque le partenaire atteint cinq transferts cumulés ; puis 1 € par transfert achevé à partir du sixième, pendant trois ans à compter du premier transfert.
+- Hôtels et locations saisonnières Cluster B : 50 € après le premier transfert ; 100 € supplémentaires au cinquième ; puis 1 € par transfert achevé à partir du sixième, pendant trois ans.
+- Agence de voyage : 30 € après le premier transfert achevé.
+- Compte entreprise : 20 € après le premier transfert achevé.
+- Les catégories et clusters sont attribués par Welcome Pickups ; ne pas présumer qu'un établissement relèvera du Cluster A.
+- Seuil de paiement annoncé par le prestataire de paiement : 10 €. Des délais de revue et des reprises de commissions peuvent s'appliquer.
+- Le modèle est un apport de partenaires B2B : il ne rémunère pas simplement les clics voyageurs.
+
+Scénarios purement illustratifs, non prévisionnels :
+- 3 partenaires hôteliers Cluster B ayant chacun atteint leur premier transfert : 150 € de primes initiales potentielles.
+- Si ces trois partenaires atteignent chacun cinq transferts : 450 € cumulés de primes initiales et de cinquième transfert (150 € + 300 €), sous réserve de qualification et de validation.
+- Chaque transfert achevé à partir du sixième génère ensuite 1 € pour les hôtels/locations admissibles, pendant la fenêtre de trois ans.
+Aucun de ces montants n'est acquis avant attribution des partenaires et réalisation des transferts éligibles.
+
+Actions :
+1. Vérifier les destinations Welcome Pickups couvertes et l'admissibilité du canal RME.
+2. S'inscrire au programme et récupérer le lien personnel de recommandation ; saisir les informations fiscales/paiement uniquement dans le compte officiel.
+3. Préparer une liste initiale de 5 hébergements réels dans les seules destinations couvertes, avec coordonnées professionnelles publiques et preuve de pertinence.
+4. Obtenir l'accord de Tarek avant tout contact externe.
+5. Compter uniquement les commissions visibles dans le tableau de bord après les transferts requis.
+
+Sources officielles vérifiées 2026-10-09 :
+- https://help.partners.welcomepickups.com/en/help-center/ambassador-program/how-commissions-work
+- https://help.partners.welcomepickups.com/en/help-center/ambassador-program/who-to-refer
+- https://help.partners.welcomepickups.com/en/help-center/ambassador-program/getting-paid
+- https://partner.welcomepickups.com/ambassador-program/
+
+## P1 — Direct Ferries : programme confirmé, rendement net RME encore INCONNU
+
+Le programme officiel Direct Ferries annonce 50 % de la commission qu'il reçoit de la compagnie de ferry pour une réservation confirmée dont le ferry a navigué. Il fournit liens suivis, widget et API ; le canal Connect comprend plus de 4 000 itinéraires et 230 opérateurs.
+
+Statut : OFFRE OFFICIELLE VÉRIFIÉE ; compte, conditions propres à RME et lien suivi ACTIFS NON CONFIRMÉS.  
+Important : 50 % porte sur la commission reçue par Direct Ferries, pas sur le prix du billet. Ne pas estimer les euros sans connaître la commission sous-jacente et les réservations attribuées.  
+Prochaine action : candidature/approbation, obtenir le lien réel, vérifier un clic de production et suivre les réservations confirmées.
+
+Source officielle vérifiée 2026-10-09 :
+- https://fca.directferries.com/affiliation.htm
+
+## P2 — Ferryhopper : offre confirmée, taux individuel UNVERIFIED
+
+Ferryhopper propose liens affiliés, bannières et widgets. Les conditions officielles indiquent que la commission est calculée comme un pourcentage du prix total des réservations éligibles, selon le taux applicable au compte ou un accord distinct ; paiements mensuels, seuil de 100 €, exclusions en cas d'annulation/remboursement ou de trafic non conforme.
+
+Statut : OFFRE ET CONDITIONS GÉNÉRALES VÉRIFIÉES ; taux RME et acceptation UNVERIFIED.  
+Prochaine action : candidater et demander le taux écrit, la durée d'attribution, les itinéraires admissibles et le calendrier de paiement avant d'envisager une intégration.
+
+Sources officielles vérifiées 2026-10-09 :
+- https://partners.ferryhopper.com/affiliates
+- https://partners.ferryhopper.com/affiliate-program-terms-conditions
+
+## Filtre économique — mise à jour 2026-10-09
+
+| Opportunité | Revenu / économie | Vitesse | Coût initial | Récurrence | Dépendance | Preuve / statut |
+|---|---|---|---|---|---|---|
+| Welcome Pickups Ambassador | 20–100 € par premier transfert selon type de partenaire ; bonus 50–200 € au cinquième transfert pour hôtels/locations ; ensuite 1 €/transfert admissible | Potentiellement rapide après inscription et transfert réel | Pas de frais annoncés sur les pages consultées ; coûts de prospection non chiffrés | Oui, jusqu'à 3 ans pour transferts éligibles | Forte (destination, classification et activité du partenaire) | Barème officiel vérifié ; revenus RME nuls à ce jour |
+| Direct Ferries | 50 % de la commission perçue par Direct Ferries ; montant en € inconnu | Après approbation et traversée effectuée | Pas de frais d'entrée indiqués sur la page publique | Par réservation éligible | Forte | Offre vérifiée ; compte/lien RME non confirmés |
+| Ferryhopper | Pourcentage du prix total des réservations éligibles ; taux individuel inconnu | Après candidature et réservation éligible | Pas de frais indiqués dans les conditions publiques consultées | Par réservation éligible | Forte | Conditions générales officielles vérifiées ; taux RME UNVERIFIED |
+
+## Actions humaines requises
+
+- Tarek : valider explicitement tout contact B2B externe ; procéder lui-même à toute inscription exigeant identité, compte, données fiscales ou paiement.
+- Assistant/opérateur technique autorisé : à réception des liens suivis, vérifier le clic et les événements dans le parcours RME sans publier ni modifier la production sans autorisation.
+- Aucune candidature, création de compte, communication externe ou intégration produit n'est effectuée par cet addendum.
+
+Règle comptable inchangée : 0 € de revenus reconnus tant qu'une commission RME n'est pas visible et validée par le partenaire.
