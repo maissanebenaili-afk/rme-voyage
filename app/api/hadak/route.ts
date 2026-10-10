@@ -14,12 +14,6 @@ import { detectServiceRequest, serviceAnswer } from '@/lib/hadakServices';
 import { searchServices } from '@/lib/servicesSearch';
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type OpenAICompatibleResponse = {
-  choices?: Array<{ message?: { content?: string } }>;
-};
-type AnthropicResponse = {
-  content?: Array<{ type?: string; text?: string }>;
-};
 type OpenMeteoResponse = {
   current?: {
     temperature_2m?: number;
@@ -28,14 +22,6 @@ type OpenMeteoResponse = {
     relative_humidity_2m?: number;
   };
 };
-
-// ── Env helpers ────────────────────────────────────────────────────────────
-function findEnvKey(pattern: RegExp): string | undefined {
-  return Object.entries(process.env).find(([k]) => pattern.test(k))?.[1];
-}
-function findEnvValue(prefix: string): string | undefined {
-  return Object.values(process.env).find(v => v?.startsWith(prefix));
-}
 
 const WMO_CODE: Record<number, { fr: string; da: string; ar: string }> = {
   0:  { fr: 'ciel dégagé ☀️',       da: 'sma safiya ☀️',       ar: 'سماء صافية ☀️' },
@@ -566,50 +552,6 @@ async function buildLocalResponse(msg: string, lang: string, intent: Intent, tra
   return null;
 }
 
-// ── LLM provider helpers ───────────────────────────────────────────────────
-// A provider that hangs must not use up the whole function budget: the next one gets its turn.
-const LLM_TIMEOUT_MS = 8_000;
-
-// Groq retires models without notice and a new account may not see all of them,
-// so each free provider lists several; the first one that answers wins.
-const GROQ_MODELS = ['llama-3.3-70b-versatile', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant'];
-const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-flash-latest'];
-
-async function firstAnswer(baseUrl: string, models: string[], apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
-  for (const model of models) {
-    const text = await callOpenAICompatible(baseUrl, model, apiKey, systemPrompt, message, providerName);
-    if (text) return text;
-  }
-  return null;
-}
-
-async function callOpenAICompatible(baseUrl: string, model: string, apiKey: string, systemPrompt: string, message: string, providerName: string): Promise<string | null> {
-  try {
-    const res = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({ model, max_tokens: 512, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: message }] }),
-      signal: AbortSignal.timeout(LLM_TIMEOUT_MS),
-    });
-    if (!res.ok) { console.error(`[hadak] ${providerName} ${model} error ${res.status}`); return null; }
-    const data = (await res.json()) as OpenAICompatibleResponse;
-    return data.choices?.[0]?.message?.content ?? null;
-  } catch (e) { console.error(`[hadak] ${providerName} failed:`, e); return null; }
-}
-
-async function callAnthropic(apiKey: string, systemPrompt: string, message: string): Promise<string | null> {
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 512, system: systemPrompt, messages: [{ role: 'user', content: message }] }),
-    });
-    if (!res.ok) { console.error('[hadak] Anthropic error', res.status); return null; }
-    const data = (await res.json()) as AnthropicResponse;
-    return data.content?.find(b => b.type === 'text')?.text ?? null;
-  } catch (e) { console.error('[hadak] Anthropic failed:', e); return null; }
-}
-
 // ── System prompts ─────────────────────────────────────────────────────────
 /** Au-delà, la requête est refusée avant tout appel à un fournisseur LLM. */
 const MAX_MESSAGE_CHARS = 1_000;
@@ -732,7 +674,7 @@ export async function POST(req: NextRequest) {
 
     // No LLM available — return a helpful offline guide instead of an empty response
     logIntent(intent, 'OFFLINE', null, 0);
-    return NextResponse.json({ response: buildOfflineFallback(lang, message), fallback: true });
+    return NextResponse.json({ response: buildOfflineFallback(responseLang, message), fallback: true });
   } catch (err) {
     console.error('[hadak] error:', err);
     return NextResponse.json({ response: buildOfflineFallback('fr', ''), fallback: true });
@@ -749,5 +691,6 @@ function buildOfflineFallback(lang: string, message: string): string {
     ar: `لا أستطيع الإجابة على ${q || 'هذا السؤال'} بدون اتصال LLM الآن.\n\nلكن أجيب فوراً على هذه المواضيع بدون انترنت:\n• 🌤️ **الطقس** — "كيف الطقس في مراكش؟"\n• 🕌 **أوقات الصلاة** — "مواعيد الصلاة في فاس"\n• 💶 **الصرف** — "كم يساوي 100 يورو بالدرهم؟"\n• ⏰ **توقيت المغرب** — "كم الساعة في المغرب؟"\n• 🚢 **العبارة** — المواعيد والشركات\n• 📄 **الوثائق** — جواز السفر، التأشيرة، البطاقة الوطنية\n• 📱 **الشريحة** — باقات المشغلين المغاربة\n• ⛽ **الوقود** — أسعار المحطات\n• ⚽ **كرة القدم** — توقعات البطولة، أسود الأطلس`,
     es: `No puedo responder a ${q || 'esa pregunta'} sin conexión LLM ahora mismo.\n\nPero respondo al instante sobre estos temas sin internet:\n• 🌤️ **Tiempo** — "¿qué tiempo hace en Agadir?"\n• 🕌 **Oraciones** — "horarios de oración en Fez"\n• 💶 **Cambio** — "¿cuánto vale 100€ en dírhams?"\n• ⏰ **Hora Marruecos** — "¿qué hora es en Marruecos?"\n• 🚢 **Ferry** — horarios y compañías\n• 📄 **Documentos** — pasaporte, visado, DNI\n• 📱 **SIM** — tarifas operadoras marroquíes\n• ⛽ **Combustible** — precios en gasolineras\n• ⚽ **Fútbol** — pronósticos Botola, Leones del Atlas`,
   };
-  return topics[lang] ?? topics.fr;
+  // hasOwn : « constructor » ou « __proto__ » renverraient une fonction ou un objet, pas un texte.
+  return Object.hasOwn(topics, lang) ? topics[lang] : topics.fr;
 }
