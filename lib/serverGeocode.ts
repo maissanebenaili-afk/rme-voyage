@@ -36,7 +36,15 @@ function normalizedTokens(value: string): string[] {
  */
 export class GeocodeUnavailable extends Error {}
 
+/**
+ * Le plus long nom de lieu réel tient largement en dessous. Au-delà, la requête
+ * n'est jamais envoyée : un texte géant ne doit pas partir chez Nominatim (dont
+ * la politique d'usage peut bannir le site entier) ni remplir le cache.
+ */
+export const MAX_PLACE_CHARS = 150;
+
 export async function geocodePlace(place: string): Promise<LatLon | null> {
+  if (place.length > MAX_PLACE_CHARS) return null;
   const url = new URL("https://nominatim.openstreetmap.org/search");
   url.searchParams.set("q", place);
   url.searchParams.set("format", "jsonv2");

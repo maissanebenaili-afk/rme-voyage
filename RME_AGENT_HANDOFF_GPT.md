@@ -460,3 +460,83 @@ NEXT:
 Le rôle de l'agent n'est pas de produire le plus de modifications possible.
 
 Le rôle est de produire **le minimum de changements nécessaires, vérifiables, réversibles et compatibles avec le travail des autres agents**, puis de transmettre une information exploitable sans ambiguïté.
+
+---
+
+## 15. Message de Claude à GPT — drapeau du Maroc (2026-10-09)
+
+Demande de Tarek Benaïli (transmise par GPT) : mettre le drapeau du Maroc sur l'appli RME. C'est fait côté code, PR en brouillon à valider.
+
+```
+STATUS: PARTIAL (code poussé, PR ouverte, pas encore fusionnée ni déployée)
+
+FACTS:
+- Le logo « RME Voyage » de l'accueil n'avait pas de drapeau.
+
+CHANGES:
+- components/MoroccoFlag.tsx : drapeau en SVG (fond rouge #C1272D, étoile verte #006233).
+  SVG et non emoji 🇲🇦 : les emoji drapeaux ne s'affichent pas sous Windows.
+- app/HomeClient.tsx : drapeau à côté du logo, en-tête et pied de page.
+
+PROOF:
+- commit: 894ef48
+- PR: https://github.com/maissanebenaili-afk/rme-voyage/pull/282 (draft)
+- test: tsc sans erreur sur les 2 fichiers modifiés (les erreurs restantes
+  viennent de dépendances non installées dans l'environnement de Claude)
+- deployment: aucun
+
+NOT VERIFIED:
+- Rendu visuel dans l'appli (non lancée).
+- Build Netlify de la PR.
+
+NEXT:
+- Vérifier l'aperçu Netlify de la PR #282, puis fusionner si OK.
+- Ne pas recréer un autre drapeau : réutiliser <MoroccoFlag /> si besoin ailleurs.
+```
+
+---
+
+## 16. Audit « red team » des routes API par Claude (2026-10-10)
+
+Tarek a redonné la main à Claude sur tout le projet. Les 17 routes de `app/api/` ont été attaquées avec des entrées hostiles.
+
+```
+STATUS: PARTIAL (corrigé et testé, à valider via l'aperçu Netlify de la PR #282)
+
+FACTS (failles confirmées par un test rouge avant correction) :
+- /api/hadak : lang = « constructor » / « __proto__ » / « toString » → réponse vide ou objet
+  au lieu d'un texte quand l'IA est injoignable (dernier repli lisait `lang` brut).
+- /api/route et /api/services : nom de lieu sans limite de taille envoyé tel quel à
+  Nominatim (risque : bannissement du site par OpenStreetMap, cache rempli).
+- /api/remittance : devise libre utilisée comme chemin d'URL du fournisseur de taux
+  (« ../../evil » partait en requête) ; « 500abc » accepté comme 500.
+- Dépendances : 3 failles « high » (sharp/libvips, source-map-js).
+
+CHANGES:
+- app/api/hadak/route.ts : repli avec la langue validée + Object.hasOwn ; ~60 lignes de
+  code mort supprimées (anciens appels Groq/Gemini/Anthropic jamais utilisés, et un
+  helper qui parcourait toutes les variables d'environnement).
+- lib/serverGeocode.ts : MAX_PLACE_CHARS = 150, aucune requête au-delà.
+- app/api/route, app/api/services : 400 si nom de lieu trop long.
+- app/api/remittance : devise = 3 lettres exactement ; montant via Number().
+- package-lock.json : npm audit fix (sharp 0.35.5, libvips 1.3.4, source-map-js) → 0 faille.
+
+PROOF:
+- test: __tests__/redTeamApi.test.ts (11 attaques, rouges avant, vertes après)
+- test: suite complète 989/989
+- tsc : aucune erreur ; eslint : aucune erreur
+- deployment: aucun
+
+NOT VERIFIED:
+- `next build` local échoue dans le conteneur de Claude (« Cannot find module
+  tailwindcss » dans le worker Turbopack) alors que tailwindcss est installé :
+  problème d'environnement, Netlify a construit la PR #282 sans souci.
+
+NON CORRIGÉ (à décider, hors périmètre) :
+- /api/trips et /api/tips utilisent le client Supabase anonyme, sans le jeton de
+  l'utilisateur : avec la RLS de packages/db/schema.sql, toute écriture serait refusée.
+  Aucun écran ne les appelle aujourd'hui → à brancher sur lib/supabase/server.ts
+  le jour où la fonction est activée.
+- CSP : script-src garde 'unsafe-inline' (exigé par Next sans nonces).
+- Limite de débit du proxy en mémoire : déjà documentée, la vraie limite est Netlify.
+```
