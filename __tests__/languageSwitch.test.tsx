@@ -35,7 +35,7 @@ afterEach(() => jest.restoreAllMocks());
 describe("changer de langue", () => {
   it("le fournisseur de langue enveloppe toute l'application", () => {
     const layout = fs.readFileSync(path.join(__dirname, "../app/layout.tsx"), "utf-8");
-    expect(layout).toMatch(/<LanguageProvider>[\\s\\S]*\\{children\\}[\\s\\S]*<\\/LanguageProvider>/);
+    expect(layout).toMatch(/<LanguageProvider>[\s\S]*\{children\}[\s\S]*<\/LanguageProvider>/);
   });
 
   it("traduit l'accueil quand on choisit l'anglais, et garde ce choix", async () => {
