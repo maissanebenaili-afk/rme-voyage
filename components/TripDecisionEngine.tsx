@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Car, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Car, ChevronDown, Plane, Ship, WalletCards, ArrowRight, ShieldCheck } from 'lucide-react';
 import DistanceProvenanceNote from './DistanceProvenanceNote';
 import FuelByCountryPanel from './FuelByCountryPanel';
 import { computeFuelByCountry, hasFerry, type FuelType } from '@/lib/fuelByCountry';
@@ -117,7 +117,31 @@ export default function TripDecisionEngine() {
         </div>
       </div>
 
-      <div className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
+      <div className="grid gap-5 p-5 sm:p-8">
+        <div className="rounded-2xl bg-[#f8fafc] p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]"><ShieldCheck size={17} className="text-[#b45309]" />{h.yourEstimate}</div>
+          <div className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">{h.directBudget}</p>
+            <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d] tabular-nums">{eur(animatedSelected)}</p>
+            <p className="mt-2 text-sm text-[#64748b]">{h.perPerson(eur(result.perPerson), eur(result.high))}</p>
+            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? h.cheapest : h.moreThan(eur(result.deltaVsCheapest), result.cheapestMode)}</p>
+          </div>
+          <div data-testid="scenario-breakdown" className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
+            <div className="flex justify-between"><span>{h.fuel}</span><strong>{eur(result.fuel)}</strong></div>
+            {routeNeedsFerry !== true && <div className="flex justify-between"><span>{h.carNoFerry}</span><strong>{eur(result.carTrip)}</strong></div>}
+            {routeNeedsFerry !== false && <div className="flex justify-between"><span>{h.carFerry}</span><strong>{eur(result.mixedTrip)}</strong></div>}
+            <div className="flex justify-between"><span>{h.flightFor(travelers)}</span><strong>{eur(result.flightTrip)}</strong></div>
+          </div>
+          <p className="mt-5 text-xs leading-5 text-[#64748b]">{h.assumptionsNote}</p>
+          <a href="#ferry" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">{h.compareFerriesFlights} <ArrowRight size={16} /></a>
+        </div>
+        {/* Les hypothèses restent modifiables, repliées : un visiteur voit d'abord le résultat, pas 7 cases à remplir. */}
+        <details className="group rounded-2xl ring-1 ring-[#e2e8f0]">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 px-4 text-sm font-extrabold text-[#0f1f3d] [&::-webkit-details-marker]:hidden">
+            {h.adjust}
+            <ChevronDown size={18} aria-hidden="true" className="shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="border-t border-[#e2e8f0] p-4">
         <div className="grid gap-4">
           {[
             [h.fieldDistance, distance, setDistance, 1, 10000, 10],
@@ -144,24 +168,8 @@ export default function TripDecisionEngine() {
           )}
           <DistanceProvenanceNote provenance={provenance} className="text-[#64748b]" />
         </div>
-
-        <div className="rounded-2xl bg-[#f8fafc] p-5 sm:p-6">
-          <div className="flex items-center gap-2 text-sm font-extrabold text-[#0f1f3d]"><ShieldCheck size={17} className="text-[#b45309]" />{h.yourEstimate}</div>
-          <div className="mt-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">{h.directBudget}</p>
-            <p className="mt-1 text-4xl font-black tracking-tight text-[#0f1f3d] tabular-nums">{eur(animatedSelected)}</p>
-            <p className="mt-2 text-sm text-[#64748b]">{h.perPerson(eur(result.perPerson), eur(result.high))}</p>
-            <p className="mt-3 rounded-xl bg-[#fff7ed] px-3 py-2 text-sm font-semibold text-[#9a3412]">{result.deltaVsCheapest === 0 ? h.cheapest : h.moreThan(eur(result.deltaVsCheapest), result.cheapestMode)}</p>
           </div>
-          <div data-testid="scenario-breakdown" className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
-            <div className="flex justify-between"><span>{h.fuel}</span><strong>{eur(result.fuel)}</strong></div>
-            {routeNeedsFerry !== true && <div className="flex justify-between"><span>{h.carNoFerry}</span><strong>{eur(result.carTrip)}</strong></div>}
-            {routeNeedsFerry !== false && <div className="flex justify-between"><span>{h.carFerry}</span><strong>{eur(result.mixedTrip)}</strong></div>}
-            <div className="flex justify-between"><span>{h.flightFor(travelers)}</span><strong>{eur(result.flightTrip)}</strong></div>
-          </div>
-          <p className="mt-5 text-xs leading-5 text-[#64748b]">{h.assumptionsNote}</p>
-          <a href="#ferry" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">{h.compareFerriesFlights} <ArrowRight size={16} /></a>
-        </div>
+        </details>
       </div>
       {byCountry && <FuelByCountryPanel result={byCountry} fuelType={fuelType} />}
     </section>

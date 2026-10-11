@@ -140,6 +140,13 @@ const fr = {
   flightFor: (n: number) => `Avion pour ${n} pers.`,
   assumptionsNote: 'Les trois scénarios utilisent uniquement vos hypothèses locales. Aucun prix partenaire ni tarif temps réel n’est inventé.',
   compareFerriesFlights: 'Comparer les ferries et les vols',
+  // À la une
+  newsTitle: 'À la une',
+  newsSubtitle: 'Les dernières nouvelles du Maroc et de la diaspora.',
+  newsAgo: (minutes: number) => (minutes < 60 ? `il y a ${Math.max(1, minutes)} min` : minutes < 1440 ? `il y a ${Math.floor(minutes / 60)} h` : `il y a ${Math.floor(minutes / 1440)} j`),
+  newsUnavailable: 'Les actualités ne sont pas disponibles pour le moment.',
+  newsOpen: 'Lire l’article sur',
+  adjust: 'Ajuster mes hypothèses',
 };
 
 export type HomeText = typeof fr;
@@ -275,6 +282,12 @@ const en: HomeText = {
   flightFor: (n: number) => `Flight for ${n} people`,
   assumptionsNote: 'All three options use only your own assumptions. No partner price or real-time fare is made up.',
   compareFerriesFlights: 'Compare ferries and flights',
+  newsTitle: 'Top stories',
+  newsSubtitle: 'The latest news from Morocco and the diaspora.',
+  newsAgo: (minutes: number) => (minutes < 60 ? `${Math.max(1, minutes)} min ago` : minutes < 1440 ? `${Math.floor(minutes / 60)} h ago` : `${Math.floor(minutes / 1440)} d ago`),
+  newsUnavailable: 'News is not available right now.',
+  newsOpen: 'Read the article on',
+  adjust: 'Adjust my assumptions',
 };
 
 const es: HomeText = {
@@ -408,6 +421,12 @@ const es: HomeText = {
   flightFor: (n: number) => `Avión para ${n} pers.`,
   assumptionsNote: 'Las tres opciones usan solo tus datos. No se inventa ningún precio de socio ni tarifa en tiempo real.',
   compareFerriesFlights: 'Comparar ferris y vuelos',
+  newsTitle: 'Portada',
+  newsSubtitle: 'Las últimas noticias de Marruecos y la diáspora.',
+  newsAgo: (minutes: number) => (minutes < 60 ? `hace ${Math.max(1, minutes)} min` : minutes < 1440 ? `hace ${Math.floor(minutes / 60)} h` : `hace ${Math.floor(minutes / 1440)} d`),
+  newsUnavailable: 'Las noticias no están disponibles por ahora.',
+  newsOpen: 'Leer el artículo en',
+  adjust: 'Ajustar mis datos',
 };
 
 const ar: HomeText = {
@@ -541,6 +560,12 @@ const ar: HomeText = {
   flightFor: (n: number) => `الطائرة لـ${n} أشخاص`,
   assumptionsNote: 'تعتمد الخيارات الثلاثة على معطياتك فقط. لا يُختلق أي سعر شريك أو تعريفة آنية.',
   compareFerriesFlights: 'قارن البواخر والطائرات',
+  newsTitle: 'أهم الأخبار',
+  newsSubtitle: 'آخر أخبار المغرب والجالية.',
+  newsAgo: (minutes: number) => (minutes < 60 ? `منذ ${Math.max(1, minutes)} دقيقة` : minutes < 1440 ? `منذ ${Math.floor(minutes / 60)} ساعة` : `منذ ${Math.floor(minutes / 1440)} يوم`),
+  newsUnavailable: 'الأخبار غير متاحة حالياً.',
+  newsOpen: 'اقرأ المقال على',
+  adjust: 'عدّل معطياتي',
 };
 
 const da: HomeText = {
@@ -674,6 +699,12 @@ const da: HomeText = {
   flightFor: (n: number) => `الطيارة ل ${n} ديال الناس`,
   assumptionsNote: 'التلاتة كيخدمو غير بالمعطيات ديالك. حتى ثمن ما مخترع.',
   compareFerriesFlights: 'قارن البواخر والطيارات',
+  newsTitle: 'آخر الأخبار',
+  newsSubtitle: 'الجديد ديال المغرب والجالية.',
+  newsAgo: (minutes: number) => (minutes < 60 ? `هادي ${Math.max(1, minutes)} دقيقة` : minutes < 1440 ? `هادي ${Math.floor(minutes / 60)} ساعة` : `هادي ${Math.floor(minutes / 1440)} يام`),
+  newsUnavailable: 'الأخبار ما كايناش دابا.',
+  newsOpen: 'قرا المقال ف',
+  adjust: 'بدّل المعطيات ديالي',
 };
 
 export const HOME_TEXT: Record<Language, HomeText> = { fr, en, es, ar, da };

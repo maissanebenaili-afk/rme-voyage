@@ -29,6 +29,8 @@ import BookBanner from '@/components/BookBanner';
 import StepHeader from '@/components/home/StepHeader';
 import ToolDrawer from '@/components/home/ToolDrawer';
 import TripNav from '@/components/home/TripNav';
+import LiveNews from '@/components/home/LiveNews';
+import { Bell, Coins, Handshake, MoonStar, ShoppingBag, Smartphone, Trophy } from 'lucide-react';
 import MoroccoFlag from '@/components/MoroccoFlag';
 import { useHomeText } from '@/lib/LanguageContext';
 
@@ -74,7 +76,7 @@ export default function HomeClient() {
               {h.heroTitle}<span className="sr-only">{h.heroTitleSr}</span>
             </h1>
           }
-          belowHero={<TripNav />}
+          belowHero={<><TripNav /><LiveNews /></>}
         />
       </div>
 
@@ -125,42 +127,42 @@ export default function HomeClient() {
         <section aria-labelledby="outils-title" className="mt-12">
           <h2 id="outils-title" className="font-display text-2xl font-semibold tracking-tight">{h.toolsTitle}</h2>
           <div className="mt-4 space-y-3">
-            <ToolDrawer id="maroc" icon="🕌" title={h.drawerFaithTitle} text={h.drawerFaithText}>
+            <ToolDrawer id="maroc" icon={<MoonStar size={20} />} title={h.drawerFaithTitle} text={h.drawerFaithText}>
               <DailyWidget />
               <PrayerWidget />
               <QiblaCompass />
               <MoroccanCalendar />
               <NewsFeed />
             </ToolDrawer>
-            <ToolDrawer id="argent" icon="💶" title={h.drawerMoneyTitle} text={h.drawerMoneyText}>
+            <ToolDrawer id="argent" icon={<Coins size={20} />} title={h.drawerMoneyTitle} text={h.drawerMoneyText}>
               <CurrencyConverter />
               <RemittanceComparator />
               <ZakaatCalculator />
             </ToolDrawer>
-            <ToolDrawer id="sur-place" icon="📱" title={h.drawerLocalTitle} text={h.drawerLocalText}>
+            <ToolDrawer id="sur-place" icon={<Smartphone size={20} />} title={h.drawerLocalTitle} text={h.drawerLocalText}>
               <TimeZoneSIM />
               <DarijaPhrasebook />
               <FuelPriceComparator />
               <SmartPacking />
             </ToolDrawer>
-            <ToolDrawer id="sport-tv" icon="⚽" title={h.drawerSportTitle} text={h.drawerSportText}>
+            <ToolDrawer id="sport-tv" icon={<Trophy size={20} />} title={h.drawerSportTitle} text={h.drawerSportText}>
               <SportsHub />
               <FaicalWidget />
               <TVWidget />
             </ToolDrawer>
-            <ToolDrawer id="boutique" icon="🛍️" title={h.drawerShopTitle} text={h.drawerShopText}>
+            <ToolDrawer id="boutique" icon={<ShoppingBag size={20} />} title={h.drawerShopTitle} text={h.drawerShopText}>
               <MarwaCaftanWidget />
               <MouniaWidget />
               <ColisWidget />
               <ServicesProWidget />
               <Link href="/boutique" className="inline-flex min-h-11 items-center rounded-full bg-[#0f1f3d] px-5 text-sm font-extrabold text-white">{h.shopAll}</Link>
             </ToolDrawer>
-            <ToolDrawer id="partenaires" icon="🤝" title={h.drawerBookTitle} text={h.drawerBookText}>
+            <ToolDrawer id="partenaires" icon={<Handshake size={20} />} title={h.drawerBookTitle} text={h.drawerBookText}>
               {/* Public links first; PartnerComparison asks /api/partners for the
                   configured ones after hydration. */}
               <PartnerComparison partners={getPartnerCatalogue({})} />
             </ToolDrawer>
-            <ToolDrawer id="nouvelles" icon="✉️" title={h.drawerNewsTitle} text={h.drawerNewsText}>
+            <ToolDrawer id="nouvelles" icon={<Bell size={20} />} title={h.drawerNewsTitle} text={h.drawerNewsText}>
               <NewsletterSection />
               <BookBanner />
             </ToolDrawer>
