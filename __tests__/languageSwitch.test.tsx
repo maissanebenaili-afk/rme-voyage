@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import TripNav from "@/components/home/TripNav";
 import StepHeader from "@/components/home/StepHeader";
@@ -6,6 +6,11 @@ import { LANG_STORAGE_KEY, LanguageProvider } from "@/lib/LanguageContext";
 import { HOME_TEXT } from "@/lib/homeI18n";
 import fs from "fs";
 import path from "path";
+
+let mockPathname = "/";
+jest.mock("next/navigation", () => ({
+  usePathname: () => mockPathname,
+}));
 
 function Page() {
   return (
@@ -18,7 +23,7 @@ function Page() {
 }
 
 beforeEach(() => {
-  // Navigateur réglé en français : la langue de départ est le français.
+  mockPathname = "/";
   jest.spyOn(window.navigator, "language", "get").mockReturnValue("fr-FR");
   localStorage.clear();
   document.documentElement.lang = "fr";
@@ -27,15 +32,13 @@ beforeEach(() => {
 
 afterEach(() => jest.restoreAllMocks());
 
-// Jusqu'au 2026-10-11, le sélecteur n'avait aucun effet : LanguageProvider
-// n'était monté nulle part, setLang était une fonction vide.
 describe("changer de langue", () => {
   it("le fournisseur de langue enveloppe toute l'application", () => {
     const layout = fs.readFileSync(path.join(__dirname, "../app/layout.tsx"), "utf-8");
-    expect(layout).toMatch(/<LanguageProvider>[\s\S]*\{children\}[\s\S]*<\/LanguageProvider>/);
+    expect(layout).toMatch(/<LanguageProvider>[\\s\\S]*\\{children\\}[\\s\\S]*<\\/LanguageProvider>/);
   });
 
-  it("traduit l'accueil quand on choisit l'anglais, et garde ce choix", () => {
+  it("traduit l'accueil quand on choisit l'anglais, et garde ce choix", async () => {
     render(<Page />);
     expect(screen.getByRole("link", { name: "Coût" })).toBeInTheDocument();
     expect(screen.getByText("Étape 1")).toBeInTheDocument();
@@ -45,15 +48,36 @@ describe("changer de langue", () => {
 
     expect(screen.getByRole("link", { name: "Cost" })).toBeInTheDocument();
     expect(screen.getByText("Step 1")).toBeInTheDocument();
-    expect(document.documentElement.lang).toBe("en");
+    await waitFor(() => expect(document.documentElement.lang).toBe("en"));
     expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe("en");
   });
 
-  it("reprend la langue enregistrée à la visite suivante, de droite à gauche en arabe", () => {
-    localStorage.setItem(LANG_STORAGE_KEY, "ar");
+  it("annonce la darija par son code HTML et conserve le RTL", async () => {
+    localStorage.setItem(LANG_STORAGE_KEY, "da");
     render(<Page />);
-    expect(screen.getByRole("link", { name: "التكلفة" })).toBeInTheDocument();
-    expect(document.documentElement.dir).toBe("rtl");
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe("ary");
+      expect(document.documentElement.dir).toBe("rtl");
+    });
+  });
+
+  it("ne confond pas le danois du navigateur avec la darija", async () => {
+    jest.spyOn(window.navigator, "language", "get").mockReturnValue("da-DK");
+    render(<Page />);
+    await waitFor(() => expect(document.documentElement.lang).toBe("fr"));
+    expect(document.documentElement.dir).toBe("ltr");
+  });
+
+  it("réinitialise le document en français en quittant l'accueil non traduit", async () => {
+    localStorage.setItem(LANG_STORAGE_KEY, "en");
+    mockPathname = "/trajet/paris-tanger";
+    render(<Page />);
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe("fr");
+      expect(document.documentElement.dir).toBe("ltr");
+    });
+    // La préférence est conservée, mais le document non traduit annonce le français.
+    expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe("en");
   });
 
   it("ignore une valeur enregistrée inconnue", () => {
@@ -68,7 +92,6 @@ describe("changer de langue", () => {
       expect(Object.keys(texts).sort()).toEqual([...keys].sort());
       for (const key of keys) {
         const value = (texts as Record<string, unknown>)[key];
-        // Les textes à trous (durées, montants) sont des fonctions : on teste ce qu'elles écrivent.
         const sample = typeof value === "function" ? String(value("10 h", "car")) : String(value);
         expect([lang, key, sample.trim().length > 0 && !sample.includes("undefined")]).toEqual([lang, key, true]);
       }
