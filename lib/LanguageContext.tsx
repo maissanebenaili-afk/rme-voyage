@@ -65,7 +65,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (isLanguage(browserLang)) initial = browserLang;
     }
     const effective = isHome && initial ? initial : 'fr';
-    setLangState(initial ?? 'fr');
+    setLangState(effective);
     applyToDocument(effective);
   }, [isHome, pathname]);
 
