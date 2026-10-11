@@ -76,7 +76,7 @@ if missing:
 
 out = {
     "source": "Commission européenne — Weekly Oil Bulletin, prix moyens nationaux TTC",
-    "sourceUrl": xlsx_url,
+    "sourceUrl": PAGE,
     "observedAt": bulletin_date.date().isoformat(),
     "unit": "EUR/L",
     "prices": dict(sorted(prices.items())),
