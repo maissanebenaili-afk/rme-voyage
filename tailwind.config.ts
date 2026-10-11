@@ -108,8 +108,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Display: warm editorial serif for headings (Fontshare)
-        display: ["var(--font-boska)", "Georgia", "serif"],
+        // Display: same modern sans as the body, heavier (General Sans)
+        display: ["var(--font-gensans)", "var(--font-jakarta)", "system-ui", "sans-serif"],
         // Body: clean humanist sans (Fontshare)
         sans: ["var(--font-gensans)", "var(--font-jakarta)", "system-ui", "sans-serif"],
         // Arabic / Darija RTL

@@ -312,10 +312,10 @@ export default function Accessibility() {
       <button
         ref={buttonRef}
         onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-4 left-4 z-[9998] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-95"
+        className="fixed bottom-4 left-4 z-[9998] w-11 h-11 rounded-full flex items-center justify-center shadow-lg opacity-80 transition-all hover:opacity-100 hover:scale-105 focus-visible:opacity-100 active:scale-95"
         style={{
           background: 'linear-gradient(135deg, #0f1f3d, #080f28)',
-          border: '2px solid #f59e0b',
+          border: '1.5px solid rgba(245, 158, 11, .7)',
         }}
         aria-label={
           open ? "Fermer les options d'accessibilité" : "Ouvrir les options d'accessibilité"
@@ -324,13 +324,10 @@ export default function Accessibility() {
         aria-haspopup="dialog"
       >
         {open ? (
-          <X size={24} className="text-[#f59e0b]" strokeWidth={2.5} />
+          <X size={20} className="text-[#f59e0b]" strokeWidth={2.5} />
         ) : (
-          <Eye size={24} className="text-[#f59e0b]" strokeWidth={2.5} />
+          <Eye size={20} className="text-[#f59e0b]" strokeWidth={2.5} />
         )}
-        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#0f1f3d] bg-[#f59e0b] px-2 py-0.5 rounded-full whitespace-nowrap">
-          Vue+
-        </span>
       </button>
 
       {/* Accessibility Panel */}
@@ -340,7 +337,7 @@ export default function Accessibility() {
           role="dialog"
           aria-modal="true"
           aria-label="Options d'accessibilité"
-          className="fixed bottom-20 left-4 z-[9998] w-[calc(100vw-2rem)] sm:w-80 rounded-2xl shadow-2xl overflow-hidden"
+          className="fixed bottom-16 left-4 z-[9998] w-[calc(100vw-2rem)] sm:w-80 rounded-2xl shadow-2xl overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, #0f1f3d 0%, #080f28 100%)',
             border: '1px solid rgba(245, 158, 11, 0.2)',
