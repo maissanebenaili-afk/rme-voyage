@@ -29,7 +29,10 @@ import BookBanner from '@/components/BookBanner';
 import StepHeader from '@/components/home/StepHeader';
 import ToolDrawer from '@/components/home/ToolDrawer';
 import TripNav from '@/components/home/TripNav';
+import LiveNews from '@/components/home/LiveNews';
+import { Bell, Coins, Handshake, MoonStar, ShoppingBag, Smartphone, Trophy } from 'lucide-react';
 import MoroccoFlag from '@/components/MoroccoFlag';
+import { useHomeText } from '@/lib/LanguageContext';
 
 // Hadak et l'écran d'accueil embarquent framer-motion (~120 Ko). Aucun des
 // deux n'apparaît dans le HTML serveur (le splash démarre masqué, Hadak ne
@@ -48,6 +51,7 @@ const askHadak = (msg: string) => window.dispatchEvent(new CustomEvent('hadak:op
  * l'ordre et la présentation.
  */
 export default function HomeClient() {
+  const h = useHomeText();
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#f6f3ec] text-[#0f1f3d]">
       <SplashScreen />
@@ -55,35 +59,35 @@ export default function HomeClient() {
       <div id="planifier" className="scroll-mt-0">
         <RouteSearch
           header={
-            <nav aria-label="Principal" className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-4">
+            <nav aria-label={h.navAria} className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-4">
               <Link href="/" className="flex shrink-0 items-center gap-2.5">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#f59e0b] font-black text-[#0f1f3d]">R</span>
                 <span className="text-base font-black tracking-tight text-white">RME <span className="font-medium text-[#fcd34d]">Voyage</span></span>
                 <MoroccoFlag />
               </Link>
               <div className="flex items-center gap-1 text-white">
-                <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/75 transition hover:bg-white/10 hover:text-white sm:block">Guide</Link>
+                <Link href="/guide" className="hidden rounded-full px-3 py-2 text-sm font-bold text-white/75 transition hover:bg-white/10 hover:text-white sm:block">{h.guide}</Link>
                 <LanguageSwitcher />
               </div>
             </nav>
           }
           title={
             <h1 className="font-display text-[2.6rem] font-semibold leading-none tracking-tight sm:text-6xl">
-              Votre voyage<span className="sr-only"> au Maroc, étape par étape</span>
+              {h.heroTitle}<span className="sr-only">{h.heroTitleSr}</span>
             </h1>
           }
-          belowHero={<TripNav />}
+          belowHero={<><TripNav /><LiveNews /></>}
         />
       </div>
 
       <div className="mx-auto max-w-2xl px-5 pb-16">
         <section id="route" aria-labelledby="cout-title" className="mt-14 scroll-mt-20">
-          <StepHeader id="cout-title" step={3} title="Le coût" text="Un ordre de grandeur selon vos hypothèses. Une fois le trajet calculé, le carburant est compté pays par pays." />
+          <StepHeader id="cout-title" step={3} title={h.costTitle} text={h.costText} />
           <TripDecisionEngine />
         </section>
 
         <section id="preparer" aria-labelledby="docs-title" className="mt-14 scroll-mt-20">
-          <StepHeader id="docs-title" step={4} title="Documents et douane" text="Ce qu'il faut avoir avant de partir." />
+          <StepHeader id="docs-title" step={4} title={h.docsTitle} text={h.docsText} />
           <div className="space-y-4">
             <TravelChecklist />
             <CustomsCalculator />
@@ -91,12 +95,12 @@ export default function HomeClient() {
         </section>
 
         <section id="meteo" aria-labelledby="meteo-title" className="mt-14 scroll-mt-20">
-          <StepHeader id="meteo-title" step={5} title="La météo" text="À l'arrivée, ville par ville." />
+          <StepHeader id="meteo-title" step={5} title={h.weatherTitle} text={h.weatherText} />
           <WeatherMorocco />
         </section>
 
         <section id="services" aria-labelledby="services-title" className="mt-14 scroll-mt-20">
-          <StepHeader id="services-title" title="À proximité" text="Services utiles et numéros d'urgence." />
+          <StepHeader id="services-title" title={h.nearbyTitle} text={h.nearbyText} />
           <div className="space-y-4">
             <ServicesMap />
             <EmergencyContacts />
@@ -104,65 +108,61 @@ export default function HomeClient() {
         </section>
 
         <section aria-labelledby="hadak-title" className="mt-12 rounded-3xl bg-[#0f1f3d] p-5 text-white">
-          <h2 id="hadak-title" className="text-lg font-extrabold">Une question sur votre voyage ?</h2>
-          <p className="mt-1 text-sm text-white/70">Hadak répond en français, darija, arabe, anglais ou espagnol.</p>
+          <h2 id="hadak-title" className="text-lg font-extrabold">{h.hadakTitle}</h2>
+          <p className="mt-1 text-sm text-white/70">{h.hadakText}</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {[
-              { label: 'Quel ferry pour Tanger ?', msg: 'Ferry Algeciras Tanger' },
-              { label: 'Combien de dirhams pour 100 € ?', msg: 'Combien vaut 100 euros en dirhams ?' },
-              { label: 'Que dit la douane ?', msg: 'Quelle franchise douane au Maroc ?' },
-            ].map(({ label, msg }) => (
+            {[h.hadakQ1, h.hadakQ2, h.hadakQ3].map((question) => (
               <button
-                key={msg}
+                key={question}
                 type="button"
-                onClick={() => askHadak(msg)}
+                onClick={() => askHadak(question)}
                 className="min-h-11 rounded-full bg-white/10 px-4 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/20"
               >
-                {label}
+                {question}
               </button>
             ))}
           </div>
         </section>
 
         <section aria-labelledby="outils-title" className="mt-12">
-          <h2 id="outils-title" className="font-display text-2xl font-semibold tracking-tight">Le reste, quand vous en avez besoin</h2>
+          <h2 id="outils-title" className="font-display text-2xl font-semibold tracking-tight">{h.toolsTitle}</h2>
           <div className="mt-4 space-y-3">
-            <ToolDrawer id="maroc" icon="🕌" title="Prières et Qibla" text="Horaires, direction de La Mecque, actualités du Maroc">
+            <ToolDrawer id="maroc" icon={<MoonStar size={20} />} title={h.drawerFaithTitle} text={h.drawerFaithText}>
               <DailyWidget />
               <PrayerWidget />
               <QiblaCompass />
               <MoroccanCalendar />
               <NewsFeed />
             </ToolDrawer>
-            <ToolDrawer id="argent" icon="💶" title="Argent" text="Change, envois d'argent, zakat">
+            <ToolDrawer id="argent" icon={<Coins size={20} />} title={h.drawerMoneyTitle} text={h.drawerMoneyText}>
               <CurrencyConverter />
               <RemittanceComparator />
               <ZakaatCalculator />
             </ToolDrawer>
-            <ToolDrawer id="sur-place" icon="📱" title="Sur place" text="Carte SIM, heure, darija, carburant">
+            <ToolDrawer id="sur-place" icon={<Smartphone size={20} />} title={h.drawerLocalTitle} text={h.drawerLocalText}>
               <TimeZoneSIM />
               <DarijaPhrasebook />
               <FuelPriceComparator />
               <SmartPacking />
             </ToolDrawer>
-            <ToolDrawer id="sport-tv" icon="⚽" title="Sport et TV" text="Matchs, chaînes, analyses">
+            <ToolDrawer id="sport-tv" icon={<Trophy size={20} />} title={h.drawerSportTitle} text={h.drawerSportText}>
               <SportsHub />
               <FaicalWidget />
               <TVWidget />
             </ToolDrawer>
-            <ToolDrawer id="boutique" icon="🛍️" title="Boutique et services" text="Caftans, traiteurs, colis, garages">
+            <ToolDrawer id="boutique" icon={<ShoppingBag size={20} />} title={h.drawerShopTitle} text={h.drawerShopText}>
               <MarwaCaftanWidget />
               <MouniaWidget />
               <ColisWidget />
               <ServicesProWidget />
-              <Link href="/boutique" className="inline-flex min-h-11 items-center rounded-full bg-[#0f1f3d] px-5 text-sm font-extrabold text-white">Voir toute la boutique →</Link>
+              <Link href="/boutique" className="inline-flex min-h-11 items-center rounded-full bg-[#0f1f3d] px-5 text-sm font-extrabold text-white">{h.shopAll}</Link>
             </ToolDrawer>
-            <ToolDrawer id="partenaires" icon="🤝" title="Réserver" text="Ferries, vols, eSIM, bagages : les liens utiles">
+            <ToolDrawer id="partenaires" icon={<Handshake size={20} />} title={h.drawerBookTitle} text={h.drawerBookText}>
               {/* Public links first; PartnerComparison asks /api/partners for the
                   configured ones after hydration. */}
               <PartnerComparison partners={getPartnerCatalogue({})} />
             </ToolDrawer>
-            <ToolDrawer id="nouvelles" icon="✉️" title="Rester informé" text="Les nouveautés de RME, et le livre de Tarek">
+            <ToolDrawer id="nouvelles" icon={<Bell size={20} />} title={h.drawerNewsTitle} text={h.drawerNewsText}>
               <NewsletterSection />
               <BookBanner />
             </ToolDrawer>
@@ -180,24 +180,24 @@ export default function HomeClient() {
                 RME Voyage
                 <MoroccoFlag className="h-5 w-7" />
               </div>
-              <p className="mt-3 text-sm">Votre compagnon de route entre l'Europe, le Maroc et les communautés du monde.</p>
+              <p className="mt-3 text-sm">{h.footerTagline}</p>
             </div>
             <div>
-              <h3 className="font-bold text-[#0f1f3d]">Navigation</h3>
+              <h3 className="font-bold text-[#0f1f3d]">{h.footerNav}</h3>
               <ul className="mt-3 space-y-2 text-sm">
-                <li><Link href="/" className="inline-block py-1.5 hover:text-[#0f1f3d]">Accueil</Link></li>
-                <li><Link href="/guide" className="inline-block py-1.5 hover:text-[#0f1f3d]">Guide</Link></li>
-                <li><Link href="/trajet" className="inline-block py-1.5 hover:text-[#0f1f3d]">Tous les trajets en voiture</Link></li>
-                <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Découvrir</Link></li>
-                <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">Boutique ✨</Link></li>
-                <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">Télécharger</Link></li>
-                <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Soutenir le projet 💛</Link></li>
-                <li><Link href="/boutique#livre" className="inline-block py-1.5 hover:text-[#0f1f3d]">Le livre de Tarek 📕</Link></li>
-                <li><a href="/rss.xml" className="inline-block py-1.5 hover:text-[#0f1f3d]">Flux RSS</a></li>
+                <li><Link href="/" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerHome}</Link></li>
+                <li><Link href="/guide" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.guide}</Link></li>
+                <li><Link href="/trajet" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerRoutes}</Link></li>
+                <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDiscover}</Link></li>
+                <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerShop}</Link></li>
+                <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDownload}</Link></li>
+                <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerSupport}</Link></li>
+                <li><Link href="/boutique#livre" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerBook}</Link></li>
+                <li><a href="/rss.xml" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerRss}</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-[#0f1f3d]">Partenaires</h3>
+              <h3 className="font-bold text-[#0f1f3d]">{h.footerPartners}</h3>
               <ul className="mt-3 space-y-2 text-sm">
                 <li><Link href="/marwa-caftan" className="inline-block py-1.5 hover:text-[#0f1f3d]">Marwa Caftan</Link></li>
                 <li><Link href="/belisamae" className="inline-block py-1.5 hover:text-[#0f1f3d]">Belisamae</Link></li>
@@ -205,17 +205,17 @@ export default function HomeClient() {
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-[#0f1f3d]">À propos</h3>
-              <p className="mt-3 text-sm">Un projet Nova Presta — SAS de conseil en gestion et services aux entreprises.</p>
-              <p className="mt-2 text-xs">MVP. Les données temps réel nécessitent des sources vérifiées.</p>
+              <h3 className="font-bold text-[#0f1f3d]">{h.footerAbout}</h3>
+              <p className="mt-3 text-sm">{h.footerAboutText}</p>
+              <p className="mt-2 text-xs">{h.footerMvp}</p>
             </div>
           </div>
           <div className="mt-8 border-t border-slate-200 pt-6 text-center text-xs">
-            <p>© 2026 RME Voyage — Nova Presta. Tous droits réservés.</p>
+            <p>© 2026 RME Voyage — Nova Presta. {h.footerRights}</p>
             <p className="mt-2">
-              <a href="/api/legal/privacy" className="underline hover:text-[#0f1f3d]">Confidentialité</a>
+              <a href="/api/legal/privacy" className="underline hover:text-[#0f1f3d]">{h.footerPrivacy}</a>
               {" · "}
-              <a href="/api/legal/terms" className="underline hover:text-[#0f1f3d]">Conditions d&apos;utilisation</a>
+              <a href="/api/legal/terms" className="underline hover:text-[#0f1f3d]">{h.footerTerms}</a>
             </p>
           </div>
         </div>

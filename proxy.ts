@@ -29,7 +29,7 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requêtes / minute / IP / instance, ro
 // (et le coût si un fournisseur payant était un jour activé) par IP.
 const AI_RATE_LIMIT_MAX_REQUESTS = 8; // 8 requêtes / minute / IP / instance
 
-const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/events', '/api/newsletter', '/api/partners', '/api/prayer', '/api/remittance', '/api/route', '/api/services', '/api/support', '/api/tips'];
+const RATE_LIMITED_API_PREFIXES = ['/api/affiliates', '/api/events', '/api/news', '/api/newsletter', '/api/partners', '/api/prayer', '/api/remittance', '/api/route', '/api/services', '/api/support', '/api/tips'];
 const AI_RATE_LIMITED_API_PREFIXES = ['/api/hadak', '/api/faical'];
 
 function getClientKey(request: NextRequest): string {

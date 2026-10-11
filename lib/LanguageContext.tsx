@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Language, translations, TranslationKey } from './i18n';
+import { homeText, type HomeText } from './homeI18n';
 
 interface LanguageContextType {
   lang: Language;
@@ -12,31 +13,52 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
+const LANGS: readonly Language[] = ['fr', 'en', 'ar', 'es', 'da'];
+/** La langue choisie dans le sélecteur, gardée d'une visite à l'autre. */
+export const LANG_STORAGE_KEY = 'rme-lang';
+
+function isLanguage(value: unknown): value is Language {
+  return typeof value === 'string' && (LANGS as readonly string[]).includes(value);
+}
+
+function applyToDocument(lang: Language) {
+  try {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' || lang === 'da' ? 'rtl' : 'ltr';
+  } catch {
+    // ignore
+  }
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>('fr');
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);
-    if (typeof window !== 'undefined') {
-      try {
-        document.documentElement.lang = newLang;
-        document.documentElement.dir = (newLang === 'ar' || newLang === 'da') ? 'rtl' : 'ltr';
-      } catch (e) {
-        // ignore
-      }
+    applyToDocument(newLang);
+    try {
+      localStorage.setItem(LANG_STORAGE_KEY, newLang);
+    } catch {
+      // stockage indisponible (navigation privée) : la langue vaut pour cette page
     }
   };
 
+  // Le choix enregistré prime ; sinon la langue du navigateur, si elle est proposée.
   useEffect(() => {
-    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
-      try {
-        const browserLang = navigator.language?.split('-')[0];
-        if (browserLang && ['fr', 'en', 'ar', 'es', 'da'].includes(browserLang)) {
-          setLang(browserLang as Language);
-        }
-      } catch (e) {
-        // ignore
-      }
+    let initial: Language | null = null;
+    try {
+      const saved = localStorage.getItem(LANG_STORAGE_KEY);
+      if (isLanguage(saved)) initial = saved;
+    } catch {
+      // ignore
+    }
+    if (!initial) {
+      const browserLang = typeof navigator !== 'undefined' ? navigator.language?.split('-')[0] : undefined;
+      if (isLanguage(browserLang)) initial = browserLang;
+    }
+    if (initial && initial !== 'fr') {
+      setLangState(initial);
+      applyToDocument(initial);
     }
   }, []);
 
@@ -61,4 +83,9 @@ export function useLanguage() {
     };
   }
   return ctx;
+}
+
+/** Les textes de l'accueil dans la langue choisie. */
+export function useHomeText(): HomeText {
+  return homeText(useLanguage().lang);
 }

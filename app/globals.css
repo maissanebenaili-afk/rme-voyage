@@ -4,7 +4,6 @@
 
 :root {
   /* Identity typefaces — Fontshare CDN, loaded in app/layout.tsx <head> */
-  --font-boska: 'Boska', Georgia, serif;
   --font-gensans: 'General Sans', 'Plus Jakarta Sans', sans-serif;
   --font-inter: 'Inter', sans-serif;
   --font-jakarta: 'Plus Jakarta Sans', sans-serif;
@@ -30,13 +29,16 @@ body {
 
 * { box-sizing: border-box; }
 
+/* Titres en sans moderne (General Sans) : l'ancien serif éditorial (Boska)
+   donnait un air « papier journal » à l'appli. */
 h1, h2, h3, h4 {
-  font-family: var(--font-boska), Georgia, serif;
+  font-family: var(--font-gensans), var(--font-jakarta), system-ui, sans-serif;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
 [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4 {
-  font-family: var(--font-amiri), var(--font-boska), serif;
+  font-family: var(--font-amiri), serif;
 }
 
 ::selection {
@@ -268,18 +270,14 @@ input:focus {
 /* ── Accueil V2 : « de la nuit d'Europe au soleil du Maroc » ─────────────── */
 .rme-hero {
   background:
-    radial-gradient(130% 55% at 88% 112%, rgba(245, 158, 11, .42), rgba(245, 158, 11, .08) 45%, transparent 70%),
-    radial-gradient(90% 60% at -10% -10%, rgba(3, 105, 161, .45), transparent 60%),
-    linear-gradient(180deg, #08112a 0%, #0f1f3d 55%, #1b2f55 100%);
+    radial-gradient(120% 70% at 100% 115%, rgba(251, 146, 60, .55), rgba(245, 158, 11, .12) 45%, transparent 70%),
+    radial-gradient(70% 55% at 0% 0%, rgba(20, 184, 166, .35), transparent 65%),
+    radial-gradient(60% 50% at 85% 10%, rgba(99, 102, 241, .35), transparent 70%),
+    linear-gradient(165deg, #0b1533 0%, #13254d 55%, #1e2f5c 100%);
 }
-.rme-hero-stars {
-  background-image:
-    radial-gradient(rgba(255, 255, 255, .55) 1px, transparent 1.6px),
-    radial-gradient(rgba(255, 255, 255, .3) 1px, transparent 1.4px);
-  background-size: 46px 46px, 29px 29px;
-  background-position: 0 0, 13px 17px;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .55) 45%, transparent 80%);
-  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, .55) 45%, transparent 80%);
+/* Halo doux qui remplace l'ancien ciel en pointillés. */
+.rme-hero-glow {
+  background: radial-gradient(40% 35% at 50% 0%, rgba(255, 255, 255, .14), transparent 70%);
 }
 @keyframes rme-spin { to { transform: rotate(360deg); } }
 .rme-zellige { animation: rme-spin 160s linear infinite; transform-origin: 50% 50%; }
