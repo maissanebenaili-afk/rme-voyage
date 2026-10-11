@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { decodeText, mergeNews, parseRss, safeUrl, NEWS_SOURCES, type NewsItem } from '@/lib/newsFeed';
+import { decodeText, mergeNews, parseRss, safeUrl, NEWS_SOURCES, NEWS_USER_AGENT, type NewsItem } from '@/lib/newsFeed';
 import { GET } from '@/app/api/news/route';
 
 const yabiladi = NEWS_SOURCES.find((s) => s.id === 'yabiladi')!;
@@ -82,6 +82,13 @@ describe('mélange des sources', () => {
 });
 
 describe('GET /api/news', () => {
+  // 11/10/2026 : un « ’ » dans le user-agent faisait échouer chaque fetch() en vrai
+  // (en-têtes HTTP en Latin-1 seulement), et la liste restait vide en ligne.
+  it('envoie des en-têtes que fetch() accepte vraiment', () => {
+    expect(() => new Headers({ 'user-agent': NEWS_USER_AGENT })).not.toThrow();
+    expect(NEWS_USER_AGENT).toMatch(/^[\x20-\x7e]+$/);
+  });
+
   const originalFetch = global.fetch;
   afterEach(() => {
     global.fetch = originalFetch;

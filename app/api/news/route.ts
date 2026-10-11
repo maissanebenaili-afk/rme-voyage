@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { NEWS_SOURCES, mergeNews, parseRss, type NewsItem, type NewsSource } from '@/lib/newsFeed';
+import { NEWS_SOURCES, NEWS_USER_AGENT, mergeNews, parseRss, type NewsItem, type NewsSource } from '@/lib/newsFeed';
 
 // Titres rafraîchis toutes les 15 minutes au plus : les médias ne sont pas
 // sollicités à chaque visite.
@@ -9,7 +9,8 @@ const FEED_TIMEOUT_MS = 6_000;
 
 async function fetchSource(source: NewsSource): Promise<NewsItem[]> {
   const res = await fetch(source.feedUrl, {
-    headers: { 'user-agent': 'RME-Voyage/1.0 (actualités, lien vers l’article)', accept: 'application/rss+xml, application/xml, text/xml' },
+    // En-têtes en ASCII seulement : un caractère accentué fait échouer fetch() avant tout envoi.
+    headers: { 'user-agent': NEWS_USER_AGENT, accept: 'application/rss+xml, application/xml, text/xml' },
     signal: AbortSignal.timeout(FEED_TIMEOUT_MS),
     next: { revalidate },
   });

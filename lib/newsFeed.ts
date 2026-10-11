@@ -20,6 +20,9 @@ export const NEWS_SOURCES: readonly NewsSource[] = [
   { id: 'telquel', name: 'TelQuel', feedUrl: 'https://telquel.ma/feed', host: 'telquel.ma' },
 ];
 
+/** ASCII seulement : un caractère accentué dans un en-tête fait échouer fetch(). */
+export const NEWS_USER_AGENT = 'RME-Voyage/1.0 (+https://rme-voyage.netlify.app; headlines link to the source article)';
+
 export type NewsItem = {
   title: string;
   url: string;
