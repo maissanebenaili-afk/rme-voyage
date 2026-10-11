@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { Language, translations, TranslationKey } from './i18n';
 import { homeText, type HomeText } from './homeI18n';
 
@@ -21,9 +22,13 @@ function isLanguage(value: unknown): value is Language {
   return typeof value === 'string' && (LANGS as readonly string[]).includes(value);
 }
 
+function htmlLanguage(lang: Language): string {
+  return lang === 'da' ? 'ary' : lang;
+}
+
 function applyToDocument(lang: Language) {
   try {
-    document.documentElement.lang = lang;
+    document.documentElement.lang = htmlLanguage(lang);
     document.documentElement.dir = lang === 'ar' || lang === 'da' ? 'rtl' : 'ltr';
   } catch {
     // ignore
@@ -31,11 +36,13 @@ function applyToDocument(lang: Language) {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isHome = pathname === '/' || pathname == null;
   const [lang, setLangState] = useState<Language>('fr');
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);
-    applyToDocument(newLang);
+    applyToDocument(isHome ? newLang : 'fr');
     try {
       localStorage.setItem(LANG_STORAGE_KEY, newLang);
     } catch {
@@ -43,7 +50,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Le choix enregistré prime ; sinon la langue du navigateur, si elle est proposée.
+  // La préférence est conservée, mais n'affecte le document que sur l'accueil,
+  // seule route dont le contenu est entièrement traduit dans les cinq langues.
   useEffect(() => {
     let initial: Language | null = null;
     try {
@@ -56,11 +64,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       const browserLang = typeof navigator !== 'undefined' ? navigator.language?.split('-')[0] : undefined;
       if (isLanguage(browserLang)) initial = browserLang;
     }
-    if (initial && initial !== 'fr') {
-      setLangState(initial);
-      applyToDocument(initial);
-    }
-  }, []);
+    const effective = isHome && initial ? initial : 'fr';
+    setLangState(initial ?? 'fr');
+    applyToDocument(effective);
+  }, [isHome, pathname]);
 
   const t = (key: TranslationKey) => translations[lang][key] || translations.fr[key] || key;
   const isRtl = lang === 'ar' || lang === 'da';
