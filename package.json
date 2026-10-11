@@ -14,7 +14,8 @@
     "store:check": "rm -rf .store-check-tmp && tsc --target ES2022 --module commonjs --moduleResolution node --types node --skipLibCheck --esModuleInterop --outDir .store-check-tmp scripts/store-check.ts && node .store-check-tmp/store-check.js; code=$?; rm -rf .store-check-tmp; exit $code",
     "cap:build": "next build && npx cap sync",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "forge": "node scripts/forge/forge.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^7.1.0",

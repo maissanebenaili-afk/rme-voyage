@@ -1,0 +1,409 @@
+{
+  "label": "baseline-production",
+  "base": "https://rme-voyage.netlify.app",
+  "at": "2026-10-04T13:42:18.975Z",
+  "pass": 17,
+  "fail": 28,
+  "skipped": 0,
+  "families": {
+    "truth": {
+      "PASS": 4,
+      "FAIL": 9,
+      "SKIPPED": 0
+    },
+    "action": {
+      "PASS": 1,
+      "FAIL": 6,
+      "SKIPPED": 0
+    },
+    "function": {
+      "PASS": 11,
+      "FAIL": 3,
+      "SKIPPED": 0
+    },
+    "ux": {
+      "PASS": 1,
+      "FAIL": 5,
+      "SKIPPED": 0
+    },
+    "commercial": {
+      "PASS": 0,
+      "FAIL": 5,
+      "SKIPPED": 0
+    }
+  },
+  "results": [
+    {
+      "id": "H01",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "absent : /20[  ,.]?000/",
+        "réponse générée par l'IA (groq) sur un sujet où seule une source réelle est permise"
+      ],
+      "source": "groq"
+    },
+    {
+      "id": "H02",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "absent : /100[  ,.]?000/"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H03",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /11-12/"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H04",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /Grimaldi/",
+        "affirmation interdite (Nador is served by GNV, not Grimaldi (2026-10-04))"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H05",
+      "family": "truth",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H06",
+      "family": "action",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /Météo/",
+        "interdit présent : /°C/"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H07",
+      "family": "action",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /MAD/l/"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H08",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /\\+33/",
+        "réponse générée par l'IA (groq) sur un sujet où seule une source réelle est permise"
+      ],
+      "source": "groq"
+    },
+    {
+      "id": "H09",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "requête impossible : fetch failed"
+      ]
+    },
+    {
+      "id": "H10",
+      "family": "action",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H11",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H12",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H13",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H14",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H15",
+      "family": "action",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /^Il est actuellement/"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H16",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H17",
+      "family": "action",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /°C/"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H18",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "réponse générée par l'IA (groq) sur un sujet où seule une source réelle est permise"
+      ],
+      "source": "groq"
+    },
+    {
+      "id": "H19",
+      "family": "truth",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "groq"
+    },
+    {
+      "id": "H20",
+      "family": "action",
+      "verdict": "FAIL",
+      "failures": [
+        "absent : /ville/"
+      ],
+      "source": "groq"
+    },
+    {
+      "id": "H21",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H22",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /FRS/",
+        "affirmation interdite (Nador is served by GNV, not Grimaldi (2026-10-04))"
+      ],
+      "source": "local"
+    },
+    {
+      "id": "H23",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": [],
+      "source": "local"
+    },
+    {
+      "id": "H24",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "A01",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "A02",
+      "family": "ux",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /not found/"
+      ]
+    },
+    {
+      "id": "A03",
+      "family": "ux",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /Missing/"
+      ]
+    },
+    {
+      "id": "A04",
+      "family": "function",
+      "verdict": "FAIL",
+      "failures": [
+        "status 502, attendu 200"
+      ]
+    },
+    {
+      "id": "A05",
+      "family": "function",
+      "verdict": "FAIL",
+      "failures": [
+        "status 502, attendu 200"
+      ]
+    },
+    {
+      "id": "A06",
+      "family": "function",
+      "verdict": "FAIL",
+      "failures": [
+        "status 502, attendu 200"
+      ]
+    },
+    {
+      "id": "A07",
+      "family": "ux",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /not found/"
+      ]
+    },
+    {
+      "id": "A08",
+      "family": "truth",
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "A09",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "A10",
+      "family": "function",
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "P01",
+      "family": "truth",
+      "verdict": "FAIL",
+      "failures": [
+        "affirmation interdite (unsourced remittance volume (2026-10-04))"
+      ]
+    },
+    {
+      "id": "P02",
+      "family": "commercial",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /\\d+ ?€/",
+        "interdit présent : /10 ?%/"
+      ]
+    },
+    {
+      "id": "P03",
+      "family": "commercial",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /halal certifiée/"
+      ]
+    },
+    {
+      "id": "P04",
+      "family": "commercial",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /\\d[\\d  ]* ?DH/",
+        "interdit présent : /m²/"
+      ]
+    },
+    {
+      "id": "P05",
+      "family": "truth",
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "B01",
+      "family": "ux",
+      "verdict": "FAIL",
+      "failures": [
+        "affirmation interdite (unsourced remittance volume (2026-10-04))",
+        "affirmation interdite (no source found (2026-10-04))",
+        "erreur JavaScript : Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-mi"
+      ]
+    },
+    {
+      "id": "B02",
+      "family": "action",
+      "verdict": "FAIL",
+      "failures": [
+        "résultat hors écran (haut à 912 px sur 844)"
+      ],
+      "metrics": {
+        "msToAnswer": 2737,
+        "resultTop": 912
+      }
+    },
+    {
+      "id": "B03",
+      "family": "ux",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /not found/",
+        "résultat hors écran (haut à 980 px sur 844)"
+      ],
+      "metrics": {
+        "msToAnswer": 1563,
+        "resultTop": 980
+      }
+    },
+    {
+      "id": "B04",
+      "family": "commercial",
+      "verdict": "FAIL",
+      "failures": [
+        "médaille 🥇 attribuée sur des frais estimés"
+      ]
+    },
+    {
+      "id": "B05",
+      "family": "commercial",
+      "verdict": "FAIL",
+      "failures": [
+        "interdit présent : /Partenaire\\b(?! de RME)/",
+        "interdit présent : /Collection exclusive/"
+      ]
+    },
+    {
+      "id": "B06",
+      "family": "ux",
+      "verdict": "PASS",
+      "failures": [],
+      "metrics": {
+        "screens": 37,
+        "sections": 38,
+        "buttons": 79
+      }
+    }
+  ]
+}
