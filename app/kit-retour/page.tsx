@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import KitRetour from '@/components/KitRetour';
+import WhatsAppShare from '@/components/WhatsAppShare';
 
 export const metadata: Metadata = {
   title: 'Kit Retour au bled — vos papiers pour le Maroc',
@@ -19,6 +20,9 @@ export default function KitRetourPage() {
         <p className="mt-2 text-slate-700">
           4 questions, et vous avez la liste de vos papiers pour partir au Maroc. Chaque ligne indique sa source.
         </p>
+        <div className="mt-4">
+          <WhatsAppShare message="La liste des papiers pour partir au Maroc, en 4 questions :" path="/kit-retour" />
+        </div>
         <div className="mt-6">
           <KitRetour />
         </div>

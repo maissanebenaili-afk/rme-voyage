@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import OutilsPapiers from '@/components/OutilsPapiers';
+import WhatsAppShare from '@/components/WhatsAppShare';
 
 export const metadata: Metadata = {
   title: 'Papiers faciles — outils gratuits pour vos démarches',
@@ -27,6 +28,9 @@ export default function OutilsPapiersPage() {
           </Link>
           .
         </p>
+        <div className="mt-4">
+          <WhatsAppShare message="Des outils gratuits pour scanner, signer et envoyer ses papiers :" path="/outils-papiers" />
+        </div>
         <div className="mt-8">
           <OutilsPapiers />
         </div>
