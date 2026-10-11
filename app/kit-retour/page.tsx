@@ -22,7 +22,13 @@ export default function KitRetourPage() {
         <div className="mt-6">
           <KitRetour />
         </div>
-        <p className="mt-8 text-xs text-slate-600">
+        <p className="mt-8 text-base print:hidden">
+          Besoin de scanner, signer ou envoyer un papier ?{' '}
+          <Link href="/outils-papiers" className="font-bold text-blue-700 underline">
+            Outils gratuits
+          </Link>
+        </p>
+        <p className="mt-4 text-xs text-slate-600">
           Ce kit est une aide et ne remplace pas les sites officiels. Les règles peuvent changer : vérifiez les
           lignes marquées « à confirmer » avant le départ.
         </p>

@@ -37,9 +37,9 @@ const SOURCES = {
     label: 'Conseils aux voyageurs — Maroc (diplomatie.gouv.fr)',
     url: 'https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs/conseils-par-pays-destination/maroc/',
   },
-  douaneAst: {
-    label: 'Autorisation de sortie du territoire (douane.gouv.fr)',
-    url: 'https://www.douane.gouv.fr/fiche/autorisation-de-sortie-du-territoire-ast-pour-les-mineurs',
+  serviceAst: {
+    label: 'Autorisation de sortie du territoire (service-public.fr)',
+    url: 'https://www.service-public.fr/particuliers/vosdroits/F1359',
   },
   justiceAst: {
     label: 'AST pour les mineurs (justice.gouv.fr)',
@@ -96,7 +96,7 @@ export function buildKit(answers: KitAnswers): KitItem[] {
       title: 'Autorisation de sortie du territoire (formulaire Cerfa 15646*01)',
       detail:
         "Obligatoire pour un mineur résidant en France qui voyage sans ses parents. Formulaire à remplir en ligne, à imprimer et à signer par un parent, avec la copie de la pièce d'identité du parent signataire. Aucune démarche en mairie.",
-      source: SOURCES.douaneAst,
+      source: SOURCES.serviceAst,
       aVerifier: false,
     });
     items.push({

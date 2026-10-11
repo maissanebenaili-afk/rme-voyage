@@ -190,6 +190,8 @@ export default function HomeClient() {
                 <li><Link href="/trajet" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerRoutes}</Link></li>
                 <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDiscover}</Link></li>
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerShop}</Link></li>
+                <li><Link href="/kit-retour" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerKit}</Link></li>
+                <li><Link href="/outils-papiers" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerPapers}</Link></li>
                 <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDownload}</Link></li>
                 <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerSupport}</Link></li>
                 <li><Link href="/boutique#livre" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerBook}</Link></li>
