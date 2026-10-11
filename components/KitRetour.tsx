@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, ExternalLink, Printer } from "lucide-react";
+import { AlertTriangle, Check, ExternalLink, Printer, Volume2 } from "lucide-react";
+import { useSpeech } from "@/lib/hooks/useSpeech";
 import {
   buildKit,
   KIT_CATEGORY_LABELS,
@@ -77,6 +78,7 @@ export default function KitRetour() {
     vehiculeAuNomDuConducteur: true,
   });
   const [done, setDone] = useState<Set<string>>(new Set());
+  const { supported: canSpeak, speak } = useSpeech();
 
   const kit = useMemo(() => buildKit(answers), [answers]);
   const update = (patch: Partial<KitAnswers>) => setAnswers((prev) => ({ ...prev, ...patch }));
@@ -172,6 +174,16 @@ export default function KitRetour() {
                         <AlertTriangle size={14} className="mt-0.5 shrink-0" />
                         À confirmer auprès de la source officielle avant le départ.
                       </p>
+                    )}
+                    {canSpeak && (
+                      <button
+                        type="button"
+                        onClick={() => speak(`${item.title}. ${item.detail}`)}
+                        aria-label={`Écouter : ${item.title}`}
+                        className="mt-2 mr-3 inline-flex items-center gap-1 rounded-lg border border-slate-300 px-2 py-1 text-xs font-bold text-[#0f1f3d] print:hidden"
+                      >
+                        <Volume2 size={14} /> Écouter
+                      </button>
                     )}
                     <a
                       href={item.source.url}
