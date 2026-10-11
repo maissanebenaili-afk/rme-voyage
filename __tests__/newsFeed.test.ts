@@ -49,6 +49,14 @@ describe('lecture des flux RSS', () => {
     expect(decodeText('<![CDATA[<b>Titre</b> <script>x</script>]]>')).toBe('Titre x');
   });
 
+  // Alerte CodeQL du 11/10/2026 : décoder après avoir retiré les balises
+  // laissait passer « &lt;script&gt; » sous forme de vraie balise.
+  it('ne laisse aucune balise ressortir des entités encodées', () => {
+    expect(decodeText('&lt;script&gt;alert(1)&lt;/script&gt;Titre')).toBe('alert(1)Titre');
+    expect(decodeText('&#60;img src=x onerror=1&#62;Titre')).toBe('Titre');
+    expect(decodeText('<<script>script>x')).not.toMatch(/[<>]/);
+  });
+
   it("n'accepte que des liens https du bon domaine", () => {
     expect(safeUrl('http://fr.hespress.com/a', 'hespress.com')).toBeNull();
     expect(safeUrl('https://hespress.com.evil.io/a', 'hespress.com')).toBeNull();

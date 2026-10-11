@@ -39,14 +39,15 @@ const MAX_TITLE_CHARS = 200;
 const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
 
 export function decodeText(raw: string): string {
-  const text = raw.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
-  return text
-    .replace(/<[^>]*>/g, '')
+  // Entités décodées d'abord, balises retirées ensuite : dans l'autre ordre,
+  // « &lt;script&gt; » redevenait « <script> » après le nettoyage.
+  const decoded = raw
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
     .replace(/&#(\d+);/g, (_, n: string) => safeCodePoint(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, h: string) => safeCodePoint(parseInt(h, 16)))
-    .replace(/&([a-z]+);/gi, (m, name: string) => ENTITIES[name.toLowerCase()] ?? m)
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/&([a-z]+);/gi, (m, name: string) => ENTITIES[name.toLowerCase()] ?? m);
+  // Un titre n'a jamais besoin de chevrons : ceux qui restent après les balises partent aussi.
+  return decoded.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function safeCodePoint(code: number): string {
