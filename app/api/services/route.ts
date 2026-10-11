@@ -4,6 +4,7 @@ import {
   isServiceCategory,
   searchServices,
 } from "@/lib/servicesSearch";
+import { MAX_PLACE_CHARS } from "@/lib/serverGeocode";
 
 export type { ServiceCategory, ServicePoint } from "@/lib/servicesSearch";
 
@@ -14,6 +15,9 @@ export async function GET(request: Request) {
 
   if (!place) {
     return Response.json({ error: "Missing place" }, { status: 400 });
+  }
+  if (place.length > MAX_PLACE_CHARS) {
+    return Response.json({ error: "Place too long" }, { status: 400 });
   }
   if (!isServiceCategory(category)) {
     return Response.json(

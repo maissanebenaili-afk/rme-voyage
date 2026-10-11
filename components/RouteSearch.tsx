@@ -23,6 +23,7 @@ import {
 import { publishRoute, toComputedRoute, useComputedRoute } from "@/lib/routeContext";
 import { parseRouteLegs } from "@/lib/routeLegs";
 import { trackFunnelEvent } from "@/lib/partnerTracking";
+import { useHomeText } from "@/lib/LanguageContext";
 
 function ferryLabel(legs: unknown): string | undefined {
   const ferries = (parseRouteLegs(legs) ?? []).filter((leg) => leg.kind === "ferry");
@@ -34,6 +35,7 @@ function ferryLabel(legs: unknown): string | undefined {
 type RouteCalcStatus = "idle" | "loading" | "error" | "ready";
 
 export default function RouteSearch({ header, title, belowHero }: { header?: ReactNode; title?: ReactNode; belowHero?: ReactNode } = {}) {
+  const h = useHomeText();
   const [origin, setOrigin] = useState("Paris, France");
   const [destination, setDestination] = useState("Tanger, Maroc");
   const [date, setDate] = useState("");
@@ -198,14 +200,14 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
   const destinationFlag = flagFor(destination);
   const showsFerry = transportMode === "car-ferry" || (transportMode === "car" && crossesToMorocco(origin, destination));
   const modes = [
-    { value: "car", label: "Voiture", Icon: Car },
-    { value: "car-ferry", label: "Voiture + ferry", Icon: Ship },
-    { value: "flight", label: "Avion", Icon: Plane },
+    { value: "car", label: h.car, Icon: Car },
+    { value: "car-ferry", label: h.carFerry, Icon: Ship },
+    { value: "flight", label: h.flight, Icon: Plane },
   ] as const;
 
   return (
     <>
-      <section aria-label="Votre trajet" className="rme-hero relative isolate text-white">
+      <section aria-label={h.tripAria} className="rme-hero relative isolate text-white">
         <HeroArt />
         {header && <div className="relative">{header}</div>}
         <div className="relative mx-auto max-w-2xl px-5 pb-10 pt-2 sm:pb-14 sm:pt-8">
@@ -216,9 +218,9 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
               <span aria-hidden="true" className="mb-2 block h-7 text-2xl leading-7">{originFlag ?? ""}</span>
               <CityAutocomplete
                 variant="journey"
-                label="Départ"
+                label={h.departure}
                 value={origin}
-                placeholder="Ville de départ"
+                placeholder={h.departurePlaceholder}
                 onChange={(v) => {
                   setOrigin(v);
                   setOriginCity(null);
@@ -235,9 +237,9 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
               <CityAutocomplete
                 variant="journey"
                 align="right"
-                label="Destination"
+                label={h.destination}
                 value={destination}
-                placeholder="Ville d'arrivée"
+                placeholder={h.destinationPlaceholder}
                 onChange={(v) => {
                   setDestination(v);
                   setDestinationCity(null);
@@ -256,10 +258,10 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="min-h-11 min-w-0 bg-transparent text-sm font-semibold text-white [color-scheme:dark] focus:outline-none"
-                aria-label="Date"
+                aria-label={h.date}
               />
             </label>
-            <div role="radiogroup" aria-label="Mode de transport" className="flex rounded-full bg-white/10 p-1 ring-1 ring-white/15">
+            <div role="radiogroup" aria-label={h.transportMode} className="flex rounded-full bg-white/10 p-1 ring-1 ring-white/15">
               {modes.map(({ value, label, Icon }) => {
                 const active = transportMode === value;
                 return (
@@ -294,7 +296,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
           <div ref={resultRef} className="scroll-mt-4">
             {routeStatus === "loading" && (
               <p role="status" className="mt-6 flex items-center gap-2 text-sm font-semibold text-white/80">
-                <span aria-hidden="true" className="h-2 w-2 animate-ping rounded-full bg-[#f59e0b]" /> Calcul de votre voyage…
+                <span aria-hidden="true" className="h-2 w-2 animate-ping rounded-full bg-[#f59e0b]" /> {h.computingTrip}
               </p>
             )}
             <JourneySummary />
@@ -303,7 +305,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
           {/* Une seule action principale. L'API compose route + traversée pour l'Europe ↔ Maroc. */}
           {transportMode === "flight" ? (
             <a href="#ferry" className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl gloss-amber bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d]">
-              Comparer les vols <ArrowRight size={18} aria-hidden="true" />
+              {h.compareFlights} <ArrowRight size={18} aria-hidden="true" />
             </a>
           ) : (
             validation.valid && !route && (
@@ -313,7 +315,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
                 disabled={routeStatus === "loading"}
                 className="mt-6 inline-flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl gloss-amber bg-[#f59e0b] px-5 text-base font-extrabold text-[#0f1f3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {routeStatus === "loading" ? "Calcul en cours…" : <>Continuer mon voyage <ArrowRight size={18} aria-hidden="true" /></>}
+                {routeStatus === "loading" ? h.computing : <>{h.continueTrip} <ArrowRight size={18} aria-hidden="true" /></>}
               </button>
             )
           )}
@@ -327,7 +329,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
                 className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white"
               >
                 <ExternalLink size={15} aria-hidden="true" />
-                Ouvrir dans Google Maps
+                {h.openMaps}
               </a>
             )}
             <button
@@ -337,19 +339,19 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
               className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Share2 size={15} aria-hidden="true" />
-              Partager mon trajet
+              {h.share}
             </button>
           </div>
           <div role="status" className="text-center text-sm font-semibold text-[#fcd34d]">
-            {shareState.status === "shared" && "Partage effectué !"}
-            {shareState.status === "copied" && "Lien copié !"}
-            {shareState.status === "cancelled" && <span className="text-white/60">Partage annulé.</span>}
+            {shareState.status === "shared" && h.shared}
+            {shareState.status === "copied" && h.copied}
+            {shareState.status === "cancelled" && <span className="text-white/60">{h.shareCancelled}</span>}
           </div>
 
           {shareState.status === "manual" && (
             <div className="mt-3">
               <label className="text-xs font-medium text-white/70" htmlFor="rme-share-link-fallback">
-                Copie automatique indisponible — copiez ce lien manuellement :
+                {h.shareManual}
               </label>
               <input
                 id="rme-share-link-fallback"
@@ -363,8 +365,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
           )}
 
           <p className="mt-1 text-center text-xs text-white/40">
-            Le lien contient les villes et, si renseignée, la date. Ne le partagez qu’avec les
-            personnes de votre choix.
+            {h.shareNote}
           </p>
         </div>
       </section>
@@ -376,8 +377,8 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
           <StepHeader
             id="la-route-title"
             step={1}
-            title="La route"
-            text={routeStatus === "idle" ? "Appuyez sur « Continuer mon voyage » pour tracer l’itinéraire." : "Le tracé calculé, étape par étape."}
+            title={h.routeTitle}
+            text={routeStatus === "idle" ? h.routeIdle : h.routeReady}
           />
           {routeStatus !== "idle" && (
             <>
@@ -392,7 +393,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
           )}
         </section>
         <section id="ferry" aria-labelledby="ferry-title" className="mt-12 scroll-mt-20">
-          <StepHeader id="ferry-title" step={2} title="Ferry et vols" text="Comparez les traversées et les vols chez les compagnies." />
+          <StepHeader id="ferry-title" step={2} title={h.ferryTitle} text={h.ferryText} />
           <BookingCards
             hideTitle
             origin={origin}

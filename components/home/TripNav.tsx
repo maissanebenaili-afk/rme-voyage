@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useHomeText } from '@/lib/LanguageContext';
+import type { HomeText } from '@/lib/homeI18n';
 
 export const TRIP_STEPS = [
-  { id: 'la-route', label: 'Route' },
-  { id: 'ferry', label: 'Ferry' },
-  { id: 'route', label: 'Coût' },
-  { id: 'preparer', label: 'Documents' },
-  { id: 'meteo', label: 'Météo' },
-  { id: 'services', label: 'À proximité' },
-] as const;
+  { id: 'la-route', label: 'Route', key: 'navRoute' },
+  { id: 'ferry', label: 'Ferry', key: 'navFerry' },
+  { id: 'route', label: 'Coût', key: 'navCost' },
+  { id: 'preparer', label: 'Documents', key: 'navDocs' },
+  { id: 'meteo', label: 'Météo', key: 'navWeather' },
+  { id: 'services', label: 'À proximité', key: 'navNearby' },
+] as const satisfies readonly { id: string; label: string; key: keyof HomeText }[];
 
 /**
  * « Votre trajet » : les étapes du voyage, collées en haut pendant qu'on
@@ -17,6 +19,7 @@ export const TRIP_STEPS = [
  * JavaScript, la navigation fonctionne quand même.
  */
 export default function TripNav() {
+  const h = useHomeText();
   const [active, setActive] = useState<string | null>(null);
   const listRef = useRef<HTMLOListElement | null>(null);
 
@@ -45,9 +48,9 @@ export default function TripNav() {
   }, [active]);
 
   return (
-    <nav aria-label="Votre trajet" className="sticky top-0 z-30 border-b border-black/5 bg-[#f6f3ec]/85 backdrop-blur-md">
+    <nav aria-label={h.tripAria} className="sticky top-0 z-30 border-b border-black/5 bg-[#f6f3ec]/85 backdrop-blur-md">
       <ol ref={listRef} className="mx-auto flex max-w-2xl gap-1.5 overflow-x-auto px-5 py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {TRIP_STEPS.map(({ id, label }) => {
+        {TRIP_STEPS.map(({ id, key }) => {
           const on = active === id;
           return (
             <li key={id} className="shrink-0">
@@ -57,7 +60,7 @@ export default function TripNav() {
                 aria-current={on ? 'location' : undefined}
                 className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-bold transition ${on ? 'bg-[#0f1f3d] text-white' : 'text-slate-600 hover:bg-black/5 hover:text-[#0f1f3d]'}`}
               >
-                {label}
+                {h[key]}
               </a>
             </li>
           );

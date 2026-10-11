@@ -6,12 +6,13 @@ import PWAInstall from '@/components/PWAInstall';
 import Accessibility from '@/components/Accessibility';
 import RegisterSW from './register-sw';
 import PageViewBeacon from '@/components/PageViewBeacon';
+import { LanguageProvider } from '@/lib/LanguageContext';
 import { siteUrl } from '@/lib/siteUrl';
 import { siteVerification } from '@/lib/siteVerification';
 import { NETLIFY_HEAD_COMMENT_CLEANUP } from '@/lib/netlifyHeadComment';
 
 // Fallback fonts (kept for RTL Arabic + safety net); primary display/body
-// identity fonts (Boska + General Sans) load via Fontshare <link> below.
+// identity font (General Sans) load via Fontshare <link> below.
 // Seule la police principale est préchargée. Inter n'est utilisée qu'à un
 // endroit et Amiri seulement pour le texte arabe : les précharger sur chaque
 // page coûtait ~250 Ko de téléchargement inutile. Elles restent disponibles
@@ -98,7 +99,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="" />
         <link
-          href="https://api.fontshare.com/v2/css?f[]=boska@500,600,700&f[]=general-sans@400,500,600,700&display=swap"
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
           rel="stylesheet"
         />
         <script
@@ -132,13 +133,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             global : il annonçait Accueil > Guide > Découvrir partout. */}
       </head>
       <body>
-        <a className="skip-link" href="#main-content">Aller au contenu principal</a>
-        {children}
-        <ServiceWorkerRegistration />
-        <RegisterSW />
-        <PWAInstall />
-        <Accessibility />
-        <PageViewBeacon />
+        <LanguageProvider>
+          <a className="skip-link" href="#main-content">Aller au contenu principal</a>
+          {children}
+          <ServiceWorkerRegistration />
+          <RegisterSW />
+          <PWAInstall />
+          <Accessibility />
+          <PageViewBeacon />
+        </LanguageProvider>
       </body>
     </html>
   );

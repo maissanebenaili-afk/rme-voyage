@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Ship, Plane, ExternalLink } from "lucide-react";
 import { comparisonFallbacks, verifiedPartnerUrl, type BookingType } from "@/lib/bookingLinks";
 import { trackPartnerClick } from "@/lib/partnerTracking";
+import { useHomeText } from '@/lib/LanguageContext';
 
 type Props = {
   origin: string;
@@ -40,6 +41,7 @@ async function lookupPartner(type: BookingType, trip: Trip, signal: AbortSignal)
 }
 
 export default function BookingCards({ origin, destination, date, crossing, hideTitle = false }: Props) {
+  const h = useHomeText();
   const [partners, setPartners] = useState<Partial<Record<BookingType, ConfiguredPartner>>>({});
   // The ferry link comes from the dashboard and does not depend on the trip.
   const tripAtMount = useRef<Trip>({ origin, destination, date });
@@ -87,31 +89,17 @@ export default function BookingCards({ origin, destination, date, crossing, hide
 
   return (
     <section className="depth-card rounded-3xl border border-sable-300 bg-white p-6" aria-labelledby="booking-title">
-      <h2 id="booking-title" className={hideTitle ? "sr-only" : "font-display text-xl font-semibold text-zellige-800"}>Comparer les traversées et les vols</h2>
+      <h2 id="booking-title" className={hideTitle ? "sr-only" : "font-display text-xl font-semibold text-zellige-800"}>{h.bookingTitle}</h2>
       <p className="mt-2 break-words text-sm text-sable-700">
-        {origin || 'Votre départ'} → {destination || 'Votre destination'}{date ? ` · ${date}` : ''}
+        {origin || h.yourDeparture} → {destination || h.yourDestination}{date ? ` · ${date}` : ''}
       </p>
       {crossing && (
         <p className="mt-3 rounded-xl bg-zellige-50 px-4 py-3 text-sm text-zellige-800">
-          D’après l’itinéraire calculé, la traversée la plus courte est <strong>{crossing}</strong>. Cherchez
-          cette liaison chez les compagnies, et comparez-la aux autres ports : le prix et les horaires du jour
-          peuvent rendre une traversée plus longue préférable.
+          {h.crossingBefore}<strong>{crossing}</strong>{h.crossingAfter}
         </p>
       )}
       <p className="mt-2 text-sm leading-6 text-sable-700">
-        {flightPrefilled ? (
-          <>
-            Les comparateurs s’ouvrent dans un nouvel onglet. Le comparateur de vols s’ouvre sur ce trajet
-            déjà rempli : vérifiez-y la date et le nombre de voyageurs. Pour la traversée, renseignez votre
-            trajet, vos dates et vos voyageurs.
-          </>
-        ) : (
-          <>
-            Les comparateurs s’ouvrent dans un nouvel onglet. Renseignez-y votre trajet, vos dates
-            et vos voyageurs pour obtenir les disponibilités et les prix : nous ne pré-remplissons pas ces
-            formulaires, faute de format de lien documenté par les partenaires.
-          </>
-        )}
+        {flightPrefilled ? h.bookingPrefilled : h.bookingManual}
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {(['ferry', 'flight'] as const).map((type) => {
@@ -131,11 +119,11 @@ export default function BookingCards({ origin, destination, date, crossing, hide
               className={`gloss-dark flex min-h-24 items-start gap-3 rounded-2xl p-4 font-semibold text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zellige-700 ${type === 'ferry' ? 'bg-zellige-700 hover:bg-zellige-800' : 'bg-terracotta-600 hover:bg-terracotta-700'}`}>
               <Icon size={22} className="mt-1 shrink-0" aria-hidden />
               <span className="min-w-0 flex-1">
-                {type === 'ferry' ? 'Comparer les ferries' : 'Comparer les vols'}
+                {type === 'ferry' ? h.compareFerries : h.compareFlights}
                 <span className="mt-2 block text-xs font-normal">
                   {partner
-                    ? (partner.prefilled ? 'Lien affilié · trajet pré-rempli' : 'Lien affilié configuré')
-                    : `${type === 'ferry' ? 'Direct Ferries' : 'Skyscanner'} · lien non affilié`}
+                    ? (partner.prefilled ? h.affiliatePrefilled : h.affiliateConfigured)
+                    : `${type === 'ferry' ? 'Direct Ferries' : 'Skyscanner'} · ${h.notAffiliated}`}
                 </span>
               </span>
               <ExternalLink size={16} className="mt-1 shrink-0" aria-hidden />
@@ -144,8 +132,7 @@ export default function BookingCards({ origin, destination, date, crossing, hide
         })}
       </div>
       <p className="mt-4 text-xs leading-5 text-sable-700">
-        Un lien affilié peut rémunérer RME Voyage si les conditions du partenaire sont remplies.
-        Aucun tarif ni aucune réservation n’est garanti par l’application.
+        {h.affiliateDisclosure}
       </p>
     </section>
   );

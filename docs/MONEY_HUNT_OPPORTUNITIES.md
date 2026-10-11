@@ -561,3 +561,128 @@ Priority: P1
 No revenue is counted until a partner accepts RME, a tracked link is active, a qualifying customer action occurs, and the resulting commission is visible/validated.
 
 Repository note: this section is append-only. No product code, secret, payment, account or deployment was changed by Money Hunt.
+
+
+---
+
+# MONEY HUNT 360° — vérification 2026-10-09
+
+## P1 — Welcome Pickups Ambassador : barème officiel désormais vérifié
+
+Type : apport d'affaires B2B pour transferts aéroport, hôtels et locations de vacances.  
+Adéquation RME : forte pour l'offre de transfert et les partenaires d'hébergement du corridor Europe ↔ Maroc, sous réserve des villes effectivement desservies.  
+Statut : PROGRAMME ET BARÈME VÉRIFIÉS sur les pages officielles consultées le 2026-10-09 ; inscription et éligibilité du compte RME/Tarek à compléter.
+
+Barème officiel :
+- Hôtels et locations saisonnières Cluster A : 100 € après le premier transfert achevé ; 200 € supplémentaires lorsque le partenaire atteint cinq transferts cumulés ; puis 1 € par transfert achevé à partir du sixième, pendant trois ans à compter du premier transfert.
+- Hôtels et locations saisonnières Cluster B : 50 € après le premier transfert ; 100 € supplémentaires au cinquième ; puis 1 € par transfert achevé à partir du sixième, pendant trois ans.
+- Agence de voyage : 30 € après le premier transfert achevé.
+- Compte entreprise : 20 € après le premier transfert achevé.
+- Les catégories et clusters sont attribués par Welcome Pickups ; ne pas présumer qu'un établissement relèvera du Cluster A.
+- Seuil de paiement annoncé par le prestataire de paiement : 10 €. Des délais de revue et des reprises de commissions peuvent s'appliquer.
+- Le modèle est un apport de partenaires B2B : il ne rémunère pas simplement les clics voyageurs.
+
+Scénarios purement illustratifs, non prévisionnels :
+- 3 partenaires hôteliers Cluster B ayant chacun atteint leur premier transfert : 150 € de primes initiales potentielles.
+- Si ces trois partenaires atteignent chacun cinq transferts : 450 € cumulés de primes initiales et de cinquième transfert (150 € + 300 €), sous réserve de qualification et de validation.
+- Chaque transfert achevé à partir du sixième génère ensuite 1 € pour les hôtels/locations admissibles, pendant la fenêtre de trois ans.
+Aucun de ces montants n'est acquis avant attribution des partenaires et réalisation des transferts éligibles.
+
+Actions :
+1. Vérifier les destinations Welcome Pickups couvertes et l'admissibilité du canal RME.
+2. S'inscrire au programme et récupérer le lien personnel de recommandation ; saisir les informations fiscales/paiement uniquement dans le compte officiel.
+3. Préparer une liste initiale de 5 hébergements réels dans les seules destinations couvertes, avec coordonnées professionnelles publiques et preuve de pertinence.
+4. Obtenir l'accord de Tarek avant tout contact externe.
+5. Compter uniquement les commissions visibles dans le tableau de bord après les transferts requis.
+
+Sources officielles vérifiées 2026-10-09 :
+- https://help.partners.welcomepickups.com/en/help-center/ambassador-program/how-commissions-work
+- https://help.partners.welcomepickups.com/en/help-center/ambassador-program/who-to-refer
+- https://help.partners.welcomepickups.com/en/help-center/ambassador-program/getting-paid
+- https://partner.welcomepickups.com/ambassador-program/
+
+## P1 — Direct Ferries : programme confirmé, rendement net RME encore INCONNU
+
+Le programme officiel Direct Ferries annonce 50 % de la commission qu'il reçoit de la compagnie de ferry pour une réservation confirmée dont le ferry a navigué. Il fournit liens suivis, widget et API ; le canal Connect comprend plus de 4 000 itinéraires et 230 opérateurs.
+
+Statut : OFFRE OFFICIELLE VÉRIFIÉE ; compte, conditions propres à RME et lien suivi ACTIFS NON CONFIRMÉS.  
+Important : 50 % porte sur la commission reçue par Direct Ferries, pas sur le prix du billet. Ne pas estimer les euros sans connaître la commission sous-jacente et les réservations attribuées.  
+Prochaine action : candidature/approbation, obtenir le lien réel, vérifier un clic de production et suivre les réservations confirmées.
+
+Source officielle vérifiée 2026-10-09 :
+- https://fca.directferries.com/affiliation.htm
+
+## P2 — Ferryhopper : offre confirmée, taux individuel UNVERIFIED
+
+Ferryhopper propose liens affiliés, bannières et widgets. Les conditions officielles indiquent que la commission est calculée comme un pourcentage du prix total des réservations éligibles, selon le taux applicable au compte ou un accord distinct ; paiements mensuels, seuil de 100 €, exclusions en cas d'annulation/remboursement ou de trafic non conforme.
+
+Statut : OFFRE ET CONDITIONS GÉNÉRALES VÉRIFIÉES ; taux RME et acceptation UNVERIFIED.  
+Prochaine action : candidater et demander le taux écrit, la durée d'attribution, les itinéraires admissibles et le calendrier de paiement avant d'envisager une intégration.
+
+Sources officielles vérifiées 2026-10-09 :
+- https://partners.ferryhopper.com/affiliates
+- https://partners.ferryhopper.com/affiliate-program-terms-conditions
+
+## Filtre économique — mise à jour 2026-10-09
+
+| Opportunité | Revenu / économie | Vitesse | Coût initial | Récurrence | Dépendance | Preuve / statut |
+|---|---|---|---|---|---|---|
+| Welcome Pickups Ambassador | 20–100 € par premier transfert selon type de partenaire ; bonus 50–200 € au cinquième transfert pour hôtels/locations ; ensuite 1 €/transfert admissible | Potentiellement rapide après inscription et transfert réel | Pas de frais annoncés sur les pages consultées ; coûts de prospection non chiffrés | Oui, jusqu'à 3 ans pour transferts éligibles | Forte (destination, classification et activité du partenaire) | Barème officiel vérifié ; revenus RME nuls à ce jour |
+| Direct Ferries | 50 % de la commission perçue par Direct Ferries ; montant en € inconnu | Après approbation et traversée effectuée | Pas de frais d'entrée indiqués sur la page publique | Par réservation éligible | Forte | Offre vérifiée ; compte/lien RME non confirmés |
+| Ferryhopper | Pourcentage du prix total des réservations éligibles ; taux individuel inconnu | Après candidature et réservation éligible | Pas de frais indiqués dans les conditions publiques consultées | Par réservation éligible | Forte | Conditions générales officielles vérifiées ; taux RME UNVERIFIED |
+
+## Actions humaines requises
+
+- Tarek : valider explicitement tout contact B2B externe ; procéder lui-même à toute inscription exigeant identité, compte, données fiscales ou paiement.
+- Assistant/opérateur technique autorisé : à réception des liens suivis, vérifier le clic et les événements dans le parcours RME sans publier ni modifier la production sans autorisation.
+- Aucune candidature, création de compte, communication externe ou intégration produit n'est effectuée par cet addendum.
+
+Règle comptable inchangée : 0 € de revenus reconnus tant qu'une commission RME n'est pas visible et validée par le partenaire.
+
+
+---
+
+# MONEY HUNT 360° — lot d'exécution B2B préparé 2026-10-09
+
+## Décision opérationnelle
+
+Démarrer par un micro-lot de cinq hébergements à Casablanca et Marrakech, deux destinations présentes dans le catalogue public de Welcome Pickups. Ce sont des PROSPECTS À QUALIFIER, pas des partenaires acquis ni des clients Welcome Pickups confirmés. Aucun message n'a été envoyé. Avant contact, confirmer que le programme Ambassador accepte les apporteurs RME et que les hébergements ciblés peuvent être attribués au compte.
+
+## Lot pilote — cinq établissements avec coordonnées professionnelles publiques
+
+| Prospect | Ville | Signal vérifiable | Contact professionnel public | Source officielle / preuve | Priorité |
+|---|---|---|---|---|---|
+| Le Casablanca Hôtel | Casablanca | 68 chambres/suites, restaurants, spa et espaces événementiels ; potentiel de clientèle entrante et transferts | resa@lecasablanca-hotel.com ; +212 5226-49797 | https://www.lecasablanca-hotel.com/fr/ | P1 à qualifier |
+| Mövenpick Hotel Casablanca | Casablanca | Hôtel de centre-ville ; indique que les transferts peuvent être organisés sur demande | hotel.casablanca.reservation@movenpick.com ; +212 522 48 80 00 | https://movenpick.accor.com/fr/africa/morocco/casablanca/hotel-casablanca.html | P1 à qualifier |
+| L’Hôtel Marrakech | Marrakech | Hébergement dans la médina ; coordonnées de contact et réservation publiques | contact@l-hotelmarrakech.com ; +212 524 387 880 | https://www.l-hotelmarrakech.com/contact/ | P1 à qualifier |
+| Mövenpick Hotel Mansour Eddahbi Marrakech | Marrakech | Hôtel à Hivernage, à environ 4 km de l’aéroport ; transferts privés organisables sur demande | hotel.marrakech.reservations@movenpick.com ; +212 524 339 100 | https://movenpick.accor.com/fr/africa/morocco/marrakech/marrakech/location.html | P1 à qualifier |
+| Adam Park Marrakech Hotel & Spa | Marrakech | Hôtel dans la zone touristique de l’Agdal ; contacts réservation et e-commerce publiés | resa@adamparkmarrakech.com ; ecommerce@adamparkmarrakech.com ; +212 524 35 11 00 | https://www.adamparkmarrakech.com/en/ | P2 à qualifier |
+
+## Angle commercial à tester
+
+Proposition de valeur à préparer, sans promesse de volume : « RME aide les voyageurs Europe ↔ Maroc à préparer leur trajet et à trouver les services utiles à l'arrivée. Nous souhaitons tester si un parcours d'information sur les transferts peut vous apporter des demandes qualifiées. Nous proposons un pilote limité, mesuré et sans exclusivité ; aucune estimation de réservations n'est garantie. »
+
+Le programme Welcome Pickups rémunère l'apport de partenaires qui génèrent des transferts effectivement réalisés, selon sa classification et ses conditions. Il ne faut pas présenter l'offre comme une commission garantie pour l'hôtel, ni prétendre que ces cinq établissements ont déjà accepté.
+
+## Conditions avant envoi
+
+1. Vérifier l'inscription et le barème Ambassador, l'attribution des partenaires, la couverture effective de chaque destination et les règles de conformité.
+2. Tarek valide explicitement le texte exact et les destinataires avant tout contact externe.
+3. Une fois le contact autorisé, envoyer un lot limité et enregistrer la date, le destinataire professionnel, le statut de réponse et la prochaine action.
+4. Ne compter aucun revenu avant validation du partenaire, transfert achevé et commission visible dans le compte.
+
+## Filtre économique — lot B2B
+
+| Élément | Évaluation |
+|---|---|
+| Revenu potentiel | Barème Welcome Pickups publié, mais revenu RME actuel = 0 € ; attribution et activité réelles inconnues |
+| Économie potentielle | Aucune économie directe démontrée |
+| Financement potentiel | Aucun |
+| Vitesse | Quelques jours pour qualifier le canal ; délai de conversion inconnu |
+| Coût initial | Aucun frais de candidature annoncé ; temps de qualification à limiter |
+| Effort humain | Faible si le pilote est limité à cinq contacts |
+| Récurrence | Possible pour les transferts de partenaires hôteliers admissibles, dans la fenêtre prévue au programme |
+| Dépendance | Forte : approbation, destination, classification, attribution et transferts réalisés |
+| Niveau de preuve | Coordonnées et services vérifiés sur sites officiels ; aucune réponse commerciale ni revenu constaté |
+
+Aucun contact externe, candidature, compte, paiement, intégration de code ou déploiement n'a été effectué par cette préparation.

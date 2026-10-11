@@ -68,6 +68,8 @@ function configuredAffiliateUrl(value: string | undefined): string | null {
   }
 }
 
+const CURRENCY_CODE = /^[A-Za-z]{3}$/;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 
@@ -75,9 +77,15 @@ export async function GET(request: NextRequest) {
   const from = searchParams.get('from') || 'EUR';
   const to = searchParams.get('to') || 'MAD';
 
-  const amount = rawAmount ? parseFloat(rawAmount) : 500;
+  // Number() et non parseFloat() : « 500abc » est refusé au lieu de devenir 500.
+  const amount = rawAmount ? Number(rawAmount) : 500;
   if (!isFinite(amount) || amount <= 0 || amount > 1_000_000) {
     return Response.json({ error: 'Invalid amount' }, { status: 400 });
+  }
+  // Un code ISO à 3 lettres et rien d'autre : la devise sert de chemin dans
+  // l'URL du fournisseur de taux et de clé de cache.
+  if (!CURRENCY_CODE.test(from) || !CURRENCY_CODE.test(to)) {
+    return Response.json({ error: 'Invalid currency' }, { status: 400 });
   }
 
   // Fetch mid-market rate — fawaz-ahmed currency API, free, no key, supports MAD

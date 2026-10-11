@@ -1,4 +1,4 @@
-import { GeocodeUnavailable, geocodePlace, type LatLon } from "@/lib/serverGeocode";
+import { GeocodeUnavailable, MAX_PLACE_CHARS, geocodePlace, type LatLon } from "@/lib/serverGeocode";
 import { overnightStops as stopsOnRoute, type OvernightStop } from "@/lib/overnight";
 import stopoverHubs from "@/lib/data/stopoverHubs.json";
 import { countryNear, splitByCountry } from "@/lib/countryLookup";
@@ -312,6 +312,9 @@ export async function GET(request: Request) {
 
   if (!origin || !destination) {
     return Response.json({ error: "Indiquez une ville de départ et une destination." }, { status: 400 });
+  }
+  if (origin.length > MAX_PLACE_CHARS || destination.length > MAX_PLACE_CHARS) {
+    return Response.json({ error: "Nom de ville trop long." }, { status: 400 });
   }
 
   let originPoint: LatLon | null;
