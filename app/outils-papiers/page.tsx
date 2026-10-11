@@ -28,6 +28,13 @@ export default function OutilsPapiersPage() {
           </Link>
           .
         </p>
+        <p className="mt-2 text-base">
+          Prêter sa voiture ?{' '}
+          <Link href="/modeles" className="font-bold text-blue-700 underline">
+            Procuration prête à remplir
+          </Link>
+          .
+        </p>
         <div className="mt-4">
           <WhatsAppShare message="Des outils gratuits pour scanner, signer et envoyer ses papiers :" path="/outils-papiers" />
         </div>

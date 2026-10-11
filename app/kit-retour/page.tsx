@@ -31,6 +31,10 @@ export default function KitRetourPage() {
           <Link href="/outils-papiers" className="font-bold text-blue-700 underline">
             Outils gratuits
           </Link>
+          {' '}·{' '}
+          <Link href="/modeles" className="font-bold text-blue-700 underline">
+            Procuration pour la voiture
+          </Link>
         </p>
         <p className="mt-4 text-xs text-slate-600">
           Ce kit est une aide et ne remplace pas les sites officiels. Les règles peuvent changer : vérifiez les
