@@ -67,7 +67,10 @@ describe("changer de langue", () => {
     for (const [lang, texts] of Object.entries(HOME_TEXT)) {
       expect(Object.keys(texts).sort()).toEqual([...keys].sort());
       for (const key of keys) {
-        expect([lang, key, (texts as Record<string, string>)[key].trim().length > 0]).toEqual([lang, key, true]);
+        const value = (texts as Record<string, unknown>)[key];
+        // Les textes à trous (durées, montants) sont des fonctions : on teste ce qu'elles écrivent.
+        const sample = typeof value === "function" ? String(value("10 h", "car")) : String(value);
+        expect([lang, key, sample.trim().length > 0 && !sample.includes("undefined")]).toEqual([lang, key, true]);
       }
     }
   });
