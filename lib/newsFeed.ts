@@ -46,8 +46,15 @@ export function decodeText(raw: string): string {
     .replace(/&#(\d+);/g, (_, n: string) => safeCodePoint(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, h: string) => safeCodePoint(parseInt(h, 16)))
     .replace(/&([a-z]+);/gi, (m, name: string) => ENTITIES[name.toLowerCase()] ?? m);
-  // Un titre n'a jamais besoin de chevrons : ceux qui restent après les balises partent aussi.
-  return decoded.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
+  // Balises retirées jusqu'à ce qu'il n'en reste plus (« <<b>script> » ne se
+  // recompose pas), puis tout chevron restant : un titre n'en a jamais besoin.
+  let text = decoded;
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(/<[^<>]*>/g, '');
+  } while (text !== previous);
+  return text.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function safeCodePoint(code: number): string {
