@@ -62,10 +62,13 @@ describe("changer de langue", () => {
   });
 
   it("ne confond pas le danois du navigateur avec la darija", async () => {
+    // Aucune préférence enregistrée : un navigateur danois ne force pas le code interne darija.
+    localStorage.removeItem(LANG_STORAGE_KEY);
     jest.spyOn(window.navigator, "language", "get").mockReturnValue("da-DK");
     render(<Page />);
     await waitFor(() => expect(document.documentElement.lang).toBe("fr"));
     expect(document.documentElement.dir).toBe("ltr");
+    expect(localStorage.getItem(LANG_STORAGE_KEY)).toBeNull();
   });
 
   it("réinitialise le document en français en quittant l'accueil non traduit", async () => {
