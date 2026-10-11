@@ -112,3 +112,51 @@ RME should deprioritize:
 Re-check Tariq, Trekna, Tanger Med Passenger Journey and new MRE travel products before every major positioning or store-listing change.
 
 Last checked: 2026-10-03.
+
+
+## 2026-10-05 evidence update — user friction, generalists, Marhaba
+
+This section deliberately does **not** repeat the direct-competitor inventory above. It adds observed user complaints, current generalist lessons, and official 2026 Marhaba evidence.
+
+### 1. User complaints are a warning against false precision
+
+**ViaMichelin:** current public reviews repeatedly mention incorrect or stale fuel/toll estimates, confusing route presentation, map/display regressions and excessive friction after interface changes. At the same time, positive App Store reviews confirm that users value route variants, explicit toll costs, fuel-station prices and a clear route overview.
+
+**Rome2Rio:** current public reviews show the same structural failure mode at larger scale: users value breadth and complex-journey planning, but complain when connections, prices, schedules or directness are inaccurate, stale, or difficult to configure. This reinforces RME's provenance rule: an estimate must be labelled as an estimate, a live value needs a timestamp/source, and an unavailable value should be UNKNOWN rather than filled with a plausible number.
+
+### 2. Tariq: feature signal, not market proof
+
+Tariq's public stores currently show **1+ Google Play downloads** and the App Store says there are not enough ratings/reviews for an overview. Its public feature claims include official fuel prices, community ferry queues, MRE-friendly hotels, offline help and convoy coordination.
+
+Conclusion: these are useful competitive signals, but there is not enough public traction evidence to treat Tariq as validated market demand. RME should copy the *problem selection* only where it can produce stronger evidence and provenance.
+
+### 3. Trekna: marketing claims must not be treated as evidence
+
+Trekna currently advertises live Strait information, transport comparison and budget figures. Its page also displays user-style testimonials. These are **claims published by the product itself**, not independent evidence of accuracy, adoption, conversion or partner revenue. RME should therefore not reproduce any Trekna number as a benchmark unless independently sourced.
+
+### 4. Marhaba 2026 changes the priority calculation
+
+Official Moroccan sources report **4,137,594 MRE welcomed during Marhaba 2026**, with peaks near **80,000 arrivals/day** and **more than 87,000 departures/day**. The 2026 system used 26 reception sites, including Tanger Med, Tanger Ville, Nador, Sète, Marseille, Motril, Almería and Algeciras. During the peak phase, Tanger Med reported an average exit time of no more than 15 minutes on 2 August despite high traffic.
+
+Important product implication: "port waiting time" is valuable but **seasonal and operationally sensitive**. Marhaba 2026 ended on 15 September 2026. RME must not present a Marhaba-derived value as a current live queue in October. A future port-status module should expose source + observed_at + freshness + coverage; outside the verified operating window it should say UNKNOWN/season ended rather than inventing a live state.
+
+### 5. Revised opportunity ranking
+
+| Opportunity | User value | Evidence quality today | Monetization | Decision |
+|---|---:|---:|---:|---|
+| Port status with timestamp/source | High seasonal | Medium/fragmented | Indirect | **LAB / source hunt** |
+| Mid-route family hotel | Medium-high | High if official/affiliate data | Direct affiliate | **After production** |
+| Official toll computation | High | High only if corridor/source coverage is verified | Indirect | **After production** |
+| Station-level fuel price | High | Potentially high | Indirect | **LAB, no duplication without source/license check** |
+| Crowd safety alerts | High | Low | Indirect | **REJECT for now** |
+| Fixed travel-price claims | High | Often low/stale | Direct | **REJECT unless live verified quote** |
+
+### 6. New strategic rule
+
+Do not ask "does a competitor have this feature?" Ask:
+
+> **Can RME deliver the same user outcome with stronger provenance, clearer uncertainty, lower interaction cost, and a measurable commercial next action?**
+
+If not, do not build it merely to close a feature gap.
+
+Last checked: 2026-10-05.
