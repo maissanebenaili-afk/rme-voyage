@@ -62,7 +62,7 @@ describe("changer de langue", () => {
   });
 
   it("ne confond pas le danois du navigateur avec la darija", async () => {
-    // Une préférence explicitement sauvegardée prime sur le navigateur.
+    // Une préférence sauvegardée et valide prime sur la langue du navigateur.
     localStorage.setItem(LANG_STORAGE_KEY, "en");
     jest.spyOn(window.navigator, "language", "get").mockReturnValue("da-DK");
     render(<Page />);
