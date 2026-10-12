@@ -82,6 +82,35 @@ describe("changer de langue", () => {
     expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe("en");
   });
 
+  it("réapplique la préférence darija après navigation accueil → route non traduite → accueil", async () => {
+    const { rerender } = render(<Page />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Changer de langue" }));
+    fireEvent.click(screen.getByRole("button", { name: /الدارجة/ }));
+
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe("ary");
+      expect(document.documentElement.dir).toBe("rtl");
+    });
+    expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe("da");
+
+    mockPathname = "/trajet/paris-tanger";
+    rerender(<Page />);
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe("fr");
+      expect(document.documentElement.dir).toBe("ltr");
+    });
+    expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe("da");
+
+    mockPathname = "/";
+    rerender(<Page />);
+    await waitFor(() => {
+      expect(document.documentElement.lang).toBe("ary");
+      expect(document.documentElement.dir).toBe("rtl");
+    });
+    expect(localStorage.getItem(LANG_STORAGE_KEY)).toBe("da");
+  });
+
   it("ignore une valeur enregistrée inconnue", () => {
     localStorage.setItem(LANG_STORAGE_KEY, "constructor");
     render(<Page />);
