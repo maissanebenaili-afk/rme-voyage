@@ -18,6 +18,7 @@ from datetime import datetime
 from pathlib import Path
 
 import openpyxl
+from fuel_prices_guard import is_older_observation
 
 PAGE = "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en"
 UA = {"User-Agent": "RME-Voyage fuel price updater"}
@@ -82,5 +83,22 @@ out = {
     "prices": dict(sorted(prices.items())),
 }
 path = Path(__file__).resolve().parent.parent / "lib" / "data" / "fuelPrices.json"
+
+# Fail closed: never overwrite the current dataset with an older or
+# uncomparable observation. Prices and dates remain untouched on rejection.
+if path.exists():
+    try:
+        current = json.loads(path.read_text(encoding="utf-8"))
+        current_date = current.get("observedAt")
+        if not isinstance(current_date, str) or not current_date:
+            raise ValueError("current dataset has no valid observedAt")
+        if is_older_observation(out["observedAt"], current_date):
+            raise SystemExit(
+                f"Refusing to replace fuel bulletin {current_date} with older "
+                f"observation {out['observedAt']}"
+            )
+    except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+        raise SystemExit(f"Cannot validate current fuel dataset; refusing to overwrite: {exc}") from exc
+
 path.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"{path.name} : {len(prices)} pays, bulletin du {out['observedAt']}")
