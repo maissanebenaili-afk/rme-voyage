@@ -62,7 +62,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
     if (!initial) {
       const browserLang = typeof navigator !== 'undefined' ? navigator.language?.split('-')[0] : undefined;
-      if (isLanguage(browserLang)) initial = browserLang;
+      if (browserLang && browserLang !== 'da' && isLanguage(browserLang)) initial = browserLang;
     }
     const effective = isHome && initial ? initial : 'fr';
     setLangState(effective);
