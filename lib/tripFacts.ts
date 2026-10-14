@@ -24,7 +24,7 @@ export type TripFacts = {
 
 const MAX_CHARS = 2000;
 
-function norm(text: string): string {
+export function norm(text: string): string {
   return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ');
 }
 
