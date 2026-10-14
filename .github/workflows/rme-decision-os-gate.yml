@@ -1,0 +1,22 @@
+name: RME Decision OS Gate
+
+on:
+  push:
+    branches:
+      - feat/rme-decision-os-core
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx jest __tests__/rme-core --runInBand
