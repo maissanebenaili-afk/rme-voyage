@@ -1,24 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ExternalLink, Volume2 } from "lucide-react";
 import { ETAPES, texteALire, type Outil } from "@/lib/outilsPapiers";
-
-function useSpeech() {
-  const [supported, setSupported] = useState(false);
-  useEffect(() => {
-    setSupported(typeof window !== "undefined" && "speechSynthesis" in window);
-  }, []);
-  function speak(text: string) {
-    if (!supported) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "fr-FR";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-  }
-  return { supported, speak };
-}
+import { useSpeech } from "@/lib/hooks/useSpeech";
 
 function OutilCard({ outil, speak, canSpeak }: { outil: Outil; speak: (t: string) => void; canSpeak: boolean }) {
   return (
