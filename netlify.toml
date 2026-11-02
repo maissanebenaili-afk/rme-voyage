@@ -3,9 +3,14 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  # Économie de crédits : pas de build si seuls docs, tests ou scripts changent.
-  # Code 0 = on saute le build ; code 1 (ou erreur, ex. premier build) = on construit.
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- app components lib packages public netlify proxy.ts config.ts package.json package-lock.json next.config.mjs tailwind.config.ts postcss.config.mjs tsconfig.json netlify.toml"
+  # Économie de crédits. Code 0 = on saute le build ; code 1 (ou erreur, ex. premier
+  # build) = on construit.
+  # 1) Pas d'aperçu pour les branches des robots (prix carburant, veille BOAMP,
+  #    Dependabot) : chaque PR automatique consommait des crédits, et la CI GitHub
+  #    les vérifie déjà. $HEAD est le nom de la branche dans un aperçu de PR,
+  #    $BRANCH y vaut « pull/N/head » : on teste les deux.
+  # 2) Pas de build si seuls docs, tests ou scripts changent.
+  ignore = 'for b in "$HEAD" "$BRANCH"; do case "$b" in data/*|dependabot/*|omega-veritas/*|lab/*) exit 0;; esac; done; git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- app components lib packages public netlify proxy.ts config.ts package.json package-lock.json next.config.mjs tailwind.config.ts postcss.config.mjs tsconfig.json netlify.toml'
 
 [build.environment]
   NODE_VERSION = "20"
