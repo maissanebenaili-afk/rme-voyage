@@ -273,7 +273,16 @@ describe("proxy + Supabase session refresh", () => {
     const directive = (name: string) =>
       (csp.split(";").find((d) => d.trim().startsWith(`${name} `)) ?? "").trim().split(/\s+/);
     expect(directive("connect-src")).toContain(CORAN_API);
-    expect(directive("media-src")).toEqual(["media-src", "'self'", CORAN_AUDIO]);
+    expect(directive("media-src")).toEqual(expect.arrayContaining(["media-src", "'self'", CORAN_AUDIO]));
+  });
+
+  it("lets the radio page play every listed station, and nothing over plain http (CSP media-src)", async () => {
+    const { RADIOS, RADIO_MEDIA_SOURCES, isAllowedStream } = await import("@/lib/radiosMaroc");
+    const csp = (await proxy(buildRequest("/radio-tv"))).headers.get("Content-Security-Policy") ?? "";
+    const media = (csp.split(";").find((d) => d.trim().startsWith("media-src ")) ?? "").trim().split(/\s+/);
+    for (const source of RADIO_MEDIA_SOURCES) expect(media).toContain(source);
+    expect(media.some((source) => source.startsWith("http:") || source === "https:" || source === "*")).toBe(false);
+    for (const station of RADIOS) expect([station.id, isAllowedStream(station.stream)]).toEqual([station.id, true]);
   });
 
   it("allows the Supabase project origin in connect-src only when configured with https", async () => {
