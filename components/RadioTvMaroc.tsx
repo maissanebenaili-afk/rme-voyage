@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ExternalLink, Loader2, Pause, Play, Radio, Tv } from 'lucide-react';
-import { LAST_RADIO_KEY, RADIOS, SNRT_RADIOS, TV_CHANNELS, radioById, type OfficialLink, type RadioStation } from '@/lib/radiosMaroc';
+import { Clapperboard, ExternalLink, Loader2, Pause, Play, Radio, Tv } from 'lucide-react';
+import { FREE_STREAMING, LAST_RADIO_KEY, RADIOS, SNRT_RADIOS, TV_CHANNELS, radioById, type OfficialLink, type RadioStation } from '@/lib/radiosMaroc';
 
 type PlayState = 'idle' | 'loading' | 'playing' | 'error';
 
@@ -167,6 +167,16 @@ export default function RadioTvMaroc() {
         </h2>
         <p className="mt-1 text-slate-700">Sur les sites officiels des chaînes, gratuitement.</p>
         <LinkList items={TV_CHANNELS} />
+      </section>
+
+      <section aria-labelledby="films-title">
+        <h2 id="films-title" className="flex items-center gap-2 text-2xl font-black text-[#0f1f3d]">
+          <Clapperboard size={24} aria-hidden="true" /> Films et séries gratuits
+        </h2>
+        <p className="mt-1 text-slate-700">
+          Sur les plateformes officielles, gratuites avec publicité. Certaines ne marchent qu&apos;en France.
+        </p>
+        <LinkList items={FREE_STREAMING} />
       </section>
     </div>
   );

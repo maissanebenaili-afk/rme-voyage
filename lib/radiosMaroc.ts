@@ -59,6 +59,19 @@ export const TV_CHANNELS: readonly OfficialLink[] = [
   { id: 'medi1-tv', name: 'Medi1 TV', detail: 'Site officiel de la chaîne', url: 'https://www.medi1tv.com/' },
 ];
 
+// Films, séries et télé gratuits ET légaux (plateformes des diffuseurs, avec
+// publicité). Les sites « gratuits » qui agrègent des films piratés ne sont
+// jamais listés : risque juridique pour l'éditeur et refus des stores.
+export const FREE_STREAMING: readonly OfficialLink[] = [
+  { id: 'tv5mondeplus', name: 'TV5MONDEplus', detail: 'Films et séries en français, depuis le Maroc aussi', url: 'https://www.tv5mondeplus.com/' },
+  { id: 'arte', name: 'arte.tv', detail: 'Films, séries, documentaires (France et Europe)', url: 'https://www.arte.tv/fr/' },
+  { id: 'pluto', name: 'Pluto TV', detail: 'Chaînes de films et séries en continu', url: 'https://pluto.tv/' },
+  { id: 'rakuten', name: 'Rakuten TV', detail: 'Rubrique de films gratuits', url: 'https://www.rakuten.tv/fr' },
+  { id: 'france-tv', name: 'france.tv', detail: 'Séries, films, dessins animés (en France)', url: 'https://www.france.tv/' },
+  { id: 'tf1-plus', name: 'TF1+', detail: 'Séries, films, émissions (en France)', url: 'https://www.tf1.fr/' },
+  { id: 'm6-plus', name: 'M6+', detail: 'Séries, films, émissions (en France)', url: 'https://www.m6.fr/' },
+];
+
 /** Origines des flux, pour la règle media-src de la politique de sécurité. */
 export const RADIO_MEDIA_SOURCES = [
   'https://*.ice.infomaniak.ch',
