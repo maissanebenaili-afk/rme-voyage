@@ -46,7 +46,7 @@ export function provenanceOf(trace: AnswerTrace): HadakProvenance {
   return { level: 'INFERRED', basis: 'RME_GUIDE', sources };
 }
 
-type Section = 'route' | 'preparer' | 'kit' | 'maroc' | 'transfert' | 'sport';
+type Section = 'route' | 'preparer' | 'kit' | 'voiture180' | 'passeport' | 'maroc' | 'transfert' | 'sport';
 
 const SECTIONS: Record<Section, { destination: string; label: Record<HadakLang, string>; reason: Record<HadakLang, string> }> = {
   route: {
@@ -83,6 +83,28 @@ const SECTIONS: Record<Section, { destination: string; label: Record<HadakLang, 
       en: 'Your papers for this trip (car, children, nationality), with official sources.',
       ar: 'وثائقك حسب رحلتك (السيارة، الأطفال، الجنسية) مع المصادر الرسمية.',
       es: 'Tus papeles según tu viaje (coche, niños, nacionalidad), con fuentes oficiales.',
+    },
+  },
+  voiture180: {
+    destination: '/kit-retour#voiture',
+    label: { fr: 'Ma date limite (180 jours)', da: 'Akhir nhar l tomobil (180 youm)', en: 'My car deadline (180 days)', ar: 'آخر أجل لسيارتي (180 يوماً)', es: 'Mi fecha límite (180 días)' },
+    reason: {
+      fr: 'Calcule le dernier jour où votre voiture peut rester au Maroc, et l’amende en cas de retard.',
+      da: 'Kat7seb akhir nhar tomobil t9der tb9a f l-Maghrib, w l-ghrama ila fat l-ajal.',
+      en: 'Works out the last day your car may stay in Morocco, and the fine if you are late.',
+      ar: 'يحسب آخر يوم يمكن أن تبقى فيه سيارتك في المغرب، والغرامة عند التأخر.',
+      es: 'Calcula el último día que tu coche puede quedarse en Marruecos y la multa si te retrasas.',
+    },
+  },
+  passeport: {
+    destination: '/kit-retour#passeport',
+    label: { fr: 'Mon passeport est-il valable ?', da: 'Wach l-passeport dyali sali7 ?', en: 'Is my passport valid?', ar: 'هل جوازي صالح؟', es: '¿Mi pasaporte es válido?' },
+    reason: {
+      fr: 'Vérifie qu’il est valable jusqu’au retour, enfants compris.',
+      da: 'T2akkad bli sali7 7ta l-rjou3, 7ta dyal drari.',
+      en: 'Checks it stays valid until you come back, children included.',
+      ar: 'تحقق من أنه صالح حتى العودة، بما في ذلك جوازات الأطفال.',
+      es: 'Comprueba que sea válido hasta la vuelta, también el de los niños.',
     },
   },
   maroc: {
@@ -124,8 +146,8 @@ const NEXT_BY_INTENT: Record<string, Section[]> = {
   trip: ['route', 'kit', 'maroc'],
   ferry: ['route', 'kit'],
   fuel: ['route'],
-  docs: ['kit', 'route'],
-  vehicle: ['kit'],
+  docs: ['kit', 'passeport', 'route'],
+  vehicle: ['voiture180', 'kit'],
   minor: ['kit'],
   sim: ['preparer'],
   weather: ['maroc', 'route'],

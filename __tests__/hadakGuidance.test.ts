@@ -31,7 +31,7 @@ describe('nextActionsFor', () => {
     for (const a of actions) {
       expect(a.safety).toBe('INFORMATIONAL')
       // A home section, or the papers kit (/kit-retour, set from the question).
-      expect(a.destination).toMatch(/^\/(#[a-z-]+|kit-retour(\?[a-z=&-]+)?)$/)
+      expect(a.destination).toMatch(/^\/(#[a-z-]+|kit-retour(\?[a-z=&-]+|#[a-z0-9-]+)?)$/)
       expect(a.reason.trim()).not.toBe('')
     }
   })
@@ -41,6 +41,13 @@ describe('nextActionsFor', () => {
     expect(kit('trip', 'Je pars au Maroc en voiture avec la voiture de mon frère')).toBe('/kit-retour?transport=voiture&vehicule=autre')
     expect(kit('minor', 'Mon fils part seul en avion')).toBe('/kit-retour?transport=avion&mineur=oui')
     expect(kit('docs', 'Quels papiers pour le Maroc ?')).toBe('/kit-retour')
+  })
+  it('sends car questions to the 180-day counter and papers questions to the passport check', () => {
+    expect(nextActionsFor('vehicle', 'fr', 'Combien de temps ma voiture au Maroc ?')[0]).toMatchObject({
+      destination: '/kit-retour#voiture',
+      label: 'Ma date limite (180 jours)',
+    })
+    expect(nextActionsFor('docs', 'ar').map((a) => a.destination)).toContain('/kit-retour#passeport')
   })
   it('proposes nothing for the clock, school work or unknown questions', () => {
     expect(nextActionsFor('time')).toEqual([])
