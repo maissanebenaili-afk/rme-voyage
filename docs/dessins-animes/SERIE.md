@@ -17,6 +17,10 @@ de darija y reviennent plusieurs fois, sont mimés, puis récapitulés à la fin
 
 ## La langue : le marocain de la rue
 
+« Chouya dial darija, chouya dial français » : un peu de darija, un peu de
+français (ou d'espagnol dans la version espagnole). La darija prend de plus
+en plus de place au fil des saisons (voir [PLAN-1000.md](PLAN-1000.md)).
+
 On parle comme à la maison et au bled, pas comme dans un manuel :
 
 - **La base, c'est le français**, pour que tout enfant de France, de Belgique
@@ -95,5 +99,39 @@ les personnages restent les mêmes d'un épisode à l'autre.
 
 ## Sur RME Voyage
 
-Une fois la chaîne créée, une rubrique « Dessins animés » dans la page Médias
-affichera les épisodes (lecteur YouTube en mode respect de la vie privée).
+Les épisodes 1 à 3 sont animés et se regardent sur la page `/dessins-animes`
+(lien depuis « Radios et télé » et l'accueil), en **français ou en espagnol**.
+Ils marchent sans réseau une fois la page ouverte.
+
+- Animation : la caméra glisse vers celui qui parle, le décor est en
+  profondeur, les personnages ont des ombres, des gestes, des lèvres qui
+  suivent le texte. Les bulles s'écrivent lettre par lettre, et les mots de
+  darija « sautent » en couleur.
+- Apprentissage : un mot nouveau est traduit sous la bulle la première fois
+  (« chouf = regarde ») ; les mots déjà appris ne le sont plus.
+- Son : une petite musique originale avec darbouka, et des bruitages (pop des
+  bulles, « pling » des mots de darija, boing, ding, fanfare). Pas encore de voix.
+- À la fin : « Demain : … » et un bouton « Épisode suivant ».
+- Le code : `lib/kalimat/episodes.ts` (les épisodes), `lexique.ts` (le
+  dictionnaire), `dessin.ts` (l'image), `son.ts` (la musique).
+
+Le plan pour aller jusqu'à 1000 épisodes : [PLAN-1000.md](PLAN-1000.md).
+
+## Fabriquer les vidéos YouTube
+
+```
+npm run build && npx next start -p 3200
+node scripts/kalimat-video.mjs http://localhost:3200 videos-kalimat
+```
+
+Pour chaque épisode et chaque langue, le dossier `videos-kalimat/` reçoit :
+
+- `kalimat-01-fr.mp4` : la vidéo verticale 1080 × 1920 (format Short), avec
+  musique et bruitages ;
+- `kalimat-01-fr.srt` : les sous-titres, à envoyer sur YouTube. C'est aussi le
+  texte minuté pour enregistrer les voix ;
+- `kalimat-01-fr.jpg` : la miniature.
+
+Pour les voix : enregistrer chaque réplique au moment indiqué dans le `.srt`,
+puis les ajouter au montage (YouTube Studio, CapCut ou tout outil de montage),
+en baissant un peu la musique.
