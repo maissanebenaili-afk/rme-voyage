@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Memoire from '@/components/jeux/Memoire';
+import Rouleau from '@/components/jeux/Rouleau';
 import Skate from '@/components/jeux/Skate';
 import Zellige from '@/components/jeux/Zellige';
 
@@ -9,6 +10,7 @@ const JEUX = [
   { id: 'skate', nom: 'Skate à la corniche', emoji: '🛹', texte: 'Saute les plots, ramasse les pièces, bats ton record.' },
   { id: 'zellige', nom: 'Zellige', emoji: '🟩', texte: 'Range les mosaïques pour faire des lignes. Petits et grands.' },
   { id: 'memoire', nom: 'Mémoire des souks', emoji: '🫖', texte: 'Retrouve les paires. Dès 4 ans.' },
+  { id: 'rouleau', nom: 'Déroule !', emoji: '🧻', texte: 'Le jeu des toilettes : 10 secondes pour dérouler tout le rouleau.' },
 ] as const;
 
 type IdJeu = (typeof JEUX)[number]['id'];
@@ -50,6 +52,7 @@ export default function JeuxRoute() {
         </button>
       </div>
       {choisi.id === 'memoire' && <Memoire />}
+      {choisi.id === 'rouleau' && <Rouleau />}
       {choisi.id === 'skate' && <Skate />}
       {choisi.id === 'zellige' && <Zellige />}
     </div>

@@ -158,3 +158,35 @@ describe('records', () => {
     expect(lireRecords('{"skate":120,"zellige":"beaucoup","x":-3}')).toEqual({ skate: 120 });
   });
 });
+
+describe('Déroule !', () => {
+  const { DUREE, attendre, derouler, metres, nouvelleManche, verdict } = jest.requireActual('@/lib/jeux/rouleau') as typeof import('@/lib/jeux/rouleau');
+
+  it('ne lance le chrono qu’au premier glissement', () => {
+    const manche = nouvelleManche();
+    expect(attendre(manche, 3)).toBe(manche);
+    const lancee = derouler(manche, 50);
+    expect(attendre(lancee, 3).reste).toBe(DUREE - 3);
+  });
+
+  it('compte les mètres et s’arrête au bout de 10 secondes', () => {
+    let manche = derouler(nouvelleManche(), 250);
+    expect(metres(manche)).toBe(2.5);
+    manche = attendre(manche, DUREE + 1);
+    expect(manche.finie).toBe(true);
+    expect(derouler(manche, 1000)).toBe(manche);
+  });
+
+  it('ignore les glissements vers le haut ou vides', () => {
+    const manche = nouvelleManche();
+    expect(derouler(manche, -20)).toBe(manche);
+    expect(derouler(manche, Number.NaN)).toBe(manche);
+  });
+
+  it('donne un verdict drôle selon la longueur', () => {
+    expect(verdict(2)).toMatch(/khoya/);
+    expect(verdict(10)).toMatch(/Hchouma/);
+    expect(verdict(20)).toMatch(/Wa3er/);
+    expect(verdict(40)).toMatch(/Champion du bled/);
+  });
+});

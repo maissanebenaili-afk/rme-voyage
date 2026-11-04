@@ -1,7 +1,9 @@
 # « Kalimat — les mots du bled » : série de dessins animés
 
-Mini-série pour enfants de 4 à 10 ans, en français avec des mots de darija,
-diffusée sur YouTube et dans la rubrique Médias de RME Voyage.
+Mini-série pour enfants de 4 à 10 ans (et leurs parents), dans la langue des
+familles de la diaspora : le « marocain de la rue », du français plein de
+darija, avec de temps en temps un mot néerlandais ou espagnol.
+Diffusée sur YouTube et dans la rubrique Médias de RME Voyage.
 
 Personnages, noms et dessins **originaux** : style « anime » (grands yeux
 expressifs, couleurs vives), sans reprendre un personnage existant (pas de
@@ -13,13 +15,37 @@ Chaque épisode raconte une petite histoire de vacances au Maroc. Trois mots
 de darija y reviennent plusieurs fois, sont mimés, puis récapitulés à la fin :
 « Les mots du jour ». Les enfants les apprennent sans s'en rendre compte.
 
+## La langue : le marocain de la rue
+
+On parle comme à la maison et au bled, pas comme dans un manuel :
+
+- **La base, c'est le français**, pour que tout enfant de France, de Belgique
+  ou de Suisse comprenne l'histoire.
+- **Beaucoup de darija dans chaque phrase** : *wakha* (d'accord), *safi*
+  (c'est bon), *yallah* (allez), *zid* (vas-y), *chouf* (regarde), *3afak*
+  (s'il te plaît), *mzyan* (bien), *hchouma* (la honte), *khoya* / *khti*
+  (mon frère / ma sœur), *wa3er* (trop fort), *bsaha* (bon appétit).
+- **De temps en temps un mot néerlandais**, par Nour, la cousine de Rotterdam :
+  *lekker* (bon), *mooi* (beau), *kijk* (regarde), *doei* (salut, en partant).
+- **De temps en temps un mot espagnol**, par Yassine, comme on parle dans le
+  Nord : *vale* (d'accord), *venga* (allez), *hombre* (mais enfin), et les mots
+  de darija venus de l'espagnol (*simana*, la semaine ; *kozina*, la cuisine).
+- **Un ou deux mots étrangers au maximum par épisode**, pour que ça reste drôle et pas
+  confus. Les trois « mots du jour » restent en darija.
+- **Jamais de gros mots ni de jurons**, même ceux qu'on entend dans la rue :
+  c'est une série pour enfants.
+
+Exemple de réplique : « *Yallah* Adam, *zid*, la voiture elle attend ! —
+*Wakha wakha*, j'arrive ! »
+
 ## Les personnages
 
 | Personnage | Âge | Ce qu'il apporte |
 |---|---|---|
 | **Inès** | 8 ans | Vit à Lyon, curieuse, pose les questions. Cheveux bouclés, sac à dos jaune. |
 | **Adam** | 5 ans | Son petit frère, rigolo, répète tout de travers (comique). Casquette rouge. |
-| **Yassine** | 9 ans | Leur cousin de Tanger, parle darija et français, explique les mots. Skate. |
+| **Yassine** | 9 ans | Leur cousin de Tanger, parle darija et français, explique les mots, glisse un *vale* ou un *venga* du Nord. Skate. |
+| **Nour** | 10 ans | La cousine de Rotterdam, sûre d'elle, drôle, lâche un mot néerlandais quand elle s'emballe (*lekker*, *mooi*). Baskets blanches, tresses. |
 | **Mima Zohra** | grand-mère | Douce et drôle, raconte des histoires, cuisine. Foulard vert. |
 | **Mchicha** | chatte | « Petite chatte » en darija. Ne parle pas, mime les émotions. |
 

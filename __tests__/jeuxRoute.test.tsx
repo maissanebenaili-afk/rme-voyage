@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import JeuxRoute from '@/components/jeux/JeuxRoute'
 import Memoire from '@/components/jeux/Memoire'
 import Zellige from '@/components/jeux/Zellige'
+import Rouleau from '@/components/jeux/Rouleau'
 import { nouvellePartie } from '@/lib/jeux/memoire'
 
 describe('Jeux pour la route', () => {
@@ -9,6 +10,7 @@ describe('Jeux pour la route', () => {
     render(<JeuxRoute />)
     expect(screen.getByText('Mémoire des souks')).toBeInTheDocument()
     expect(screen.getByText('Skate à la corniche')).toBeInTheDocument()
+    expect(screen.getByText('Déroule !')).toBeInTheDocument()
     fireEvent.click(screen.getByText('Zellige'))
     expect(screen.getByLabelText('Tourner')).toBeInTheDocument()
     fireEvent.click(screen.getByText('← Autres jeux'))
@@ -44,6 +46,28 @@ describe('Jeux pour la route', () => {
     } finally {
       jest.useRealTimers()
       jest.restoreAllMocks()
+    }
+  })
+
+  it('rouleau: a swipe down unrolls paper and starts the 10-second clock', () => {
+    // jsdom n'a pas PointerEvent : on prend MouseEvent, qui porte clientY et buttons.
+    const avant = window.PointerEvent
+    window.PointerEvent = class extends MouseEvent {} as unknown as typeof PointerEvent
+    jest.useFakeTimers()
+    try {
+      render(<Rouleau />)
+      const zone = screen.getByLabelText('Glissez vers le bas pour dérouler le papier')
+      fireEvent.pointerDown(zone, { clientY: 100 })
+      fireEvent.pointerMove(zone, { clientY: 500, buttons: 1 })
+      expect(screen.getByText('1.06 m')).toBeInTheDocument() // 6 cm + 400 px × 0,25 cm
+      act(() => {
+        jest.advanceTimersByTime(11_000)
+      })
+      expect(screen.getByRole('status')).toHaveTextContent('khoya')
+      expect(screen.getByText('Encore un rouleau')).toBeInTheDocument()
+    } finally {
+      jest.useRealTimers()
+      window.PointerEvent = avant
     }
   })
 
