@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { RADIO_MEDIA_SOURCES } from '@/lib/radiosMaroc';
 import type { NextRequest } from 'next/server';
 import { isSupabaseConfigured, updateSession } from '@/lib/supabase/middleware';
 
@@ -278,7 +279,8 @@ export async function proxy(request: NextRequest) {
     `connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com https://cdn.jsdelivr.net https://api.alquran.cloud${supabaseConnectSrc()}`,
     // Récitation du Coran (/coran) : sans cette ligne, le son suivait
     // default-src 'self' et le navigateur le bloquait.
-    "media-src 'self' https://cdn.islamic.network",
+    // + les flux des radios marocaines (/radio-tv), liste fixe dans lib/radiosMaroc.ts.
+    `media-src 'self' https://cdn.islamic.network ${RADIO_MEDIA_SOURCES.join(' ')}`,
     "frame-src 'self' https://www.openstreetmap.org",
     "frame-ancestors 'none'",
     "object-src 'none'",

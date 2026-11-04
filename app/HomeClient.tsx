@@ -156,6 +156,16 @@ export default function HomeClient() {
               <SmartPacking />
             </ToolDrawer>
             <ToolDrawer id="sport-tv" icon={<Trophy size={20} />} title={h.drawerSportTitle} text={h.drawerSportText}>
+              <Link
+                href="/radio-tv"
+                className="flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-[#0f1f3d] px-4 py-3 font-bold text-white transition hover:bg-[#172b52]"
+              >
+                <span>
+                  <span className="block">{h.footerRadio}</span>
+                  <span className="block text-sm font-normal text-white/75">{h.radioCard}</span>
+                </span>
+                <span aria-hidden="true">→</span>
+              </Link>
               <SportsHub />
               <FaicalWidget />
               <TVWidget />
@@ -202,6 +212,7 @@ export default function HomeClient() {
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerShop}</Link></li>
                 <li><Link href="/kit-retour" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerKit}</Link></li>
                 <li><Link href="/coran" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerCoran}</Link></li>
+                <li><Link href="/radio-tv" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerRadio}</Link></li>
                 <li><Link href="/outils-papiers" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerPapers}</Link></li>
                 <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDownload}</Link></li>
                 <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerSupport}</Link></li>
