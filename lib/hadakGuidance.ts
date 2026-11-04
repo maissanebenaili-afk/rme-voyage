@@ -6,6 +6,7 @@
  */
 import type { NextAction } from '@/lib/rmeMoments';
 import type { TruthLevel } from '@/lib/trust';
+import { kitHintFromText, kitHref } from '@/lib/kitFromText';
 
 export type HadakLang = 'fr' | 'da' | 'en' | 'ar' | 'es';
 
@@ -45,7 +46,7 @@ export function provenanceOf(trace: AnswerTrace): HadakProvenance {
   return { level: 'INFERRED', basis: 'RME_GUIDE', sources };
 }
 
-type Section = 'route' | 'preparer' | 'maroc' | 'transfert' | 'sport';
+type Section = 'route' | 'preparer' | 'kit' | 'maroc' | 'transfert' | 'sport';
 
 const SECTIONS: Record<Section, { destination: string; label: Record<HadakLang, string>; reason: Record<HadakLang, string> }> = {
   route: {
@@ -70,6 +71,18 @@ const SECTIONS: Record<Section, { destination: string; label: Record<HadakLang, 
       en: 'The checklist before leaving: documents, car, SIM.',
       ar: 'قائمة ما قبل السفر: الوثائق، السيارة، الشريحة.',
       es: 'La lista antes de salir: documentos, coche, SIM.',
+    },
+  },
+  kit: {
+    // Remplacée par le lien réglé d'après la question (voir nextActionsFor).
+    destination: '/kit-retour',
+    label: { fr: 'Ma liste de papiers', da: 'Liste dyal l-wraq dyali', en: 'My papers checklist', ar: 'قائمة وثائقي', es: 'Mi lista de papeles' },
+    reason: {
+      fr: 'Votre liste de papiers selon votre voyage (voiture, enfants, nationalité), avec les sources officielles.',
+      da: 'L-wraq li khasskom 3la 7sab s-safar (tomobil, drari, jensiya), m3a l-masadir r-rasmiya.',
+      en: 'Your papers for this trip (car, children, nationality), with official sources.',
+      ar: 'وثائقك حسب رحلتك (السيارة، الأطفال، الجنسية) مع المصادر الرسمية.',
+      es: 'Tus papeles según tu viaje (coche, niños, nacionalidad), con fuentes oficiales.',
     },
   },
   maroc: {
@@ -108,10 +121,12 @@ const SECTIONS: Record<Section, { destination: string; label: Record<HadakLang, 
 };
 
 const NEXT_BY_INTENT: Record<string, Section[]> = {
-  trip: ['route', 'preparer', 'maroc'],
-  ferry: ['route', 'preparer'],
+  trip: ['route', 'kit', 'maroc'],
+  ferry: ['route', 'kit'],
   fuel: ['route'],
-  docs: ['preparer', 'route'],
+  docs: ['kit', 'route'],
+  vehicle: ['kit'],
+  minor: ['kit'],
   sim: ['preparer'],
   weather: ['maroc', 'route'],
   prayer: ['maroc'],
@@ -126,14 +141,14 @@ export function isHadakLang(value: unknown): value is HadakLang {
 }
 
 /** 0 to 3 suggestions; none for time, school work or unrecognised questions. */
-export function nextActionsFor(intent: string, lang: HadakLang = 'fr'): NextAction[] {
+export function nextActionsFor(intent: string, lang: HadakLang = 'fr', message = ''): NextAction[] {
   const sections = Object.hasOwn(NEXT_BY_INTENT, intent) ? NEXT_BY_INTENT[intent] : [];
   return sections.slice(0, 3).map(section => ({
     id: `${intent}-${section}`,
     label: SECTIONS[section].label[lang],
     reason: SECTIONS[section].reason[lang],
     safety: 'INFORMATIONAL',
-    destination: SECTIONS[section].destination,
+    destination: section === 'kit' ? kitHref(kitHintFromText(message)) : SECTIONS[section].destination,
   }));
 }
 
