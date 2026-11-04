@@ -90,7 +90,9 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(navigation(request));
     return;
   }
-  if (url.pathname.startsWith('/_next/static/') || PRECACHE.includes(url.pathname)) {
+  // Les voix des dessins animés (/kalimat/voix/) : gardées pour regarder sans réseau.
+  // Si on remplace des voix sous le même nom, changer VERSION pour vider le cache.
+  if (url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/kalimat/voix/') || PRECACHE.includes(url.pathname)) {
     event.respondWith(asset(request));
   }
 });

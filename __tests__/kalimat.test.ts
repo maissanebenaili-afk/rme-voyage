@@ -2,6 +2,9 @@
 import {
   EPISODES,
   FIN,
+  aDesVoix,
+  clip,
+  voixAuxTemps,
   GENERIQUE,
   LANGUES,
   MOTS,
@@ -18,7 +21,8 @@ import {
   traductions,
 } from '@/lib/kalimat/episodes';
 import { LEXIQUE, cleDuMot } from '@/lib/kalimat/lexique';
-import { dessinerEpisode, ouvertureBouche } from '@/lib/kalimat/dessin';
+import { dessinerEpisode, ouvertureBouche, ouvertureVoix } from '@/lib/kalimat/dessin';
+import { CASTING, repliquesAParler, texteAParler } from '@/lib/kalimat/voix';
 import { FREQUENCE, enWav, genererSon } from '@/lib/kalimat/son';
 
 // Un faux canvas : accepte tous les appels de dessin et garde les textes écrits.
@@ -204,5 +208,63 @@ describe('Kalimat : le dessin', () => {
     expect(textes.join('')).toContain('brilla');
     expect(textes).toContain(' = mira');
     expect(textes).toContain('Inès');
+  });
+});
+
+describe('Kalimat : les voix', () => {
+  it('écrit les mots de darija pour que la voix les prononce bien', () => {
+    expect(texteAParler('Reviens, *3afak* !', 'fr')).toBe('Reviens, âafak !');
+    expect(texteAParler('*Chouf*, Adam', 'es')).toBe('chuf, Adam');
+    expect(texteAParler('Tu réponds : *labas, hamdoullah* !', 'fr')).toBe('Tu réponds : labasse, hamdoullah !');
+  });
+
+  it('prépare toutes les répliques à dire, avec la voix de chaque personnage', () => {
+    const ep = EPISODES[0];
+    const liste = repliquesAParler(ep, 'fr');
+    expect(liste).toHaveLength(ep.plans.length + 5);
+    expect(liste[0].cle).toBe('g');
+    expect(liste[1]).toMatchObject({ cle: 'p00', qui: 'ines', voix: CASTING.ines.voix });
+    for (const r of liste) expect(r.texte).not.toMatch(/[*3]/);
+  });
+
+  it('cale l’épisode doublé sur la durée des voix', () => {
+    const ep = EPISODES[0];
+    expect(aDesVoix(ep, 'fr')).toBe(true);
+    expect(aDesVoix(ep, 'es')).toBe(false);
+    const c = clip(ep, 'fr', 'p00');
+    expect(c).toBeDefined();
+    expect(momentA(ep, GENERIQUE).duree).toBeCloseTo(Math.max(1.4, Math.round((0.2 + (c?.duree ?? 0) + 0.5) * 10) / 10), 5);
+    const places = voixAuxTemps(ep, 'fr');
+    expect(places).toHaveLength(ep.plans.length + 5);
+    for (let i = 1; i < places.length; i++) expect(places[i].debut).toBeGreaterThan(places[i - 1].debut);
+    expect(places[places.length - 1].debut + places[places.length - 1].clip.duree).toBeLessThan(dureeEpisode(ep, 'fr'));
+  });
+
+  it('ouvre la bouche avec la voix, et la ferme quand elle s’arrête', () => {
+    const voix = { fichier: '', duree: 0.1, bouche: '09' };
+    expect(ouvertureVoix(voix, 0)).toBe(-1);
+    expect(ouvertureVoix(voix, 0.2 + 1 / 30)).toBeGreaterThan(0.9);
+    expect(ouvertureVoix(voix, 5)).toBe(-1);
+  });
+
+  it('mélange les voix à la musique', () => {
+    const ep = EPISODES[2];
+    const voix = new Float32Array(FREQUENCE).map((_, i) => 0.5 * Math.sin(i / 5));
+    const sans = genererSon(ep, 'fr');
+    const avec = genererSon(ep, 'fr', [{ debut: 10, donnees: voix }]);
+    const energie = (p: Float32Array) => p.subarray(10 * FREQUENCE, 11 * FREQUENCE).reduce((s, v) => s + v * v, 0);
+    expect(energie(avec)).toBeGreaterThan(energie(sans) * 2);
+  });
+
+  it('dessine la version doublée sans bulle, avec sous-titres si on les demande', () => {
+    const ep = EPISODES[0];
+    const sans = fauxCanvas();
+    dessinerEpisode(sans.ctx, ep, GENERIQUE + 1.5, 'sans-serif', 'fr');
+    expect(sans.textes).toContain(' = regarde');
+    expect(sans.textes.join('')).not.toContain('la mer');
+    const avec = fauxCanvas();
+    dessinerEpisode(avec.ctx, ep, GENERIQUE + 1.5, 'sans-serif', 'fr', { sousTitres: true });
+    expect(avec.textes.join('')).toContain('Inès : ');
+    expect(avec.textes.join('')).toContain('la mer');
   });
 });

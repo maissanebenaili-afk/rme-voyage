@@ -117,6 +117,29 @@ Ils marchent sans réseau une fois la page ouverte.
 
 Le plan pour aller jusqu'à 1000 épisodes : [PLAN-1000.md](PLAN-1000.md).
 
+## Les voix : les personnages parlent
+
+Les enfants regardent et écoutent, ils ne lisent pas : un épisode **doublé**
+n'a plus de bulles. La bouche suit la vraie voix, et seuls les mots nouveaux
+de darija s'affichent avec leur traduction (sous-titres complets au choix sur
+le site, et en fichier `.srt` sur YouTube).
+
+- Épisode 1 en français : doublé avec des voix de synthèse (ElevenLabs via
+  Speko, environ 5 centimes la minute), pour tester. Les enfants sont joués par
+  des voix de femmes rendues plus aiguës, comme dans les animés.
+- Le casting des voix et l'écriture « à prononcer » des mots de darija sont
+  dans `lib/kalimat/voix.ts` et `lexique.ts` (« 3afak » est dit « âafak »).
+- Le mieux reste de **vraies voix marocaines** : enregistrer chaque réplique
+  dans un fichier `<clé>.wav` (g, p00, p01…, m0, m1, m2, f), puis :
+
+```
+node scripts/kalimat-preparer-voix.mjs <dossier-des-wav> <liste.json> 1 fr
+```
+
+Le script rend les voix d'enfants plus jeunes, coupe les silences, égalise le
+volume, calcule le mouvement des lèvres et range tout dans
+`public/kalimat/voix/` et `lib/kalimat/voix/`.
+
 ## Fabriquer les vidéos YouTube
 
 ```

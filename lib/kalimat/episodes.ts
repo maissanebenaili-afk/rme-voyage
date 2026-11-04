@@ -10,6 +10,7 @@
 // darija restant la même. Textes repris de docs/dessins-animes/.
 
 import { LEXIQUE, cleDuMot, type EntreeLexique } from './lexique';
+import voix1fr from './voix/1-fr.json';
 
 export type Langue = 'fr' | 'es';
 export const LANGUES: readonly Langue[] = ['fr', 'es'];
@@ -259,14 +260,61 @@ export function texteBrut(texte: string): string {
   return texte.replace(/\*/g, '');
 }
 
-/** Le temps d'écrire la bulle, puis de la lire : au moins 2,4 secondes. */
-export function dureePlan(plan: Plan, langue: Langue = 'fr'): number {
+// --- Les voix ---------------------------------------------------------------
+
+/** Une réplique enregistrée : le fichier, sa durée, et l'ouverture de la bouche (30 valeurs par seconde, 0 à 9). */
+export interface Clip {
+  fichier: string;
+  duree: number;
+  bouche: string;
+}
+
+/** Les voix déjà prêtes, par épisode et par langue (scripts/kalimat-preparer-voix.mjs). */
+const VOIX: Record<string, Record<string, Clip>> = { '1-fr': voix1fr };
+/** Le personnage commence à parler un peu après le début du plan. */
+export const DEBUT_VOIX = 0.2;
+
+export const cleDuPlan = (index: number) => `p${String(index).padStart(2, '0')}`;
+
+export function clip(ep: Episode, langue: Langue, cle: string): Clip | undefined {
+  return VOIX[`${ep.numero}-${langue}`]?.[cle];
+}
+
+/** Vrai quand l'épisode est doublé dans cette langue : les personnages parlent, sans bulles. */
+export function aDesVoix(ep: Episode, langue: Langue): boolean {
+  return Boolean(VOIX[`${ep.numero}-${langue}`]);
+}
+
+/**
+ * La durée d'un plan : le temps de la voix et une petite respiration quand
+ * l'épisode est doublé ; sinon le temps d'écrire la bulle puis de la lire.
+ */
+export function dureePlan(plan: Plan, langue: Langue = 'fr', voix?: Clip): number {
+  if (voix) return Math.max(1.4, Math.round((DEBUT_VOIX + voix.duree + 0.5) * 10) / 10);
   const lettres = texteBrut(plan.texte[langue]).length;
   return Math.max(2.4, Math.round((0.5 + lettres / LETTRES_PAR_SECONDE + 1.3) * 10) / 10);
 }
 
+const dureeDuPlan = (ep: Episode, index: number, langue: Langue) => dureePlan(ep.plans[index], langue, clip(ep, langue, cleDuPlan(index)));
+
 export function dureeEpisode(ep: Episode, langue: Langue = 'fr'): number {
-  return GENERIQUE + ep.plans.reduce((s, plan) => s + dureePlan(plan, langue), 0) + MOTS + FIN;
+  return GENERIQUE + ep.plans.reduce((s, _plan, i) => s + dureeDuPlan(ep, i, langue), 0) + MOTS + FIN;
+}
+
+/** Où placer chaque voix dans l'épisode (en secondes). */
+export function voixAuxTemps(ep: Episode, langue: Langue): { debut: number; clip: Clip }[] {
+  if (!aDesVoix(ep, langue)) return [];
+  const liste: { debut: number; clip: Clip }[] = [];
+  const ajouter = (debut: number, c: Clip | undefined) => c && liste.push({ debut, clip: c });
+  ajouter(0.2, clip(ep, langue, 'g'));
+  let debut = GENERIQUE;
+  ep.plans.forEach((_plan, i) => {
+    ajouter(debut + DEBUT_VOIX, clip(ep, langue, cleDuPlan(i)));
+    debut += dureeDuPlan(ep, i, langue);
+  });
+  for (let i = 0; i < 3; i++) ajouter(debut + i * (MOTS / 3) + 0.45, clip(ep, langue, `m${i}`));
+  ajouter(debut + MOTS + 0.35, clip(ep, langue, 'f'));
+  return liste;
 }
 
 export type Moment =
@@ -283,7 +331,7 @@ export function momentA(ep: Episode, t: number, langue: Langue = 'fr'): Moment {
   let debut = GENERIQUE;
   for (let index = 0; index < ep.plans.length; index++) {
     const plan = ep.plans[index];
-    const duree = dureePlan(plan, langue);
+    const duree = dureeDuPlan(ep, index, langue);
     if (reste < duree) return { partie: 'plan', index, plan, local: reste, duree, debut };
     reste -= duree;
     debut += duree;
@@ -411,8 +459,8 @@ export function repliques(ep: Episode, langue: Langue = 'fr'): Replique[] {
     { debut: 0, fin: GENERIQUE, qui: 'Narration', narration: true, texte: `Kalimat, ${e.sousTitre}. ${e.episode} ${ep.numero} : ${ep.titre[langue]}` },
   ];
   let debut = GENERIQUE;
-  for (const plan of ep.plans) {
-    const duree = dureePlan(plan, langue);
+  for (const [i, plan] of ep.plans.entries()) {
+    const duree = dureeDuPlan(ep, i, langue);
     liste.push({ debut, fin: debut + duree, qui: plan.parle ? NOMS[plan.parle][langue] : 'Narration', narration: !plan.parle, texte: texteBrut(plan.texte[langue]) });
     debut += duree;
   }
