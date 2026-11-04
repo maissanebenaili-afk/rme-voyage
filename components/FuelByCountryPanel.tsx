@@ -1,6 +1,6 @@
 import { Ship } from 'lucide-react';
-import { countryName } from '@/lib/countries';
-import type { FuelByCountryResult, FuelType } from '@/lib/fuelByCountry';
+import { countryName, inCountry } from '@/lib/countries';
+import { refuelTip, type FuelByCountryResult, type FuelType } from '@/lib/fuelByCountry';
 
 const FUEL_LABELS: Record<FuelType, string> = { diesel: 'gazole', petrol95: 'SP95' };
 
@@ -32,6 +32,7 @@ export default function FuelByCountryPanel({
 }) {
   const usesUserPrice = result.countries.some((line) => line.priceSource === 'user');
   const ferries = result.legs.filter((leg) => leg.kind === 'ferry').length;
+  const tip = refuelTip(result);
   return (
     <div className="border-t border-[#e2e8f0] p-6 sm:p-8" aria-labelledby="fuel-by-country-title">
       <h3 id="fuel-by-country-title" className="text-sm font-extrabold text-[#0f1f3d]">
@@ -75,6 +76,11 @@ export default function FuelByCountryPanel({
           ),
         )}
       </ol>
+      {tip && (
+        <p className="mt-4 rounded-xl bg-[#ecfdf5] px-4 py-3 text-sm font-semibold text-[#065f46]" data-refuel-tip={tip.cheap}>
+          {`Le ${FUEL_LABELS[fuelType]} coûte ${tip.percentCheaper} % de moins ${inCountry(tip.cheap)} qu'${inCountry(tip.dear)} : environ ${eur(tip.gapFor50Liters)} d'écart pour 50 litres. Faites vos pleins ${inCountry(tip.cheap)} plutôt qu'${inCountry(tip.dear)} quand c'est possible.`}
+        </p>
+      )}
       <p className="mt-4 text-xs leading-5 text-[#64748b]" data-fuel-dataset={result.dataset.fresh ? 'fresh' : result.dataset.stale ? 'stale' : 'expired'}>
         {result.dataset.fresh ? (
           <>

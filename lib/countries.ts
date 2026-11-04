@@ -11,3 +11,17 @@ export const COUNTRY_NAMES_FR: Record<string, string> = {
 export function countryName(code: string | null): string {
   return code ? (COUNTRY_NAMES_FR[code] ?? code) : 'Hors couverture';
 }
+
+// « au Portugal », « aux Pays-Bas », « à Monaco », « en Espagne ».
+const AU = new Set(['DK', 'GB', 'LI', 'LU', 'MA', 'PT']);
+const AUX = new Set(['NL']);
+const A = new Set(['CY', 'MC', 'MT', 'SM']);
+
+/** Le nom du pays précédé de la bonne préposition de lieu. */
+export function inCountry(code: string): string {
+  const name = countryName(code);
+  if (AUX.has(code)) return `aux ${name}`;
+  if (AU.has(code)) return `au ${name}`;
+  if (A.has(code)) return `à ${name}`;
+  return `en ${name}`;
+}

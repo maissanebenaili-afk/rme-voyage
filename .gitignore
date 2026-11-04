@@ -47,3 +47,6 @@ capacitor.config.json
 .qa-geocode-test/
 .qa-shots/
 tsconfig.tsbuildinfo
+
+# Python
+__pycache__/
