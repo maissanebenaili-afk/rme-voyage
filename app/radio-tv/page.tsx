@@ -18,6 +18,17 @@ export default function RadioTvPage() {
         <h1 className="mt-4 text-3xl font-black">Radios et télé du Maroc</h1>
         <p className="mt-1 text-slate-700">En direct, gratuit, sans compte.</p>
 
+        <Link
+          href="/dessins-animes"
+          className="mt-6 flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-amber-400 px-4 py-3 font-bold text-[#0f1f3d] transition hover:bg-amber-300"
+        >
+          <span>
+            <span className="block">Dessins animés Kalimat 🎬</span>
+            <span className="block text-sm font-normal text-[#0f1f3d]/80">La darija en riant, pour les enfants</span>
+          </span>
+          <span aria-hidden="true">→</span>
+        </Link>
+
         <div className="mt-6">
           <RadioTvMaroc />
         </div>

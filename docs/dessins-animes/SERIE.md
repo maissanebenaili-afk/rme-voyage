@@ -95,5 +95,31 @@ les personnages restent les mêmes d'un épisode à l'autre.
 
 ## Sur RME Voyage
 
-Une fois la chaîne créée, une rubrique « Dessins animés » dans la page Médias
-affichera les épisodes (lecteur YouTube en mode respect de la vie privée).
+Les épisodes 1 à 3 sont animés et se regardent sur la page `/dessins-animes`
+(lien depuis « Radios et télé » et l'accueil). Ils marchent sans réseau une
+fois la page ouverte.
+
+- Le dessin est fait par le code (`lib/kalimat/dessin.ts`) : personnages,
+  décors, bulles avec les mots de darija en couleur.
+- Les épisodes sont des données (`lib/kalimat/episodes.ts`) : pour en ajouter
+  un, on écrit ses plans (décor, personnages, réplique), le reste suit.
+- Pas encore de voix : les bulles se lisent à voix haute.
+
+## Fabriquer les vidéos YouTube
+
+```
+npm run build && npx next start -p 3200
+node scripts/kalimat-video.mjs http://localhost:3200 videos-kalimat
+```
+
+Pour chaque épisode, le dossier `videos-kalimat/` reçoit :
+
+- `kalimat-01.mp4` : la vidéo verticale 1080 × 1920 (format Short), son muet ;
+- `kalimat-01.srt` : les sous-titres, à envoyer sur YouTube. C'est aussi le
+  texte minuté pour enregistrer les voix ;
+- `kalimat-01.jpg` : la miniature.
+
+Pour les voix : enregistrer chaque réplique au moment indiqué dans le `.srt`,
+puis remplacer le son muet (dans YouTube Studio, CapCut ou tout outil de
+montage). Pour la musique, la bibliothèque audio de YouTube Studio est
+gratuite et sans droits à payer.

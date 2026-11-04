@@ -6,8 +6,8 @@ const VERSION = `${PREFIX}v4`;
 const ASSETS = `${VERSION}-assets`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = '/offline.html';
-// /jeux : pour jouer sans réseau en voiture, page prête dès l'installation.
-const PUBLIC_PAGES = ['/', '/guide', '/decouvrir', '/telecharger', '/jeux'];
+// /jeux et /dessins-animes : pour les enfants en voiture, pages prêtes sans réseau.
+const PUBLIC_PAGES = ['/', '/guide', '/decouvrir', '/telecharger', '/jeux', '/dessins-animes'];
 const PRECACHE = [OFFLINE, '/manifest.webmanifest', '/icon-192.svg', '/icon-512.svg', '/icons/icon-192.png'];
 
 async function precache(cacheName, paths) {
