@@ -27,16 +27,19 @@ describe('Lecteur Kalimat', () => {
     expect(screen.getByText(/el mar brilla/)).toBeInTheDocument()
   })
 
-  it('propose l’épisode suivant à la fin', () => {
+  it('propose l’épisode suivant à la fin', async () => {
     render(<LecteurKalimat />)
     fireEvent.change(screen.getByLabelText('Avancer dans l’épisode'), { target: { value: '1000' } })
-    expect(screen.getByLabelText('Revoir l’épisode')).toBeInTheDocument()
+    expect(await screen.findByLabelText('Revoir l’épisode')).toBeInTheDocument()
     fireEvent.click(screen.getByText(/Épisode suivant : Atay chez Mima/))
     expect(screen.getByRole('img', { name: /épisode 2/ })).toBeInTheDocument()
   })
 
-  it('peut couper le son', () => {
+  it('peut couper le son et afficher les sous-titres', async () => {
     render(<LecteurKalimat />)
+    expect(await screen.findByLabelText('Lecture')).toBeInTheDocument()
+    fireEvent.click(screen.getByLabelText('Sous-titres'))
+    expect(screen.getByLabelText('Sous-titres')).toHaveAttribute('aria-pressed', 'true')
     fireEvent.click(screen.getByLabelText('Couper le son'))
     expect(screen.getByLabelText('Mettre le son')).toHaveAttribute('aria-pressed', 'false')
   })

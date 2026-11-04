@@ -11,8 +11,8 @@
 //   traduction qui apparaît dessous la première fois ;
 // - des passages en cercle (iris) entre les lieux et les écrans.
 
-import { DEBUT_ECRITURE, LETTRES_PAR_SECONDE, ECRAN, NOMS, lignes, momentA, suivant, texteBrut, texteFin, traductions } from './episodes';
-import type { DecorId, Episode, Humeur, Langue, Moment, ObjetId, PersoId, Placement, Plan, Tenu } from './episodes';
+import { DEBUT_ECRITURE, DEBUT_VOIX, LETTRES_PAR_SECONDE, ECRAN, NOMS, clip, cleDuPlan, lignes, momentA, suivant, texteBrut, texteFin, traductions } from './episodes';
+import type { Clip, DecorId, Episode, Humeur, Langue, Moment, ObjetId, PersoId, Placement, Plan, Tenu } from './episodes';
 import type { EntreeLexique } from './lexique';
 
 export const LARGEUR = 1080;
@@ -28,6 +28,7 @@ const IRIS = 0.45;
 type Ctx = CanvasRenderingContext2D;
 let police = 'sans-serif';
 let langue: Langue = 'fr';
+let avecSousTitres = false;
 
 // --- Outils -------------------------------------------------------------------
 
@@ -174,6 +175,16 @@ export function ouvertureBouche(texte: string, local: number): number {
     return 0.3;
   };
   return o(brut[i]) * (1 - f) + o(brut[i + 1]) * f;
+}
+
+/** Ouverture de la bouche d'après la vraie voix (courbe mesurée, 30 valeurs par seconde). */
+export function ouvertureVoix(voix: Clip, local: number): number {
+  const n = (local - DEBUT_VOIX) * 30;
+  if (n < 0 || n >= voix.bouche.length) return -1;
+  const i = Math.floor(n);
+  const f = n - i;
+  const v = (c: string | undefined) => (c ? Number(c) / 9 : 0);
+  return Math.sqrt(v(voix.bouche[i]) * (1 - f) + v(voix.bouche[i + 1]) * f);
 }
 
 function yeux(ctx: Ctx, look: Look, etat: Etat, id: PersoId) {
@@ -659,7 +670,7 @@ function cameraDuPlan(plan: Plan): Camera {
   else if (!plan.parle) cam = { x: centre, zoom: 1.06 };
   else {
     const parleur = plan.persos.find((q) => q.id === plan.parle);
-    cam = { x: 0.65 * (parleur ? parleur.x * LARGEUR : centre) + 0.35 * centre, zoom: 1.2 };
+    cam = { x: 0.65 * (parleur ? parleur.x * LARGEUR : centre) + 0.35 * centre, zoom: 1.25 };
   }
   const demi = LARGEUR / (2 * cam.zoom);
   return { x: borne(cam.x, demi - 120, LARGEUR - demi + 120), zoom: cam.zoom };
@@ -1040,7 +1051,7 @@ const DECORS: Record<DecorId, { fond: Calque; milieu: Calque; sol: Calque; devan
  * `visibles` premières lettres sont montrées ; un mot de darija qui vient
  * d'apparaître grossit un instant.
  */
-function texteColore(ctx: Ctx, texte: string, cx: number, y: number, taille: number, largeurMax: number, couleur: string, visibles = Infinity) {
+function texteColore(ctx: Ctx, texte: string, cx: number, y: number, taille: number, largeurMax: number, couleur: string, visibles = Infinity, couleurFort = DARIJA) {
   ctx.font = `800 ${taille}px ${police}`;
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left';
@@ -1054,7 +1065,7 @@ function texteColore(ctx: Ctx, texte: string, cx: number, y: number, taille: num
       const w = ctx.measureText(m.texte).width;
       const reste = visibles - compte;
       if (reste > 0) {
-        ctx.fillStyle = m.fort ? DARIJA : couleur;
+        ctx.fillStyle = m.fort ? couleurFort : couleur;
         if (m.fort && reste >= m.texte.length && visibles !== Infinity) {
           const depuis = (reste - m.texte.length) / LETTRES_PAR_SECONDE;
           const s = 1 + 0.28 * Math.sin(Math.min(1, depuis / 0.25) * Math.PI);
@@ -1138,13 +1149,21 @@ function bulle(ctx: Ctx, texte: string, qui: PersoId | undefined, cible: [number
 }
 
 /** Les petites étiquettes « chouf = regarde » sous la bulle. */
-function etiquettesTraduction(ctx: Ctx, mots: EntreeLexique[], texte: string, boite: Boite, local: number, duree: number) {
+function etiquettesTraduction(
+  ctx: Ctx,
+  mots: EntreeLexique[],
+  texte: string,
+  boite: Boite,
+  local: number,
+  duree: number,
+  quand: (finDuMot: number, longueur: number) => number = (finDuMot) => DEBUT_ECRITURE + finDuMot / LETTRES_PAR_SECONDE + 0.1,
+) {
   const brut = texteBrut(texte).toLowerCase();
   const sortie = borne((duree - local) / 0.14, 0, 1);
   let y = boite.y + boite.h + 40;
   for (const m of mots) {
     const position = brut.indexOf(m.mot.toLowerCase());
-    const apparition = DEBUT_ECRITURE + (position < 0 ? 4 : position + m.mot.length) / LETTRES_PAR_SECONDE + 0.1;
+    const apparition = quand(position < 0 ? 4 : position + m.mot.length, brut.length);
     const v = (local - apparition) / 0.3;
     if (v <= 0) continue;
     const sens = langue === 'es' ? m.es : m.fr;
@@ -1170,6 +1189,24 @@ function etiquettesTraduction(ctx: Ctx, mots: EntreeLexique[], texte: string, bo
     ctx.restore();
     y += 96;
   }
+}
+
+/** Le sous-titre en bas de l'image, pendant que le personnage parle (au choix, sur le site). */
+function sousTitre(ctx: Ctx, texte: string, qui: PersoId | undefined, local: number, duree: number) {
+  const v = borne(local / 0.15, 0, 1) * borne((duree - local) / 0.15, 0, 1);
+  if (v <= 0) return;
+  const taille = 50;
+  ctx.font = `800 ${taille}px ${police}`;
+  const prefixe = qui ? `${NOMS[qui][langue]} : ` : '';
+  const rangees = lignes(prefixe + texte, 940, (s2) => ctx.measureText(s2).width);
+  const h = rangees.length * taille * 1.25 + 40;
+  ctx.save();
+  ctx.globalAlpha = v;
+  rectRond(ctx, 40, 1560, LARGEUR - 80, h, 28);
+  ctx.fillStyle = 'rgba(15,31,61,0.82)';
+  ctx.fill();
+  texteColore(ctx, prefixe + texte, LARGEUR / 2, 1560 + 20 + taille * 0.9, taille, 940, '#ffffff', Infinity, '#ffb37a');
+  ctx.restore();
 }
 
 function etiquette(ctx: Ctx, ep: Episode) {
@@ -1227,13 +1264,13 @@ function repos(t: number, extra: Partial<Etat> = {}): Etat {
 }
 
 /** Les personnages arrivent en sautant, l'un après l'autre, puis sautillent en saluant. */
-function bandeDesPersos(ctx: Ctx, t: number, sol: number, echelle: number, decalage = 0.35) {
+function bandeDesPersos(ctx: Ctx, t: number, sol: number, echelle: number, decalage = 0.35, bouches: Partial<Record<PersoId, number>> = {}) {
   BANDE.forEach((id, i) => {
     const arrivee = borne((t - i * decalage) / 0.45, 0, 1);
     if (arrivee <= 0) return;
     const monte = (1 - rebond(arrivee)) * 500;
     const saute = arrivee >= 1 ? Math.max(0, Math.sin(t * 5 - i * 0.7)) * 26 : 0;
-    personnage(ctx, id, 130 + i * 205, sol - saute + monte, echelle, repos(t + i, { salut: true, humeur: i % 2 ? 'rire' : 'content' }));
+    personnage(ctx, id, 130 + i * 205, sol - saute + monte, echelle, repos(t + i, { salut: true, humeur: i % 2 ? 'rire' : 'content', bouche: bouches[id] ?? -1 }));
   });
 }
 
@@ -1335,8 +1372,10 @@ function ecranMots(ctx: Ctx, ep: Episode, local: number) {
     ctx.restore();
   });
   const dansLePas = local % pas;
-  const parle = dansLePas > 0.4 && dansLePas < 1.6 && local < 3 * pas;
-  personnage(ctx, 'yassine', 860, 1900, 0.72, repos(local, { bouche: parle ? 0.5 + 0.5 * Math.sin(local * 18) : -1, geste: 1, typeGeste: 'montre', regard: -1 }));
+  const enCours = Math.min(2, Math.floor(local / pas));
+  const voix = clip(ep, langue, `m${enCours}`);
+  const bouche = voix ? ouvertureVoix(voix, dansLePas - 0.45 + DEBUT_VOIX) : dansLePas > 0.4 && dansLePas < 1.6 && local < 3 * pas ? 0.5 + 0.5 * Math.sin(local * 18) : -1;
+  personnage(ctx, 'yassine', 860, 1900, 0.72, repos(local, { bouche, geste: 1, typeGeste: 'montre', regard: -1 }));
 }
 
 function ecranFin(ctx: Ctx, ep: Episode, local: number) {
@@ -1398,7 +1437,8 @@ function ecranFin(ctx: Ctx, ep: Episode, local: number) {
     ctx.fillText(texte, 0, 2, 940);
     ctx.restore();
   }
-  bandeDesPersos(ctx, local + 2, 1640, 0.62);
+  const voixFin = clip(ep, langue, 'f');
+  bandeDesPersos(ctx, local + 2, 1640, 0.62, 0.35, voixFin ? { ines: ouvertureVoix(voixFin, local - 0.35 + DEBUT_VOIX) } : {});
   chat(ctx, local, 980, 1700 - Math.max(0, Math.sin(local * 5)) * 40, 0.55, false);
 }
 
@@ -1436,6 +1476,7 @@ function ecranPlan(ctx: Ctx, ep: Episode, index: number, local: number, duree: n
   const parleur = pos.find((q) => q.placement.id === plan.parle);
   const cam = cameraA(ep, index, local);
   const calques = DECORS[plan.decor];
+  const voix = clip(ep, langue, cleDuPlan(index));
   const dessinerCalque = (k: number, fn: () => void) => {
     ctx.save();
     calque(ctx, cam, k);
@@ -1451,7 +1492,7 @@ function ecranPlan(ctx: Ctx, ep: Episode, index: number, local: number, duree: n
       ellipse(ctx, q.x, SOL + 6, (q.placement.id === 'mchicha' ? 60 : 78) * reduit, 14 * reduit, 'rgba(29,22,48,0.18)');
     }
     const ordre = [...pos].sort((a, b) => Number(a.placement.id === 'mchicha') - Number(b.placement.id === 'mchicha'));
-    const finParole = DEBUT_ECRITURE + texteBrut(texte).length / LETTRES_PAR_SECONDE;
+    const finParole = voix ? DEBUT_VOIX + voix.duree : DEBUT_ECRITURE + texteBrut(texte).length / LETTRES_PAR_SECONDE;
     for (const q of ordre) {
       const id = q.placement.id;
       const parle = plan.parle === id;
@@ -1459,7 +1500,7 @@ function ecranPlan(ctx: Ctx, ep: Episode, index: number, local: number, duree: n
       const geste = parle ? doux((local - 0.1) / 0.3) * (1 - doux((local - finParole - 0.2) / 0.4)) : 0;
       const etat: Etat = {
         t: t + DECALAGE[id],
-        bouche: parle ? ouvertureBouche(texte, local) : -1,
+        bouche: parle ? (voix ? ouvertureVoix(voix, local) : ouvertureBouche(texte, local)) : -1,
         geste,
         typeGeste: GESTES[(index + texte.length) % GESTES.length],
         humeur: q.placement.humeur ?? 'content',
@@ -1479,6 +1520,13 @@ function ecranPlan(ctx: Ctx, ep: Episode, index: number, local: number, duree: n
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, LARGEUR, HAUTEUR);
   etiquette(ctx, ep);
+  if (voix) {
+    // Doublé : ils parlent, sans bulle. Les mots nouveaux s'affichent quand ils sont dits.
+    const haut: Boite = { x: 0, y: 200, w: LARGEUR, h: 0 };
+    etiquettesTraduction(ctx, traductions(ep, index, langue), texte, haut, local, duree, (finDuMot, longueur) => DEBUT_VOIX + (finDuMot / Math.max(1, longueur)) * voix.duree);
+    if (avecSousTitres) sousTitre(ctx, texte, plan.parle, local, duree);
+    return;
+  }
   const cible = parleur ? versEcran(cam, parleur.x, parleur.sol - hautTete(parleur.placement.id, ECHELLE_PERSO)) : undefined;
   const boite = bulle(ctx, texte, plan.parle, cible, local, duree);
   etiquettesTraduction(ctx, traductions(ep, index, langue), texte, boite, local, duree);
@@ -1502,9 +1550,10 @@ export function avecIris(ep: Episode, moment: Moment): boolean {
  * Dessine l'image de l'épisode à l'instant `t` (secondes), dans un repère de
  * 1080 × 1920, dans la langue choisie. L'appelant règle l'échelle du canvas.
  */
-export function dessinerEpisode(ctx: Ctx, ep: Episode, t: number, policeTexte = 'sans-serif', langueTexte: Langue = 'fr') {
+export function dessinerEpisode(ctx: Ctx, ep: Episode, t: number, policeTexte = 'sans-serif', langueTexte: Langue = 'fr', options: { sousTitres?: boolean } = {}) {
   police = policeTexte;
   langue = langueTexte;
+  avecSousTitres = options.sousTitres ?? false;
   ctx.save();
   ctx.lineJoin = 'round';
   const moment = momentA(ep, t, langue);

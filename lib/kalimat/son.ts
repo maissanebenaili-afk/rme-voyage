@@ -3,7 +3,13 @@
 // « pling » quand un mot de darija s'écrit, boing, ding, fanfare de fin).
 // Le son est calé sur le temps de l'épisode : le même sur le site et dans la vidéo.
 
-import { DEBUT_ECRITURE, FIN, GENERIQUE, LETTRES_PAR_SECONDE, MOTS, dureeEpisode, dureePlan, morceaux, type Episode, type Langue } from './episodes';
+import { DEBUT_ECRITURE, FIN, GENERIQUE, LETTRES_PAR_SECONDE, MOTS, clip, cleDuPlan, dureeEpisode, dureePlan, morceaux, type Episode, type Langue } from './episodes';
+
+/** Une voix déjà décodée, à placer dans la piste. */
+export interface VoixPlacee {
+  debut: number;
+  donnees: Float32Array;
+}
 
 export const FREQUENCE = 44100;
 
@@ -103,8 +109,8 @@ function musique(duree: number): Float32Array {
 }
 
 /** Les moments où la musique est plus forte (générique, mots du jour, fin) ou plus douce (dialogues). */
-function volumeMusique(t: number, debutDialogues: number, finDialogues: number): number {
-  const doux = 0.32;
+function volumeMusique(t: number, debutDialogues: number, finDialogues: number, avecVoix: boolean): number {
+  const doux = avecVoix ? 0.2 : 0.32;
   const fort = 0.85;
   const fondu = 0.4;
   if (t < debutDialogues - fondu) return fort;
@@ -114,8 +120,12 @@ function volumeMusique(t: number, debutDialogues: number, finDialogues: number):
   return fort;
 }
 
-/** La piste complète de l'épisode (mono, de -1 à 1). */
-export function genererSon(ep: Episode, langue: Langue = 'fr'): Float32Array {
+/**
+ * La piste complète de l'épisode (mono, de -1 à 1). Avec `voix`, les répliques
+ * enregistrées sont mélangées à la musique (plus douce), sans les bruitages des bulles.
+ */
+export function genererSon(ep: Episode, langue: Langue = 'fr', voix: VoixPlacee[] = []): Float32Array {
+  const avecVoix = voix.length > 0;
   const duree = dureeEpisode(ep, langue);
   const fond = musique(duree);
   const effets = new Float32Array(fond.length);
@@ -126,15 +136,15 @@ export function genererSon(ep: Episode, langue: Langue = 'fr'): Float32Array {
   let debut = GENERIQUE;
   ep.plans.forEach((plan, i) => {
     if (i === 0 || ep.plans[i - 1].decor !== plan.decor) note(effets, debut - 0.05, 0.35, (u) => 900 - 600 * u, 'sinus', 0.1, 0.1, 0.15);
-    note(effets, debut + 0.04, 0.07, (u) => 520 + 600 * u, 'sinus', 0.32, 0.005, 0.05);
+    if (!avecVoix) note(effets, debut + 0.04, 0.07, (u) => 520 + 600 * u, 'sinus', 0.32, 0.005, 0.05);
     if (plan.persos.some((q) => q.saut)) note(effets, debut + 0.1, 0.45, (u) => 260 + 260 * Math.sin(u * Math.PI) + 30 * Math.sin(u * 40), 'sinus', 0.3, 0.01, 0.1);
     // un petit « pling » quand chaque mot de darija finit de s'écrire
     let lettres = 0;
     for (const m of morceaux(plan.texte[langue])) {
       lettres += m.texte.length;
-      if (m.fort) note(effets, debut + DEBUT_ECRITURE + lettres / LETTRES_PAR_SECONDE, 0.06, () => hz(93), 'sinus', 0.12, 0.003, 0.12);
+      if (m.fort && !avecVoix) note(effets, debut + DEBUT_ECRITURE + lettres / LETTRES_PAR_SECONDE, 0.06, () => hz(93), 'sinus', 0.12, 0.003, 0.12);
     }
-    debut += dureePlan(plan, langue);
+    debut += dureePlan(plan, langue, clip(ep, langue, cleDuPlan(i)));
   });
   // ding pour chaque mot du jour, fanfare de fin
   for (let i = 0; i < 3; i++) {
@@ -144,10 +154,14 @@ export function genererSon(ep: Episode, langue: Langue = 'fr'): Float32Array {
   }
   [74, 78, 81, 86].forEach((n, i) => note(effets, finDialogues + MOTS + 0.1 + i * 0.12, i === 3 ? 0.5 : 0.12, () => hz(n), 'carre', 0.12, 0.005, 0.15));
 
+  for (const { debut: d, donnees } of voix) {
+    const i0 = Math.floor(d * FREQUENCE);
+    for (let k = 0; k < donnees.length && i0 + k < effets.length; k++) effets[i0 + k] += donnees[k] * 0.9;
+  }
   const piste = new Float32Array(fond.length);
   for (let i = 0; i < piste.length; i++) {
     const t = i / FREQUENCE;
-    const v = fond[i] * volumeMusique(t, GENERIQUE, finDialogues) + effets[i];
+    const v = fond[i] * volumeMusique(t, GENERIQUE, finDialogues, avecVoix) + effets[i];
     piste[i] = Math.tanh(v * 1.1) * 0.9;
   }
   return piste;

@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pause, Play, RotateCcw, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Captions, Pause, Play, RotateCcw, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
-import { EPISODES, LANGUES, dureeEpisode, repliques, sousTitresSrt, type Langue } from '@/lib/kalimat/episodes';
+import { EPISODES, LANGUES, aDesVoix, dureeEpisode, repliques, sousTitresSrt, voixAuxTemps, type Episode, type Langue } from '@/lib/kalimat/episodes';
 import { HAUTEUR, LARGEUR, dessinerEpisode } from '@/lib/kalimat/dessin';
-import { FREQUENCE, enWav, genererSon } from '@/lib/kalimat/son';
+import { FREQUENCE, enWav, genererSon, type VoixPlacee } from '@/lib/kalimat/son';
 
 /** Pour fabriquer les vidéos YouTube : la page ouverte avec ?video expose l'image et le son de chaque épisode. */
 interface ExportKalimat {
@@ -13,13 +13,28 @@ interface ExportKalimat {
   duree: (episode: number, langue: Langue) => number;
   image: (episode: number, t: number, qualite: number, langue: Langue) => string;
   srt: (episode: number, langue: Langue) => string;
-  wav: (episode: number, langue: Langue) => string;
+  wav: (episode: number, langue: Langue) => Promise<string>;
 }
 
 const NOM_LANGUE: Record<Langue, string> = { fr: 'Français', es: 'Español' };
 
 function police(): string {
   return getComputedStyle(document.body).fontFamily || 'sans-serif';
+}
+
+/** Télécharge et décode les voix de l'épisode (vide s'il n'est pas doublé ou si le navigateur ne sait pas décoder). */
+async function chargerVoix(ep: Episode, langue: Langue): Promise<VoixPlacee[]> {
+  const places = voixAuxTemps(ep, langue);
+  if (places.length === 0 || typeof OfflineAudioContext === 'undefined') return [];
+  const decodeur = new OfflineAudioContext(1, 1, FREQUENCE);
+  return Promise.all(
+    places.map(async ({ debut, clip }) => {
+      const reponse = await fetch(clip.fichier);
+      if (!reponse.ok) throw new Error(`Voix introuvable : ${clip.fichier}`);
+      const son = await decodeur.decodeAudioData(await reponse.arrayBuffer());
+      return { debut, donnees: son.getChannelData(0) };
+    }),
+  );
 }
 
 function enBase64(octets: Uint8Array): string {
@@ -35,6 +50,10 @@ export default function LecteurKalimat() {
   const audioRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const pistesRef = useRef(new Map<string, AudioBuffer>());
+  const voixRef = useRef(new Map<string, VoixPlacee[]>());
+  const [voixPretes, setVoixPretes] = useState(true);
+  const [erreurVoix, setErreurVoix] = useState(false);
+  const [sousTitres, setSousTitres] = useState(false);
   const [choix, setChoix] = useState(0);
   const [langue, setLangue] = useState<Langue>(lang === 'es' ? 'es' : 'fr');
   const [lecture, setLecture] = useState(false);
@@ -49,10 +68,37 @@ export default function LecteurKalimat() {
       const ctx = canvas?.getContext('2d');
       if (!canvas || !ctx) return;
       ctx.setTransform(canvas.width / LARGEUR, 0, 0, canvas.height / HAUTEUR, 0, 0);
-      dessinerEpisode(ctx, ep, t, police(), langue);
+      dessinerEpisode(ctx, ep, t, police(), langue, { sousTitres });
     },
-    [ep, langue],
+    [ep, langue, sousTitres],
   );
+
+  // Les voix de l'épisode doublé se chargent dès qu'on le choisit.
+  useEffect(() => {
+    const cle = `${choix}-${langue}`;
+    if (!aDesVoix(ep, langue) || voixRef.current.has(cle)) {
+      setVoixPretes(true);
+      return;
+    }
+    let actif = true;
+    setVoixPretes(false);
+    setErreurVoix(false);
+    chargerVoix(ep, langue)
+      .then((voix) => {
+        voixRef.current.set(cle, voix);
+        if (actif) setVoixPretes(true);
+      })
+      .catch(() => {
+        // Sans les voix, l'épisode reste regardable avec la musique.
+        if (actif) {
+          setErreurVoix(true);
+          setVoixPretes(true);
+        }
+      });
+    return () => {
+      actif = false;
+    };
+  }, [choix, ep, langue]);
 
   const arreterSon = useCallback(() => {
     const source = sourceRef.current;
@@ -71,7 +117,7 @@ export default function LecteurKalimat() {
       const cle = `${choix}-${langue}`;
       let piste = pistesRef.current.get(cle);
       if (!piste) {
-        const donnees = genererSon(ep, langue);
+        const donnees = genererSon(ep, langue, voixRef.current.get(cle) ?? []);
         piste = horloge.createBuffer(1, donnees.length, FREQUENCE);
         piste.getChannelData(0).set(donnees);
         pistesRef.current.set(cle, piste);
@@ -139,7 +185,7 @@ export default function LecteurKalimat() {
         return canvas.toDataURL('image/jpeg', qualite);
       },
       srt: (i, l) => sousTitresSrt(EPISODES[i], l),
-      wav: (i, l) => enBase64(enWav(genererSon(EPISODES[i], l))),
+      wav: async (i, l) => enBase64(enWav(genererSon(EPISODES[i], l, await chargerVoix(EPISODES[i], l)))),
     };
     (window as unknown as { __kalimat?: ExportKalimat }).__kalimat = exporter;
   }, []);
@@ -195,6 +241,15 @@ export default function LecteurKalimat() {
         </div>
         <button
           type="button"
+          onClick={() => setSousTitres((v) => !v)}
+          aria-pressed={sousTitres}
+          aria-label="Sous-titres"
+          className={`ms-auto inline-flex h-11 w-11 items-center justify-center rounded-full ring-1 ring-slate-200 ${sousTitres ? 'bg-[#0f1f3d] text-white' : 'bg-white text-[#0f1f3d]'}`}
+        >
+          <Captions size={20} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
           onClick={() => {
             setLecture(false);
             setSon((s) => !s);
@@ -237,7 +292,9 @@ export default function LecteurKalimat() {
         <button
           type="button"
           onClick={basculer}
-          aria-label={lecture ? 'Pause' : fini ? 'Revoir l’épisode' : 'Lecture'}
+          disabled={!voixPretes}
+          aria-busy={!voixPretes}
+          aria-label={!voixPretes ? 'Chargement des voix' : lecture ? 'Pause' : fini ? 'Revoir l’épisode' : 'Lecture'}
           className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#0f1f3d] text-white"
         >
           {lecture ? <Pause size={26} aria-hidden="true" /> : fini ? <RotateCcw size={24} aria-hidden="true" /> : <Play size={26} className="ms-0.5" aria-hidden="true" />}
@@ -275,8 +332,15 @@ export default function LecteurKalimat() {
       )}
 
       <p className="mx-auto mt-3 max-w-[360px] text-center text-sm text-slate-700">
-        Musique et bruitages, pas encore de voix : lisez les bulles à voix haute avec les enfants, c’est encore plus drôle !
+        {aDesVoix(ep, langue)
+          ? 'Version doublée : les personnages parlent (voix de synthèse, en attendant de vraies voix marocaines).'
+          : 'Pas encore doublé dans cette langue : lisez les bulles à voix haute avec les enfants !'}
       </p>
+      {erreurVoix && (
+        <p role="alert" className="mx-auto mt-2 max-w-[360px] text-center text-sm font-semibold text-red-700">
+          Les voix n’ont pas pu se charger : l’épisode joue avec la musique seule.
+        </p>
+      )}
 
       <details className="mt-6 rounded-2xl bg-white p-4">
         <summary className="cursor-pointer font-bold">Lire le texte de l’épisode</summary>
