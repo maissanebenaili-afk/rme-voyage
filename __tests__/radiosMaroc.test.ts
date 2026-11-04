@@ -1,4 +1,4 @@
-import { RADIOS, SNRT_RADIOS, TV_CHANNELS, isAllowedStream, radioById } from '@/lib/radiosMaroc'
+import { FREE_STREAMING, RADIOS, SNRT_RADIOS, TV_CHANNELS, isAllowedStream, radioById } from '@/lib/radiosMaroc'
 
 describe('radios et télé du Maroc', () => {
   it('lists stations with unique ids, https streams and https homepages', () => {
@@ -22,6 +22,15 @@ describe('radios et télé du Maroc', () => {
     expect(isAllowedStream('https://x.ice.infomaniak.ch.evil.example/x.mp3')).toBe(false)
     expect(isAllowedStream('https://stream.zeno.fm/abc')).toBe(false)
     expect(isAllowedStream('pas une adresse')).toBe(false)
+  })
+
+  it('lists only official free platforms for films and series, never a piracy aggregator', () => {
+    const hosts = FREE_STREAMING.map((p) => new URL(p.url).host)
+    expect(hosts).toEqual(
+      expect.arrayContaining(['www.tv5mondeplus.com', 'www.arte.tv', 'pluto.tv', 'www.rakuten.tv', 'www.france.tv', 'www.tf1.fr', 'www.m6.fr']),
+    )
+    expect(hosts).toHaveLength(7)
+    expect(hosts.some((h) => h.includes('miaw'))).toBe(false)
   })
 
   it('finds a station back from its id', () => {

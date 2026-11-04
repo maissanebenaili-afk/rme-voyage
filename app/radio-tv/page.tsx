@@ -5,7 +5,7 @@ import RadioTvMaroc from '@/components/RadioTvMaroc';
 export const metadata: Metadata = {
   title: 'Radios et télé du Maroc en direct',
   description:
-    'Écoutez Hit Radio, Radio Mars, Medina FM, Med Radio et d’autres radios marocaines en un appui, et retrouvez les directs officiels d’Al Aoula, Al Maghribia, 2M et Medi1 TV.',
+    'Écoutez Hit Radio, Radio Mars, Medina FM, Med Radio et d’autres radios marocaines en un appui, retrouvez les directs officiels d’Al Aoula, Al Maghribia, 2M et Medi1 TV, et des films et séries gratuits et légaux.',
 };
 
 export default function RadioTvPage() {
