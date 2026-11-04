@@ -36,6 +36,7 @@ jobs:
         id: update
         run: |
           pip install --quiet openpyxl==3.1.5
+          python3 -m unittest discover -s scripts -p 'test_fuel_prices_guard.py'
           python3 scripts/update-fuel-prices.py
           observed=$(python3 -c "import json; print(json.load(open('lib/data/fuelPrices.json'))['observedAt'])")
           echo "observed=$observed" >> "$GITHUB_OUTPUT"

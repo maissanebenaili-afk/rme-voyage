@@ -157,6 +157,9 @@ export default function TripDecisionEngine() {
               <input type="number" min={min as number} max={max as number} step={step as number} value={value as number} onChange={(e) => { (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number)); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40" />
             </label>
           ))}
+          <p className="text-xs leading-5 text-[#64748b]">
+            {h.flightBagsNote}
+          </p>
           {byCountry && (
             <label className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
               <span className="font-semibold text-[#334155]">{h.fuel}</span>

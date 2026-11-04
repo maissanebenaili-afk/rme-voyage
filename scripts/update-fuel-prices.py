@@ -13,11 +13,16 @@ lib/fuelByCountry.ts) et revient alors au prix saisi par l'utilisateur.
 import io
 import json
 import re
+import sys
 import urllib.request
 from datetime import datetime
 from pathlib import Path
 
 import openpyxl
+
+# Le garde-fou est à côté de ce script, même lancé en mode isolé (python -I).
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from fuel_prices_guard import is_older_observation  # noqa: E402
 
 PAGE = "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en"
 UA = {"User-Agent": "RME-Voyage fuel price updater"}
@@ -82,5 +87,20 @@ out = {
     "prices": dict(sorted(prices.items())),
 }
 path = Path(__file__).resolve().parent.parent / "lib" / "data" / "fuelPrices.json"
+
+# Si la page de la Commission renvoie un bulletin plus ancien que celui déjà
+# publié, on garde le nôtre : rien n'est écrit, donc aucune PR n'est ouverte.
+# Un fichier actuel illisible arrête le robot (code d'erreur) au lieu d'être écrasé.
+if path.exists():
+    try:
+        current_date = json.loads(path.read_text(encoding="utf-8")).get("observedAt")
+        if not isinstance(current_date, str) or not current_date:
+            raise ValueError("observedAt absent")
+        older = is_older_observation(out["observedAt"], current_date)
+    except (OSError, json.JSONDecodeError, AttributeError, ValueError) as exc:
+        raise SystemExit(f"fuelPrices.json illisible, rien n'est remplacé : {exc}") from exc
+    if older:
+        print(f"Bulletin reçu du {out['observedAt']} plus ancien que celui publié ({current_date}) : rien à faire.")
+        raise SystemExit(0)
 path.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"{path.name} : {len(prices)} pays, bulletin du {out['observedAt']}")
