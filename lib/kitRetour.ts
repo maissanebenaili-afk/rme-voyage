@@ -49,6 +49,10 @@ const SOURCES = {
     label: 'Administration des douanes marocaines (douane.gov.ma)',
     url: 'https://www.douane.gov.ma/',
   },
+  guideMre2026: {
+    label: 'Guide « Marocains du Monde 2026 » de la douane marocaine (PDF)',
+    url: 'https://casainvest.ma/sites/default/files/Guide%20Douanes%20MDM%202026.pdf',
+  },
 } satisfies Record<string, KitSource>;
 
 export function buildKit(answers: KitAnswers): KitItem[] {
@@ -131,11 +135,11 @@ export function buildKit(answers: KitAnswers): KitItem[] {
       {
         id: 'admission-temporaire',
         category: 'vehicule',
-        title: 'Admission temporaire du véhicule (fiche D16 ter)',
+        title: "Carte d'admission temporaire du véhicule",
         detail:
-          "Délivrée gratuitement par la douane marocaine à l'entrée. Gardez-la jusqu'à la sortie. La voiture peut rester environ 180 jours par année civile ; ne la prêtez pas et ne la vendez pas sur place.",
-        source: SOURCES.douaneMaroc,
-        aVerifier: true,
+          "Remise par la douane marocaine à l'entrée (en ferry, parfois à bord). Gardez-la jusqu'à la sortie. La voiture peut rester 180 jours par année civile. Si ce délai finit à partir du 1er décembre, la douane peut le prolonger sans pénalité. Retard : de 1 000 à 10 000 DH d'amende. Quelqu'un qui vit au Maroc ne peut la conduire qu'en votre présence. Ne la vendez pas sur place.",
+        source: SOURCES.guideMre2026,
+        aVerifier: false,
       },
     );
     if (!vehiculeAuNomDuConducteur) {
@@ -144,8 +148,8 @@ export function buildKit(answers: KitAnswers): KitItem[] {
         category: 'vehicule',
         title: 'Procuration du propriétaire du véhicule',
         detail:
-          "Si la carte grise n'est pas à votre nom. Faites-la légaliser en mairie par prudence : les guides ne sont pas d'accord sur ce point.",
-        source: SOURCES.douaneMaroc,
+          "Si la carte grise n'est pas à votre nom : la douane l'accepte. Faites-la légaliser en mairie par prudence. Attention : une voiture qui a déjà passé 180 jours au Maroc cette année ne peut pas y revenir avant l'an prochain, même avec une procuration.",
+        source: SOURCES.guideMre2026,
         aVerifier: true,
       });
     }

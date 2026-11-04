@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { POST } from '../app/api/hadak/route'
 
 // Production on 2026-10-04: customs questions went to an AI that gave MRE the
-// 2 000 DH gift limit (theirs is 20 000 DH) and "6 L de vin"; the local fuel
+// 2 000 DH gift limit (theirs is 25 000 DH since 2026) and "6 L de vin"; the local fuel
 // answer said diesel 11-12 MAD/L while the press reported it above 16 DH/L.
 async function ask(message: string, lang = 'fr') {
   global.fetch = jest.fn(async () => {
@@ -32,7 +32,8 @@ describe('Hadak — customs and fuel facts', () => {
   ])('answers "%s" locally with the MRE gift limit, never an AI guess', async (message) => {
     const data = await ask(message)
     expect(data.source).toBe('local')
-    expect(data.response).toMatch(/20[  ,]000/)
+    expect(data.response).toMatch(/25[  ,]000/)
+    expect(data.response).not.toMatch(/20[  ,]000/)
     expect(data.response).toMatch(/100[  ,]000/)
     expect(data.response).not.toMatch(/2000 ?€|€ ?2000|6 L de vin/)
     // Only figures read in a primary source (ADII guide, IGOC 2026): the

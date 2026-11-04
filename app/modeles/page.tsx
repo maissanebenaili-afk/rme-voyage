@@ -36,7 +36,10 @@ export default function ModelesPage() {
           </ol>
           <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm font-semibold text-amber-900">
             Au Maroc, une voiture entrée en admission temporaire ne peut être ni vendue ni donnée sur place sans
-            passer par la douane. Cette procuration autorise seulement à conduire.
+            passer par la douane. Cette procuration autorise seulement à conduire. Une personne qui vit au Maroc ne
+            peut la conduire qu&apos;en présence de celui qui l&apos;a fait entrer. Une voiture qui a déjà passé 180
+            jours au Maroc cette année ne peut pas y revenir avant l&apos;an prochain, même avec une procuration
+            (guide de la douane 2026).
           </p>
         </div>
 
