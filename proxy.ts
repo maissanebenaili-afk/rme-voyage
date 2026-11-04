@@ -274,7 +274,11 @@ export async function proxy(request: NextRequest) {
     // cdn.jsdelivr.net: the currency converter reads the day's rates there
     // (fetch only, never scripts); without it the browser blocked the call
     // and the converter always fell back to fixed rates.
-    `connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com https://cdn.jsdelivr.net${supabaseConnectSrc()}`,
+    // api.alquran.cloud: texte et traduction des sourates (/coran).
+    `connect-src 'self' https://api.aladhan.com https://*.tile.openstreetmap.org https://router.project-osrm.org https://api.open-meteo.com https://cdn.jsdelivr.net https://api.alquran.cloud${supabaseConnectSrc()}`,
+    // Récitation du Coran (/coran) : sans cette ligne, le son suivait
+    // default-src 'self' et le navigateur le bloquait.
+    "media-src 'self' https://cdn.islamic.network",
     "frame-src 'self' https://www.openstreetmap.org",
     "frame-ancestors 'none'",
     "object-src 'none'",

@@ -1,0 +1,803 @@
+{
+"source": "AlQuran Cloud (api.alquran.cloud/v1/surah), relevé le 2026-11-04",
+"surahs": [
+{
+"n": 1,
+"ar": "سُورَةُ ٱلْفَاتِحَةِ",
+"tr": "Al-Faatiha",
+"ayahs": 7,
+"type": "mecquoise"
+},
+{
+"n": 2,
+"ar": "سُورَةُ البَقَرَةِ",
+"tr": "Al-Baqara",
+"ayahs": 286,
+"type": "médinoise"
+},
+{
+"n": 3,
+"ar": "سُورَةُ آلِ عِمۡرَانَ",
+"tr": "Aal-i-Imraan",
+"ayahs": 200,
+"type": "médinoise"
+},
+{
+"n": 4,
+"ar": "سُورَةُ النِّسَاءِ",
+"tr": "An-Nisaa",
+"ayahs": 176,
+"type": "médinoise"
+},
+{
+"n": 5,
+"ar": "سُورَةُ المَائـِدَةِ",
+"tr": "Al-Maaida",
+"ayahs": 120,
+"type": "médinoise"
+},
+{
+"n": 6,
+"ar": "سُورَةُ الأَنۡعَامِ",
+"tr": "Al-An'aam",
+"ayahs": 165,
+"type": "mecquoise"
+},
+{
+"n": 7,
+"ar": "سُورَةُ الأَعۡرَافِ",
+"tr": "Al-A'raaf",
+"ayahs": 206,
+"type": "mecquoise"
+},
+{
+"n": 8,
+"ar": "سُورَةُ الأَنفَالِ",
+"tr": "Al-Anfaal",
+"ayahs": 75,
+"type": "médinoise"
+},
+{
+"n": 9,
+"ar": "سُورَةُ التَّوۡبَةِ",
+"tr": "At-Tawba",
+"ayahs": 129,
+"type": "médinoise"
+},
+{
+"n": 10,
+"ar": "سُورَةُ يُونُسَ",
+"tr": "Yunus",
+"ayahs": 109,
+"type": "mecquoise"
+},
+{
+"n": 11,
+"ar": "سُورَةُ هُودٍ",
+"tr": "Hud",
+"ayahs": 123,
+"type": "mecquoise"
+},
+{
+"n": 12,
+"ar": "سُورَةُ يُوسُفَ",
+"tr": "Yusuf",
+"ayahs": 111,
+"type": "mecquoise"
+},
+{
+"n": 13,
+"ar": "سُورَةُ الرَّعۡدِ",
+"tr": "Ar-Ra'd",
+"ayahs": 43,
+"type": "médinoise"
+},
+{
+"n": 14,
+"ar": "سُورَةُ إِبۡرَاهِيمَ",
+"tr": "Ibrahim",
+"ayahs": 52,
+"type": "mecquoise"
+},
+{
+"n": 15,
+"ar": "سُورَةُ الحِجۡرِ",
+"tr": "Al-Hijr",
+"ayahs": 99,
+"type": "mecquoise"
+},
+{
+"n": 16,
+"ar": "سُورَةُ النَّحۡلِ",
+"tr": "An-Nahl",
+"ayahs": 128,
+"type": "mecquoise"
+},
+{
+"n": 17,
+"ar": "سُورَةُ الإِسۡرَاءِ",
+"tr": "Al-Israa",
+"ayahs": 111,
+"type": "mecquoise"
+},
+{
+"n": 18,
+"ar": "سُورَةُ الكَهۡفِ",
+"tr": "Al-Kahf",
+"ayahs": 110,
+"type": "mecquoise"
+},
+{
+"n": 19,
+"ar": "سُورَةُ مَرۡيَمَ",
+"tr": "Maryam",
+"ayahs": 98,
+"type": "mecquoise"
+},
+{
+"n": 20,
+"ar": "سُورَةُ طه",
+"tr": "Taa-Haa",
+"ayahs": 135,
+"type": "mecquoise"
+},
+{
+"n": 21,
+"ar": "سُورَةُ الأَنبِيَاءِ",
+"tr": "Al-Anbiyaa",
+"ayahs": 112,
+"type": "mecquoise"
+},
+{
+"n": 22,
+"ar": "سُورَةُ الحَجِّ",
+"tr": "Al-Hajj",
+"ayahs": 78,
+"type": "médinoise"
+},
+{
+"n": 23,
+"ar": "سُورَةُ المُؤۡمِنُونَ",
+"tr": "Al-Muminoon",
+"ayahs": 118,
+"type": "mecquoise"
+},
+{
+"n": 24,
+"ar": "سُورَةُ النُّورِ",
+"tr": "An-Noor",
+"ayahs": 64,
+"type": "médinoise"
+},
+{
+"n": 25,
+"ar": "سُورَةُ الفُرۡقَانِ",
+"tr": "Al-Furqaan",
+"ayahs": 77,
+"type": "mecquoise"
+},
+{
+"n": 26,
+"ar": "سُورَةُ الشُّعَرَاءِ",
+"tr": "Ash-Shu'araa",
+"ayahs": 227,
+"type": "mecquoise"
+},
+{
+"n": 27,
+"ar": "سُورَةُ النَّمۡلِ",
+"tr": "An-Naml",
+"ayahs": 93,
+"type": "mecquoise"
+},
+{
+"n": 28,
+"ar": "سُورَةُ القَصَصِ",
+"tr": "Al-Qasas",
+"ayahs": 88,
+"type": "mecquoise"
+},
+{
+"n": 29,
+"ar": "سُورَةُ العَنكَبُوتِ",
+"tr": "Al-Ankaboot",
+"ayahs": 69,
+"type": "mecquoise"
+},
+{
+"n": 30,
+"ar": "سُورَةُ الرُّومِ",
+"tr": "Ar-Room",
+"ayahs": 60,
+"type": "mecquoise"
+},
+{
+"n": 31,
+"ar": "سُورَةُ لُقۡمَانَ",
+"tr": "Luqman",
+"ayahs": 34,
+"type": "mecquoise"
+},
+{
+"n": 32,
+"ar": "سُورَةُ السَّجۡدَةِ",
+"tr": "As-Sajda",
+"ayahs": 30,
+"type": "mecquoise"
+},
+{
+"n": 33,
+"ar": "سُورَةُ الأَحۡزَابِ",
+"tr": "Al-Ahzaab",
+"ayahs": 73,
+"type": "médinoise"
+},
+{
+"n": 34,
+"ar": "سُورَةُ سَبَإٍ",
+"tr": "Saba",
+"ayahs": 54,
+"type": "mecquoise"
+},
+{
+"n": 35,
+"ar": "سُورَةُ فَاطِرٍ",
+"tr": "Faatir",
+"ayahs": 45,
+"type": "mecquoise"
+},
+{
+"n": 36,
+"ar": "سُورَةُ يسٓ",
+"tr": "Yaseen",
+"ayahs": 83,
+"type": "mecquoise"
+},
+{
+"n": 37,
+"ar": "سُورَةُ الصَّافَّاتِ",
+"tr": "As-Saaffaat",
+"ayahs": 182,
+"type": "mecquoise"
+},
+{
+"n": 38,
+"ar": "سُورَةُ صٓ",
+"tr": "Saad",
+"ayahs": 88,
+"type": "mecquoise"
+},
+{
+"n": 39,
+"ar": "سُورَةُ الزُّمَرِ",
+"tr": "Az-Zumar",
+"ayahs": 75,
+"type": "mecquoise"
+},
+{
+"n": 40,
+"ar": "سُورَةُ غَافِرٍ",
+"tr": "Ghafir",
+"ayahs": 85,
+"type": "mecquoise"
+},
+{
+"n": 41,
+"ar": "سُورَةُ فُصِّلَتۡ",
+"tr": "Fussilat",
+"ayahs": 54,
+"type": "mecquoise"
+},
+{
+"n": 42,
+"ar": "سُورَةُ الشُّورَىٰ",
+"tr": "Ash-Shura",
+"ayahs": 53,
+"type": "mecquoise"
+},
+{
+"n": 43,
+"ar": "سُورَةُ الزُّخۡرُفِ",
+"tr": "Az-Zukhruf",
+"ayahs": 89,
+"type": "mecquoise"
+},
+{
+"n": 44,
+"ar": "سُورَةُ الدُّخَانِ",
+"tr": "Ad-Dukhaan",
+"ayahs": 59,
+"type": "mecquoise"
+},
+{
+"n": 45,
+"ar": "سُورَةُ الجَاثِيَةِ",
+"tr": "Al-Jaathiya",
+"ayahs": 37,
+"type": "mecquoise"
+},
+{
+"n": 46,
+"ar": "سُورَةُ الأَحۡقَافِ",
+"tr": "Al-Ahqaf",
+"ayahs": 35,
+"type": "mecquoise"
+},
+{
+"n": 47,
+"ar": "سُورَةُ مُحَمَّدٍ",
+"tr": "Muhammad",
+"ayahs": 38,
+"type": "médinoise"
+},
+{
+"n": 48,
+"ar": "سُورَةُ الفَتۡحِ",
+"tr": "Al-Fath",
+"ayahs": 29,
+"type": "médinoise"
+},
+{
+"n": 49,
+"ar": "سُورَةُ الحُجُرَاتِ",
+"tr": "Al-Hujuraat",
+"ayahs": 18,
+"type": "médinoise"
+},
+{
+"n": 50,
+"ar": "سُورَةُ قٓ",
+"tr": "Qaaf",
+"ayahs": 45,
+"type": "mecquoise"
+},
+{
+"n": 51,
+"ar": "سُورَةُ الذَّارِيَاتِ",
+"tr": "Adh-Dhaariyat",
+"ayahs": 60,
+"type": "mecquoise"
+},
+{
+"n": 52,
+"ar": "سُورَةُ الطُّورِ",
+"tr": "At-Tur",
+"ayahs": 49,
+"type": "mecquoise"
+},
+{
+"n": 53,
+"ar": "سُورَةُ النَّجۡمِ",
+"tr": "An-Najm",
+"ayahs": 62,
+"type": "mecquoise"
+},
+{
+"n": 54,
+"ar": "سُورَةُ القَمَرِ",
+"tr": "Al-Qamar",
+"ayahs": 55,
+"type": "mecquoise"
+},
+{
+"n": 55,
+"ar": "سُورَةُ الرَّحۡمَٰن",
+"tr": "Ar-Rahmaan",
+"ayahs": 78,
+"type": "médinoise"
+},
+{
+"n": 56,
+"ar": "سُورَةُ الوَاقِعَةِ",
+"tr": "Al-Waaqia",
+"ayahs": 96,
+"type": "mecquoise"
+},
+{
+"n": 57,
+"ar": "سُورَةُ الحَدِيدِ",
+"tr": "Al-Hadid",
+"ayahs": 29,
+"type": "médinoise"
+},
+{
+"n": 58,
+"ar": "سُورَةُ المُجَادلَةِ",
+"tr": "Al-Mujaadila",
+"ayahs": 22,
+"type": "médinoise"
+},
+{
+"n": 59,
+"ar": "سُورَةُ الحَشۡرِ",
+"tr": "Al-Hashr",
+"ayahs": 24,
+"type": "médinoise"
+},
+{
+"n": 60,
+"ar": "سُورَةُ المُمۡتَحنَةِ",
+"tr": "Al-Mumtahana",
+"ayahs": 13,
+"type": "médinoise"
+},
+{
+"n": 61,
+"ar": "سُورَةُ الصَّفِّ",
+"tr": "As-Saff",
+"ayahs": 14,
+"type": "médinoise"
+},
+{
+"n": 62,
+"ar": "سُورَةُ الجُمُعَةِ",
+"tr": "Al-Jumu'a",
+"ayahs": 11,
+"type": "médinoise"
+},
+{
+"n": 63,
+"ar": "سُورَةُ المُنَافِقُونَ",
+"tr": "Al-Munaafiqoon",
+"ayahs": 11,
+"type": "médinoise"
+},
+{
+"n": 64,
+"ar": "سُورَةُ التَّغَابُنِ",
+"tr": "At-Taghaabun",
+"ayahs": 18,
+"type": "médinoise"
+},
+{
+"n": 65,
+"ar": "سُورَةُ الطَّلَاقِ",
+"tr": "At-Talaaq",
+"ayahs": 12,
+"type": "médinoise"
+},
+{
+"n": 66,
+"ar": "سُورَةُ التَّحۡرِيمِ",
+"tr": "At-Tahrim",
+"ayahs": 12,
+"type": "médinoise"
+},
+{
+"n": 67,
+"ar": "سُورَةُ المُلۡكِ",
+"tr": "Al-Mulk",
+"ayahs": 30,
+"type": "mecquoise"
+},
+{
+"n": 68,
+"ar": "سُورَةُ القَلَمِ",
+"tr": "Al-Qalam",
+"ayahs": 52,
+"type": "mecquoise"
+},
+{
+"n": 69,
+"ar": "سُورَةُ الحَاقَّةِ",
+"tr": "Al-Haaqqa",
+"ayahs": 52,
+"type": "mecquoise"
+},
+{
+"n": 70,
+"ar": "سُورَةُ المَعَارِجِ",
+"tr": "Al-Ma'aarij",
+"ayahs": 44,
+"type": "mecquoise"
+},
+{
+"n": 71,
+"ar": "سُورَةُ نُوحٍ",
+"tr": "Nooh",
+"ayahs": 28,
+"type": "mecquoise"
+},
+{
+"n": 72,
+"ar": "سُورَةُ الجِنِّ",
+"tr": "Al-Jinn",
+"ayahs": 28,
+"type": "mecquoise"
+},
+{
+"n": 73,
+"ar": "سُورَةُ المُزَّمِّلِ",
+"tr": "Al-Muzzammil",
+"ayahs": 20,
+"type": "mecquoise"
+},
+{
+"n": 74,
+"ar": "سُورَةُ المُدَّثِّرِ",
+"tr": "Al-Muddaththir",
+"ayahs": 56,
+"type": "mecquoise"
+},
+{
+"n": 75,
+"ar": "سُورَةُ القِيَامَةِ",
+"tr": "Al-Qiyaama",
+"ayahs": 40,
+"type": "mecquoise"
+},
+{
+"n": 76,
+"ar": "سُورَةُ الإِنسَانِ",
+"tr": "Al-Insaan",
+"ayahs": 31,
+"type": "médinoise"
+},
+{
+"n": 77,
+"ar": "سُورَةُ المُرۡسَلَاتِ",
+"tr": "Al-Mursalaat",
+"ayahs": 50,
+"type": "mecquoise"
+},
+{
+"n": 78,
+"ar": "سُورَةُ النَّبَإِ",
+"tr": "An-Naba",
+"ayahs": 40,
+"type": "mecquoise"
+},
+{
+"n": 79,
+"ar": "سُورَةُ النَّازِعَاتِ",
+"tr": "An-Naazi'aat",
+"ayahs": 46,
+"type": "mecquoise"
+},
+{
+"n": 80,
+"ar": "سُورَةُ عَبَسَ",
+"tr": "Abasa",
+"ayahs": 42,
+"type": "mecquoise"
+},
+{
+"n": 81,
+"ar": "سُورَةُ التَّكۡوِيرِ",
+"tr": "At-Takwir",
+"ayahs": 29,
+"type": "mecquoise"
+},
+{
+"n": 82,
+"ar": "سُورَةُ الانفِطَارِ",
+"tr": "Al-Infitaar",
+"ayahs": 19,
+"type": "mecquoise"
+},
+{
+"n": 83,
+"ar": "سُورَةُ المُطَفِّفِينَ",
+"tr": "Al-Mutaffifin",
+"ayahs": 36,
+"type": "mecquoise"
+},
+{
+"n": 84,
+"ar": "سُورَةُ الانشِقَاقِ",
+"tr": "Al-Inshiqaaq",
+"ayahs": 25,
+"type": "mecquoise"
+},
+{
+"n": 85,
+"ar": "سُورَةُ البُرُوجِ",
+"tr": "Al-Burooj",
+"ayahs": 22,
+"type": "mecquoise"
+},
+{
+"n": 86,
+"ar": "سُورَةُ الطَّارِقِ",
+"tr": "At-Taariq",
+"ayahs": 17,
+"type": "mecquoise"
+},
+{
+"n": 87,
+"ar": "سُورَةُ الأَعۡلَىٰ",
+"tr": "Al-A'laa",
+"ayahs": 19,
+"type": "mecquoise"
+},
+{
+"n": 88,
+"ar": "سُورَةُ الغَاشِيَةِ",
+"tr": "Al-Ghaashiya",
+"ayahs": 26,
+"type": "mecquoise"
+},
+{
+"n": 89,
+"ar": "سُورَةُ الفَجۡرِ",
+"tr": "Al-Fajr",
+"ayahs": 30,
+"type": "mecquoise"
+},
+{
+"n": 90,
+"ar": "سُورَةُ البَلَدِ",
+"tr": "Al-Balad",
+"ayahs": 20,
+"type": "mecquoise"
+},
+{
+"n": 91,
+"ar": "سُورَةُ الشَّمۡسِ",
+"tr": "Ash-Shams",
+"ayahs": 15,
+"type": "mecquoise"
+},
+{
+"n": 92,
+"ar": "سُورَةُ اللَّيۡلِ",
+"tr": "Al-Lail",
+"ayahs": 21,
+"type": "mecquoise"
+},
+{
+"n": 93,
+"ar": "سُورَةُ الضُّحَىٰ",
+"tr": "Ad-Dhuhaa",
+"ayahs": 11,
+"type": "mecquoise"
+},
+{
+"n": 94,
+"ar": "سُورَةُ الشَّرۡحِ",
+"tr": "Ash-Sharh",
+"ayahs": 8,
+"type": "mecquoise"
+},
+{
+"n": 95,
+"ar": "سُورَةُ التِّينِ",
+"tr": "At-Tin",
+"ayahs": 8,
+"type": "mecquoise"
+},
+{
+"n": 96,
+"ar": "سُورَةُ العَلَقِ",
+"tr": "Al-Alaq",
+"ayahs": 19,
+"type": "mecquoise"
+},
+{
+"n": 97,
+"ar": "سُورَةُ القَدۡرِ",
+"tr": "Al-Qadr",
+"ayahs": 5,
+"type": "mecquoise"
+},
+{
+"n": 98,
+"ar": "سُورَةُ البَيِّنَةِ",
+"tr": "Al-Bayyina",
+"ayahs": 8,
+"type": "médinoise"
+},
+{
+"n": 99,
+"ar": "سُورَةُ الزَّلۡزَلَةِ",
+"tr": "Az-Zalzala",
+"ayahs": 8,
+"type": "médinoise"
+},
+{
+"n": 100,
+"ar": "سُورَةُ العَادِيَاتِ",
+"tr": "Al-Aadiyaat",
+"ayahs": 11,
+"type": "mecquoise"
+},
+{
+"n": 101,
+"ar": "سُورَةُ القَارِعَةِ",
+"tr": "Al-Qaari'a",
+"ayahs": 11,
+"type": "mecquoise"
+},
+{
+"n": 102,
+"ar": "سُورَةُ التَّكَاثُرِ",
+"tr": "At-Takaathur",
+"ayahs": 8,
+"type": "mecquoise"
+},
+{
+"n": 103,
+"ar": "سُورَةُ العَصۡرِ",
+"tr": "Al-Asr",
+"ayahs": 3,
+"type": "mecquoise"
+},
+{
+"n": 104,
+"ar": "سُورَةُ الهُمَزَةِ",
+"tr": "Al-Humaza",
+"ayahs": 9,
+"type": "mecquoise"
+},
+{
+"n": 105,
+"ar": "سُورَةُ الفِيلِ",
+"tr": "Al-Fil",
+"ayahs": 5,
+"type": "mecquoise"
+},
+{
+"n": 106,
+"ar": "سُورَةُ قُرَيۡشٍ",
+"tr": "Quraish",
+"ayahs": 4,
+"type": "mecquoise"
+},
+{
+"n": 107,
+"ar": "سُورَةُ المَاعُونِ",
+"tr": "Al-Maa'un",
+"ayahs": 7,
+"type": "mecquoise"
+},
+{
+"n": 108,
+"ar": "سُورَةُ الكَوۡثَرِ",
+"tr": "Al-Kawthar",
+"ayahs": 3,
+"type": "mecquoise"
+},
+{
+"n": 109,
+"ar": "سُورَةُ الكَافِرُونَ",
+"tr": "Al-Kaafiroon",
+"ayahs": 6,
+"type": "mecquoise"
+},
+{
+"n": 110,
+"ar": "سُورَةُ النَّصۡرِ",
+"tr": "An-Nasr",
+"ayahs": 3,
+"type": "médinoise"
+},
+{
+"n": 111,
+"ar": "سُورَةُ المَسَدِ",
+"tr": "Al-Masad",
+"ayahs": 5,
+"type": "mecquoise"
+},
+{
+"n": 112,
+"ar": "سُورَةُ الإِخۡلَاصِ",
+"tr": "Al-Ikhlaas",
+"ayahs": 4,
+"type": "mecquoise"
+},
+{
+"n": 113,
+"ar": "سُورَةُ الفَلَقِ",
+"tr": "Al-Falaq",
+"ayahs": 5,
+"type": "mecquoise"
+},
+{
+"n": 114,
+"ar": "سُورَةُ النَّاسِ",
+"tr": "An-Naas",
+"ayahs": 6,
+"type": "mecquoise"
+}
+]
+}

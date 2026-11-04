@@ -128,6 +128,16 @@ export default function HomeClient() {
           <h2 id="outils-title" className="font-display text-2xl font-semibold tracking-tight">{h.toolsTitle}</h2>
           <div className="mt-4 space-y-3">
             <ToolDrawer id="maroc" icon={<MoonStar size={20} />} title={h.drawerFaithTitle} text={h.drawerFaithText}>
+              <Link
+                href="/coran"
+                className="flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-[#0f1f3d] px-4 py-3 font-bold text-white transition hover:bg-[#172b52]"
+              >
+                <span>
+                  <span className="block">{h.footerCoran}</span>
+                  <span className="block text-sm font-normal text-white/75">{h.coranCard}</span>
+                </span>
+                <span aria-hidden="true">→</span>
+              </Link>
               <DailyWidget />
               <PrayerWidget />
               <QiblaCompass />
@@ -191,6 +201,7 @@ export default function HomeClient() {
                 <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDiscover}</Link></li>
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerShop}</Link></li>
                 <li><Link href="/kit-retour" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerKit}</Link></li>
+                <li><Link href="/coran" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerCoran}</Link></li>
                 <li><Link href="/outils-papiers" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerPapers}</Link></li>
                 <li><Link href="/telecharger" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDownload}</Link></li>
                 <li><Link href="/soutenir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerSupport}</Link></li>
