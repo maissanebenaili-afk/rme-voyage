@@ -40,7 +40,7 @@ describe("Hadak voice dictation", () => {
 
     render(<HadakAI />);
     fireEvent.click(screen.getByRole("button", { name: "Open Hadak chat" }));
-    fireEvent.click(screen.getByRole("button", { name: "Voice input" }));
+    fireEvent.click(screen.getByRole("button", { name: /Appuie et parle|Wrek w tkellem|Tap and speak/ }));
 
     const recognition = instances[instances.length - 1];
     expect(recognition.start).toHaveBeenCalled();

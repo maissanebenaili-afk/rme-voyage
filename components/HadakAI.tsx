@@ -464,6 +464,22 @@ function getAnswer(query: string, lang: Lang): { content: string; topic: TopicKe
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+const SWITCH_NOTE: Record<string, string> = {
+  fr: '↪ Je laisse la question précédente et je réponds à la nouvelle.',
+  da: '↪ Nkhlli s-so2al l-lowel w njaweb 3la l-jdid.',
+  en: '↪ Leaving the previous question, answering the new one.',
+  ar: '↪ أترك السؤال السابق وأجيب عن الجديد.',
+  es: '↪ Dejo la pregunta anterior y respondo a la nueva.',
+};
+
+const VOICE_LABEL: Record<'start' | 'stop' | 'listening' | 'thinking' | 'hint', Record<Lang, string>> = {
+  start: { fr: 'Appuie et parle', da: 'Wrek w tkellem', en: 'Tap and speak', ar: 'اضغط وتكلم', es: 'Pulsa y habla' },
+  stop: { fr: 'Je t\'écoute… touche pour arrêter', da: 'Kansme3 lik… wrek bach t7bes', en: 'Listening… tap to stop', ar: 'أستمع إليك… اضغط للإيقاف', es: 'Te escucho… pulsa para parar' },
+  listening: { fr: 'Hadak t\'écoute.', da: 'Hadak kaysme3 lik.', en: 'Hadak is listening.', ar: 'حداك يستمع إليك.', es: 'Hadak te escucha.' },
+  thinking: { fr: 'Hadak cherche la réponse.', da: 'Hadak kay9elleb 3la l-jawab.', en: 'Hadak is looking for the answer.', ar: 'حداك يبحث عن الجواب.', es: 'Hadak busca la respuesta.' },
+  hint: { fr: 'Je cherche… tu peux déjà poser une autre question.', da: 'Kan9elleb… t9der tsowwel so2al akhor.', en: 'Searching… you can already ask another question.', ar: 'أبحث… يمكنك طرح سؤال آخر.', es: 'Buscando… ya puedes hacer otra pregunta.' },
+};
+
 export default function HadakAI() {
   const [open, setOpen] = useState(false);
   const [lang, setLang] = useState<Lang>('da');
@@ -484,6 +500,11 @@ export default function HadakAI() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSendRef = useRef<(text?: string) => void>(() => {});
+  // A new question while Hadak is still answering replaces the old one: the
+  // old request is aborted and its late answer ignored. Before, the new
+  // question was silently dropped (typed or dictated).
+  const requestSeq = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   const isRtl = lang === 'ar';
 
@@ -613,12 +634,27 @@ export default function HadakAI() {
 
   const handleSend = async (text?: string) => {
     const content = (text ?? input).trim();
-    if (!content || isTyping) return;
+    if (!content) return;
+
+    const seq = ++requestSeq.current;
+    const stale = () => seq !== requestSeq.current;
+    const interrupting = isTyping;
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    // Stop reading the previous answer aloud: the user has moved on.
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setSpeakingIdx(null);
+    }
 
     const responseLang = detectHadakLanguage(content, lang);
     const userMsg: Message = { role: 'user', content };
-    const responseIndex = messages.length + 1;
-    setMessages((prev) => [...prev, userMsg]);
+    const switchNote: Message | null = interrupting
+      ? { role: 'assistant', content: SWITCH_NOTE[responseLang] ?? SWITCH_NOTE.fr, language: responseLang }
+      : null;
+    const responseIndex = messages.length + (switchNote ? 2 : 1);
+    setMessages((prev) => (switchNote ? [...prev, switchNote, userMsg] : [...prev, userMsg]));
     setInput('');
     setIsTyping(true);
 
@@ -635,7 +671,9 @@ export default function HadakAI() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: content, lang: responseLang }),
+        signal: controller.signal,
       });
+      if (stale()) return;
 
       // Check HTTP status BEFORE parsing JSON — 503/429/502/500 with fallback flag
       // should still trigger the local knowledge base, not display the error message
@@ -652,7 +690,9 @@ export default function HadakAI() {
       let data: { response: string; fallback?: boolean; trust?: HadakProvenance; next_actions?: NextAction[] };
       try {
         data = (await response.json()) as typeof data;
+        if (stale()) return;
       } catch {
+        if (stale()) return;
         // JSON parse error — likely malformed response
         console.error('Failed to parse Hadak response, status:', response.status);
         setIsOffline(true);
@@ -683,6 +723,7 @@ export default function HadakAI() {
       setLastTopic(topic);
       if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(answer, responseIndex, responseLang), 0); }
     } catch (error) {
+      if (stale()) return;
       console.error('Error calling Hadak API:', error);
       setIsOffline(true);
       const { content: answer, topic } = getAnswer(content, lang);
@@ -690,7 +731,7 @@ export default function HadakAI() {
       setLastTopic(topic);
       if (speakNextResponse.current) { speakNextResponse.current = false; setTimeout(() => speakMessage(answer, responseIndex, responseLang), 0); }
     } finally {
-      setIsTyping(false);
+      if (!stale()) setIsTyping(false);
     }
   };
 
@@ -1038,6 +1079,7 @@ export default function HadakAI() {
                     className="h-2 w-2 rounded-full bg-[#f59e0b]"
                     style={{ animation: 'hadak-typing 1.2s infinite ease-in-out', animationDelay: '0.4s' }}
                   />
+                  <span className="ms-2 text-[15px] text-white/85">{VOICE_LABEL.hint[lang]}</span>
                 </div>
               </motion.div>
             )}
@@ -1087,6 +1129,27 @@ export default function HadakAI() {
             className="p-3"
             style={{ borderTop: '1px solid rgba(245, 158, 11, 0.12)' }}
           >
+            {/* Big, labelled voice button: the old 40 px grey mic was hard to
+                see and to hit, for low vision and for older users. */}
+            {recognition && (
+              <button
+                type="button"
+                onClick={handleVoiceInput}
+                aria-pressed={isListening}
+                aria-label={isListening ? VOICE_LABEL.stop[lang] : VOICE_LABEL.start[lang]}
+                className="mb-3 flex min-h-[60px] w-full items-center justify-center gap-3 rounded-2xl px-4 text-lg font-extrabold transition-transform active:scale-[0.98] focus:outline-none focus-visible:ring-4 focus-visible:ring-white"
+                style={{
+                  background: isListening ? '#dc2626' : '#f59e0b',
+                  color: isListening ? '#ffffff' : '#0f1f3d',
+                }}
+              >
+                {isListening ? <MicOff className="h-7 w-7 animate-pulse" aria-hidden="true" /> : <Mic className="h-7 w-7" aria-hidden="true" />}
+                {isListening ? VOICE_LABEL.stop[lang] : VOICE_LABEL.start[lang]}
+              </button>
+            )}
+            <p role="status" aria-live="polite" className="sr-only">
+              {isListening ? VOICE_LABEL.listening[lang] : isTyping ? VOICE_LABEL.thinking[lang] : ''}
+            </p>
             <div className="flex items-center gap-2">
               <input
                 maxLength={1000}
@@ -1116,29 +1179,10 @@ export default function HadakAI() {
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid rgba(245, 158, 11, 0.15)',
                 }}
-                disabled={isTyping}
               />
               <button
-                onClick={handleVoiceInput}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
-                style={{
-                  background: isListening
-                    ? 'linear-gradient(135deg, #ff6b6b 0%, #ee5a3f 100%)'
-                    : 'rgba(255, 255, 255, 0.1)',
-                  boxShadow: isListening ? '0 4px 12px rgba(255, 107, 107, 0.4)' : 'none',
-                }}
-                aria-label="Voice input"
-                title={isListening ? 'Stop listening' : 'Start voice input'}
-              >
-                {isListening ? (
-                  <MicOff className="h-4 w-4 text-white animate-pulse" />
-                ) : (
-                  <Mic className="h-4 w-4 text-white/60" />
-                )}
-              </button>
-              <button
                 onClick={() => handleSend()}
-                disabled={!input.trim() || isTyping}
+                disabled={!input.trim()}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
                 style={{
                   background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
