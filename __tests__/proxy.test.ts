@@ -266,6 +266,16 @@ describe("proxy + Supabase session refresh", () => {
     expect(connectSrc.trim().split(/\s+/)).toContain(host);
   });
 
+  it("lets the Quran page load its text and play its recitation (CSP connect-src and media-src)", async () => {
+    // Without media-src the recitation fell back to default-src 'self' and was blocked.
+    const { CORAN_API, CORAN_AUDIO } = await import("@/lib/coran");
+    const csp = (await proxy(buildRequest("/coran"))).headers.get("Content-Security-Policy") ?? "";
+    const directive = (name: string) =>
+      (csp.split(";").find((d) => d.trim().startsWith(`${name} `)) ?? "").trim().split(/\s+/);
+    expect(directive("connect-src")).toContain(CORAN_API);
+    expect(directive("media-src")).toEqual(["media-src", "'self'", CORAN_AUDIO]);
+  });
+
   it("allows the Supabase project origin in connect-src only when configured with https", async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co/some/path";
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
