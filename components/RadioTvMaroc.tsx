@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Clapperboard, ExternalLink, Loader2, Pause, Play, Radio, Tv } from 'lucide-react';
-import { FREE_STREAMING, LAST_RADIO_KEY, RADIOS, SNRT_RADIOS, TV_CHANNELS, radioById, type OfficialLink, type RadioStation } from '@/lib/radiosMaroc';
+import { Clapperboard, ExternalLink, Loader2, Pause, Play, Radio, Smartphone, Tv } from 'lucide-react';
+import { FREE_STREAMING, LAST_RADIO_KEY, RADIOS, SNRT_RADIOS, SOCIAL_SANS_COMPTE, TV_CHANNELS, radioById, type OfficialLink, type RadioStation } from '@/lib/radiosMaroc';
 
 type PlayState = 'idle' | 'loading' | 'playing' | 'error';
 
@@ -177,6 +177,14 @@ export default function RadioTvMaroc() {
           Sur les plateformes officielles, gratuites avec publicité. Certaines ne marchent qu&apos;en France.
         </p>
         <LinkList items={FREE_STREAMING} />
+      </section>
+
+      <section aria-labelledby="social-title">
+        <h2 id="social-title" className="flex items-center gap-2 text-2xl font-black text-[#0f1f3d]">
+          <Smartphone size={24} aria-hidden="true" /> Vidéos et réseaux, sans compte
+        </h2>
+        <p className="mt-1 text-slate-700">À regarder directement, sans s&apos;inscrire. Pour les enfants : YouTube Kids.</p>
+        <LinkList items={SOCIAL_SANS_COMPTE} />
       </section>
     </div>
   );

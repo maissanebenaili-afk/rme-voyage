@@ -1,4 +1,4 @@
-import { FREE_STREAMING, RADIOS, SNRT_RADIOS, TV_CHANNELS, isAllowedStream, radioById } from '@/lib/radiosMaroc'
+import { FREE_STREAMING, RADIOS, SNRT_RADIOS, SOCIAL_SANS_COMPTE, TV_CHANNELS, isAllowedStream, radioById } from '@/lib/radiosMaroc'
 
 describe('radios et télé du Maroc', () => {
   it('lists stations with unique ids, https streams and https homepages', () => {
@@ -31,6 +31,11 @@ describe('radios et télé du Maroc', () => {
     )
     expect(hosts).toHaveLength(7)
     expect(hosts.some((h) => h.includes('miaw'))).toBe(false)
+  })
+
+  it('links the no-account video sites, with YouTube Kids and the TikTok age', () => {
+    expect(SOCIAL_SANS_COMPTE.map((s) => new URL(s.url).host)).toEqual(['www.youtube.com', 'www.youtubekids.com', 'www.tiktok.com'])
+    expect(SOCIAL_SANS_COMPTE.find((s) => s.id === 'tiktok')?.detail).toMatch(/13 ans/)
   })
 
   it('finds a station back from its id', () => {
