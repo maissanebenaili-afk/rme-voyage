@@ -1,6 +1,7 @@
 import { doitRecacher, gagnee, nouvellePartie, recacher, retourner, visible } from '@/lib/jeux/memoire';
 import { HAUTEUR, LARGEUR, droite, gauche, image, lacher, libre, nouveauJeu, tomber, tourner, vitesse, type Jeu } from '@/lib/jeux/zellige';
-import { CHAMEAU, auSol, avancer, nouvelleCourse, points, sauter } from '@/lib/jeux/chameau';
+import { POINTS_PIECE, SKATEUR, auSol, avancer, nouvelleCourse, points, sauter } from '@/lib/jeux/skate';
+import { battre, lireRecords } from '@/lib/jeux/records';
 
 // Hasard reproductible pour les tests.
 function suite(...valeurs: number[]) {
@@ -104,7 +105,7 @@ describe('Zellige', () => {
   });
 });
 
-describe('Le chameau sauteur', () => {
+describe('Skate à la corniche', () => {
   it('saute seulement depuis le sol, puis retombe', () => {
     let course = sauter(nouvelleCourse());
     expect(course.vy).toBeGreaterThan(0);
@@ -115,17 +116,45 @@ describe('Le chameau sauteur', () => {
     expect(auSol(course)).toBe(true);
   });
 
-  it('perd en touchant un cactus, gagne des points en avançant', () => {
-    const cactus = { x: CHAMEAU.x + 10, largeur: 18, hauteur: 34 };
-    expect(avancer({ ...nouvelleCourse(), cactus: [cactus] }, 0.01).fini).toBe(true);
+  it('perd en touchant un plot, gagne des points en avançant', () => {
+    const plot = { x: SKATEUR.x + 10, largeur: 20, hauteur: 32 };
+    expect(avancer({ ...nouvelleCourse(), obstacles: [plot] }, 0.01).fini).toBe(true);
     let course = nouvelleCourse();
     for (let i = 0; i < 20; i++) course = avancer(course, 0.05, suite(0.9));
     expect(points(course)).toBeGreaterThan(0);
   });
 
-  it('passe au-dessus d’un cactus en sautant à temps', () => {
-    let course = sauter({ ...nouvelleCourse(), cactus: [{ x: CHAMEAU.x + 90, largeur: 18, hauteur: 34 }], prochain: 10_000 });
+  it('passe au-dessus d’un plot en sautant à temps', () => {
+    let course = sauter({ ...nouvelleCourse(), obstacles: [{ x: SKATEUR.x + 90, largeur: 20, hauteur: 32 }], prochain: 10_000 });
     for (let i = 0; i < 30 && !course.fini; i++) course = avancer(course, 0.02);
     expect(course.fini).toBe(false);
+  });
+
+  it('ramasse une pièce au sol et l’ajoute au score', () => {
+    const course = avancer({ ...nouvelleCourse(), pieces: [{ x: SKATEUR.x + 10, y: 16 }], prochain: 10_000 }, 0.01);
+    expect(course.ramassees).toBe(1);
+    expect(course.pieces).toHaveLength(0);
+    expect(points(course)).toBe(Math.floor(course.distance / 10) + POINTS_PIECE);
+  });
+
+  it('pose des pièces avec chaque nouveau plot', () => {
+    const course = avancer({ ...nouvelleCourse(), prochain: 1 }, 0.05, suite(0.1));
+    expect(course.obstacles).toHaveLength(1);
+    expect(course.pieces).toHaveLength(3);
+  });
+});
+
+describe('records', () => {
+  it('garde le meilleur score, plus haut ou en moins de coups', () => {
+    expect(battre({}, 'skate', 40)).toEqual({ records: { skate: 40 }, nouveau: true });
+    expect(battre({ skate: 50 }, 'skate', 40)).toEqual({ records: { skate: 50 }, nouveau: false });
+    expect(battre({ memoire: 12 }, 'memoire', 9, 'moins')).toEqual({ records: { memoire: 9 }, nouveau: true });
+  });
+
+  it('ignore un stockage abîmé ou des valeurs étranges', () => {
+    expect(lireRecords(null)).toEqual({});
+    expect(lireRecords('pas du json')).toEqual({});
+    expect(lireRecords('[1,2]')).toEqual({});
+    expect(lireRecords('{"skate":120,"zellige":"beaucoup","x":-3}')).toEqual({ skate: 120 });
   });
 });

@@ -72,6 +72,13 @@ export const FREE_STREAMING: readonly OfficialLink[] = [
   { id: 'm6-plus', name: 'M6+', detail: 'Séries, films, émissions (en France)', url: 'https://www.m6.fr/' },
 ];
 
+// Vidéos et réseaux qu'on peut regarder sans créer de compte.
+export const SOCIAL_SANS_COMPTE: readonly OfficialLink[] = [
+  { id: 'youtube', name: 'YouTube', detail: 'Vidéos, clips, matchs résumés', url: 'https://www.youtube.com/' },
+  { id: 'youtube-kids', name: 'YouTube Kids', detail: 'Version pour les enfants', url: 'https://www.youtubekids.com/' },
+  { id: 'tiktok', name: 'TikTok', detail: 'Vidéos courtes, dès 13 ans', url: 'https://www.tiktok.com/explore' },
+];
+
 /** Origines des flux, pour la règle media-src de la politique de sécurité. */
 export const RADIO_MEDIA_SOURCES = [
   'https://*.ice.infomaniak.ch',

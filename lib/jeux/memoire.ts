@@ -1,6 +1,6 @@
 // Mémoire des souks : retrouver les paires. Logique pure, hasard injectable.
 
-export const SYMBOLES = ['🐪', '🫖', '🌴', '🕌', '⛴️', '🍊', '🌙', '🧆', '🐐', '🥁'] as const;
+export const SYMBOLES = ['⚽', '🫖', '🌴', '🕌', '⛴️', '🍊', '🌙', '🧆', '🎨', '🥁'] as const;
 
 export interface Carte {
   id: number;

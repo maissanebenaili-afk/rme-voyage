@@ -5,7 +5,7 @@ import JeuxRoute from '@/components/jeux/JeuxRoute';
 export const metadata: Metadata = {
   title: 'Jeux pour la route',
   description:
-    'Trois petits jeux gratuits pour les enfants pendant le trajet vers le Maroc : Mémoire des souks, Le chameau sauteur et Zellige. Sans publicité, sans compte, sans réseau une fois la page ouverte.',
+    'Trois petits jeux gratuits pour les enfants pendant le trajet vers le Maroc : Skate à la corniche, Zellige et Mémoire des souks. Sans publicité, sans compte, sans réseau une fois la page ouverte.',
 };
 
 export default function JeuxPage() {

@@ -8,7 +8,7 @@ describe('Jeux pour la route', () => {
   it('offers three games and goes back to the list', () => {
     render(<JeuxRoute />)
     expect(screen.getByText('Mémoire des souks')).toBeInTheDocument()
-    expect(screen.getByText('Le chameau sauteur')).toBeInTheDocument()
+    expect(screen.getByText('Skate à la corniche')).toBeInTheDocument()
     fireEvent.click(screen.getByText('Zellige'))
     expect(screen.getByLabelText('Tourner')).toBeInTheDocument()
     fireEvent.click(screen.getByText('← Autres jeux'))

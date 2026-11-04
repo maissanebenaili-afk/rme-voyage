@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import Chameau from '@/components/jeux/Chameau';
 import Memoire from '@/components/jeux/Memoire';
+import Skate from '@/components/jeux/Skate';
 import Zellige from '@/components/jeux/Zellige';
 
 const JEUX = [
-  { id: 'memoire', nom: 'Mémoire des souks', emoji: '🐪', texte: 'Retrouve les paires. Dès 4 ans.' },
-  { id: 'chameau', nom: 'Le chameau sauteur', emoji: '🌵', texte: 'Saute par-dessus les cactus. Un seul bouton.' },
-  { id: 'zellige', nom: 'Zellige', emoji: '🟩', texte: 'Range les mosaïques pour faire des lignes.' },
+  { id: 'skate', nom: 'Skate à la corniche', emoji: '🛹', texte: 'Saute les plots, ramasse les pièces, bats ton record.' },
+  { id: 'zellige', nom: 'Zellige', emoji: '🟩', texte: 'Range les mosaïques pour faire des lignes. Petits et grands.' },
+  { id: 'memoire', nom: 'Mémoire des souks', emoji: '🫖', texte: 'Retrouve les paires. Dès 4 ans.' },
 ] as const;
 
 type IdJeu = (typeof JEUX)[number]['id'];
@@ -50,7 +50,7 @@ export default function JeuxRoute() {
         </button>
       </div>
       {choisi.id === 'memoire' && <Memoire />}
-      {choisi.id === 'chameau' && <Chameau />}
+      {choisi.id === 'skate' && <Skate />}
       {choisi.id === 'zellige' && <Zellige />}
     </div>
   );

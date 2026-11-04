@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowRight, RotateCw } from 'lucide-react';
 import { droite, gauche, image, lacher, nouveauJeu, tomber, tourner, vitesse, type Jeu } from '@/lib/jeux/zellige';
+import { battre, charger, enregistrer } from '@/lib/jeux/records';
 
 // Couleurs de zellige : vert de Fès, bleu majorelle, ocre, terre cuite, blanc cassé, noir.
 const COULEURS = ['', '#0f7a5c', '#2747c9', '#d99a1e', '#b8532c', '#e9dfc9', '#26313f'];
@@ -24,8 +25,13 @@ function Carreau({ couleur }: { couleur: number }) {
 export default function Zellige() {
   const [jeu, setJeu] = useState<Jeu | null>(null);
   const [pause, setPause] = useState(false);
+  const [record, setRecord] = useState(0);
+  const [nouveauRecord, setNouveauRecord] = useState(false);
 
-  useEffect(() => setJeu(nouveauJeu()), []);
+  useEffect(() => {
+    setJeu(nouveauJeu());
+    setRecord(charger().zellige ?? 0);
+  }, []);
 
   const agir = useCallback((action: (j: Jeu) => Jeu) => setJeu((j) => (j ? action(j) : j)), []);
 
@@ -37,6 +43,15 @@ export default function Zellige() {
     const t = setInterval(() => agir((j) => tomber(j)), vitesse(lignes));
     return () => clearInterval(t);
   }, [lignes, fini, pause, agir, jeu]);
+
+  // Fin de partie : on garde le meilleur score.
+  useEffect(() => {
+    if (!jeu?.fini) return;
+    const { records, nouveau } = battre(charger(), 'zellige', jeu.score);
+    if (nouveau) enregistrer(records);
+    setRecord(records.zellige ?? jeu.score);
+    setNouveauRecord(nouveau);
+  }, [jeu?.fini, jeu?.score]);
 
   // Clavier sur ordinateur : flèches et espace.
   useEffect(() => {
@@ -66,6 +81,7 @@ export default function Zellige() {
       <div className="flex items-center justify-between text-sm font-bold text-[#0f1f3d]">
         <span>Score : {jeu.score}</span>
         <span>Lignes : {jeu.lignes}</span>
+        <span>Record : {record}</span>
         <button type="button" onClick={() => setPause((p) => !p)} className="min-h-10 rounded-full bg-white px-4">
           {pause ? 'Reprendre' : 'Pause'}
         </button>
@@ -78,11 +94,14 @@ export default function Zellige() {
         {(jeu.fini || pause) && (
           <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-black/60 text-center text-white">
             <p className="text-2xl font-black">{jeu.fini ? 'Partie finie' : 'Pause'}</p>
-            {jeu.fini && <p className="mt-1">{jeu.score} points</p>}
+            {jeu.fini && <p className="mt-1">{nouveauRecord ? `Nouveau record : ${jeu.score} !` : `${jeu.score} points`}</p>}
             <button
               type="button"
               onClick={() => {
-                if (jeu.fini) setJeu(nouveauJeu());
+                if (jeu.fini) {
+                  setJeu(nouveauJeu());
+                  setNouveauRecord(false);
+                }
                 setPause(false);
               }}
               className="mt-4 min-h-12 rounded-full bg-amber-400 px-6 font-bold text-[#0f1f3d]"
