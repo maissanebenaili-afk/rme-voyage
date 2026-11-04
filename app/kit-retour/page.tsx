@@ -2,11 +2,12 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import KitRetour from '@/components/KitRetour';
 import WhatsAppShare from '@/components/WhatsAppShare';
+import { CompteurVoiture, VerifPasseport } from '@/components/DatesVoyage';
 
 export const metadata: Metadata = {
   title: 'Kit Retour au bled — vos papiers pour le Maroc',
   description:
-    'Répondez à 4 questions et obtenez la liste exacte des papiers pour partir au Maroc : passeport, enfants, voiture, assurance, avec les sources officielles.',
+    'Répondez à 4 questions et obtenez la liste exacte des papiers pour partir au Maroc : passeport, enfants, voiture, assurance, avec les sources officielles. Vérifiez votre passeport et la date limite de votre voiture (180 jours).',
 };
 
 export default function KitRetourPage() {
@@ -25,6 +26,10 @@ export default function KitRetourPage() {
         </div>
         <div className="mt-6">
           <KitRetour />
+        </div>
+        <div className="mt-8 space-y-6 print:hidden">
+          <VerifPasseport />
+          <CompteurVoiture />
         </div>
         <p className="mt-8 text-base print:hidden">
           Besoin de scanner, signer ou envoyer un papier ?{' '}
