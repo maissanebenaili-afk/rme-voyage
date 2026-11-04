@@ -717,7 +717,8 @@ export default function HadakAI() {
       const topic = findTopic(content);
 
       const nextActions = (data.next_actions ?? []).filter(
-        (a) => a.safety === 'INFORMATIONAL' && typeof a.destination === 'string' && a.destination.startsWith('/#'),
+        // Sections de l'accueil, ou le Kit Retour réglé d'après la question.
+        (a) => a.safety === 'INFORMATIONAL' && typeof a.destination === 'string' && (a.destination.startsWith('/#') || /^\/kit-retour(\?|$)/.test(a.destination)),
       ).slice(0, 3);
       setMessages((prev) => [...prev, { role: 'assistant', content: answer, topic, plannerLink, trust: data.trust, nextActions, language: responseLang }]);
       setLastTopic(topic);

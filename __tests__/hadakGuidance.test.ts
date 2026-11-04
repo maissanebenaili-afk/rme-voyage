@@ -30,9 +30,17 @@ describe('nextActionsFor', () => {
     expect(actions.length).toBeLessThanOrEqual(3)
     for (const a of actions) {
       expect(a.safety).toBe('INFORMATIONAL')
-      expect(a.destination).toMatch(/^\/#[a-z-]+$/)
+      // A home section, or the papers kit (/kit-retour, set from the question).
+      expect(a.destination).toMatch(/^\/(#[a-z-]+|kit-retour(\?[a-z=&-]+)?)$/)
       expect(a.reason.trim()).not.toBe('')
     }
+  })
+  it('opens the papers kit already set from what the traveller said', () => {
+    const kit = (intent: string, message: string) =>
+      nextActionsFor(intent, 'fr', message).find((a) => a.id === `${intent}-kit`)?.destination
+    expect(kit('trip', 'Je pars au Maroc en voiture avec la voiture de mon frère')).toBe('/kit-retour?transport=voiture&vehicule=autre')
+    expect(kit('minor', 'Mon fils part seul en avion')).toBe('/kit-retour?transport=avion&mineur=oui')
+    expect(kit('docs', 'Quels papiers pour le Maroc ?')).toBe('/kit-retour')
   })
   it('proposes nothing for the clock, school work or unknown questions', () => {
     expect(nextActionsFor('time')).toEqual([])

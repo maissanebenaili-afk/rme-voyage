@@ -655,7 +655,7 @@ export async function POST(req: NextRequest) {
         recordResolution(usesLiveData ? 'EXTERNAL_DATA' : 'DETERMINISTIC_LOCAL', Date.now() - localStarted);
       }
       const trust = provenanceOf(trace);
-      const nextActions = nextActionsFor(intent, guideLang);
+      const nextActions = nextActionsFor(intent, guideLang, message);
       logIntent(intent, trust.basis === 'AI' ? 'AI' : 'LOCAL', trust.basis, nextActions.length);
       return NextResponse.json({ response: local, fallback: false, source: 'local', trust, next_actions: nextActions });
     }
@@ -663,7 +663,7 @@ export async function POST(req: NextRequest) {
     // 2. Shared AI Router — provider registry, FREE_ONLY, circuit breaker and ledger.
     const routed = await routeHadakAI({ message, systemPrompt });
     if (routed.text) {
-      const nextActions = nextActionsFor(intent, guideLang);
+      const nextActions = nextActionsFor(intent, guideLang, message);
       logIntent(intent, 'AI', 'AI', nextActions.length);
       return NextResponse.json({
         response: routed.text,

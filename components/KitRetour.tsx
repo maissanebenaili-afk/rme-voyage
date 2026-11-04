@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Check, ExternalLink, Printer, Volume2 } from "lucide-react";
 import { useSpeech } from "@/lib/hooks/useSpeech";
 import {
@@ -10,6 +10,7 @@ import {
   type Nationalite,
   type Transport,
 } from "@/lib/kitRetour";
+import { kitHintFromSearch } from "@/lib/kitFromText";
 
 const transports: { value: Transport; label: string }[] = [
   { value: "voiture", label: "En voiture (ferry)" },
@@ -79,6 +80,13 @@ export default function KitRetour() {
   });
   const [done, setDone] = useState<Set<string>>(new Set());
   const { supported: canSpeak, speak } = useSpeech();
+
+  // Ouvert depuis Hadak (« je pars en voiture avec la voiture de mon frère ») :
+  // les réponses de la phrase sont déjà cochées, le voyageur peut les changer.
+  useEffect(() => {
+    const hint = kitHintFromSearch(window.location.search);
+    if (Object.keys(hint).length > 0) setAnswers((prev) => ({ ...prev, ...hint }));
+  }, []);
 
   const kit = useMemo(() => buildKit(answers), [answers]);
   const update = (patch: Partial<KitAnswers>) => setAnswers((prev) => ({ ...prev, ...patch }));
