@@ -35,6 +35,18 @@ describe('Hadak — sourced MRE answers', () => {
     expect(a).not.toMatch(/Météo|°C/)
   })
 
+  // Guide « Marocains du Monde 2026 » : 180 jours aussi pour un utilitaire
+  // léger, prolongation possible pour une AT qui finit à partir du 1er décembre,
+  // barème des pénalités. L'ancien guide de 2011 disait « 3 mois » et « D16ter ».
+  it('gives the 2026 guide rules: December extension, penalties, no "3 mois" for vans', async () => {
+    const a = await ask('Combien de temps je peux laisser ma voiture française au Maroc ?')
+    expect(a).toMatch(/utilitaire léger : \*\*6 mois par année civile/)
+    expect(a).toMatch(/1er décembre/)
+    expect(a).toMatch(/10 000 DH \(plus de 180 jours\)/)
+    expect(a).toMatch(/Marocains du Monde 2026/)
+    expect(a).not.toMatch(/3 mois|D16ter|2011/)
+  })
+
   it.each(['es', 'da', 'ar'])('gives the car rule in %s too', async (lang) => {
     expect(await ask('Combien de temps je peux laisser ma voiture au Maroc ?', lang)).toMatch(/6/)
   })
@@ -60,8 +72,8 @@ describe('Hadak — sourced MRE answers', () => {
     expect(a).toMatch(/100 000 DH/)
   })
 
-  it('keeps "argent liquide à la douane" on the customs answer (20 000 DH gifts)', async () => {
-    expect(await ask("Combien d'argent liquide je peux passer à la douane ?")).toMatch(/20 000/)
+  it('keeps "argent liquide à la douane" on the customs answer (25 000 DH gifts)', async () => {
+    expect(await ask("Combien d'argent liquide je peux passer à la douane ?")).toMatch(/25 000/)
   })
 
   it.each([

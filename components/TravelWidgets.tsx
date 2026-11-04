@@ -426,12 +426,14 @@ export function DarijaPhrasebook() {
    3. CustomsCalculator — Moroccan customs: sourced limits only
    ============================================================ */
 // Until 2026-10-04 this was a duty calculator with invented rules: gifts
-// duty-free up to 1 000 MAD (MRE: under 20 000 DH a year), electronics taxed
+// duty-free up to 1 000 MAD (MRE: 25 000 DH a year since the 2026 guide), electronics taxed
 // 20 % from the first dirham, "currency > 10 000 EUR" (declaration starts at
 // 100 000 DH). No official source gives a flat duty rate a traveller could
 // compute, so the widget states the sourced limits and links to the douane.
 export const CUSTOMS_SOURCES = {
-  adiiMre: "https://www.finances.gov.ma/Publication/adii/2011/8347_mre_douane.pdf",
+  // Guide « Marocains du Monde 2026 » de l'ADII (copie publiée par le CRI
+  // Casablanca-Settat ; douane.gov.ma refuse les accès automatisés).
+  adiiMre: "https://casainvest.ma/sites/default/files/Guide%20Douanes%20MDM%202026.pdf",
   igoc2026: "https://www.oc.gov.ma/sites/default/files/reglementation/pdf/2026-01/IGOC%202026.pdf",
   douane: "https://www.douane.gov.ma",
 };
@@ -439,9 +441,9 @@ export const CUSTOMS_SOURCES = {
 const CUSTOMS_FACTS = [
   {
     label: "Cadeaux familiaux d'un MRE",
-    value: "moins de 20 000 DH",
+    value: "moins de 25 000 DH",
     detail: "par année civile, une fois par an, sans caractère commercial",
-    source: "Guide « Marocains du Monde » de l'ADII",
+    source: "Guide « Marocains du Monde 2026 » de l'ADII",
     href: CUSTOMS_SOURCES.adiiMre,
   },
   {

@@ -42,4 +42,15 @@ describe('buildKit', () => {
     for (const item of kit) expect(item.source.url).toMatch(/^https:\/\//);
     expect(new Set(kit.map((item) => item.id)).size).toBe(kit.length);
   });
+
+  it('gives the car rules of the 2026 customs guide, with that guide as source', () => {
+    const kit = buildKit({ ...base, transport: 'voiture', vehiculeAuNomDuConducteur: false });
+    const at = kit.find((item) => item.id === 'admission-temporaire')!;
+    expect(at.detail).toMatch(/180 jours par année civile/);
+    expect(at.detail).toMatch(/1er décembre/);
+    expect(at.title).not.toMatch(/D16/);
+    expect(at.source.url).toMatch(/MDM%202026\.pdf$/);
+    const proxy = kit.find((item) => item.id === 'procuration')!;
+    expect(proxy.detail).toMatch(/même avec une procuration/);
+  });
 });
