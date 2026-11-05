@@ -112,3 +112,33 @@ Objet : Votre établissement sur RME Voyage (maquette)
 
 La colonne « réponse » de la liste d'appel : `à appeler` → `maquette envoyée`
 → `accord reçu` → on copie la preuve dans la fiche et on passe à REFERENCED.
+
+## L'idée qui peut rapporter le plus : payer à la visite, pas à l'abonnement
+
+Les gros établissements (chaînes d'hôtels, de restaurants, de stations) ne
+paient pas 20 € par mois pour un site sans audience prouvée. Ils paient quand
+on leur amène un client. Donc : **« Bon Route »**.
+
+1. La famille prépare son trajet sur RME Voyage. Pour chaque pause (voir
+   « Vos pauses avec les enfants » sur les pages trajet), le site propose un
+   établissement partenaire avec un **code** à montrer sur place.
+2. L'établissement ne paie **rien** par mois. Il verse un montant fixe
+   convenu **par code utilisé** (une personne vient et montre son code).
+3. Les familles ont une raison d'utiliser le site (un avantage), les gros ont
+   une preuve de ce que le site leur rapporte, et RME n'est payé que si ça marche.
+
+À construire pour que ce soit réel (rien de tout cela n'existe aujourd'hui) :
+- une table Supabase des codes (famille, établissement, date, utilisé ou non) ;
+- une page de validation pour l'établissement (saisir ou scanner le code) ;
+- un accord écrit par établissement avec le montant par code ;
+- la mesure : aujourd'hui, le site mesure les clics, pas les visites réelles.
+
+Première étape sans code : proposer le principe à 3 ou 4 établissements de la
+liste d'appel et voir s'ils acceptent un test d'un mois.
+
+## Les plus gros leviers de revenus déjà prêts dans le code
+
+Ils ne demandent pas d'établissements, seulement **tes comptes partenaires**
+(voir `docs/MONETISATION_SURFACES.md`) : ferry (Direct Ferries), vols
+(Travelpayouts), transferts d'argent (Wise, Remitly, WorldRemit). Tant que les
+liens d'affiliation ne sont pas posés, ces boutons ne rapportent rien.
