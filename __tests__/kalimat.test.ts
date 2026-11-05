@@ -23,7 +23,7 @@ import {
 import { LEXIQUE, cleDuMot } from '@/lib/kalimat/lexique';
 import { dessinerEpisode, ouvertureBouche, ouvertureVoix } from '@/lib/kalimat/dessin';
 import { CASTING, repliquesAParler, texteAParler } from '@/lib/kalimat/voix';
-import { FREQUENCE, enWav, genererSon } from '@/lib/kalimat/son';
+import { FREQUENCE, ambiances, enWav, genererSon } from '@/lib/kalimat/son';
 
 // Un faux canvas : accepte tous les appels de dessin et garde les textes écrits.
 function fauxCanvas() {
@@ -204,10 +204,10 @@ describe('Kalimat : le dessin', () => {
   it('écrit la réplique et sa traduction dans la langue choisie', () => {
     const ep = EPISODES[0];
     const { ctx, textes } = fauxCanvas();
-    dessinerEpisode(ctx, ep, GENERIQUE + 2.5, 'sans-serif', 'es');
+    dessinerEpisode(ctx, ep, GENERIQUE + 1.5, 'sans-serif', 'es', { sousTitres: true });
     expect(textes.join('')).toContain('brilla');
-    expect(textes).toContain(' = mira');
-    expect(textes).toContain('Inès');
+    expect(textes).toContain('chouf = mira');
+    expect(textes.join('')).toContain('Inès : ');
   });
 });
 
@@ -230,7 +230,8 @@ describe('Kalimat : les voix', () => {
   it('cale l’épisode doublé sur la durée des voix', () => {
     const ep = EPISODES[0];
     expect(aDesVoix(ep, 'fr')).toBe(true);
-    expect(aDesVoix(ep, 'es')).toBe(false);
+    // Les trois épisodes sont doublés, en français et en espagnol.
+    for (const e of EPISODES) for (const l of LANGUES) expect(aDesVoix(e, l)).toBe(true);
     const c = clip(ep, 'fr', 'p00');
     expect(c).toBeDefined();
     expect(momentA(ep, GENERIQUE).duree).toBeCloseTo(Math.max(1.4, Math.round((0.2 + (c?.duree ?? 0) + 0.5) * 10) / 10), 5);
@@ -256,15 +257,27 @@ describe('Kalimat : les voix', () => {
     expect(energie(avec)).toBeGreaterThan(energie(sans) * 2);
   });
 
-  it('dessine la version doublée sans bulle, avec sous-titres si on les demande', () => {
+  it('laisse l’image doublée libre de texte ; sous-titres et sens des mots seulement si on les demande', () => {
     const ep = EPISODES[0];
     const sans = fauxCanvas();
     dessinerEpisode(sans.ctx, ep, GENERIQUE + 1.5, 'sans-serif', 'fr');
-    expect(sans.textes).toContain(' = regarde');
-    expect(sans.textes.join('')).not.toContain('la mer');
+    expect(sans.textes).toEqual([]);
     const avec = fauxCanvas();
     dessinerEpisode(avec.ctx, ep, GENERIQUE + 1.5, 'sans-serif', 'fr', { sousTitres: true });
     expect(avec.textes.join('')).toContain('Inès : ');
     expect(avec.textes.join('')).toContain('la mer');
+    expect(avec.textes).toContain('chouf = regarde');
+  });
+
+  it('met le sens des mots nouveaux dans les sous-titres YouTube', () => {
+    expect(sousTitresSrt(EPISODES[0], 'fr')).toContain('INÈS : Chouf, Adam, la mer elle brille !\n(chouf = regarde)');
+  });
+
+  it('change la musique selon la scène : suspense quand Mchicha disparaît, tendresse avec Mima', () => {
+    const [ep1, , ep3] = EPISODES;
+    expect(ambiances(ep3, 'fr').map((s) => s.ambiance)).toEqual(['joie', 'suspense', 'joie']);
+    expect(ambiances(ep1, 'fr').map((s) => s.ambiance)).toContain('tendre');
+    const fin = ambiances(ep1, 'fr').at(-1);
+    expect(fin?.fin).toBeCloseTo(dureeEpisode(ep1, 'fr'), 5);
   });
 });
