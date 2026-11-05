@@ -61,7 +61,7 @@ function intensiteA(points, t) {
   return points[points.length - 1][1];
 }
 
-export function composerFond(total, points, pluie = []) {
+export function composerFond(total, points, pluie = [], impacts = [], crepit = []) {
   const len = Math.ceil(total * SR), buf = [new Float32Array(len), new Float32Array(len)];
   const temps = 60 / 66; let t = 0, tour = 0, graine = 11;
   // oud : le thème, en boucle
@@ -91,6 +91,25 @@ export function composerFond(total, points, pluie = []) {
     const sec = i / SR; const p = pluie.some(([a, b]) => sec >= a - 0.4 && sec <= b + 0.4) ? 1 : 0; plu += (p - plu) * 0.0004;
     const pluieBruit = (x - lp) * 0.022 * plu;
     buf[0][i] += lp2 * 0.16 + pluieBruit; buf[1][i] += lp2 * 0.16 + pluieBruit * 0.9;
+  }
+  // chocs (coup, porte, orage) : un grave qui tombe et un souffle de bruit
+  const rc = bruit(77);
+  for (const at of impacts) {
+    const i0 = Math.floor(at * SR), n = Math.floor(0.9 * SR); let l = 0;
+    for (let j = 0; j < n && i0 + j < len; j++) {
+      const e = Math.exp(-j / SR / 0.22), f = 70 - 30 * (j / n);
+      l += (rc() - l) * 0.06; const o = (Math.sin((j / SR) * f * TAU_) * 0.8 + l * 1.4) * e * 0.7;
+      buf[0][i0 + j] += o; buf[1][i0 + j] += o;
+    }
+  }
+  // crépitement du feu : de petits éclats au hasard
+  const rf = bruit(31);
+  for (const [a0, b0] of crepit) {
+    const pops = Math.floor((b0 - a0) * 26);
+    for (let q = 0; q < pops; q++) {
+      const at = a0 + ((rf() + 1) / 2) * (b0 - a0), i0 = Math.floor(at * SR), n = Math.floor((0.008 + ((rf() + 1) / 2) * 0.02) * SR); let h = 0;
+      for (let j = 0; j < n && i0 + j < len; j++) { const x = rf(); h += (x - h) * 0.7; const o = (x - h) * Math.exp(-j / n * 4) * 0.35; buf[0][i0 + j] += o; buf[1][i0 + j] += o * 0.9; }
+    }
   }
   // fondu d'entrée et de sortie, limite douce
   const fi = Math.floor(0.8 * SR), fo = Math.floor(2.2 * SR);

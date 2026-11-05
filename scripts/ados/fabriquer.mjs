@@ -12,7 +12,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EPISODES, PERSOS } from './histoire.mjs';
+import { EPISODES, PERSOS, avecVoix } from './histoire.mjs';
 import { construire, FIN } from './montage.mjs';
 import { composerFond, ecrireWav } from './musique.mjs';
 
@@ -51,21 +51,31 @@ const INTENSITE = { pleure: 1, colere: 0.85, peur: 0.8, surprise: 0.7, triste: 0
 
 function srt(S) {
   const h = (t) => { const ms = Math.round(t * 1000), z = (n, l = 2) => String(n).padStart(l, '0'); return `${z(Math.floor(ms / 3600000))}:${z(Math.floor(ms / 60000) % 60)}:${z(Math.floor(ms / 1000) % 60)},${z(ms % 1000, 3)}`; };
-  return S.shots.map((s, i) => `${i + 1}\n${h(s.voixDebut)} --> ${h(s.voixDebut + s.voixDuree + 0.3)}\n${s.parle === 'narration' ? '' : S.noms[s.parle] + ' : '}${s.texte.replace(/\*/g, '')}\n`).join('\n');
+  return S.shots.filter((s) => s.parle).map((s, i) => `${i + 1}\n${h(s.voixDebut)} --> ${h(s.voixDebut + s.voixDuree + 0.3)}\n${s.parle === 'narration' ? '' : S.noms[s.parle] + ' : '}${s.texte.replace(/\*/g, '')}\n`).join('\n');
 }
 
 async function fabriquer(ep, nav) {
   const travail = path.join(SORTIE, 'travail', `ep${ep.numero}`); await mkdir(travail, { recursive: true });
   const durees = [], voix = [];
-  ep.plans.forEach((plan, i) => { const f = preparerVoix(ep, i, plan, travail); voix.push(f); durees.push(duree(f)); });
+  ep.plans.filter(avecVoix).forEach((plan, i) => { const f = preparerVoix(ep, i, plan, travail); voix.push(f); durees.push(duree(f)); });
   const S = construire(ep, durees, PERSOS, FPS);
-  S.shots.forEach((s, i) => { s.env = enveloppe(voix[i], s.voixDuree + 0.2); });
+  S.shots.forEach((s) => { if (s.voixIndex >= 0) s.env = enveloppe(voix[s.voixIndex], s.voixDuree + 0.2); });
 
   // musique : intensité selon l'émotion des plans
-  const points = [[0, 0.5]]; const pluie = [];
-  S.shots.forEach((s) => { const v = s.persos.length ? Math.max(...s.persos.map((p) => INTENSITE[p.emo] ?? 0.4)) : 0.35; points.push([s.start + 0.3, v], [s.end - 0.3, v]); if (s.tint === 'pluie') pluie.push([s.start, s.end]); });
+  const points = [[0, 0.5]]; const pluie = []; const impacts = []; const crepit = [];
+  const INSERT_INTENSITE = { feu: 1, broche: 0.75, maison: 0.75, calendrier: 0.7, lettre: 0.6, robe: 0.6, broderie: 0.5 };
+  S.shots.forEach((sh) => {
+    const emos = sh.persos.flatMap((p) => [INTENSITE[p.emo] ?? 0.4, p.emo2 ? INTENSITE[p.emo2] ?? 0.4 : 0]);
+    let v = sh.intensite ?? (sh.insert ? INSERT_INTENSITE[sh.insert] ?? 0.5 : emos.length ? Math.max(...emos) : 0.35);
+    if (sh.cam === 'shake' || sh.cam === 'push') v = Math.min(1, v + 0.1);
+    points.push([sh.start + 0.3, v], [sh.end - 0.3, v]);
+    if (sh.tint === 'pluie') pluie.push([sh.start, sh.end]);
+    if (sh.fx?.includes('flash')) impacts.push(sh.start + 0.04);
+    if (sh.persos.some((p) => p.act === 'choc')) impacts.push(sh.start + 0.14);
+    if (sh.insert === 'feu') crepit.push([sh.start, sh.end]);
+  });
   points.push([S.finDebut, 0.7], [S.total, 0.5]);
-  const fond = path.join(travail, 'fond.wav'); await ecrireWav(fond, composerFond(S.total, points, pluie));
+  const fond = path.join(travail, 'fond.wav'); await ecrireWav(fond, composerFond(S.total, points, pluie, impacts, crepit));
 
   // mixage : voix posées à leur instant, musique qui baisse quand on parle
   const entrees = ['-i', fond]; const filtres = []; voix.forEach((f, i) => { entrees.push('-i', f); filtres.push(`[${i + 1}:a]adelay=${Math.round(S.shots[i].voixDebut * 1000)}:all=1,volume=1.5[v${i}]`); });
