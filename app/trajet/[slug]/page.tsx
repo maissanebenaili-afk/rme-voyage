@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Car, Clock, Fuel, Ship } from 'lucide-react';
 import { countryName } from '@/lib/countries';
+import { PRESSURE_RULES } from '@/lib/crossingPressure';
 import { computeFuelByCountry, FUEL_PRICES } from '@/lib/fuelByCountry';
 import {
   ferryOf,
@@ -294,6 +295,23 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
             </ul>
           </section>
         )}
+
+        <section aria-labelledby="quand-title" className="mt-10">
+          <h2 id="quand-title" className="font-display text-2xl font-semibold">
+            Quand traverser ?
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#475569]">
+            Indication d'affluence tirée du calendrier, pas des horaires ni des prix en direct. Partir un jour calme
+            évite souvent les files au port.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            {PRESSURE_RULES.map((rule) => (
+              <li key={rule.level} className="rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5">
+                <span className="font-semibold">{rule.label}</span> : {rule.when}
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section aria-labelledby="autres-title" className="mt-10 border-t border-[#e2e8f0] pt-8">
           <h2 id="autres-title" className="font-display text-xl font-semibold">
