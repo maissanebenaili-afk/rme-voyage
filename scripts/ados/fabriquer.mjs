@@ -12,13 +12,18 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EPISODES, PERSOS, avecVoix } from './histoire.mjs';
+// SERIE=foot node scripts/ados/fabriquer.mjs  → histoire-foot.mjs ; sans SERIE : « Le Fil d'or ».
+const NOM_SERIE = process.env.SERIE || 'fil-d-or';
+const HISTOIRE = await import(NOM_SERIE === 'fil-d-or' ? './histoire.mjs' : `./histoire-${NOM_SERIE}.mjs`);
+const { EPISODES, PERSOS, avecVoix } = HISTOIRE;
+const SERIE = HISTOIRE.SERIE ?? { titre: 'Le Fil d’or', etiquette: 'ÉPISODE', dossier: 'videos-ados', musique: 'hijaz' };
 import { construire, FIN } from './montage.mjs';
 import { composerFond, ecrireWav } from './musique.mjs';
+import { composerFondFoot } from './musique-foot.mjs';
 
 const ICI = path.dirname(fileURLToPath(import.meta.url));
 const RACINE = path.resolve(ICI, '../..');
-const SORTIE = path.join(RACINE, 'videos-ados');
+const SORTIE = path.join(RACINE, SERIE.dossier);
 const FPS = 24;
 const { chromium } = createRequire(import.meta.url)('playwright');
 
@@ -59,11 +64,12 @@ async function fabriquer(ep, nav) {
   const durees = [], voix = [];
   ep.plans.filter(avecVoix).forEach((plan, i) => { const f = preparerVoix(ep, i, plan, travail); voix.push(f); durees.push(duree(f)); });
   const S = construire(ep, durees, PERSOS, FPS);
+  S.titreSerie = SERIE.titre; S.etiquette = SERIE.etiquette;
   S.shots.forEach((s) => { if (s.voixIndex >= 0) s.env = enveloppe(voix[s.voixIndex], s.voixDuree + 0.2); });
 
   // musique : intensité selon l'émotion des plans
   const points = [[0, 0.5]]; const pluie = []; const impacts = []; const crepit = [];
-  const INSERT_INTENSITE = { feu: 1, broche: 0.75, maison: 0.75, calendrier: 0.7, lettre: 0.6, robe: 0.6, broderie: 0.5 };
+  const INSERT_INTENSITE = { but: 1, ballon: 0.7, feu: 1, broche: 0.75, maison: 0.75, calendrier: 0.7, lettre: 0.6, robe: 0.6, broderie: 0.5 };
   S.shots.forEach((sh) => {
     const emos = sh.persos.flatMap((p) => [INTENSITE[p.emo] ?? 0.4, p.emo2 ? INTENSITE[p.emo2] ?? 0.4 : 0]);
     let v = sh.intensite ?? (sh.insert ? INSERT_INTENSITE[sh.insert] ?? 0.5 : emos.length ? Math.max(...emos) : 0.35);
@@ -75,7 +81,9 @@ async function fabriquer(ep, nav) {
     if (sh.insert === 'feu') crepit.push([sh.start, sh.end]);
   });
   points.push([S.finDebut, 0.7], [S.total, 0.5]);
-  const fond = path.join(travail, 'fond.wav'); await ecrireWav(fond, composerFond(S.total, points, pluie, impacts, crepit));
+  const fond = path.join(travail, 'fond.wav');
+  const ovations = S.shots.filter((x) => x.insert === 'but').map((x) => x.start);
+  await ecrireWav(fond, SERIE.musique === 'foot' ? composerFondFoot(S.total, points, impacts, ovations) : composerFond(S.total, points, pluie, impacts, crepit));
 
   // mixage : voix posées à leur instant, musique qui baisse quand on parle
   const entrees = ['-i', fond]; const filtres = []; voix.forEach((f, i) => { entrees.push('-i', f); filtres.push(`[${i + 1}:a]adelay=${Math.round(S.shots[i].voixDebut * 1000)}:all=1,volume=1.5[v${i}]`); });
@@ -102,7 +110,7 @@ async function fabriquer(ep, nav) {
   }
   proc.stdin.end(); await fini; await page.close();
 
-  const sortie = path.join(SORTIE, `fil-d-or-${pad(ep.numero)}.mp4`);
+  const sortie = path.join(SORTIE, `${NOM_SERIE}-${pad(ep.numero)}.mp4`);
   sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', muet, '-i', audio, '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', sortie]);
   await writeFile(sortie.replace('.mp4', '.srt'), srt(S));
   console.log(`épisode ${ep.numero} : prêt (${S.total.toFixed(1)} s)`);
