@@ -8,13 +8,13 @@ describe('Lecteur Kalimat', () => {
   })
   afterEach(() => jest.restoreAllMocks())
 
-  it('choisit un épisode, lance la lecture et montre le texte', () => {
+  it('choisit un épisode, lance la lecture et montre le texte', async () => {
     render(<LecteurKalimat />)
     expect(screen.getByRole('img', { name: /épisode 1 : Salam, Yassine/ })).toBeInTheDocument()
     fireEvent.click(screen.getByText('Atay chez Mima'))
     expect(screen.getByRole('img', { name: /épisode 2 : Atay chez Mima/ })).toBeInTheDocument()
     expect(screen.getByText('Atay chez Mima').closest('button')).toHaveAttribute('aria-pressed', 'true')
-    fireEvent.click(screen.getByLabelText('Lecture'))
+    fireEvent.click(await screen.findByLabelText('Lecture'))
     expect(screen.getByLabelText('Pause')).toBeInTheDocument()
     expect(screen.getByText(/Qui veut de l’atay/)).toBeInTheDocument()
   })

@@ -109,8 +109,9 @@ Ils marchent sans réseau une fois la page ouverte.
   darija « sautent » en couleur.
 - Apprentissage : un mot nouveau est traduit sous la bulle la première fois
   (« chouf = regarde ») ; les mots déjà appris ne le sont plus.
-- Son : une petite musique originale avec darbouka, et des bruitages (pop des
-  bulles, « pling » des mots de darija, boing, ding, fanfare). Pas encore de voix.
+- Son : une musique originale dans l'esprit des animés des années 80 (cordes
+  en trémolo, harpe, flûte), qui change selon la scène : joie, tendresse ou
+  suspense. Plus quelques bruitages (harpe, boing).
 - À la fin : « Demain : … » et un bouton « Épisode suivant ».
 - Le code : `lib/kalimat/episodes.ts` (les épisodes), `lexique.ts` (le
   dictionnaire), `dessin.ts` (l'image), `son.ts` (la musique).
@@ -124,8 +125,8 @@ n'a plus de bulles. La bouche suit la vraie voix, et seuls les mots nouveaux
 de darija s'affichent avec leur traduction (sous-titres complets au choix sur
 le site, et en fichier `.srt` sur YouTube).
 
-- Épisode 1 en français : doublé avec des voix de synthèse (ElevenLabs via
-  Speko, environ 5 centimes la minute), pour tester. Les enfants sont joués par
+- Les 3 épisodes, en français et en espagnol : doublés avec des voix de
+  synthèse (ElevenLabs via Speko, environ 5 centimes la minute). Les enfants sont joués par
   des voix de femmes rendues plus aiguës, comme dans les animés.
 - Le casting des voix et l'écriture « à prononcer » des mots de darija sont
   dans `lib/kalimat/voix.ts` et `lexique.ts` (« 3afak » est dit « âafak »).
@@ -141,6 +142,8 @@ volume, calcule le mouvement des lèvres et range tout dans
 `public/kalimat/voix/` et `lib/kalimat/voix/`.
 
 ## Fabriquer les vidéos YouTube
+
+Titres, descriptions, réglages et monétisation : [YOUTUBE.md](YOUTUBE.md).
 
 ```
 npm run build && npx next start -p 3200
