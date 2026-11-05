@@ -18,7 +18,6 @@ Règles :
 | Bouton « Envoyer » du comparateur de transferts | Wise, Remitly, WorldRemit, Western Union, MoneyGram (`*_AFFILIATE_URL`) | prêt : tout lien https accepté, `rel="sponsored"` seulement si configuré | ouvrir le programme (souvent via un réseau d'affiliation, À VÉRIFIER par prestataire) | `partner_click` (placement comparateur) + `remittance_result_viewed` | compte partenaire |
 | Hub sport | Unibet, Betclic, Winamax, bet365 (`*_AFFILIATE_URL`) | code présent, masqué dans l'app mobile | **décision juridique** (jeux d'argent régulés par l'ANJ, publicité encadrée) | `partner_click` | juridique |
 | `/taza-immobilier` | HiDOUR Immobilier (contact WhatsApp) | en ligne, contact direct | accord de commission hors code, À VÉRIFIER | aucune mesure du clic WhatsApp | accord commercial |
-| `/marwa-caftan`, `/boutique` | Marwa Caftan (contact WhatsApp) | en ligne, contact direct | accord de commission hors code, À VÉRIFIER | aucune mesure du clic WhatsApp | accord commercial |
 | `/soutenir` | Stripe, don (`STRIPE_SECRET_KEY`) | code prêt, désactivé sans clé | compte Stripe (identité, IBAN) ; la clé secrète se pose dans Netlify par le propriétaire uniquement | — | compte Stripe |
 | Encart « Publicité » du livre | le livre de l'auteur | en ligne | aucune | — | — |
 

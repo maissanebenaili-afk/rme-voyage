@@ -527,3 +527,9 @@ de clé), aucune intégration présentée comme "entreprise" ou garantie
 disponible — le README de ce fichier précise explicitement les limites de
 Nominatim (gratuit, débit limité, pas de SLA). Un commit clair par
 changement (géocodage, CSP, service worker, documentation).
+
+
+## 2026-11-05 : retrait de Marwa Caftan et d'Afarah Nassim
+
+À la demande du propriétaire, les pages `/marwa-caftan` et `/afarah-nassim`, le widget caftans, les liens d'accueil, les entrées du plan du site, de l'annuaire Services Pro et de `lib/listings.ts` sont supprimés. Les anciens liens renvoient vers `/boutique` (redirections 301 dans `netlify.toml`). Les paragraphes plus haut sur ces deux commerces sont l'historique.
+Prochaine étape : des établissements de plus grande taille, avec accord écrit (voir `docs/PROSPECTION.md`).

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Phone, Globe, MapPin, Star, ExternalLink, Bike, ArrowRight } from 'lucide-react';
-import { MARWA_PHONE } from '@/lib/partners';
 import { contactMailto } from '@/lib/contact';
 import LeadLink from '@/components/LeadLink';
 
@@ -22,29 +21,7 @@ type Business = {
 };
 
 const SERVICES: Record<string, Business[]> = {
-  traiteurs: [
-    {
-      name: 'Afarah Nassim',
-      desc: 'Traiteur. Menu, prix et conditions à demander directement.',
-      location: 'Zone à demander',
-      phone: MARWA_PHONE,
-      page: '/afarah-nassim',
-      featured: true,
-      tag: 'Référencé · aucun accord commercial',
-    },
-    {
-      name: 'Votre traiteur',
-      desc: 'Emplacement disponible pour un futur partenaire validé.',
-      location: 'Zone à confirmer',
-      tag: 'À venir',
-    },
-    {
-      name: 'Votre service événementiel',
-      desc: 'Emplacement disponible pour un futur partenaire validé.',
-      location: 'Zone à confirmer',
-      tag: 'À venir',
-    },
-  ],
+  traiteurs: [],
   mobilite: [],
   garages: [],
 };
@@ -87,7 +64,7 @@ function BusinessCard({ b }: { b: Business }) {
       <div className="flex gap-2">
         {b.phone && (
           <LeadLink
-            // Partner id from its page (/afarah-nassim → afarah_nassim), as on the page itself.
+            // Partner id from its page (/taza-immobilier → taza_immobilier), as on the page itself.
             partner={b.page ? b.page.slice(1).replace(/-/g, '_') : 'services_pro'}
             channel="phone"
             href={`tel:${b.phone}`}
@@ -171,7 +148,12 @@ export default function ServicesProWidget() {
           SERVICES[tab].map((b) => <BusinessCard key={b.name} b={b} />)
         ) : (
           <p className="rounded-2xl bg-[#f8fafc] p-5 text-center text-sm text-[#64748b] sm:col-span-2">
-            Aucun partenaire vérifié dans cette catégorie pour le moment.
+            Aucun partenaire vérifié dans cette catégorie pour le moment. En attendant, trouvez les stations,
+            restaurants halal et garages réels sur votre route :{' '}
+            <Link href="/#services" className="font-bold text-[#b45309] underline">
+              chercher près de vous
+            </Link>
+            .
           </p>
         )}
       </div>

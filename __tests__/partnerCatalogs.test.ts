@@ -8,7 +8,7 @@ function source(file: string) {
 // Issue #227: partner pages render the shared ReferencedListing, which has no
 // room for a price, a stock, a review or an official status.
 describe('partner catalog integrity', () => {
-  it.each(['marwa-caftan', 'afarah-nassim', 'taza-immobilier', 'belisamae'])('%s publishes no catalogue of its own', (page) => {
+  it.each(['taza-immobilier', 'belisamae'])('%s publishes no catalogue of its own', (page) => {
     const file = source(`app/${page}/page.tsx`);
     expect(file).toContain('<ReferencedListing');
     expect(file).not.toMatch(/prixLocation|prixVente|caution: \d+|avis: \d+|stars: \d+|dispo: (true|false)|parPersonne|Partenaire officiel/);
@@ -21,7 +21,6 @@ describe('partner catalog integrity', () => {
   it('does not list unverified businesses as active services', () => {
     const widget = source('components/ServicesProWidget.tsx');
     expect(widget).toContain('Aucun partenaire vérifié dans cette catégorie pour le moment.');
-    expect(widget).toContain('Référencé · aucun accord commercial');
     expect(widget).not.toMatch(/Garage Hassan|Atlas Car Rental|Saveurs du Maghreb/);
   });
 });

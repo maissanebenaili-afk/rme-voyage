@@ -43,7 +43,6 @@ Le socle actuel comprend notamment :
 - comparateurs/points d'entrée transport ;
 - services et contenus pour les voyageurs ;
 - catalogue partenaire et immobilier de Taza ;
-- Marwa Caftan ;
 - comparateur de transferts ;
 - analytics de conversion ;
 - PWA/accessibilité renforcée ;

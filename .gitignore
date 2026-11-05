@@ -51,3 +51,5 @@ tsconfig.tsbuildinfo
 # Python
 __pycache__/
 videos-kalimat/
+videos-ados/
+prospects-appel.csv

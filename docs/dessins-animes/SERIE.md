@@ -5,6 +5,8 @@ familles de la diaspora : le « marocain de la rue », du français plein de
 darija, avec de temps en temps un mot néerlandais ou espagnol.
 Diffusée sur YouTube et dans la rubrique Médias de RME Voyage.
 
+Pour le grand feuilleton dramatique, voir [SAGA-SAFIA.md](SAGA-SAFIA.md).
+
 Personnages, noms et dessins **originaux** : style « anime » (grands yeux
 expressifs, couleurs vives), sans reprendre un personnage existant (pas de
 Caillou, de Candy ni d'autre héros connu).

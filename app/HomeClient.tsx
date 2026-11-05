@@ -21,7 +21,6 @@ import NewsletterSection from '@/components/NewsletterSection';
 import FaicalWidget from '@/components/FaicalWidget';
 import SportsHub from '@/components/SportsHub';
 import TVWidget from '@/components/TVWidget';
-import MarwaCaftanWidget from '@/components/MarwaCaftanWidget';
 import ServicesProWidget from '@/components/ServicesProWidget';
 import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
@@ -191,7 +190,6 @@ export default function HomeClient() {
               <TVWidget />
             </ToolDrawer>
             <ToolDrawer id="boutique" icon={<ShoppingBag size={20} />} title={h.drawerShopTitle} text={h.drawerShopText}>
-              <MarwaCaftanWidget />
               <MouniaWidget />
               <ColisWidget />
               <ServicesProWidget />
@@ -245,9 +243,7 @@ export default function HomeClient() {
             <div>
               <h3 className="font-bold text-[#0f1f3d]">{h.footerPartners}</h3>
               <ul className="mt-3 space-y-2 text-sm">
-                <li><Link href="/marwa-caftan" className="inline-block py-1.5 hover:text-[#0f1f3d]">Marwa Caftan</Link></li>
                 <li><Link href="/belisamae" className="inline-block py-1.5 hover:text-[#0f1f3d]">Belisamae</Link></li>
-                <li><Link href="/afarah-nassim" className="inline-block py-1.5 hover:text-[#0f1f3d]">Afarah Nassim</Link></li>
               </ul>
             </div>
             <div>

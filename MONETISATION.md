@@ -19,7 +19,6 @@ sur un lien comparateur public générique, jamais sur un lien inventé.
 | Ferries (Direct Ferries) | ✅ idem | Repli comparateur public (directferries.fr) | ✅ commission | `DIRECT_FERRIES_AFFILIATE_URL` |
 | Transferts d'argent (Wise, WorldRemit, Remitly, Western Union, MoneyGram) | ✅ `app/api/remittance`, `components/RemittanceComparator.tsx` — taux de change live (fawazahmed0 API), frais/spread **estimés** et étiquetés comme tels à l'utilisateur | Lien public pré-rempli vers chaque fournisseur | ✅ commission par fournisseur configuré | `WISE_AFFILIATE_URL`, `WORLDREMIT_AFFILIATE_URL`, `REMITLY_AFFILIATE_URL`, `WESTERN_UNION_AFFILIATE_URL`, `MONEYGRAM_AFFILIATE_URL` |
 | Immobilier Taza (Aziz HiDOUR) | ✅ `app/taza-immobilier` | Contact WhatsApp direct, partenaire réel nommé | Lead / commission à négocier hors-code | — (contact direct) |
-| Caftans Marwa | ✅ `app/marwa-caftan` | Boutique/contact | Vente directe (hors plateforme de paiement dans ce dépôt) | — |
 | Offre B2B / widget embarquable | ❌ pas construit | `/pro` explicite : « en préparation, aucune facturation » (voir #87) | Non — aucun embed, aucune facturation, aucun dashboard n'existe | — |
 | Hôtels, eSIM, assurance, location voiture | ❌ pas de code | — | Non explorés dans ce dépôt à ce jour | — |
 | Hadak (assistant IA) | ✅ `app/api/hadak` | Repli local si aucune clé LLM | Pas un levier direct de revenu ; coût variable | `ANTHROPIC_API_KEY` / `GROQ_API_KEY` / `OPENAI_API_KEY` (au choix, ordre de repli dans le code) |

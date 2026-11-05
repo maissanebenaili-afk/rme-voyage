@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArrowRight, Car, Clock, Fuel, Ship } from 'lucide-react';
 import { countryName } from '@/lib/countries';
 import { PRESSURE_RULES } from '@/lib/crossingPressure';
+import { pausesFamille } from '@/lib/pausesFamille';
 import { computeFuelByCountry, FUEL_PRICES } from '@/lib/fuelByCountry';
 import {
   ferryOf,
@@ -77,6 +78,7 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
   if (!route) notFound();
 
   const ferry = ferryOf(route);
+  const pauses = pausesFamille(route.durationSeconds, route.distanceMeters);
   const fuel = computeFuelByCountry({
     legs: route.legs,
     consumptionPer100Km: REFERENCE_CONSUMPTION_L_PER_100KM,
@@ -295,6 +297,41 @@ export default async function TrajetPage({ params }: { params: Promise<{ slug: s
             </ul>
           </section>
         )}
+
+        <section aria-labelledby="pauses-title" className="mt-10">
+          <h2 id="pauses-title" className="font-display text-2xl font-semibold">
+            Vos pauses avec les enfants
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#475569]">
+            Une pause toutes les 2 heures, c&apos;est la règle de sécurité routière la plus courante. Sur ce trajet, voici
+            où elles tombent à peu près (estimation à partir de la durée de conduite, hors traversée).
+          </p>
+          {pauses.length > 0 ? (
+            <ol className="mt-4 space-y-2 text-sm">
+              {pauses.map((pause) => (
+                <li key={pause.numero} className="flex flex-wrap justify-between gap-2 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5">
+                  <span className="font-semibold">Pause {pause.numero}</span>
+                  <span className="text-[#475569]">
+                    après {formatDuration(pause.apresSecondes)} de route, vers le km {pause.kmApprox}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-4 text-sm text-[#475569]">Trajet court : pas de pause obligatoire, mais n&apos;hésitez pas à vous arrêter si les enfants sont fatigués.</p>
+          )}
+          <ul className="mt-4 list-disc space-y-1 pl-5 text-sm leading-6 text-[#475569]">
+            <li>Prévoyez 15 à 20 minutes : les enfants sortent, boivent, se dégourdissent.</li>
+            <li>Gardez de l&apos;eau dans la voiture et cherchez l&apos;ombre ou un endroit climatisé aux heures chaudes.</li>
+            <li>Conducteur fatigué : on s&apos;arrête, on ne lutte pas.</li>
+          </ul>
+          <p className="mt-4 text-sm">
+            <Link href="/#services" className="font-bold text-[#b45309] underline">
+              Trouver stations, restaurants halal, garages et aires de repos
+            </Link>{' '}
+            près de votre route.
+          </p>
+        </section>
 
         <section aria-labelledby="quand-title" className="mt-10">
           <h2 id="quand-title" className="font-display text-2xl font-semibold">
