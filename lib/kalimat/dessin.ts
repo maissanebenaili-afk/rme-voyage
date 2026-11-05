@@ -1192,20 +1192,28 @@ function etiquettesTraduction(
 }
 
 /** Le sous-titre en bas de l'image, pendant que le personnage parle (au choix, sur le site). */
-function sousTitre(ctx: Ctx, texte: string, qui: PersoId | undefined, local: number, duree: number) {
+function sousTitre(ctx: Ctx, texte: string, qui: PersoId | undefined, local: number, duree: number, sens: EntreeLexique[] = []) {
   const v = borne(local / 0.15, 0, 1) * borne((duree - local) / 0.15, 0, 1);
   if (v <= 0) return;
   const taille = 50;
   ctx.font = `800 ${taille}px ${police}`;
   const prefixe = qui ? `${NOMS[qui][langue]} : ` : '';
   const rangees = lignes(prefixe + texte, 940, (s2) => ctx.measureText(s2).width);
-  const h = rangees.length * taille * 1.25 + 40;
+  const ligneSens = sens.map((e) => `${e.mot} = ${langue === 'es' ? e.es : e.fr}`).join('  ·  ');
+  const h = rangees.length * taille * 1.25 + 40 + (ligneSens ? 56 : 0);
   ctx.save();
   ctx.globalAlpha = v;
   rectRond(ctx, 40, 1560, LARGEUR - 80, h, 28);
   ctx.fillStyle = 'rgba(15,31,61,0.82)';
   ctx.fill();
   texteColore(ctx, prefixe + texte, LARGEUR / 2, 1560 + 20 + taille * 0.9, taille, 940, '#ffffff', Infinity, '#ffb37a');
+  if (ligneSens) {
+    ctx.font = `700 40px ${police}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#ffd166';
+    ctx.fillText(ligneSens, LARGEUR / 2, 1560 + h - 26, 960);
+  }
   ctx.restore();
 }
 
@@ -1519,14 +1527,13 @@ function ecranPlan(ctx: Ctx, ep: Episode, index: number, local: number, duree: n
   vignette.addColorStop(1, 'rgba(20,10,40,0.28)');
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, LARGEUR, HAUTEUR);
-  etiquette(ctx, ep);
   if (voix) {
-    // Doublé : ils parlent, sans bulle. Les mots nouveaux s'affichent quand ils sont dits.
-    const haut: Boite = { x: 0, y: 200, w: LARGEUR, h: 0 };
-    etiquettesTraduction(ctx, traductions(ep, index, langue), texte, haut, local, duree, (finDuMot, longueur) => DEBUT_VOIX + (finDuMot / Math.max(1, longueur)) * voix.duree);
-    if (avecSousTitres) sousTitre(ctx, texte, plan.parle, local, duree);
+    // Doublé : ils parlent, et l'image reste libre de tout texte. Le texte et le
+    // sens des mots nouveaux passent dans les sous-titres, qu'on active ou non.
+    if (avecSousTitres) sousTitre(ctx, texte, plan.parle, local, duree, traductions(ep, index, langue));
     return;
   }
+  etiquette(ctx, ep);
   const cible = parleur ? versEcran(cam, parleur.x, parleur.sol - hautTete(parleur.placement.id, ECHELLE_PERSO)) : undefined;
   const boite = bulle(ctx, texte, plan.parle, cible, local, duree);
   etiquettesTraduction(ctx, traductions(ep, index, langue), texte, boite, local, duree);

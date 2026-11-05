@@ -29,6 +29,22 @@ export const CASTING: Record<Parleur, Casting> = {
   narration: { voix: 'jvSOBXJ1cP2sdvT5RgUP', hauteur: 1 }, // Richie Tekan
 };
 
+/** La version espagnole : des voix qui parlent espagnol sans accent français. */
+export const CASTING_ES: Record<Parleur, Casting> = {
+  ines: { voix: 'NNuHMQa2acKEytgZ6uvw', hauteur: 1.12 }, // Carito
+  nour: { voix: '2qdfPrvMqpD1KKo9k6Yv', hauteur: 1.06 }, // Zoey
+  adam: { voix: '2qdfPrvMqpD1KKo9k6Yv', hauteur: 1.3 }, // Zoey, plus aiguë
+  yassine: { voix: '4uvQjLPvqApx1dVzpNfM', hauteur: 1.22 }, // Johan, plus aiguë
+  mima: { voix: 'EXAVITQu4vr4xnSDxMaL', hauteur: 0.97 }, // Sarah
+  marchand: { voix: 'HRUUrQrYM9LfgDbWoMXS', hauteur: 0.9 }, // Mizael, plus grave
+  mchicha: { voix: '2qdfPrvMqpD1KKo9k6Yv', hauteur: 1.4 },
+  narration: { voix: 'HRUUrQrYM9LfgDbWoMXS', hauteur: 1 }, // Mizael
+};
+
+export function castingDe(langue: Langue): Record<Parleur, Casting> {
+  return langue === 'es' ? CASTING_ES : CASTING;
+}
+
 /** Le ton, donné à la voix par une petite indication entre crochets. */
 const TON: Record<Humeur, string> = {
   content: '[cheerful]',
@@ -72,7 +88,8 @@ export interface ADire {
 /** Toutes les répliques d'un épisode à faire dire, dans l'ordre. */
 export function repliquesAParler(ep: Episode, langue: Langue): ADire[] {
   const e = ECRAN[langue];
-  const ligne = (cle: string, qui: Parleur, texte: string): ADire => ({ cle, qui, texte, ...CASTING[qui] });
+  const casting = castingDe(langue);
+  const ligne = (cle: string, qui: Parleur, texte: string): ADire => ({ cle, qui, texte, ...casting[qui] });
   const liste: ADire[] = [ligne('g', 'narration', `Kalimat ! ${e.episode} ${ep.numero} : ${ep.titre[langue]}`)];
   ep.plans.forEach((plan, i) => {
     const qui: Parleur = plan.parle ?? 'narration';
@@ -83,7 +100,8 @@ export function repliquesAParler(ep: Episode, langue: Langue): ADire[] {
   ep.mots.forEach((m, i) => {
     const mot = texteAParler(`*${m.mot}*`, langue);
     const sens = m.sens[langue];
-    liste.push(ligne(`m${i}`, 'yassine', `[cheerful] ${mot} … ${sens}${/[?!]$/.test(sens) ? '' : ' !'}`));
+    const fin = /[?!]$/.test(sens) ? sens : langue === 'es' ? `¡${sens}!` : `${sens} !`;
+    liste.push(ligne(`m${i}`, 'yassine', `[cheerful] ${mot} … ${fin}`));
   });
   const fin = ep.fin?.[langue] ?? (langue === 'es' ? '¡*Bslama*!' : '*Bslama* !');
   liste.push(ligne('f', 'ines', `[cheerful] ${e.aDemain} ${texteAParler(fin, langue)}`));

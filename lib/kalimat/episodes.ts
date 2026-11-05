@@ -10,7 +10,12 @@
 // darija restant la même. Textes repris de docs/dessins-animes/.
 
 import { LEXIQUE, cleDuMot, type EntreeLexique } from './lexique';
+import voix1es from './voix/1-es.json';
 import voix1fr from './voix/1-fr.json';
+import voix2es from './voix/2-es.json';
+import voix2fr from './voix/2-fr.json';
+import voix3es from './voix/3-es.json';
+import voix3fr from './voix/3-fr.json';
 
 export type Langue = 'fr' | 'es';
 export const LANGUES: readonly Langue[] = ['fr', 'es'];
@@ -20,6 +25,8 @@ export type PersoId = 'ines' | 'adam' | 'yassine' | 'nour' | 'mima' | 'mchicha' 
 export type DecorId = 'port' | 'cuisine' | 'marche';
 export type Humeur = 'content' | 'inquiet' | 'surpris' | 'rire';
 export type Tenu = 'pancarte' | 'valise' | 'verre' | 'orange' | 'mchicha' | 'khobz' | 'theiere';
+/** L'ambiance de la musique pendant le plan. */
+export type Ambiance = 'joie' | 'tendre' | 'suspense';
 export type ObjetId = 'ferry' | 'voiture' | 'theiere' | 'verres' | 'panier-khobz' | 'oranges' | 'queue-mchicha';
 
 export interface Placement {
@@ -42,6 +49,8 @@ export interface Plan {
   parle?: PersoId;
   texte: Textes;
   objets?: ObjetId[];
+  /** Sinon déduite : suspense si celui qui parle est inquiet, tendresse quand Mima parle, joie sinon. */
+  ambiance?: Ambiance;
 }
 
 export interface MotDuJour {
@@ -243,7 +252,20 @@ const EPISODE_3: Episode = {
   ],
 };
 
+// Les moments d'émotion : la musique se fait tendre, ou inquiète.
+EPISODE_1.plans[9].ambiance = 'tendre';
+EPISODE_2.plans[1].ambiance = 'tendre';
+for (let i = 0; i <= 6; i++) EPISODE_3.plans[i].ambiance = 'suspense';
+
 export const EPISODES: readonly Episode[] = [EPISODE_1, EPISODE_2, EPISODE_3];
+
+export function ambianceDuPlan(plan: Plan): Ambiance {
+  if (plan.ambiance) return plan.ambiance;
+  const humeur = plan.persos.find((q) => q.id === plan.parle)?.humeur;
+  if (humeur === 'inquiet') return 'suspense';
+  if (plan.parle === 'mima') return 'tendre';
+  return 'joie';
+}
 
 // --- Le temps ---------------------------------------------------------------
 
@@ -270,7 +292,14 @@ export interface Clip {
 }
 
 /** Les voix déjà prêtes, par épisode et par langue (scripts/kalimat-preparer-voix.mjs). */
-const VOIX: Record<string, Record<string, Clip>> = { '1-fr': voix1fr };
+const VOIX: Record<string, Record<string, Clip>> = {
+  '1-fr': voix1fr,
+  '2-fr': voix2fr,
+  '3-fr': voix3fr,
+  '1-es': voix1es,
+  '2-es': voix2es,
+  '3-es': voix3es,
+};
 /** Le personnage commence à parler un peu après le début du plan. */
 export const DEBUT_VOIX = 0.2;
 
@@ -461,7 +490,10 @@ export function repliques(ep: Episode, langue: Langue = 'fr'): Replique[] {
   let debut = GENERIQUE;
   for (const [i, plan] of ep.plans.entries()) {
     const duree = dureeDuPlan(ep, i, langue);
-    liste.push({ debut, fin: debut + duree, qui: plan.parle ? NOMS[plan.parle][langue] : 'Narration', narration: !plan.parle, texte: texteBrut(plan.texte[langue]) });
+    // Le sens des mots nouveaux, entre parenthèses sous la réplique (sous-titres YouTube).
+    const sens = traductions(ep, i, langue).map((e) => `${e.mot} = ${langue === 'es' ? e.es : e.fr}`);
+    const texte = texteBrut(plan.texte[langue]) + (sens.length ? `\n(${sens.join(' · ')})` : '');
+    liste.push({ debut, fin: debut + duree, qui: plan.parle ? NOMS[plan.parle][langue] : 'Narration', narration: !plan.parle, texte });
     debut += duree;
   }
   const pas = MOTS / 3;
