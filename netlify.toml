@@ -25,3 +25,29 @@
   for = "/manifest.webmanifest"
   [headers.values]
     Content-Type = "application/manifest+json"
+
+# Pages retirées le 2026-11-05 à la demande du propriétaire : on renvoie vers la boutique
+# plutôt que vers une erreur 404 pour les anciens liens.
+[[redirects]]
+  from = "/marwa-caftan/*"
+  to = "/boutique"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/marwa-caftan"
+  to = "/boutique"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/afarah-nassim/*"
+  to = "/boutique"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/afarah-nassim"
+  to = "/boutique"
+  status = 301
+  force = true

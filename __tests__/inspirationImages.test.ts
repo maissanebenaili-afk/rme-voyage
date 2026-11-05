@@ -16,11 +16,9 @@ describe('partner inspiration images', () => {
 
   it('does not associate a generic inspiration image with named caftan styles', () => {
     const boutique = fs.readFileSync(path.join(__dirname, '..', 'app/boutique/page.tsx'), 'utf-8');
-    const catalog = fs.readFileSync(path.join(__dirname, '..', 'app/marwa-caftan/page.tsx'), 'utf-8');
 
-    expect(boutique).toMatch(/ne publie pas de catalogue/);
+    expect(boutique).not.toMatch(/Marwa/);
     expect(boutique).not.toContain('INSPIRATION_IMAGES.caftan');
-    expect(catalog).not.toContain('INSPIRATION_IMAGES.caftan');
   });
 
   it('uses stable dimensions and responsive sizing for visual stability', () => {

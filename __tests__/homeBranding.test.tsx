@@ -11,7 +11,6 @@ jest.mock("@/components/NewsletterSection", () => function NewsletterSectionMock
 jest.mock("@/components/DailyWidget", () => function DailyWidgetMock() { return <div>DailyWidget</div>; });
 jest.mock("@/components/FaicalWidget", () => function FaicalWidgetMock() { return <div>FaicalWidget</div>; });
 jest.mock("@/components/TVWidget", () => function TVWidgetMock() { return <div>TVWidget</div>; });
-jest.mock("@/components/MarwaCaftanWidget", () => function MarwaCaftanWidgetMock() { return <div>MarwaCaftanWidget</div>; });
 jest.mock("@/components/ServicesProWidget", () => function ServicesProWidgetMock() { return <div>ServicesProWidget</div>; });
 jest.mock("@/components/MouniaWidget", () => function MouniaWidgetMock() { return <div>MouniaWidget</div>; });
 jest.mock("@/components/ColisWidget", () => function ColisWidgetMock() { return <div>ColisWidget</div>; });
@@ -74,7 +73,8 @@ describe("Homepage branding", () => {
     expect(container.querySelector("#preparer")).toHaveTextContent(/Checklist voyage/i);
     expect(screen.getByText("Liste de bagages intelligente")).toBeInTheDocument();
     expect(container.querySelector("#sport-tv")).toHaveTextContent("Le match, les chaînes, les analyses.");
-    expect(container.querySelector("#boutique")).toHaveTextContent("MarwaCaftanWidget");
+    expect(container.querySelector("#boutique")).toHaveTextContent("MouniaWidget");
+    expect(container).not.toHaveTextContent(/Marwa|Afarah/);
     expect(container.querySelector("#argent")).toHaveTextContent("RemittanceComparator");
     expect(screen.getByText("TVWidget")).toBeInTheDocument();
 

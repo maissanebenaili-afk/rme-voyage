@@ -77,7 +77,6 @@ Une intégration nécessitant un compte ou une variable externe reste **CONFIGUR
   Check) — péages, carburant, ferry, scénarios comparés
 - Comparateur de transferts EUR→MAD (taux de change live)
 - Assistant Hadak (chat IA, infos pratiques)
-- Marketplace Marwa Caftan
 - Section immobilière Taza (partenaire Aziz HiDOUR)
 - Programme d'affiliation avec statut explicite (actif/non configuré),
   tracking de clics respectueux de la vie privée

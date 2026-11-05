@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ArrowLeft, Sparkles } from 'lucide-react';
-import MarwaCaftanWidget from '@/components/MarwaCaftanWidget';
 import MouniaWidget from '@/components/MouniaWidget';
 import ServicesProWidget from '@/components/ServicesProWidget';
 import ColisWidget from '@/components/ColisWidget';
@@ -13,7 +12,6 @@ import { contactMailto } from '@/lib/contact';
 const joinMailto = contactMailto('Rejoindre la Boutique RME Voyage');
 
 const RUBRIQUES = [
-  { href: '#caftan', label: '👗 Caftans' },
   { href: '#bienetre', label: '🌿 Bien-être' },
   { href: '#colis', label: '📦 Colis' },
   { href: '#services', label: '🔧 Services' },
@@ -43,8 +41,8 @@ export default function BoutiquePage() {
               <span className="text-[#f59e0b]">de la France au Maroc.</span>
             </h1>
             <p className="mt-5 text-lg leading-8 text-white/65">
-              Des espaces pour découvrir des professionnels et prendre contact. Caftans, bien-être,
-              traiteurs, colis et mobilité. Les professionnels sont référencés gratuitement, sans
+              Des espaces pour découvrir des professionnels et prendre contact. Bien-être, colis,
+              services et mobilité. Les professionnels sont référencés gratuitement, sans
               accord commercial : prix et conditions se demandent directement.
             </p>
           </div>
@@ -63,35 +61,6 @@ export default function BoutiquePage() {
         </div>
       </header>
 
-      <section id="caftan" className="scroll-mt-6 bg-white py-16">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <Reveal>
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#b45309]">
-              Mode &amp; cérémonie
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#0f1f3d] sm:text-4xl">
-              Le caftan, sans l&apos;acheter.
-            </h2>
-            <p className="mt-3 max-w-2xl text-[#475569]">
-              Explorez des styles pour un mariage ou une soirée, puis demandez les modalités
-              directement au professionnel.
-            </p>
-          </Reveal>
-          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
-            <div className="rounded-3xl border border-[#e2d5c0] bg-[#f7f1e7] p-6 text-[#0f1f3d]">
-              <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#92400e]">
-                Marwa Caftan
-              </p>
-              <p className="mt-3 text-sm leading-6 text-[#475569]">
-                RME Voyage ne publie pas de catalogue : modèles, tailles et prix se demandent directement.
-              </p>
-            </div>
-            <Reveal delay={90}>
-              <MarwaCaftanWidget />
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
       <section id="bienetre" className="scroll-mt-6 bg-[#f7f6f2] py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">

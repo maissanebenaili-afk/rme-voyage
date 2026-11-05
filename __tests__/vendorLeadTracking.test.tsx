@@ -17,14 +17,14 @@ describe('Leads sent to partner businesses are counted', () => {
     const post = jest.fn().mockResolvedValue({ ok: true });
     global.fetch = post as unknown as typeof fetch;
     render(
-      <LeadLink partner="afarah_nassim" channel="whatsapp" href="https://wa.me/33782722869?text=Bonjour">
+      <LeadLink partner="taza_immobilier" channel="whatsapp" href="https://wa.me/33600000000?text=Bonjour">
         Devis
       </LeadLink>,
     );
     fireEvent.click(screen.getByText('Devis'));
     const body = JSON.parse(post.mock.calls[0][1].body as string);
     expect(body.event).toBe('partner_click');
-    expect(cleanEventProps(body.props)).toMatchObject({ partner: 'afarah_nassim', product: 'contact', placement: 'vendor_whatsapp' });
+    expect(cleanEventProps(body.props)).toMatchObject({ partner: 'taza_immobilier', product: 'contact', placement: 'vendor_whatsapp' });
     expect(JSON.stringify(body)).not.toContain('33782722869');
   });
 
