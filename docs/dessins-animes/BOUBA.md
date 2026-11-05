@@ -13,6 +13,18 @@ footballeur Moussa. Chaque épisode : une bêtise, une peur, une grande joie.
   « partenaire »** : ce serait faux.
 - Pas de caricature : des personnages simples, tendres et drôles.
 
+## La famille (inventée) : d'origine marocaine, dans un club espagnol
+
+Moussa est un jeune footballeur d'origine marocaine qui joue dans un **club espagnol
+imaginaire**. Bouba, Léo et Inès vivent dans le quartier du port d'une ville
+imaginaire de la côte. C'est un point de départ général, pas le portrait d'une vraie
+famille : prénoms, histoires, visages et couleurs du club sont tous inventés.
+
+Ce que ça apporte : la darija à la maison (*yemma*, *wakha*, *safi*, *bslama*), le thé
+et le pain de la maman, le va-et-vient entre l'Espagne et le Maroc, les vacances au
+pays. Même principe que « Le Fil d'or » : surtout du français, un peu de darija, de
+plus en plus au fil des épisodes.
+
 ## Suivre le championnat, sans copier personne
 
 Un épisode par « journée » : le rythme (jour, ambiance de week-end, suspense) suit
