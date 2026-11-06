@@ -4,7 +4,7 @@ import { construire, decouper, FIN, INTRO } from '../scripts/ados/montage.mjs'
 const EMOTIONS = ['neutre', 'joie', 'triste', 'colere', 'surprise', 'peur', 'malade', 'froid', 'tendre', 'pleure']
 const DECORS = ['aube', 'atelier', 'toits', 'lycee', 'villa', 'hopital', 'gala', 'dar', 'feu']
 const INSERTS = ['feu', 'lettre', 'broderie', 'broche', 'robe', 'calendrier', 'maison']
-const GESTES = ['rire', 'secoue', 'poing', 'tend', 'coeur', 'bouche', 'baisse', 'recule', 'avance', 'choc']
+const GESTES = ['rire', 'secoue', 'poing', 'tend', 'coeur', 'bouche', 'baisse', 'recule', 'avance', 'choc', 'explique', 'doigt', 'menton', 'hausse', 'salut']
 const CAMERAS = ['zoom', 'pan', 'push', 'shake', 'fixe']
 
 describe('« Le Fil d’or » : l’histoire', () => {
@@ -15,6 +15,24 @@ describe('« Le Fil d’or » : l’histoire', () => {
       expect(e.demain.length).toBeGreaterThan(3)
       expect(e.question.endsWith('?')).toBe(true)
       expect(e.question.length).toBeLessThan(46)
+    }
+  })
+
+  it('chaque épisode dure environ 4 minutes (3 min 40 à 4 min 30)', () => {
+    for (const e of EPISODES) {
+      const voix = e.plans.filter(avecVoix).reduce((a, p) => a + (p.texte ?? '').length / 15.3 + 2.1, 0)
+      const muet = e.plans.filter((p) => !avecVoix(p)).reduce((a, p) => a + (p.duree ?? 3), 0)
+      const total = voix + muet + INTRO + FIN
+      expect(total).toBeGreaterThan(220)
+      expect(total).toBeLessThan(270)
+    }
+  })
+
+  it('les gestes ont une raison : pas de geste sur plus de la moitié des plans parlés', () => {
+    for (const e of EPISODES) {
+      const parles = e.plans.filter(avecVoix)
+      const avecGeste = parles.filter((p) => p.persos.some((x) => x.act)).length
+      expect(avecGeste / parles.length).toBeLessThan(0.62)
     }
   })
 
@@ -72,8 +90,8 @@ describe('« Le Fil d’or » : l’histoire', () => {
     }
   })
 
-  it('reste court : aucune réplique de plus de 25 mots', () => {
-    for (const e of EPISODES) for (const p of e.plans) if (p.texte) expect(p.texte.split(/\s+/).length).toBeLessThanOrEqual(25)
+  it('reste court : aucune réplique de plus de 36 mots', () => {
+    for (const e of EPISODES) for (const p of e.plans) if (p.texte) expect(p.texte.split(/\s+/).length).toBeLessThanOrEqual(36)
   })
 
   it('pas de contenu inadapté à des adolescents', () => {

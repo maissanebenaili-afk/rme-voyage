@@ -36,7 +36,7 @@ function preparerVoix(ep, i, plan, dossier) {
   const src = path.join(SORTIE, 'voix', `ep${ep.numero}`, `${pad(i + 1)}.wav`);
   const dst = path.join(dossier, `${pad(i + 1)}.wav`);
   const h = PERSOS[plan.parle].hauteur;
-  const filtre = h === 1 ? 'anull' : `asetrate=24000*${h},aresample=44100,atempo=${1 / h}`;
+  const filtre = (h === 1 ? 'anull' : `asetrate=24000*${h},aresample=44100,atempo=${1 / h}`) + ',atempo=0.9,highpass=f=90,deesser=i=0.35,acompressor=threshold=-20dB:ratio=2.5:attack=5:release=120,aecho=0.85:0.4:35:0.10';
   sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', src, '-af', `${filtre},silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse`, '-ar', '44100', '-ac', '1', dst]);
   return dst;
 }
@@ -71,6 +71,9 @@ async function fabriquer(ep, nav) {
     // le texte suit la voix réelle : il avance quand on parle, il attend pendant les pauses
     let cum = 0; const brut = s.env.map((e) => Math.max(0, e - 0.08)); const tot = brut.reduce((a, b) => a + b, 0) || 1;
     s.suivi = brut.map((e) => (cum += e) / tot);
+    // accents : les moments où la voix « appuie » après un souffle. Ils déclenchent hochements et gestes.
+    s.accents = []; let bas = 3;
+    s.env.forEach((e, k) => { if (e < 0.25) bas++; else if (e > 0.5) { const t0 = k / FPS; if (bas >= 3 && (!s.accents.length || t0 - s.accents[s.accents.length - 1] > 0.45)) s.accents.push(t0); bas = 0; } });
   });
 
   // musique : intensité selon l'émotion des plans
@@ -108,6 +111,10 @@ async function fabriquer(ep, nav) {
   page.on('pageerror', (e) => { throw e; });
   await page.goto('file://' + path.join(ICI, 'page.html'));
   await page.evaluate((s) => window.ADOS.init(s), S);
+  if (process.env.APERCU) { // APERCU=12.5,30 : quelques images seulement, pour vérifier le dessin
+    for (const t of process.env.APERCU.split(',').map(Number)) { const url = await page.evaluate((x) => { window.ADOS.frame(x); return window.ADOS.jpeg(0.9); }, t); await writeFile(`/tmp/ados/apercu-${ep.numero}-${t}.jpg`, Buffer.from(url.split(',')[1], 'base64')); }
+    fini.catch(() => {}); proc.stdin.end(); proc.kill(); await page.close(); return;
+  }
   const images = Math.ceil(S.total * FPS);
   for (let k = 0; k < images; k++) {
     const url = await page.evaluate((t) => { window.ADOS.frame(t); return window.ADOS.jpeg(0.9); }, k / FPS);

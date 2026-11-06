@@ -2,8 +2,8 @@
 // carte de fin. `durees` : la durée de chaque voix, dans l'ordre des plans parlés.
 export const INTRO = 1.6; // courte : sur un Short, on ne laisse pas le temps de glisser
 export const FIN = 4.6;
-export const AVANT_VOIX = 0.6;
-export const APRES_VOIX = 1.0;
+export const AVANT_VOIX = 0.8;
+export const APRES_VOIX = 1.3;
 
 export function construire(ep, durees, persos, fps = 24) {
   let t = INTRO;

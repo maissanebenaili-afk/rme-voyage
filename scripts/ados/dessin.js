@@ -374,6 +374,7 @@
     if (pose === 'poing') {
       rectRondeMain(hx, hy, 0.34 * R, 0.3 * R); ctx.strokeStyle = 'rgba(80,40,20,0.5)'; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(hx + i * 0.09 * R, hy - 0.14 * R); ctx.lineTo(hx + i * 0.09 * R, hy + 0.02 * R); ctx.stroke(); }
     } else {
+      if (pose === 'doigt') { ctx.strokeStyle = L.peau; ctx.lineWidth = 0.09 * R; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(hx, hy - 0.05 * R); ctx.lineTo(hx + (hx > sx ? 0.34 : -0.34) * R, hy - 0.22 * R); ctx.stroke(); ctx.strokeStyle = L.ombre; ctx.lineWidth = 0.025 * R; }
       ctx.beginPath(); ctx.ellipse(hx, hy, 0.17 * R, 0.19 * R, 0, 0, TAU); ctx.fill();
       for (let i = -2; i <= 1; i++) { ctx.save(); ctx.translate(hx + (i + 0.5) * 0.085 * R, hy - 0.14 * R); ctx.rotate((i + 0.5) * 0.18); ctx.beginPath(); ctx.ellipse(0, -0.09 * R, 0.04 * R, 0.12 * R, 0, 0, TAU); ctx.fill(); ctx.restore(); }
     }
@@ -389,7 +390,7 @@
     const emo = (I.k || 0) > 0.5 ? (I.emoB || I.emoA) : I.emoA;
     // gestes
     let dx = 0, dy = 0, rot = 0, esc = 1, pose = null, talk = I.talk, joue = 0;
-    const montee = ease(clamp(tl / 0.45));
+    const montee = ease(clamp(tl / 0.45)) * (I.fen ?? 1);
     switch (I.act) {
       case 'rire': P.ouv = Math.min(P.ouv, 0.3); P.coin = -0.09; talk = Math.max(talk, 0.55 + 0.45 * Math.abs(Math.sin(t * 11))); dy = -Math.abs(Math.sin(t * 11)) * 14; rot = Math.sin(t * 8.5) * 0.03; esc = 1.01; break;
       case 'secoue': rot = Math.sin(t * 15) * 0.05; dx = Math.sin(t * 15) * 9; break;
@@ -400,11 +401,17 @@
       case 'baisse': dy = 0.2 * R * montee; rot = -dir * 0.05 * montee; P.ouv *= 0.8; break;
       case 'recule': dx = -dir * 0.5 * R * (1 - Math.exp(-tl * 6)); esc = 0.95; break;
       case 'avance': dx = dir * 0.32 * R * montee; esc = 1 + 0.07 * montee; break;
+      case 'explique': pose = 'explique'; dx = dir * 0.05 * R * montee; rot = dir * 0.02 * montee; break;
+      case 'doigt': pose = 'doigt'; esc = 1 + 0.03 * montee; dx = dir * 0.08 * R * montee; rot = dir * 0.03 * montee; break;
+      case 'menton': pose = 'menton'; rot = -dir * 0.045 * montee; dy = 4 * montee; break;
+      case 'hausse': pose = 'hausse'; dy = -0.1 * R * montee; rot = dir * 0.05 * montee; break;
+      case 'salut': pose = 'salut'; rot = dir * 0.02 * montee; break;
       case 'choc': { const e = Math.exp(-Math.max(0, tl - 0.12) * 4.5), a = clamp(tl / 0.12); dx = -dir * 0.62 * R * e * a; rot = -dir * 0.14 * e * a; joue = e * a; P.ouv = Math.max(P.ouv, 1.15); break; }
       default: break;
     }
-    dy += -talk * 6 + Math.sin(t * 1.7 + id.length) * 3;
-    rot += Math.sin(t * 0.9 + id.length) * 0.008 + (talk > 0.3 ? Math.sin(t * 7) * 0.012 : 0);
+    // au repos : seulement la respiration. Le corps bouge quand la voix appuie (hochement) ou quand on réagit.
+    dy += Math.sin(t * 1.7 + id.length) * 1.6 + (I.pulse || 0) * 9;
+    rot += Math.sin(t * 0.9 + id.length) * 0.003 + dir * (I.pulse || 0) * 0.012;
     ctx.save(); ctx.translate(cx + dx * sc + (1 - I.ent) * -dir * 50, cy + dy * sc); ctx.scale(sc * esc, sc * esc * (1 + Math.sin(t * 1.6) * 0.004));
     ctx.translate(0, 1.3 * R); ctx.rotate(rot); ctx.translate(0, -1.3 * R);
     glow(0, 1.3 * R, 360, 'rgba(0,0,0,0.5)', 0.35);
@@ -450,6 +457,11 @@
       if (pose === 'tend') bras(R, L, sx, sy, dir * 1.95 * R, 1.3 * R + bob, 'main', t);
       if (pose === 'coeur') bras(R, L, sx, sy, -dir * 0.2 * R, 1.5 * R + bob * 0.5, 'main', t);
       if (pose === 'bouche') bras(R, L, sx, sy, dir * 0.02 * R, 0.66 * R, 'main', t);
+      if (pose === 'explique') bras(R, L, sx, sy, dir * 1.55 * R, 1.1 * R + bob, 'main', t);
+      if (pose === 'doigt') bras(R, L, sx, sy, dir * 1.95 * R, 0.85 * R + bob * 0.5, 'doigt', t);
+      if (pose === 'menton') bras(R, L, sx, sy, dir * 0.12 * R, 1.02 * R, 'main', t);
+      if (pose === 'hausse') { bras(R, L, sx, sy, dir * 1.6 * R, 1.25 * R, 'main', t); bras(R, L, -sx, sy, -dir * 1.6 * R, 1.25 * R, 'main', t); }
+      if (pose === 'salut') bras(R, L, sx, sy, dir * 1.5 * R, 0.2 * R + Math.sin(t * 9) * 0.12 * R, 'main', t);
     }
     ctx.restore();
   }
@@ -703,7 +715,24 @@
       const ent = ease(clamp(tl / 0.5));
       const regard = solo ? Math.sin(t * 0.5) * 0.3 : p.x < 0 ? 0.7 : -0.7;
       if (!parlePerso && parlant) ctx.filter = 'brightness(0.74)';
-      perso(p.id, cx, lerp(900, 740, ent) + (solo ? 0 : 70), sc, { emoA: p.emo, emoB: p.emo2, k: kEmo, act: p.act, tl, d, talk, t, regard, dir, ent });
+      // les accents de la voix : un hochement, un geste de temps en temps ; ceux qui écoutent hochent la tête un peu après
+      const acc = sh.accents || [], tv = t - sh.voixDebut;
+      const depuis = (a) => { let r = null; for (const x of a) { if (tv >= x) r = x; } return r; };
+      const impulsion = (a, dec) => { let v = 0; for (const x of a) { const u = tv - x - dec; if (u >= 0 && u < 0.7) v += Math.exp(-u * 7); } return Math.min(1.1, v); };
+      let pulse = 0, act = p.act, tlg = tl, fen = 1;
+      if (parlePerso && tv >= 0 && tv < sh.voixDuree) {
+        pulse = impulsion(acc, 0);
+        if (!act) {
+          const dern = depuis(acc), n = dern === null ? -1 : acc.indexOf(dern);
+          if (n >= 0 && n % 2 === 1) {
+            const g = /\?/.test(sh.texte) ? ['explique', 'hausse', 'menton'] : /!/.test(sh.texte) ? ['poing', 'doigt', 'explique'] : ['explique', 'menton', 'doigt', 'coeur'];
+            act = g[(sh.index * 5 + n) % g.length]; tlg = tv - dern; fen = ease(clamp(tlg / 0.25)) * (1 - ease(clamp((tlg - 0.75) / 0.35)));
+          }
+        }
+      } else if (parlant && !parlePerso && tv >= 0 && tv < sh.voixDuree) {
+        pulse = 0.55 * impulsion(acc.filter((_, i) => i % 3 === 2), 0.3);
+      }
+      perso(p.id, cx, lerp(900, 740, ent) + (solo ? 0 : 70), sc, { emoA: p.emo, emoB: p.emo2, k: kEmo, act, tl: tlg, d, talk, t, regard, dir, ent, pulse, fen });
       ctx.filter = 'none';
     }
     ctx.restore();
