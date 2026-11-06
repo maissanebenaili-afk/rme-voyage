@@ -21,7 +21,7 @@ export const PERSOS = {
   idriss: { nom: 'Idriss', voix: 'IbTlccXlWxGVwnbGUHEd', hauteur: 1.1 },
   rkia: { nom: 'Lalla Rkia', voix: 'EXAVITQu4vr4xnSDxMaL', hauteur: 0.92 },
   kenza: { nom: 'Lalla Kenza', voix: 'EXAVITQu4vr4xnSDxMaL', hauteur: 0.82 },
-  narration: { nom: '', voix: 'jvSOBXJ1cP2sdvT5RgUP', hauteur: 0.96 },
+  narration: { nom: '', voix: 'azure:fr-FR-Soleil:MAI-Voice-2', hauteur: 1 }, // voix off : Soleil, traitée « conteuse » dans fabriquer.mjs
 };
 
 const un = (id, x, emo = 'neutre', extra = {}) => ({ id, x, emo, ...extra });

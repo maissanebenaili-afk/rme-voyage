@@ -38,6 +38,15 @@ function preparerVoix(ep, i, plan, dossier) {
   const src = path.join(SORTIE, 'voix', `ep${ep.numero}`, `${pad(i + 1)}.wav`);
   const dst = path.join(dossier, `${pad(i + 1)}.wav`);
   const h = PERSOS[plan.parle].hauteur;
+  // la voix off (conteuse) : plus chaude, aigus adoucis, un peu plus lente, un souffle de pièce
+  const CONTEUSE = 'atempo=0.93,highpass=f=80,equalizer=f=230:t=q:w=1:g=2.5,equalizer=f=2900:t=q:w=1.4:g=-3,equalizer=f=5400:t=q:w=2:g=-2.5,lowpass=f=9500,deesser=i=0.3,acompressor=threshold=-20dB:ratio=2.5:attack=8:release=160,aecho=0.8:0.5:55:0.12';
+  // Soleil laisse parfois de longs silences au milieu des phrases : on les ramène à une respiration (0,5 s)
+  const PAUSES = 'silenceremove=stop_periods=-1:stop_duration=0.7:stop_threshold=-45dB:stop_silence=0.5';
+  const ARRIERE = 'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse';
+  if (plan.parle === 'narration') {
+    sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', src, '-af', `${PAUSES},${CONTEUSE},${ARRIERE}`, '-ar', '44100', '-ac', '1', dst]);
+    return dst;
+  }
   const filtre = (h === 1 ? 'anull' : `asetrate=24000*${h},aresample=44100,atempo=${1 / h}`) + ',atempo=0.9,highpass=f=90,deesser=i=0.35,acompressor=threshold=-20dB:ratio=2.5:attack=5:release=120,aecho=0.85:0.4:35:0.10';
   sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', src, '-af', `${filtre},silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse`, '-ar', '44100', '-ac', '1', dst]);
   return dst;
