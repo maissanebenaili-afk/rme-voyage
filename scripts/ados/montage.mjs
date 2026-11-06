@@ -1,7 +1,7 @@
 // Le minutage d'un épisode : carte de titre, un plan par réplique (ou par silence),
 // carte de fin. `durees` : la durée de chaque voix, dans l'ordre des plans parlés.
-export const INTRO = 2.8;
-export const FIN = 3.6;
+export const INTRO = 1.6; // courte : sur un Short, on ne laisse pas le temps de glisser
+export const FIN = 4.6;
 export const AVANT_VOIX = 0.6;
 export const APRES_VOIX = 1.0;
 
@@ -25,6 +25,7 @@ export function construire(ep, durees, persos, fps = 24) {
     numero: ep.numero,
     titre: ep.titre,
     demain: ep.demain,
+    question: ep.question ?? "",
     noms: Object.fromEntries(Object.entries(persos).map(([k, v2]) => [k, v2.nom])),
     fps,
     introFin: INTRO,

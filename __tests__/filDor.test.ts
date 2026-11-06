@@ -13,6 +13,8 @@ describe('« Le Fil d’or » : l’histoire', () => {
     for (const e of EPISODES) {
       expect(e.titre.length).toBeGreaterThan(3)
       expect(e.demain.length).toBeGreaterThan(3)
+      expect(e.question.endsWith('?')).toBe(true)
+      expect(e.question.length).toBeLessThan(46)
     }
   })
 

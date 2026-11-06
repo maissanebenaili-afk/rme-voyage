@@ -32,6 +32,7 @@ export const EPISODES = [
     numero: 1,
     titre: 'On verra',
     demain: 'Le gardien qui avait peur',
+    question: 'Qui est ce gardien qui a peur ?',
     plans: [
       dit('rue', 'narration', 'warm, storyteller', 'Dans le quartier du Port, le samedi, une seule chose compte : le grand match. Et le grand frère de Bouba y joue.', [], { cam: 'pan' }),
       dit('rue', 'bouba', 'excited, shouting', 'Les gars ! Aujourd’hui, Moussa joue au grand stade ! Il m’a promis une place !', trio(['joie', { act: 'secoue' }], ['surprise'], ['joie'])),

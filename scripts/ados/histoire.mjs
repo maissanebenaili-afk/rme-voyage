@@ -34,6 +34,7 @@ export const EPISODES = [
     numero: 1,
     titre: 'Le fil d’or',
     demain: 'La porte d’Al Andalus',
+    question: 'Qui lui a écrit cette lettre ?',
     plans: [
       dit('aube', 'narration', 'softly', 'Taza. Tout en haut de la vieille médina, une maison blanche s’éveille. Vingt-trois enfants y vivent, sans parents.', [], { cam: 'pan' }),
       dit('dar', 'idriss', 'laughing, panicked', 'Amal ! Les petits ont caché mon oud dans le puits !', [un('amal', -0.5, 'joie', { act: 'rire' }), un('idriss', 0.5, 'surprise', { act: 'secoue' })]),
@@ -60,6 +61,7 @@ export const EPISODES = [
     numero: 2,
     titre: 'La porte d’Al Andalus',
     demain: 'La maison qui va fermer',
+    question: 'Que cache la broche en fil d’or ?',
     plans: [
       dit('lycee', 'narration', 'softly', 'Al Andalus. Ici, les murs sont en zellige, et les sourires sont en glace.', [], { cam: 'pan' }),
       dit('lycee', 'amal', 'nervous whisper', 'Respire, Amal. Tu as ta place ici.', [un('amal', 0, 'peur')]),
@@ -86,6 +88,7 @@ export const EPISODES = [
     numero: 3,
     titre: 'La maison qui va fermer',
     demain: 'Le prix du silence',
+    question: 'Peut-elle sauver 23 enfants en 3 semaines ?',
     plans: [
       dit('lycee', 'idriss', 'panicked, on the phone', 'Amal ! Reviens vite. Lalla Rkia pleure. La maison va fermer. Des dettes. Trois semaines.', [un('idriss', 0, 'peur', { act: 'secoue' })], { tint: 'froid', cam: 'push' }),
       dit('lycee', 'amal', 'desperate', 'Fermer ? Et les petits, ils iront où ? Tant pis pour l’examen. Je rentre.', [un('amal', 0, 'pleure', { act: 'coeur' })], { tint: 'froid' }),
@@ -109,6 +112,7 @@ export const EPISODES = [
     numero: 4,
     titre: 'Le prix du silence',
     demain: 'La robe',
+    question: 'Idriss lui pardonnera-t-il ?',
     plans: [
       dit('villa', 'narration', 'softly', 'Chez les Benjelloun, même le silence coûte cher.', [], { cam: 'pan' }),
       dit('villa', 'amal', 'steady', 'J’ai besoin d’argent. Ta robe du gala n’est pas finie. Moi, je sais broder.', [un('amal', -0.5, 'neutre', { act: 'avance' }), un('ghita', 0.5, 'surprise')]),
@@ -133,6 +137,7 @@ export const EPISODES = [
     numero: 5,
     titre: 'La robe',
     demain: 'Lalla Kenza',
+    question: 'Qui est vraiment Lalla Kenza ?',
     plans: [
       dit('gala', 'narration', 'grand', 'Le gala d’Al Andalus. Des lustres, des caftans, et une robe qui brille comme un lever de soleil.', [], { cam: 'pan' }),
       dit('gala', 'reda', 'smiling, awed', 'Amal… tu es magnifique. Enfin, la robe. Enfin, toi aussi.', [un('amal', -0.5, 'joie', { act: 'rire' }), un('reda', 0.5, 'joie', { act: 'tend' })]),
@@ -158,6 +163,7 @@ export const EPISODES = [
     numero: 6,
     titre: 'Lalla Kenza',
     demain: 'Saison 2',
+    question: 'Et si le pardon était le plus dur ?',
     plans: [
       dit('villa', 'narration', 'softly', 'Le lendemain, une vieille dame fit appeler Amal.', [], { cam: 'pan' }),
       dit('villa', 'kenza', 'gentle, shaky', 'Approche, mon enfant. Laisse-moi regarder ton visage.', [un('amal', -0.5, 'peur'), un('kenza', 0.5, 'tendre', { act: 'tend' })]),
