@@ -65,7 +65,13 @@ async function fabriquer(ep, nav) {
   ep.plans.filter(avecVoix).forEach((plan, i) => { const f = preparerVoix(ep, i, plan, travail); voix.push(f); durees.push(duree(f)); });
   const S = construire(ep, durees, PERSOS, FPS);
   S.titreSerie = SERIE.titre; S.etiquette = SERIE.etiquette;
-  S.shots.forEach((s) => { if (s.voixIndex >= 0) s.env = enveloppe(voix[s.voixIndex], s.voixDuree + 0.2); });
+  S.shots.forEach((s) => {
+    if (s.voixIndex < 0) return;
+    s.env = enveloppe(voix[s.voixIndex], s.voixDuree + 0.2);
+    // le texte suit la voix réelle : il avance quand on parle, il attend pendant les pauses
+    let cum = 0; const brut = s.env.map((e) => Math.max(0, e - 0.08)); const tot = brut.reduce((a, b) => a + b, 0) || 1;
+    s.suivi = brut.map((e) => (cum += e) / tot);
+  });
 
   // musique : intensité selon l'émotion des plans
   const points = [[0, 0.5]]; const pluie = []; const impacts = []; const crepit = [];

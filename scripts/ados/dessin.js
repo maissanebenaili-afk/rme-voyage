@@ -711,7 +711,9 @@
     entete(S.numero, 0.9);
     if (sh.parle) {
       const apparait = ease(clamp((t - sh.voixDebut + 0.05) / 0.25));
-      const prog = clamp((t - sh.voixDebut) / Math.max(0.3, sh.voixDuree * 0.85));
+      // le texte suit la voix : avance d'environ 0,1 s sur elle pour qu'on lise avant d'entendre
+      const k = Math.floor((t - sh.voixDebut) * S.fps) + 2;
+      const prog = sh.suivi ? (k < 0 ? 0 : sh.suivi[Math.min(k, sh.suivi.length - 1)]) : clamp((t - sh.voixDebut) / Math.max(0.3, sh.voixDuree * 0.85));
       const nom = parlant ? S.noms[parlant] : '';
       if (t >= sh.voixDebut - 0.05) sousTitre(nom, sh.texte, prog, apparait * (1 - ease(clamp((t - (sh.end - 0.25)) / 0.25))));
     }
