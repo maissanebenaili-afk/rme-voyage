@@ -410,7 +410,7 @@
       default: break;
     }
     // au repos : seulement la respiration. Le corps bouge quand la voix appuie (hochement) ou quand on réagit.
-    dy += Math.sin(t * 1.7 + id.length) * 1.6 + (I.pulse || 0) * 9;
+    dy += Math.sin(t * 1.7 + id.length) * 1.6 + (I.pulse || 0) * 6;
     rot += Math.sin(t * 0.9 + id.length) * 0.003 + dir * (I.pulse || 0) * 0.012;
     ctx.save(); ctx.translate(cx + dx * sc + (1 - I.ent) * -dir * 50, cy + dy * sc); ctx.scale(sc * esc, sc * esc * (1 + Math.sin(t * 1.6) * 0.004));
     ctx.translate(0, 1.3 * R); ctx.rotate(rot); ctx.translate(0, -1.3 * R);
@@ -708,8 +708,9 @@
     const sentimental = persos.some((p) => p.emo === 'pleure' || p.emo2 === 'pleure' || p.emo === 'tendre');
     if (!sh.insert && persos.length) kitsch(t, sentimental && sh.cam === 'push', persos.some((p) => p.emo === 'joie'));
     for (const p of persos) {
-      const solo = persos.length === 1, cx = W / 2 + p.x * (persos.length > 2 ? 400 : 520), dir = solo ? 1 : p.x < 0 ? 1 : -1;
-      const parlePerso = p.id === parlant, sc = (solo ? 1.42 : persos.length > 2 ? 0.9 : 1.02) * (parlePerso ? 1.03 : 0.97);
+      // plan plus large : les personnages sont éloignés de l'écran, on voit le décor autour d'eux
+      const solo = persos.length === 1, cx = W / 2 + p.x * (persos.length > 2 ? 310 : 390), dir = solo ? 1 : p.x < 0 ? 1 : -1;
+      const parlePerso = p.id === parlant, sc = (solo ? 1.02 : persos.length > 2 ? 0.68 : 0.8) * (parlePerso ? 1.02 : 0.98);
       const talk = parle(p.id) ? clamp((env[idx] || 0) * 1.25) : 0;
       const kEmo = p.emo2 ? ease(clamp((tl - 0.45 * d) / (0.3 * d))) : 0;
       const ent = ease(clamp(tl / 0.5));
@@ -718,7 +719,7 @@
       // les accents de la voix : un hochement, un geste de temps en temps ; ceux qui écoutent hochent la tête un peu après
       const acc = sh.accents || [], tv = t - sh.voixDebut;
       const depuis = (a) => { let r = null; for (const x of a) { if (tv >= x) r = x; } return r; };
-      const impulsion = (a, dec) => { let v = 0; for (const x of a) { const u = tv - x - dec; if (u >= 0 && u < 0.7) v += Math.exp(-u * 7); } return Math.min(1.1, v); };
+      const impulsion = (a, dec) => { let v = 0; for (const x of a) { const u = tv - x - dec; if (u >= 0 && u < 0.9) v += (u < 0.14 ? ease(u / 0.14) : Math.exp(-(u - 0.14) * 4.5)); } return Math.min(1, v); };
       let pulse = 0, act = p.act, tlg = tl, fen = 1;
       if (parlePerso && tv >= 0 && tv < sh.voixDuree) {
         pulse = impulsion(acc, 0);
@@ -732,7 +733,7 @@
       } else if (parlant && !parlePerso && tv >= 0 && tv < sh.voixDuree) {
         pulse = 0.55 * impulsion(acc.filter((_, i) => i % 3 === 2), 0.3);
       }
-      perso(p.id, cx, lerp(900, 740, ent) + (solo ? 0 : 70), sc, { emoA: p.emo, emoB: p.emo2, k: kEmo, act, tl: tlg, d, talk, t, regard, dir, ent, pulse, fen });
+      perso(p.id, cx, lerp(1000, 880, ent) + (solo ? 0 : 50), sc, { emoA: p.emo, emoB: p.emo2, k: kEmo, act, tl: tlg, d, talk, t, regard, dir, ent, pulse, fen });
       ctx.filter = 'none';
     }
     ctx.restore();

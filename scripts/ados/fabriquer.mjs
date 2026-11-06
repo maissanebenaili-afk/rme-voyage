@@ -26,7 +26,7 @@ import { composerFondFoot } from './musique-foot.mjs';
 const ICI = path.dirname(fileURLToPath(import.meta.url));
 const RACINE = path.resolve(ICI, '../..');
 const SORTIE = path.join(RACINE, SERIE.dossier);
-const FPS = 24;
+const FPS = 30; // 30 images par seconde : mouvements plus fluides
 const { chromium } = createRequire(import.meta.url)('playwright');
 
 const pad = (n) => String(n).padStart(2, '0');
