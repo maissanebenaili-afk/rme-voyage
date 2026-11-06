@@ -9,6 +9,8 @@
 
 import { spawn, execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -103,25 +105,37 @@ async function fabriquer(ep, nav) {
   const audio = path.join(travail, 'mix.wav');
   sh('ffmpeg', ['-y', '-loglevel', 'error', ...entrees, '-filter_complex', filtres.join(';'), '-map', '[mix]', '-ar', '44100', '-ac', '2', '-t', String(S.total), audio]);
 
-  // images
+  // images : par morceaux de 10 s, chacun gardé sur disque. Si la machine redémarre, on reprend où on s'était arrêté.
   const muet = path.join(travail, 'muet.mp4');
-  const proc = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-preset', 'medium', '-r', String(FPS), muet], { stdio: ['pipe', 'inherit', 'inherit'] });
-  const fini = new Promise((ok, ko) => { proc.on('error', ko); proc.on('close', (c) => (c === 0 ? ok() : ko(new Error('ffmpeg a échoué')))); });
   const page = await nav.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', (e) => { throw e; });
   await page.goto('file://' + path.join(ICI, 'page.html'));
   await page.evaluate((s) => window.ADOS.init(s), S);
   if (process.env.APERCU) { // APERCU=12.5,30 : quelques images seulement, pour vérifier le dessin
     for (const t of process.env.APERCU.split(',').map(Number)) { const url = await page.evaluate((x) => { window.ADOS.frame(x); return window.ADOS.jpeg(0.9); }, t); await writeFile(`/tmp/ados/apercu-${ep.numero}-${t}.jpg`, Buffer.from(url.split(',')[1], 'base64')); }
-    fini.catch(() => {}); proc.stdin.end(); proc.kill(); await page.close(); return;
+    await page.close(); return;
   }
-  const images = Math.ceil(S.total * FPS);
-  for (let k = 0; k < images; k++) {
-    const url = await page.evaluate((t) => { window.ADOS.frame(t); return window.ADOS.jpeg(0.9); }, k / FPS);
-    await new Promise((ok, ko) => proc.stdin.write(Buffer.from(url.split(',')[1], 'base64'), (e) => (e ? ko(e) : ok())));
-    if (k % (FPS * 10) === 0) console.log(`épisode ${ep.numero} : ${Math.round((k / images) * 100)} %`);
+  const signature = createHash('sha1').update(JSON.stringify(S)).update(await readFile(path.join(ICI, 'dessin.js'))).digest('hex');
+  const fichierSig = path.join(travail, 'signature.txt');
+  let ancienne = ''; try { ancienne = (await readFile(fichierSig, 'utf8')).trim(); } catch { /* première fois */ }
+  if (ancienne !== signature) { for (const f of readdirSync(travail)) if (/^seg-/.test(f)) rmSync(path.join(travail, f)); await writeFile(fichierSig, signature); }
+  const images = Math.ceil(S.total * FPS), PAR = FPS * 10, nb = Math.ceil(images / PAR), segs = [];
+  for (let n = 0; n < nb; n++) {
+    const seg = path.join(travail, `seg-${String(n).padStart(3, '0')}.mp4`); segs.push(seg);
+    if (existsSync(seg)) continue;
+    const tmp = seg.replace('.mp4', '.tmp.mp4');
+    const proc = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-preset', 'medium', '-r', String(FPS), '-f', 'mp4', tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
+    const fini = new Promise((ok, ko) => { proc.on('error', ko); proc.on('close', (c) => (c === 0 ? ok() : ko(new Error('ffmpeg a échoué')))); });
+    for (let k = n * PAR; k < Math.min(images, (n + 1) * PAR); k++) {
+      const url = await page.evaluate((t) => { window.ADOS.frame(t); return window.ADOS.jpeg(0.9); }, k / FPS);
+      await new Promise((ok, ko) => proc.stdin.write(Buffer.from(url.split(',')[1], 'base64'), (e) => (e ? ko(e) : ok())));
+    }
+    proc.stdin.end(); await fini; renameSync(tmp, seg);
+    console.log(`épisode ${ep.numero} : ${Math.round(((n + 1) / nb) * 100)} %`);
   }
-  proc.stdin.end(); await fini; await page.close();
+  await page.close();
+  const liste = path.join(travail, 'segments.txt'); await writeFile(liste, segs.map((f) => `file '${f}'`).join('\n') + '\n');
+  sh('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', liste, '-c', 'copy', muet]);
 
   const sortie = path.join(SORTIE, `${NOM_SERIE}-${pad(ep.numero)}.mp4`);
   sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', muet, '-i', audio, '-c:v', 'copy', '-c:a', 'aac', '-b:a', '160k', '-shortest', '-movflags', '+faststart', sortie]);
