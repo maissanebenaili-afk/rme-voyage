@@ -36,7 +36,7 @@ describe("getPartnerCatalogue", () => {
     });
   });
 
-  describe("Travelpayouts partners with a short link (Airalo, Yesim, KKday, Klook)", () => {
+  describe("Travelpayouts partners with a short link (Airalo, Yesim, KKday, Klook, Radical Storage)", () => {
     const original = { ...process.env };
     afterEach(() => { process.env = { ...original }; });
 
@@ -45,6 +45,7 @@ describe("getPartnerCatalogue", () => {
       { id: "yesim", envVar: "YESIM_AFFILIATE_URL", category: "esim", url: "https://yesim.tp.st/AbCd1234" },
       { id: "kkday", envVar: "KKDAY_AFFILIATE_URL", category: "experiences", url: "https://kkday.tp.st/AbCd1234" },
       { id: "klook", envVar: "KLOOK_AFFILIATE_URL", category: "experiences", url: "https://klook.tp.st/AbCd1234" },
+      { id: "radical-storage", envVar: "RADICAL_STORAGE_AFFILIATE_URL", category: "luggage", url: "https://radicalstorage.tp.st/AbCd1234" },
     ] as const;
 
     it.each(partners)("$id is in the catalogue and stays pending without a link", ({ id, envVar, category }) => {
