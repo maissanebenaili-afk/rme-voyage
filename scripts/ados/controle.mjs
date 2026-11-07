@@ -51,7 +51,7 @@ function ecart(final, voix, debutPrevu) {
 }
 
 function controle(n) {
-  const video = path.join(DOSSIER, `${NOM}-0${n}.mp4`), travail = path.join(DOSSIER, 'travail', `ep${n}`);
+  const video = path.join(DOSSIER, `${NOM}-${String(n).padStart(2, '0')}.mp4`), travail = path.join(DOSSIER, 'travail', `ep${n}`);
   const lignes = [], echecs = [];
   const note = (ok, texte) => { lignes.push(`- ${ok ? 'OK ' : 'ÉCHEC'} : ${texte}`); if (!ok) echecs.push(texte); };
   if (!existsSync(video)) { note(false, 'vidéo absente'); return { lignes, echecs }; }

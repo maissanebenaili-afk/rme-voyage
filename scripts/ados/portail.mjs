@@ -32,9 +32,9 @@ const catalogue = [];
 for (const serie of SERIES) {
   const { EPISODES, PERSOS, avecVoix } = await import(serie.module);
   for (const ep of EPISODES) {
-    const video = path.join(RACINE, serie.dossier, `${serie.id}-0${ep.numero}.mp4`), travail = path.join(RACINE, serie.dossier, 'travail', `ep${ep.numero}`);
+    const video = path.join(RACINE, serie.dossier, `${serie.id}-${String(ep.numero).padStart(2, '0')}.mp4`), travail = path.join(RACINE, serie.dossier, 'travail', `ep${ep.numero}`);
     if (!existsSync(video) || !existsSync(travail)) { console.log(`ignoré : ${serie.id} épisode ${ep.numero} (pas fabriqué)`); continue; }
-    const nom = `${serie.id}-0${ep.numero}`;
+    const nom = `${serie.id}-${String(ep.numero).padStart(2, '0')}`;
     sortie('ffmpeg', ['-y', '-loglevel', 'error', '-i', video, '-vn', '-ac', '1', '-ar', '32000', '-b:a', '56k', '-metadata', `title=${serie.titre} : ${ep.titre}`, path.join(SORTIE, `${nom}.mp3`)]);
     const durees = ep.plans.filter(avecVoix).map((_, i) => duree(path.join(travail, `${String(i + 1).padStart(2, '0')}.wav`)));
     const S = construire(ep, durees, PERSOS, 30);

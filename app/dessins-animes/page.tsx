@@ -5,7 +5,7 @@ import LecteurKalimat from '@/components/kalimat/LecteurKalimat';
 export const metadata: Metadata = {
   title: 'Dessins animés Kalimat : la darija en riant',
   description:
-    'Kalimat, les mots du bled : un mini dessin animé par jour, en français plein de darija, pour que les enfants de la diaspora apprennent les mots du Maroc. Gratuit, sans publicité, sans compte.',
+    'Kalimat, les mots du bled : un mini dessin animé par jour, en français plein de darija, pour que les familles de la diaspora apprennent les mots du Maroc. Gratuit, sans publicité, sans compte.',
 };
 
 export default function DessinsAnimesPage() {

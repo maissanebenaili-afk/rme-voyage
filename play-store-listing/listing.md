@@ -8,7 +8,7 @@
 - **Price**: Free
 
 ## Short Description (80 chars max)
-Compagnon voyage Europe-Maroc: itinéraire, prières, Qibla, budget, IA darija.
+Voyage Europe-Maroc : itinéraire, prières, histoires audio sans réseau.
 
 ## Full Description (4000 chars max)
 RME Voyage est le compagnon de voyage ultime pour les Marocains résidant à l'étranger (MRE/RME) et tous les voyageurs entre l'Europe et le Maroc.
@@ -30,6 +30,12 @@ FONCTIONNALITÉS PRINCIPALES:
 • Convertisseur de devises - EUR, MAD, USD, GBP et plus. Conversion instantanée.
 
 • Assistant Hadak - Posez vos questions en darija, français, arabe, anglais ou espagnol. Réponses rapides sur les itinéraires, prières, ferry, documents, urgences et plus. Certaines réponses sont générées par IA : vérifiez les informations importantes, et signalez une réponse d'un simple bouton.
+
+• Histoires pour la route - Des feuilletons audio originaux de 4 minutes, à télécharger avant le départ et à écouter sans réseau, avec le texte qui défile (traductions en anglais, espagnol et néerlandais sur le premier épisode de l'Atlas, non relues).
+
+• Jeux et dessins animés pour la famille - Quiz du voyageur, mémoire des souks, zellige, skate : sans publicité, sans compte, sans réseau une fois la page ouverte.
+
+Contenu créé avec l'aide de l'intelligence artificielle : voix, images, musiques, histoires audio et réponses de l'assistant.
 
 ASSISTANT EN 5 LANGUES (interface en français) :
 - Français

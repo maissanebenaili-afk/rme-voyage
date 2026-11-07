@@ -21,6 +21,12 @@ describe("privacy policy matches the app", () => {
     }
   });
 
+  test("covers the offline stories, games and the children statement shown in the stores", () => {
+    expect(policy).toMatch(/télécharger pour les écouter sans réseau/);
+    expect(policy).toMatch(/moins de 13 ans/);
+    expect(policy).toMatch(/Dernière mise à jour : 7 novembre 2026/);
+  });
+
   test("describes the current host and analytics, not the retired Vercel ones", () => {
     expect(policy).not.toMatch(/Vercel|Web Analytics|Speed Insights/);
   });

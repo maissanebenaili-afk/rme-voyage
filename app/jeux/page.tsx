@@ -16,7 +16,7 @@ export default function JeuxPage() {
           ← Retour à l&apos;accueil
         </Link>
         <h1 className="mt-4 text-3xl font-black">Jeux pour la route</h1>
-        <p className="mt-1 text-slate-700">Pour les enfants à l&apos;arrière. Sans publicité, sans compte.</p>
+        <p className="mt-1 text-slate-700">Pour toute la famille, à l&apos;arrière comme à l&apos;avant. Sans publicité, sans compte.</p>
         <p className="mt-2 rounded-2xl bg-amber-50 p-3 text-sm font-semibold text-amber-900">
           Ouvrez cette page une fois avant de partir, avec du réseau : les jeux marcheront ensuite même sans réseau.
         </p>

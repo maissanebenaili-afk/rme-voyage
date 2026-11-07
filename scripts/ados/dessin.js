@@ -203,6 +203,20 @@
       // lanternes
       for (let i = 0; i < 5; i++) { const x = 120 + i * 220, y = 330 + Math.sin(t * 1.3 + i) * 10; ctx.strokeStyle = '#6b4a2a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y); ctx.stroke(); glow(x, y + 30, 120, 'rgba(255,200,110,0.8)', 0.7 + 0.2 * Math.sin(t * 4 + i)); ctx.fillStyle = '#ffd88a'; ctx.beginPath(); ctx.ellipse(x, y + 30, 22, 34, 0, 0, TAU); ctx.fill(); }
     },
+    // la nuit, un puits de pierre où se reflète la lune (nokta « La lune dans le puits »)
+    puits(t) {
+      ctx.fillStyle = lin(0, 0, 0, H, [[0, '#0b1230'], [0.45, '#27306a'], [1, '#17131f']]); ctx.fillRect(0, 0, W, H);
+      const r = rng(11); for (let i = 0; i < 90; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.6 * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.fillRect(r() * W, r() * 900, 3, 3); }
+      glow(W * 0.72, 330, 460, 'rgba(235,240,255,0.9)', 0.8); ctx.fillStyle = '#f4f2e6'; ctx.beginPath(); ctx.arc(W * 0.72, 330, 120, 0, TAU); ctx.fill(); ctx.fillStyle = 'rgba(180,185,210,0.35)'; for (const [x, y, d] of [[-30, -20, 26], [36, 26, 18], [-6, 48, 14]]) { ctx.beginPath(); ctx.arc(W * 0.72 + x, 330 + y, d, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = '#1b1722'; ctx.fillRect(0, 1250, W, 670);
+      // le puits, à droite : margelle de pierre, eau noire, reflet de la lune qui ondule
+      const px = W * 0.76;
+      ctx.fillStyle = '#4a3e3a'; ctx.fillRect(px - 240, 1130, 480, 330); ctx.beginPath(); ctx.ellipse(px, 1460, 240, 70, 0, 0, Math.PI); ctx.fill();
+      ctx.fillStyle = '#6b5a52'; ctx.beginPath(); ctx.ellipse(px, 1130, 240, 70, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#0c0a12'; ctx.beginPath(); ctx.ellipse(px, 1130, 185, 48, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = `rgba(244,242,230,${0.8 + 0.15 * Math.sin(t * 3)})`; ctx.beginPath(); ctx.ellipse(px, 1132 + Math.sin(t * 2) * 2, 70 + Math.sin(t * 2.4) * 4, 20, 0, 0, TAU); ctx.fill();
+      poussieresChaudes(t);
+    },
     // la rue la nuit, un lampadaire seul, un cône de lumière sur le sol (nokta « La clé »)
     lampadaire(t) {
       ctx.fillStyle = lin(0, 0, 0, H, [[0, '#0f1736'], [0.5, '#2a2f5e'], [1, '#1c1a2a']]); ctx.fillRect(0, 0, W, H);
@@ -292,6 +306,9 @@
     // « Les Noktas de Joha » : le sage-farceur, son voisin, un hôte
     joha: { peau: '#c9976d', ombre: '#a97750', cheveux: '#e9e6df', reflet: '#fff', oeil: '#3a2616', haut: '#7a8f5a', haut2: '#efe4c8', style: 'turban', voile: '#f4eee0', bord: '#c9a24a', barbe: '#e6e2d8', rides: 1, epaule: 1.9 },
     voisin: { peau: '#b98760', ombre: '#966a47', cheveux: '#2a1c14', reflet: '#5a4036', oeil: '#2e1a0c', haut: '#b5543c', haut2: '#f0dcc0', style: 'court', barbe: '#2a1c14', epaule: 1.9 },
+    sultan: { peau: '#c4916a', ombre: '#a3714b', cheveux: '#1d1511', reflet: '#4a352c', oeil: '#2a180b', haut: '#7a1f3a', haut2: '#e8c872', style: 'turban', voile: '#d9a93a', bord: '#7a1f3a', barbe: '#1d1511', epaule: 2.0 },
+    femme: { peau: '#c99a74', ombre: '#a97a54', cheveux: '#2a1a14', reflet: '#5a4036', oeil: '#3a2616', haut: '#a8517a', haut2: '#f3dbe6', style: 'voile', voile: '#a8517a', bord: '#e8c872' },
+    fils: { peau: '#c9976d', ombre: '#a97750', cheveux: '#1a100c', reflet: '#46362d', oeil: '#3a2212', haut: '#c9a24a', haut2: '#fff4d8', style: 'ebouriffe', enfant: true, yeux: 1.05, epaule: 1.4 },
     hote: { peau: '#c4916a', ombre: '#a3714b', cheveux: '#e0ddd5', reflet: '#fff', oeil: '#3a2616', haut: '#2f5d8a', haut2: '#e8c872', style: 'turban', voile: '#2f5d8a', bord: '#e8c872', barbe: '#c9c5bc', rides: 2, epaule: 1.9 },
     kenza: { peau: '#e0b896', ombre: '#c0976f', cheveux: '#ddd', reflet: '#fff', oeil: '#3b4a5a', haut: '#6e1d3a', haut2: '#caa24a', style: 'voile', voile: '#efe7d6', bord: '#caa24a', rides: 2, perles: true },
   };
