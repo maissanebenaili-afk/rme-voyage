@@ -71,3 +71,12 @@ declare module '*/scripts/ados/histoire-fable.mjs' {
   export function avecVoix(plan: Plan): boolean;
   export function texteParle(plan: Plan): string;
 }
+
+declare module '*/scripts/coloriages/pages.mjs' {
+  export interface PageColoriage { id: string; titre: string; dessin: () => string }
+  export const PAGES: PageColoriage[];
+  export function svgPage(page: PageColoriage, numero: number): string;
+  export function rosace(n: number, graine: number): string;
+  export function zellige(variante: number): string;
+  export function hasard(graine: number): () => number;
+}
