@@ -60,3 +60,14 @@ declare module '*/scripts/ados/histoire-nokta.mjs' {
   export function avecVoix(plan: Plan): boolean;
   export function texteParle(plan: Plan): string;
 }
+
+declare module '*/scripts/ados/histoire-fable.mjs' {
+  export interface PersoEcran { id: string; x: number; emo: string; act?: string }
+  export interface Plan { bg: string; parle?: string; ton?: string; texte?: string; persos: PersoEcran[]; theme?: string; cam?: string }
+  export interface Episode { numero: number; titre: string; demain: string; question: string; plans: Plan[] }
+  export const SERIE: { titre: string; etiquette: string; dossier: string; style: string; duree: [number, number] };
+  export const PERSOS: Record<string, { nom: string; voix: string; hauteur: number }>;
+  export const EPISODES: Episode[];
+  export function avecVoix(plan: Plan): boolean;
+  export function texteParle(plan: Plan): string;
+}

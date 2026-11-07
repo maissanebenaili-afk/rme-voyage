@@ -9,6 +9,7 @@ type Langue = 'fr' | 'en' | 'es' | 'nl';
 const LANGUES: { id: Langue; nom: string }[] = [{ id: 'fr', nom: 'Français' }, { id: 'en', nom: 'English' }, { id: 'es', nom: 'Español' }, { id: 'nl', nom: 'Nederlands' }];
 const VITESSES = [0.85, 1, 1.25];
 const cle = (e: EpisodeAudio) => `${e.serie}-${e.numero}`;
+const etiquetteDe = (e: EpisodeAudio) => seriesDisponibles().find((s) => s.id === e.serie)?.etiquette ?? 'Épisode';
 
 /** Lecture de localStorage sans jamais planter (navigation privée, stockage bloqué). */
 const memoire = {
@@ -131,7 +132,7 @@ export default function LecteurFeuilletons() {
       {erreur && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{erreur}</p>}
 
       <div className="sticky top-0 z-10 rounded-2xl bg-white p-3 shadow ring-1 ring-slate-200">
-        <p className="truncate text-sm font-black">{actif ? `Épisode ${actif.numero} : ${actif.titre}` : 'Choisis un épisode ci-dessous'}</p>
+        <p className="truncate text-sm font-black">{actif ? `${etiquetteDe(actif)} ${actif.numero} : ${actif.titre}` : 'Choisis une histoire ci-dessous'}</p>
         <audio ref={audio} controls preload="none" className="mt-1 w-full" aria-label="Lecteur de l’épisode"
           onTimeUpdate={(ev) => { const t = ev.currentTarget.currentTime; setTemps(t); if (actif && Math.round(t) % 5 === 0) memoire.ecrire(`feuilleton-${cle(actif)}`, String(Math.floor(t))); }}
           onEnded={() => { if (actif) memoire.ecrire(`feuilleton-${cle(actif)}`, '0'); suivant(); }} />
@@ -172,7 +173,7 @@ export default function LecteurFeuilletons() {
               const k = cle(e), p = progression[k];
               return (
                 <li key={k} className="rounded-2xl bg-white p-3 ring-1 ring-slate-200">
-                  <p className="font-black">Épisode {e.numero} : {e.titre}</p>
+                  <p className="font-black">{s.etiquette} {e.numero} : {e.titre}</p>
                   <p className="text-sm text-slate-600">{formaterDuree(e.duree)} · {formaterTaille(e.octets)}{telecharges[k] ? ' · sur ton téléphone ✓' : ''}</p>
                   <p className="mt-1 text-sm italic text-slate-700">{e.question}</p>
                   <div className="mt-2 flex flex-wrap gap-2 text-sm font-bold">
