@@ -46,5 +46,6 @@ declare module '*/scripts/ados/histoire-atlas.mjs' {
 
 declare module '*/scripts/ados/musique-atlas.mjs' {
   export const THEMES: Record<string, { bpm: number; acc: number[][]; mel: number[][][] }>;
-  export function composerFondAtlas(total: number, points: number[][], impacts?: number[], themes?: [number, number, string][]): Float32Array[];
+  export const PROFILS: Record<string, Record<string, number>>;
+  export function composerFondAtlas(total: number, points: number[][], impacts?: number[], themes?: [number, number, string, string?][]): Float32Array[];
 }

@@ -28,10 +28,26 @@ export const THEMES = {
     mel: [[[0, 79, 1], [1, 84, 1], [2, 83, 1], [3, 79, 1]], [[0, 81, 2], [2, 79, 1], [3, 76, 1]], [[0, 77, 1], [1, 81, 1], [2, 84, 2]], [[0, 83, 1], [1, 81, 1], [2, 84, 2]]] },
 };
 
-function themeA(themes, t) {
-  for (const [debut, fin, nom] of themes) if (t >= debut && t < fin) return nom;
-  return themes.length ? themes[themes.length - 1][2] : 'famille';
+function entreeA(themes, t) {
+  for (const e of themes) if (t >= e[0] && t < e[1]) return e;
+  return themes.length ? themes[themes.length - 1] : [0, 1, 'famille', 'neutre'];
 }
+const themeA = (themes, t) => entreeA(themes, t)[2];
+
+// Chaque émotion a sa couleur sonore (le principe des grandes bandes originales de feuilletons :
+// une même mélodie ne sonne pas pareil quand on rit, qu'on pleure ou qu'on a peur).
+export const PROFILS = {
+  neutre: { tempo: 1, cordes: 1, trem: 1, harpe: 0, flute: 1, perc: 1, violon: 0, guitare: 0, drone: 0, coeur: 0, ostinato: 0 },
+  joie: { tempo: 1.1, cordes: 0.5, trem: 0, harpe: 1, flute: 1, perc: 1.3, violon: 0, guitare: 1, drone: 0, coeur: 0, ostinato: 0 },
+  tendre: { tempo: 0.94, cordes: 0.8, trem: 0.2, harpe: 0.4, flute: 1, perc: 0, violon: 0.6, guitare: 0.6, drone: 0, coeur: 0, ostinato: 0 },
+  triste: { tempo: 0.85, cordes: 1.2, trem: 1.1, harpe: 0, flute: 0, perc: 0, violon: 1, guitare: 0, drone: 0, coeur: 0, ostinato: 0 },
+  pleure: { tempo: 0.8, cordes: 1.3, trem: 1.4, harpe: 0, flute: 0, perc: 0, violon: 1.2, guitare: 0, drone: 0, coeur: 0, ostinato: 0 },
+  peur: { tempo: 0.92, cordes: 0.6, trem: 1.2, harpe: 0, flute: 0, perc: 0, violon: 0, guitare: 0, drone: 1, coeur: 1, ostinato: 0 },
+  surprise: { tempo: 1, cordes: 0.7, trem: 0.8, harpe: 0.6, flute: 0, perc: 0, violon: 0, guitare: 0, drone: 0.5, coeur: 0.5, ostinato: 0 },
+  colere: { tempo: 1.06, cordes: 1.2, trem: 0.6, harpe: 0, flute: 0, perc: 1.8, violon: 0, guitare: 0, drone: 0.6, coeur: 0, ostinato: 1 },
+  froid: { tempo: 0.95, cordes: 0.7, trem: 0.3, harpe: 0.3, flute: 0.6, perc: 0, violon: 0, guitare: 0, drone: 0.4, coeur: 0, ostinato: 0 },
+  malade: { tempo: 0.82, cordes: 0.9, trem: 0.9, harpe: 0, flute: 0, perc: 0, violon: 0.8, guitare: 0, drone: 0.2, coeur: 0.4, ostinato: 0 },
+};
 
 function intensiteA(points, t) {
   if (!points.length) return 0.5;
@@ -40,7 +56,7 @@ function intensiteA(points, t) {
   return points[points.length - 1][1];
 }
 
-/** @param themes [[début s, fin s, nom du thème]], points [[temps, intensité 0..1]] */
+/** @param themes [[début s, fin s, nom du thème, émotion]], points [[temps, intensité 0..1]] */
 export function composerFondAtlas(total, points, impacts = [], themes = []) {
   const len = Math.ceil(total * SR), buf = [new Float32Array(len), new Float32Array(len)], r = bruit(11);
   const add = (i, v, pan = 0) => { if (i >= 0 && i < len) { buf[0][i] += v * (1 - pan * 0.3); buf[1][i] += v * (1 + pan * 0.3); } };
@@ -80,23 +96,57 @@ export function composerFondAtlas(total, points, impacts = [], themes = []) {
   // bendir : tambour sur cadre, grave et doux
   const bendir = (t0, a, aigu = false) => { const i0 = Math.floor(t0 * SR), n = Math.floor(0.22 * SR); for (let j = 0; j < n; j++) { const t = j / SR, f = aigu ? 190 : 86 - 24 * Math.min(1, t / 0.1); add(i0 + j, (Math.sin(t * f * TAU) + 0.35 * r() * Math.exp(-t * 30)) * Math.exp(-t * (aigu ? 28 : 16)) * a, -0.2); } };
 
-  let courant = null;
+  // violon : archet qui prend son temps, vibrato qui s'installe (la voix de la tristesse et de la nostalgie)
+  const violon = (t0, f, d, a) => {
+    const i0 = Math.floor(t0 * SR), n = Math.floor((d + 0.25) * SR); let lp = 0;
+    for (let j = 0; j < n; j++) {
+      const t = j / SR, vib = Math.sin(t * 5.6 * TAU) * Math.min(1, t / 0.6) * 0.006, ph = (t * f * (1 + vib)) % 1;
+      lp += ((ph * 2 - 1) * 0.8 + Math.sin(ph * TAU * 2) * 0.2 - lp) * 0.09;
+      add(i0 + j, lp * Math.min(1, t / 0.12) * Math.min(1, (d + 0.25 - t) / 0.25) * a, -0.1);
+    }
+  };
+  // guitare : corde pincée (Karplus-Strong), la chaleur d'un feuilleton de campagne et de famille
+  const guitare = (t0, f, a) => {
+    const N = Math.max(2, Math.round(SR / f)), ligne = new Float32Array(N), i0 = Math.floor(t0 * SR), n = Math.floor(1.4 * SR);
+    for (let i = 0; i < N; i++) ligne[i] = r();
+    for (let j = 0; j < n; j++) { const k = j % N, x = ligne[k]; ligne[k] = 0.5 * (x + ligne[(k + 1) % N]) * 0.997; add(i0 + j, x * Math.exp(-j / SR / 1.1) * Math.min(1, j / 30) * a, 0.2); }
+  };
+  // bourdon grave (la peur) : deux notes qui se frottent
+  const drone = (t0, d, a) => { const i0 = Math.floor(t0 * SR), n = Math.floor((d + 0.6) * SR); let lp = 0; for (let j = 0; j < n; j++) { const t = j / SR, s = (((t * 55) % 1) * 2 - 1) + (((t * 77.8) % 1) * 2 - 1); lp += (s - lp) * 0.02; add(i0 + j, lp * Math.min(1, t / 0.9) * Math.min(1, (d + 0.6 - t) / 0.6) * a, 0); } };
+  // cœur qui bat : deux coups sourds
+  const coeur = (t0, a) => { for (const dt of [0, 0.22]) { const i0 = Math.floor((t0 + dt) * SR); for (let j = 0; j < 0.18 * SR; j++) add(i0 + j, Math.sin((j / SR) * (62 - 18 * (j / (0.18 * SR))) * TAU) * Math.exp(-j / SR / 0.06) * a * (dt ? 0.7 : 1)); } };
+  // petit éclat aigu (la surprise, l'indice)
+  const eclat = (t0, f, a) => { const i0 = Math.floor(t0 * SR); for (let j = 0; j < 1.2 * SR; j++) { const t = j / SR; add(i0 + j, (Math.sin(t * f * TAU) + 0.4 * Math.sin(t * f * 2.76 * TAU)) * Math.exp(-t * 4.5) * a, 0.3); } };
+
+  let courant = null, dernierePlage = -1;
   for (let tm = 0; tm < total; ) {
-    const nom = themeA(themes, tm + 0.01), th = THEMES[nom] || THEMES.famille, beat = 60 / th.bpm, mesure = beat * 4;
+    const entree = entreeA(themes, tm + 0.01), nom = entree[2], emo = entree[3] || 'neutre', P = PROFILS[emo] || PROFILS.neutre;
+    const th = THEMES[nom] || THEMES.famille, beat = 60 / (th.bpm * P.tempo), mesure = beat * 4;
     const inten = intensiteA(points, tm + mesure / 2), reprise = courant !== nom; courant = nom;
+    // un éclat quand une nouvelle plage commence sur la surprise ou la peur
+    if (entree[0] !== dernierePlage) { dernierePlage = entree[0]; if (emo === 'surprise') { eclat(entree[0] + 0.05, 1568, 0.16); eclat(entree[0] + 0.18, 2093, 0.1); } }
     for (let m = 0; m < 4 && tm < total; m++, tm += mesure) {
-      if (themeA(themes, tm + 0.01) !== nom && m > 0) break; // le thème change : on repart sur le nouveau
+      if (entreeA(themes, tm + 0.01)[0] !== entree[0] && m > 0) break; // la plage change : on repart sur la nouvelle
       const acc = th.acc[m];
-      // main gauche : arpège de piano (ou de harpe quand ça monte)
-      acc.forEach((n, k) => { const t0 = tm + k * beat; (inten > 0.6 && k % 2 ? harpe : piano)(t0, hz(n - (k === 0 ? 12 : 0)), beat * 1.6, 0.16 + 0.05 * inten); });
-      // mélodie au piano
-      for (const [b, n, d] of th.mel[m]) piano(tm + b * beat, hz(n), d * beat, 0.22 + 0.1 * inten);
-      // cordes sous la mélodie dès que l'émotion monte
-      if (inten > 0.4) cordes(tm, acc.map((n) => n + 12), mesure, 0.1 + 0.12 * inten, Math.max(0, inten - 0.5) * 1.1);
-      // flûte qui double la mélodie aux moments d'espoir, de mystère et de retrouvailles
-      if (inten > 0.45 && (nom === 'espoir' || nom === 'retrouvailles' || nom === 'mystere') && m % 2 === 1) for (const [b, n, d] of th.mel[m]) flute(tm + b * beat, hz(n + (nom === 'mystere' ? -12 : 0)), d * beat, 0.11);
-      // petit tambour : seulement les thèmes de voyage et de joie, très doux
-      if ((nom === 'famille' || nom === 'espoir' || nom === 'retrouvailles') && inten > 0.35) { bendir(tm, 0.18); bendir(tm + beat * 2, 0.14); bendir(tm + beat * 3.5, 0.08, true); }
+      // main gauche : piano, ou harpe quand la joie ou l'élan monte
+      acc.forEach((n, k) => { const t0 = tm + k * beat, enHarpe = P.harpe > 0.5 || (inten > 0.6 && k % 2) || (P.harpe > 0 && k % 2); (enHarpe ? harpe : piano)(t0, hz(n - (k === 0 ? 12 : 0)), beat * 1.6, 0.16 + 0.05 * inten); });
+      // guitare qui accompagne (joie, tendresse) : arpège doux
+      if (P.guitare > 0) acc.forEach((n, k) => guitare(tm + (k + 0.5) * beat, hz(n + 12), 0.1 * P.guitare));
+      // mélodie : au violon quand on pleure, à la flûte quand on est tendre, au piano sinon
+      for (const [b, n, d] of th.mel[m]) {
+        piano(tm + b * beat, hz(n), d * beat, (0.22 + 0.1 * inten) * (P.violon > 0.9 ? 0.55 : 1));
+        if (P.violon > 0 && inten > 0.3) violon(tm + b * beat, hz(n), d * beat, 0.12 * P.violon);
+      }
+      // cordes sous la mélodie, trémolo selon l'émotion
+      if (inten > 0.4 || P.cordes > 1) cordes(tm, acc.map((n) => n + 12), mesure, (0.1 + 0.12 * inten) * P.cordes, Math.min(1, Math.max(0, inten - 0.35) * P.trem));
+      // flûte qui double la mélodie : espoir, retrouvailles, mystère, tendresse
+      if (P.flute > 0 && inten > 0.4 && (nom === 'espoir' || nom === 'retrouvailles' || nom === 'mystere' || emo === 'tendre' || emo === 'joie') && m % 2 === 1) for (const [b, n, d] of th.mel[m]) flute(tm + b * beat, hz(n + (nom === 'mystere' ? -12 : emo === 'joie' ? 12 : 0)), d * beat, 0.11 * P.flute);
+      // petit tambour : joie, colère ; très doux sinon
+      if (P.perc > 0 && inten > 0.3) { bendir(tm, 0.18 * P.perc); bendir(tm + beat * 2, 0.14 * P.perc); bendir(tm + beat * 3.5, 0.08 * P.perc, true); }
+      // peur : bourdon et cœur qui bat ; colère : cordes graves qui martèlent
+      if (P.drone > 0) drone(tm, mesure, 0.07 * P.drone);
+      if (P.coeur > 0) coeur(tm + beat * 0.5, 0.2 * P.coeur), coeur(tm + beat * 2.5, 0.2 * P.coeur);
+      if (P.ostinato > 0) for (let k = 0; k < 8; k++) piano(tm + k * beat / 2, hz(acc[0] - 12), beat * 0.5, 0.2);
       if (reprise && m === 0) cordes(tm, [acc[0] + 12, acc[2] + 12], mesure, 0.06, 0);
     }
   }
@@ -104,7 +154,10 @@ export function composerFondAtlas(total, points, impacts = [], themes = []) {
   // un peu de salle, puis fondu d'entrée et de sortie
   const retard = Math.floor(0.073 * SR);
   for (let c = 0; c < 2; c++) for (let i = len - 1; i >= retard; i--) buf[c][i] += buf[c][i - retard] * 0.22;
+  // on ramène la crête à un niveau où la saturation douce ne déforme pas la musique
+  let crete = 0; for (let c = 0; c < 2; c++) for (let i = 0; i < len; i++) crete = Math.max(crete, Math.abs(buf[c][i]));
+  const echelle = crete > 0 ? 1.0 / crete : 1;
   const fi = Math.floor(0.8 * SR), fo = Math.floor(2.5 * SR);
-  for (let c = 0; c < 2; c++) for (let i = 0; i < len; i++) { let g = 1; if (i < fi) g = i / fi; if (len - i < fo) g = Math.min(g, (len - i) / fo); buf[c][i] = Math.tanh(buf[c][i] * 1.2 * g); }
+  for (let c = 0; c < 2; c++) for (let i = 0; i < len; i++) { let g = 1; if (i < fi) g = i / fi; if (len - i < fo) g = Math.min(g, (len - i) / fo); buf[c][i] = Math.tanh(buf[c][i] * echelle * 1.2 * g) * 0.6; } // 0,6 : la musique accompagne, elle ne couvre pas les voix
   return buf;
 }

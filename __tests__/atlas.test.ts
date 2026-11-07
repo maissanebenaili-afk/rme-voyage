@@ -1,5 +1,5 @@
 import { EPISODES, PERSOS, SERIE, avecVoix } from '../scripts/ados/histoire-atlas.mjs'
-import { THEMES, composerFondAtlas } from '../scripts/ados/musique-atlas.mjs'
+import { THEMES, PROFILS, composerFondAtlas } from '../scripts/ados/musique-atlas.mjs'
 
 const EMOTIONS = ['neutre', 'joie', 'triste', 'colere', 'surprise', 'peur', 'malade', 'froid', 'tendre', 'pleure']
 const DECORS = ['route', 'atlas', 'dar']
@@ -42,6 +42,16 @@ describe('« Les Larmes de l’Atlas »', () => {
 
   it('les gestes ont une raison : pas de geste sur plus de la moitié des répliques', () => {
     expect(voix.filter((p) => p.persos.some((x) => x.act)).length / voix.length).toBeLessThan(0.5)
+  })
+
+  it('alterne joie et peine : au moins un moment de joie et un de tristesse', () => {
+    const emos = ep.plans.flatMap((p) => p.persos.flatMap((x) => [x.emo, x.emo2]))
+    expect(emos).toContain('joie')
+    expect(emos.some((e) => e === 'triste' || e === 'pleure')).toBe(true)
+  })
+
+  it('la musique a une couleur pour chaque émotion du dessin', () => {
+    for (const e of EMOTIONS) expect(Object.keys(PROFILS)).toContain(e)
   })
 
   it('utilise les six thèmes musicaux de la bible', () => {

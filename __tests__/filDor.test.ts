@@ -36,6 +36,14 @@ describe('« Le Fil d’or » : l’histoire', () => {
     }
   })
 
+  it('alterne joie et peine dans chaque épisode', () => {
+    for (const e of EPISODES) {
+      const emos = e.plans.flatMap((p) => p.persos.flatMap((x) => [x.emo, x.emo2]))
+      expect(emos).toContain('joie')
+      expect(emos.some((x) => x === 'triste' || x === 'pleure')).toBe(true)
+    }
+  })
+
   it('se passe à Taza', () => {
     const tout = EPISODES.flatMap((e) => e.plans.map((p) => p.texte ?? '')).join(' ')
     expect(tout).toMatch(/Taza/)

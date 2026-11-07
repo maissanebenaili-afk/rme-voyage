@@ -50,7 +50,7 @@ Le pardon n'est jamais facile : il doit être mérité.
 
 Six thèmes qui reviennent : **nour** (héroïne), **famille**, **séparation**, **mystère**, **espoir**,
 **retrouvailles**. Instruments : piano, harpe, cordes avec trémolo, flûte, petit tambour (bendir).
-Un plan nomme son thème ; la musique passe de l'un à l'autre. Voir `scripts/ados/musique-atlas.mjs`.
+Un plan nomme son thème ; la musique passe de l'un à l'autre. **Chaque émotion a aussi sa couleur** (`PROFILS` dans `musique-atlas.mjs`) : joie = harpe, guitare, tambour, tempo plus vif ; tendresse = flûte et piano doux ; tristesse et larmes = violon, cordes qui tremblent, tempo ralenti ; peur = bourdon grave et cœur qui bat ; colère = notes graves martelées ; surprise = petits éclats aigus. C'est le **principe** des grandes bandes originales de feuilletons (la même mélodie change de sens selon l'émotion), jamais leurs mélodies. Voir `scripts/ados/musique-atlas.mjs`.
 
 ## Darija : glossaire (à faire relire)
 

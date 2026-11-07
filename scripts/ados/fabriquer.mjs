@@ -41,7 +41,7 @@ function egaliser(fichier, cible = -32) {
   if (!m) return;
   const gain = Math.max(-9, Math.min(9, cible - Number(m[1])));
   const tmp = fichier.replace('.wav', '.egal.wav');
-  sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', fichier, '-af', `volume=${gain.toFixed(2)}dB,alimiter=limit=0.9`, '-ar', '44100', '-ac', '1', tmp]);
+  sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', fichier, '-af', `volume=${gain.toFixed(2)}dB,alimiter=limit=0.9:level=disabled`, '-ar', '44100', '-ac', '1', tmp]);
   renameSync(tmp, fichier);
 }
 
@@ -117,7 +117,9 @@ async function fabriquer(ep, nav) {
   points.push([S.finDebut, 0.7], [S.total, 0.5]);
   const fond = path.join(travail, 'fond.wav');
   const ovations = S.shots.filter((x) => x.insert === 'but').map((x) => x.start);
-  const themes = [[0, S.shots[0].start, 'nour'], ...S.shots.map((x) => [x.start, x.end, x.theme || 'famille']), [S.finDebut, S.total + 1, 'espoir']];
+  // l'émotion qui colore la musique d'un plan : celle de qui parle, sinon la plus forte à l'écran
+  const emoDuPlan = (x) => { const ecran = x.persos.map((p) => p.emo2 || p.emo); const qui = x.persos.find((p) => p.id === x.parle); return qui ? qui.emo2 || qui.emo : ecran.sort((a, b) => (INTENSITE[b] ?? 0) - (INTENSITE[a] ?? 0))[0] || 'neutre'; };
+  const themes = [[0, S.shots[0].start, 'nour', 'tendre'], ...S.shots.map((x) => [x.start, x.end, x.theme || 'famille', emoDuPlan(x)]), [S.finDebut, S.total + 1, 'espoir', 'tendre']];
   const musique = SERIE.musique === 'atlas' ? composerFondAtlas(S.total, points, impacts, themes) : SERIE.musique === 'foot' ? composerFondFoot(S.total, points, impacts, ovations) : composerFond(S.total, points, pluie, impacts, crepit);
   await ecrireWav(fond, musique);
 
@@ -127,8 +129,8 @@ async function fabriquer(ep, nav) {
   const entrees = ['-i', fond]; const filtres = []; voix.forEach((f, i) => { entrees.push('-i', f); filtres.push(`[${i + 1}:a]adelay=${Math.round(parlants[i].voixDebut * 1000)}:all=1,volume=1.5[v${i}]`); });
   const lister = voix.map((_, i) => `[v${i}]`).join('');
   filtres.push(`${lister}amix=inputs=${voix.length}:normalize=0,apad=whole_dur=${S.total},asplit=2[voix][cle]`);
-  filtres.push('[0:a]volume=0.62[bed]'); filtres.push('[bed][cle]sidechaincompress=threshold=0.04:ratio=6:attack=25:release=500[duck]');
-  filtres.push('[duck][voix]amix=inputs=2:normalize=0,loudnorm=I=-15:TP=-1.5:LRA=9,alimiter=limit=0.89[mix]');
+  filtres.push('[0:a]volume=0.62[bed]'); filtres.push('[bed][cle]sidechaincompress=threshold=0.04:ratio=8:attack=25:release=500[duck]');
+  filtres.push('[duck][voix]amix=inputs=2:normalize=0,loudnorm=I=-15:TP=-1.5:LRA=9,aresample=44100,alimiter=limit=0.84:level=disabled[mix]');
   const audio = path.join(travail, 'mix.wav');
   sh('ffmpeg', ['-y', '-loglevel', 'error', ...entrees, '-filter_complex', filtres.join(';'), '-map', '[mix]', '-ar', '44100', '-ac', '2', '-t', String(S.total), audio]);
 
