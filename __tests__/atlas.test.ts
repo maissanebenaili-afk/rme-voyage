@@ -75,3 +75,41 @@ describe('« Les Larmes de l’Atlas »', () => {
     expect(pic).toBeLessThanOrEqual(1)
   }, 60000)
 })
+
+describe('« Les Larmes de l’Atlas » : la saison 1 complète', () => {
+  const dessin = require('fs').readFileSync('scripts/ados/dessin.js', 'utf8') as string
+  const DECORS_EXISTANTS = ['route', 'atlas', 'dar', 'rue']
+  it('compte 6 épisodes numérotés, chacun avec une question de fin', () => {
+    expect(EPISODES.map((e) => e.numero)).toEqual([1, 2, 3, 4, 5, 6])
+    for (const e of EPISODES) {
+      expect(e.question.endsWith('?')).toBe(true)
+      expect(e.titre.length).toBeGreaterThan(3)
+    }
+    expect(new Set(EPISODES.map((e) => e.titre)).size).toBe(6)
+  })
+  it.each(EPISODES)('épisode $numero : personnages, décors, émotions et thèmes existent', (ep) => {
+    for (const plan of ep.plans) {
+      expect(DECORS_EXISTANTS).toContain(plan.bg)
+      for (const p of plan.persos) {
+        expect(PERSOS[p.id]).toBeDefined()
+        expect(dessin).toMatch(new RegExp(`\\b${p.id}: \\{ peau`))
+        expect(EMOTIONS).toContain(p.emo)
+      }
+      if (plan.theme) expect(Object.keys(THEMES)).toContain(plan.theme)
+      if (avecVoix(plan)) expect(PERSOS[plan.parle as string]).toBeDefined()
+    }
+  })
+  it('la bonne fée Lalla Nejma conclut les épisodes 2 à 5 et 6 (voix douce, aérienne)', () => {
+    for (const n of [2, 3, 4, 5, 6]) {
+      expect(EPISODES[n - 1].plans.some((p) => p.parle === 'nejma')).toBe(true)
+    }
+    expect(PERSOS.nejma.hauteur).toBeGreaterThan(1)
+  })
+  it('chaque épisode mêle joie et peine (règle des 8 règles)', () => {
+    for (const e of EPISODES) {
+      const emos = e.plans.flatMap((p) => p.persos.map((x) => x.emo))
+      expect(emos.some((x) => ['joie', 'tendre'].includes(x))).toBe(true)
+      expect(emos.some((x) => ['triste', 'pleure', 'peur'].includes(x))).toBe(true)
+    }
+  })
+})

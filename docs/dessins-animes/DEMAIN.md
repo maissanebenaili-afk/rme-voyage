@@ -1,11 +1,11 @@
-# Demain : ce que tu fais, et rien d'autre
+# Ce que toi seule peux faire (mis à jour le 7 nov. 2026)
 
-Tout le reste est déjà prêt. Chaque étape dure quelques minutes.
+Déjà fait par moi : PR #316 fusionnée, site en production vérifié (pages, audio, hors ligne, lien Radical Storage), saison 1 de l'Atlas, 10 noktas, fiche boutique et politique de confidentialité.
 
-1. **Regarder / écouter** l'épisode 1 de l'Atlas (fichier déjà envoyé) : te touche-t-il ? Une phrase me suffit.
-2. **Essayer le portail** sur ton téléphone : https://deploy-preview-316--rme-voyage.netlify.app/feuilletons (télécharger, mode avion, écouter).
-3. **Fusionner la PR #316** sur GitHub (ou me dire « fusionne » et je le fais).
-4. **YouTube Studio** : publier Atlas 1 en **Privé**, puis en public si tout va bien (textes dans `PUBLICATION.md`).
-5. **Gmail** : ouvrir le brouillon « Histoires audio gratuites… », mettre un prénom et une adresse, envoyer à **une** personne.
-6. **Relecture** : demander à une personne qui parle darija de lire `NOKTAS-ET-SUITE.md` et les textes des épisodes.
-7. **Me dire « go »** pour : produire les noktas (voix : environ 6 $ disponibles), Atlas 2 avec la bonne fée, connexion Instagram.
+1. **Regarder / écouter** un épisode de l'Atlas et 2 noktas : une phrase suffit (« ça marche » ou ce qui gêne).
+2. **Relecture de la darija** et des traductions EN/ES/NL (une personne qui parle ces langues).
+3. **Netlify** : passer `GROQ_API_KEY` et `OPENROUTER_API_KEY` en « secret » et les régénérer chez Groq et OpenRouter (elles sont apparues dans mon journal de session).
+4. **Play Console** : créer l'application, répondre au questionnaire avec `play-store-listing/data-safety.md`, choisir le public cible « 13 ans et plus ».
+5. **YouTube Studio** : publier en **Privé** d'abord. Textes dans `PUBLICATION.md`.
+6. **Gmail** : brouillon « Histoires audio gratuites pour la route des MRE » : un prénom, une adresse, envoyer à une seule personne.
+7. **Instagram** : me dire « go Instagram » pour afficher la carte de connexion.

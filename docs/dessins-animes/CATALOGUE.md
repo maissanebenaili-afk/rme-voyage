@@ -9,7 +9,8 @@ produit se vende. Ce catalogue sert à produire beaucoup, vite, sans payer, et �
 | Série | État | Contenu |
 |---|---|---|
 | **Le Fil d'or** (drame ado, Taza) | 6 épisodes de 3 min 47 à 4 min 05, son synchronisé (écart mesuré 0,000 s) | `scripts/ados/histoire.mjs` |
-| **Les Larmes de l'Atlas** (drame familial, voyage France-Maroc) | pilote de ~3 min en fabrication | `scripts/ados/histoire-atlas.mjs`, bible : `ATLAS-BIBLE.md` |
+| **Les Larmes de l'Atlas** (drame familial, voyage France-Maroc) | **saison 1 complète : 6 épisodes** (1 min 38 à 3 min 20), bonne fée Lalla Nejma, tous contrôles OK | `scripts/ados/histoire-atlas.mjs`, bible : `ATLAS-BIBLE.md` |
+| **Les Noktas de Joha** (humour populaire, 32 à 53 s) | **10 noktas fabriquées**, tous contrôles OK | `histoire-nokta.mjs` |
 | **Bouba et le grand stade** (comédie, foot) | pilote ancien : refaire avec le moteur actuel | `scripts/ados/histoire-foot.mjs` |
 
 ## 2. La machine : ce qu'elle fait toute seule
