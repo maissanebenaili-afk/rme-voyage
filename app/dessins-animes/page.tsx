@@ -28,6 +28,10 @@ export default function DessinsAnimesPage() {
           🎧 Histoires pour la route : Le Fil d’or, Les Larmes de l’Atlas (à télécharger, sans réseau) →
         </Link>
 
+        <Link href="/coloriages" className="mt-3 block rounded-2xl bg-amber-100 p-3 text-sm font-black text-amber-950">
+          🖍️ Coloriages du Maroc : 4 dessins gratuits à imprimer, livre bientôt disponible →
+        </Link>
+
         <div className="mt-6">
           <LecteurKalimat />
         </div>

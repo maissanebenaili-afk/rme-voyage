@@ -9,3 +9,5 @@ Déjà fait par moi : PR #316 fusionnée, site en production vérifié (pages, a
 5. **YouTube Studio** : publier en **Privé** d'abord. Textes dans `PUBLICATION.md`.
 6. **Gmail** : brouillon « Histoires audio gratuites pour la route des MRE » : un prénom, une adresse, envoyer à une seule personne.
 7. **Instagram** : me dire « go Instagram » pour afficher la carte de connexion.
+
+8. **Coloriages** : suivre `docs/coloriages/PUBLIER-KDP.md` (40 minutes, une seule fois) et lire `docs/coloriages/RENTABILITE.md` : **à 2–3 € en papier, ce n'est probablement pas possible** ; le PDF à 2–3 € est rentable.
