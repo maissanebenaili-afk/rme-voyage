@@ -92,5 +92,60 @@ export const EPISODES_AUDIO: EpisodeAudio[] = [
     "octets": 1400826,
     "fichier": "/feuilletons/atlas-01.mp3",
     "texte": "/feuilletons/atlas-01.json"
+  },
+  {
+    "serie": "atlas",
+    "numero": 2,
+    "titre": "Ce que dit la lettre",
+    "question": "Où est Hassan aujourd’hui ?",
+    "suite": "Karim avoue",
+    "duree": 133,
+    "octets": 933110,
+    "fichier": "/feuilletons/atlas-02.mp3",
+    "texte": "/feuilletons/atlas-02.json"
+  },
+  {
+    "serie": "atlas",
+    "numero": 3,
+    "titre": "Karim avoue",
+    "question": "Qui a revu Hassan ?",
+    "suite": "Monsieur Ali",
+    "duree": 107,
+    "octets": 747377,
+    "fichier": "/feuilletons/atlas-03.mp3",
+    "texte": "/feuilletons/atlas-03.json"
+  },
+  {
+    "serie": "atlas",
+    "numero": 4,
+    "titre": "Monsieur Ali",
+    "question": "Qui est vraiment Monsieur Ali ?",
+    "suite": "Le voyage de Hassan",
+    "duree": 98,
+    "octets": 685134,
+    "fichier": "/feuilletons/atlas-04.mp3",
+    "texte": "/feuilletons/atlas-04.json"
+  },
+  {
+    "serie": "atlas",
+    "numero": 5,
+    "titre": "Le voyage de Hassan",
+    "question": "Hassan osera-t-il rentrer ?",
+    "suite": "La place vide",
+    "duree": 103,
+    "octets": 723193,
+    "fichier": "/feuilletons/atlas-05.mp3",
+    "texte": "/feuilletons/atlas-05.json"
+  },
+  {
+    "serie": "atlas",
+    "numero": 6,
+    "titre": "La place vide",
+    "question": "Et si l’histoire de la famille ne faisait que commencer ?",
+    "suite": "Saison 2 : les cèdres",
+    "duree": 123,
+    "octets": 862039,
+    "fichier": "/feuilletons/atlas-06.mp3",
+    "texte": "/feuilletons/atlas-06.json"
   }
 ];

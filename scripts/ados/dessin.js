@@ -298,6 +298,11 @@
     maman: { peau: '#c99a74', ombre: '#a97a54', cheveux: '#2a1a14', reflet: '#5a4036', oeil: '#3a2616', haut: '#4a8f86', haut2: '#e8f3ef', style: 'voile', voile: '#4a8f86' },
     papa: { peau: '#b57e58', ombre: '#936143', cheveux: '#17100d', reflet: '#3d2d27', oeil: '#2a180b', haut: '#5a6f8f', haut2: '#fff', style: 'court', epaule: 1.9 },
     zahra: { peau: '#cfa27c', ombre: '#ad805a', cheveux: '#e6e6e6', reflet: '#fff', oeil: '#3a2a1c', haut: '#f1ece0', haut2: '#c9a24a', style: 'voile', voile: '#f1ece0', bord: '#c9a24a', rides: 3 },
+    // la bonne fée de l'Atlas : douce lumière, ailes translucides, cheveux longs violets
+    nejma: { peau: '#e6c9a8', ombre: '#c9a784', cheveux: '#7c5cc4', reflet: '#d9ccff', oeil: '#4a2f8a', haut: '#a78bfa', haut2: '#fde68a', style: 'long', ailes: '#e9defc', perles: true },
+    // Monsieur Ali et Hassan : le même homme, les cheveux blancs, un gilet de laine
+    ali: { peau: '#c4916a', ombre: '#a3714b', cheveux: '#d8d4cc', reflet: '#ffffff', oeil: '#3a2616', haut: '#8a5a3a', haut2: '#f0dcc0', style: 'court', rides: 2, epaule: 1.9 },
+    hassan: { peau: '#c4916a', ombre: '#a3714b', cheveux: '#d8d4cc', reflet: '#ffffff', oeil: '#3a2616', haut: '#8a5a3a', haut2: '#f0dcc0', style: 'court', rides: 2, epaule: 1.9 },
     amal: { peau: '#c4885f', ombre: '#a06a48', cheveux: '#1b1217', reflet: '#4a3340', oeil: '#6b4423', haut: '#e6d5ae', haut2: '#c9b387', style: 'long', cicatrice: true, patch: true },
     ghita: { peau: '#e6bb94', ombre: '#c99a72', cheveux: '#2a1b16', reflet: '#5a3f33', oeil: '#3a6b5a', haut: '#1f2d5c', haut2: '#fff', style: 'bob', broche: true },
     reda: { peau: '#d4a37c', ombre: '#b4835e', cheveux: '#1d1411', reflet: '#4a352c', oeil: '#3a2a1f', haut: '#2b3f73', haut2: '#fff', style: 'court' },
@@ -370,6 +375,11 @@
   }
 
   function cheveuxArriere(R, L) {
+    if (L.ailes) { // ailes translucides derrière la tête et les épaules
+      ctx.save(); ctx.globalAlpha = 0.5; ctx.fillStyle = L.ailes;
+      for (const sg of [-1, 1]) { ctx.beginPath(); ctx.ellipse(sg * 1.55 * R, 0.6 * R, 0.55 * R, 1.35 * R, sg * 0.45, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(sg * 1.3 * R, 1.6 * R, 0.4 * R, 0.8 * R, sg * 0.9, 0, TAU); ctx.fill(); }
+      ctx.restore();
+    }
     ctx.fillStyle = L.cheveux;
     if (L.style === 'long') {
       ctx.beginPath(); ctx.moveTo(-0.95 * R, -0.2 * R); ctx.bezierCurveTo(-1.35 * R, 0.6 * R, -1.2 * R, 1.8 * R, -1.45 * R, 2.4 * R);
