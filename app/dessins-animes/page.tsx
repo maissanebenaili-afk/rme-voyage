@@ -24,6 +24,10 @@ export default function DessinsAnimesPage() {
           Ouvrez cette page une fois avec du réseau : les épisodes marcheront ensuite même sans réseau, en voiture.
         </p>
 
+        <Link href="/feuilletons" className="mt-4 block rounded-2xl bg-violet-100 p-3 text-sm font-black text-violet-950">
+          🎧 Histoires pour la route : Le Fil d’or, Les Larmes de l’Atlas (à télécharger, sans réseau) →
+        </Link>
+
         <div className="mt-6">
           <LecteurKalimat />
         </div>

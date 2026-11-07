@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Memoire from '@/components/jeux/Memoire';
+import Quiz from '@/components/jeux/Quiz';
 import Rouleau from '@/components/jeux/Rouleau';
 import Skate from '@/components/jeux/Skate';
 import Zellige from '@/components/jeux/Zellige';
 
 const JEUX = [
+  { id: 'quiz', nom: 'Quiz du voyageur', emoji: '🧭', texte: 'Le Maroc, la route, la culture : 5 questions, 3 niveaux, des étoiles à gagner.', nouveau: true },
   { id: 'skate', nom: 'Skate à la corniche', emoji: '🛹', texte: 'Saute les plots, ramasse les pièces, bats ton record.' },
   { id: 'zellige', nom: 'Zellige', emoji: '🟩', texte: 'Range les mosaïques pour faire des lignes. Petits et grands.' },
   { id: 'memoire', nom: 'Mémoire des souks', emoji: '🫖', texte: 'Retrouve les paires. Dès 4 ans.' },
@@ -33,7 +35,10 @@ export default function JeuxRoute() {
                 {j.emoji}
               </span>
               <span>
-                <span className="block text-xl font-black text-[#0f1f3d]">{j.nom}</span>
+                <span className="flex items-center gap-2 text-xl font-black text-[#0f1f3d]">
+                  {j.nom}
+                  {'nouveau' in j && j.nouveau && <span className="rounded-full bg-violet-600 px-2 py-0.5 text-xs font-black uppercase tracking-wide text-white">Nouveau</span>}
+                </span>
                 <span className="block text-slate-700">{j.texte}</span>
               </span>
             </button>
@@ -51,6 +56,7 @@ export default function JeuxRoute() {
           ← Autres jeux
         </button>
       </div>
+      {choisi.id === 'quiz' && <Quiz />}
       {choisi.id === 'memoire' && <Memoire />}
       {choisi.id === 'rouleau' && <Rouleau />}
       {choisi.id === 'skate' && <Skate />}

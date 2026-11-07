@@ -5,7 +5,7 @@ import JeuxRoute from '@/components/jeux/JeuxRoute';
 export const metadata: Metadata = {
   title: 'Jeux pour la route',
   description:
-    'Petits jeux gratuits pour le trajet vers le Maroc : Skate à la corniche, Zellige, Mémoire des souks et Déroule !, le jeu des toilettes. Sans publicité, sans compte, sans réseau une fois la page ouverte.',
+    'Petits jeux gratuits pour le trajet vers le Maroc : Quiz du voyageur, Skate à la corniche, Zellige, Mémoire des souks et Déroule !, le jeu des toilettes. Sans publicité, sans compte, sans réseau une fois la page ouverte.',
 };
 
 export default function JeuxPage() {
