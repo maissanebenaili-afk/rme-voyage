@@ -140,7 +140,7 @@ Inventaire complet des surfaces de revenus, conditions VERIFIED et modification 
 | `TRAVELPAYOUTS_FLIGHT_URL` | tp.media, lien court `<marque>.tp.st`, www.aviasales.com, www.skyscanner.fr | bouton vol + comparatif |
 | `TRAVELPAYOUTS_HOTEL_URL`, `TRAVELPAYOUTS_CAR_URL`, `TRAVELPAYOUTS_INSURANCE_URL` | tp.media, lien court `<marque>.tp.st` | comparatif partenaires |
 | `ESIM_MOROCCO_AFFILIATE_URL` | esimmorocco.org **uniquement** | comparatif. Pour Airalo et Yesim, voir la ligne suivante |
-| `AIRALO_AFFILIATE_URL`, `YESIM_AFFILIATE_URL`, `KKDAY_AFFILIATE_URL`, `KLOOK_AFFILIATE_URL` | tp.media, lien court `<marque>.tp.st` | comparatif partenaires (eSIM et expériences). Tant que la variable est absente, la carte reste « À activer » et pointe vers le site public, sans lien d'affiliation |
+| `AIRALO_AFFILIATE_URL`, `YESIM_AFFILIATE_URL`, `KKDAY_AFFILIATE_URL`, `KLOOK_AFFILIATE_URL`, `RADICAL_STORAGE_AFFILIATE_URL` (lien reçu le 07/11/2026) | tp.media, lien court `<marque>.tp.st` | comparatif partenaires (eSIM et expériences). Tant que la variable est absente, la carte reste « À activer » et pointe vers le site public, sans lien d'affiliation |
 | `WISE_AFFILIATE_URL`, `REMITLY_AFFILIATE_URL`, `WORLDREMIT_AFFILIATE_URL`, `WESTERN_UNION_AFFILIATE_URL`, `MONEYGRAM_AFFILIATE_URL` | tout lien https | bouton « Envoyer » du comparateur de transferts |
 
 Ordre : obtenir le lien → le faire vérifier → Netlify → Project configuration → Environment variables → Add a variable (portée Functions ou All scopes) → Trigger deploy.
