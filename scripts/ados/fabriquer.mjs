@@ -22,6 +22,7 @@ const SERIE = HISTOIRE.SERIE ?? { titre: 'Le Fil d’or', etiquette: 'ÉPISODE',
 import { construire, plansParlants, FIN } from './montage.mjs';
 import { composerFond, ecrireWav } from './musique.mjs';
 import { composerFondFoot } from './musique-foot.mjs';
+import { composerFondAtlas } from './musique-atlas.mjs';
 
 const ICI = path.dirname(fileURLToPath(import.meta.url));
 const RACINE = path.resolve(ICI, '../..');
@@ -88,7 +89,7 @@ async function fabriquer(ep, nav) {
   const durees = [], voix = [];
   ep.plans.filter(avecVoix).forEach((plan, i) => { const f = preparerVoix(ep, i, plan, travail); voix.push(f); durees.push(duree(f)); });
   const S = construire(ep, durees, PERSOS, FPS);
-  S.titreSerie = SERIE.titre; S.etiquette = SERIE.etiquette;
+  S.titreSerie = SERIE.titre; S.etiquette = SERIE.etiquette; S.style = process.env.STYLE || SERIE.style || '';
   S.shots.forEach((s) => {
     if (s.voixIndex < 0) return;
     s.env = enveloppe(voix[s.voixIndex], s.voixDuree + 0.2);
@@ -116,7 +117,9 @@ async function fabriquer(ep, nav) {
   points.push([S.finDebut, 0.7], [S.total, 0.5]);
   const fond = path.join(travail, 'fond.wav');
   const ovations = S.shots.filter((x) => x.insert === 'but').map((x) => x.start);
-  await ecrireWav(fond, SERIE.musique === 'foot' ? composerFondFoot(S.total, points, impacts, ovations) : composerFond(S.total, points, pluie, impacts, crepit));
+  const themes = [[0, S.shots[0].start, 'nour'], ...S.shots.map((x) => [x.start, x.end, x.theme || 'famille']), [S.finDebut, S.total + 1, 'espoir']];
+  const musique = SERIE.musique === 'atlas' ? composerFondAtlas(S.total, points, impacts, themes) : SERIE.musique === 'foot' ? composerFondFoot(S.total, points, impacts, ovations) : composerFond(S.total, points, pluie, impacts, crepit);
+  await ecrireWav(fond, musique);
 
   // mixage : voix posées à leur instant, musique qui baisse quand on parle
   // IMPORTANT : la voix n° i va avec le i-ème plan QUI PARLE (les plans muets ne comptent pas)
@@ -125,7 +128,7 @@ async function fabriquer(ep, nav) {
   const lister = voix.map((_, i) => `[v${i}]`).join('');
   filtres.push(`${lister}amix=inputs=${voix.length}:normalize=0,apad=whole_dur=${S.total},asplit=2[voix][cle]`);
   filtres.push('[0:a]volume=0.62[bed]'); filtres.push('[bed][cle]sidechaincompress=threshold=0.04:ratio=6:attack=25:release=500[duck]');
-  filtres.push('[duck][voix]amix=inputs=2:normalize=0,loudnorm=I=-15:TP=-1.5:LRA=9[mix]');
+  filtres.push('[duck][voix]amix=inputs=2:normalize=0,loudnorm=I=-15:TP=-1.5:LRA=9,alimiter=limit=0.89[mix]');
   const audio = path.join(travail, 'mix.wav');
   sh('ffmpeg', ['-y', '-loglevel', 'error', ...entrees, '-filter_complex', filtres.join(';'), '-map', '[mix]', '-ar', '44100', '-ac', '2', '-t', String(S.total), audio]);
 

@@ -87,6 +87,41 @@
   }
 
   const DECORS = {
+    // la route vers le Maroc, vue de la voiture : montagnes qui défilent, bord de fenêtre
+    route(t) {
+      ctx.fillStyle = lin(0, 0, 0, H, [[0, '#3b4f8a'], [0.3, '#e49a6a'], [0.55, '#f5cf8a'], [1, '#2d2a3a']]); ctx.fillRect(0, 0, W, H);
+      glow(W * 0.72, 620, 520, 'rgba(255,220,150,0.9)', 0.85);
+      const couches = [['#8a6a9a', 520, 0.012, 140, 1], ['#6a4f7a', 680, 0.02, 190, 2], ['#43375a', 820, 0.034, 240, 3]];
+      for (const [col, base, v, haut, seed] of couches) {
+        const r = rng(seed * 13); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, H);
+        for (let x = -60; x <= W + 60; x += 60) { const k = x + t * v * 900; const h = haut * (0.55 + 0.45 * Math.sin(k * 0.006 + seed * 2) + 0.25 * Math.sin(k * 0.017 + seed)); ctx.lineTo(x, base - h + r() * 0); }
+        ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+      }
+      // la route : des tirets qui défilent
+      ctx.fillStyle = '#2a2530'; ctx.fillRect(0, 1000, W, 400);
+      ctx.fillStyle = 'rgba(255,240,200,0.8)'; for (let i = 0; i < 8; i++) { const y = 1010 + ((i * 60 + t * 260) % 400); const w = 6 + (y - 1000) * 0.05; ctx.fillRect(W / 2 - w / 2, y, w, 26 + (y - 1000) * 0.08); }
+      // bord de fenêtre de la voiture
+      ctx.fillStyle = '#14111a'; ctx.fillRect(0, 0, W, 90); ctx.fillRect(0, 0, 70, H); ctx.fillRect(W - 70, 0, 70, H);
+      ctx.fillStyle = lin(0, 1180, 0, 1500, [[0, 'rgba(20,17,26,0)'], [1, 'rgba(20,17,26,0.9)']]); ctx.fillRect(0, 1180, W, 340);
+    },
+    // le village dans l'Atlas, au crépuscule : neige sur les sommets, fenêtres allumées
+    atlas(t) {
+      ctx.fillStyle = lin(0, 0, 0, H, [[0, '#0f1736'], [0.35, '#3a3f78'], [0.6, '#d98a74'], [0.78, '#f0b074'], [1, '#2a1c24']]); ctx.fillRect(0, 0, W, H);
+      const r = rng(21); for (let i = 0; i < 70; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.6 * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.fillRect(r() * W, r() * 520, 3, 3); }
+      // sommets enneigés
+      ctx.fillStyle = '#4a4678'; ctx.beginPath(); ctx.moveTo(0, 940); ctx.lineTo(180, 560); ctx.lineTo(330, 780); ctx.lineTo(560, 470); ctx.lineTo(760, 800); ctx.lineTo(930, 600); ctx.lineTo(W, 860); ctx.lineTo(W, 1000); ctx.lineTo(0, 1000); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#eef1ff'; for (const [x, y] of [[180, 560], [560, 470], [930, 600]]) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 70, y + 110); ctx.lineTo(x - 20, y + 95); ctx.lineTo(x + 25, y + 120); ctx.lineTo(x + 80, y + 105); ctx.closePath(); ctx.fill(); }
+      // cèdres
+      ctx.fillStyle = '#1d2a2a'; for (let i = 0; i < 9; i++) { const x = 40 + i * 120, h = 150 + (i % 3) * 40; ctx.beginPath(); ctx.moveTo(x, 1040); ctx.lineTo(x + 40, 1040 - h); ctx.lineTo(x + 80, 1040); ctx.closePath(); ctx.fill(); }
+      // maisons de pierre aux fenêtres allumées
+      const rm = rng(5); for (let i = 0; i < 7; i++) {
+        const x = i * 160 - 20, w = 150, h = 190 + rm() * 120, y = 1250 - h + (i % 2) * 40;
+        ctx.fillStyle = i % 2 ? '#7a5a48' : '#8d6a52'; ctx.fillRect(x, y, w, 1500 - y);
+        ctx.fillStyle = '#5a4034'; ctx.fillRect(x - 6, y - 10, w + 12, 16);
+        glow(x + w / 2, y + 70, 120, 'rgba(255,200,110,0.9)', 0.55 + 0.15 * Math.sin(t * 3 + i)); ctx.fillStyle = '#ffd88a'; ctx.fillRect(x + w / 2 - 18, y + 46, 36, 52);
+      }
+      poussieresChaudes(t);
+    },
     aube(t) {
       ctx.fillStyle = lin(0, 0, 0, H, [[0, '#14143f'], [0.35, '#5a3a7a'], [0.62, '#d97b6c'], [0.8, '#f6b26b'], [1, '#2a1a2a']]); ctx.fillRect(0, 0, W, H);
       const r = rng(7); for (let i = 0; i < 60; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.6 * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.fillRect(r() * W, r() * 700, 3, 3); }
@@ -222,6 +257,8 @@
     }
   }
 
+  function poussieresChaudes(t) { const r = rng(77); ctx.save(); for (let i = 0; i < 26; i++) { const x = (r() * W + Math.sin(t * 0.6 + i) * 30) % W, y = 1500 - ((t * (30 + r() * 40) + r() * 900) % 900); ctx.fillStyle = `rgba(255,214,150,${0.25 + 0.3 * r()})`; ctx.beginPath(); ctx.arc(x, y, 2 + r() * 3, 0, TAU); ctx.fill(); } ctx.restore(); }
+
   // ───────────────────────── personnages ─────────────────────────
   const LOOKS = {
     bouba: { peau: '#6b4430', ombre: '#4f2f20', cheveux: '#120b08', reflet: '#33231b', oeil: '#2a170c', haut: '#ff8a1f', haut2: '#fff4e0', style: 'afro', enfant: true, yeux: 0.98, epaule: 1.45 },
@@ -229,6 +266,12 @@
     ines: { peau: '#9a6a48', ombre: '#7a4f33', cheveux: '#1a100b', reflet: '#45332a', oeil: '#3a2212', haut: '#e0457b', haut2: '#fff', style: 'macarons', enfant: true, yeux: 0.96, epaule: 1.5 },
     moussa: { peau: '#5e3b28', ombre: '#432a1c', cheveux: '#0f0a08', reflet: '#2d201a', oeil: '#26140a', haut: '#ff8a1f', haut2: '#fff4e0', style: 'court', rayures: ['#ff8a1f', '#fff4e0'], epaule: 1.9 },
     agent: { peau: '#c79a74', ombre: '#a67a56', cheveux: '#8a8a8a', reflet: '#c8c8c8', oeil: '#3a2a1c', haut: '#e8d12a', haut2: '#2a2a2a', style: 'court', rides: 1, epaule: 1.9 },
+    // « Les Larmes de l'Atlas » : une famille franco-marocaine
+    nour: { peau: '#b98760', ombre: '#966a47', cheveux: '#1a100c', reflet: '#46362d', oeil: '#3a2212', haut: '#f2b632', haut2: '#fff4d8', style: 'bob', enfant: true, yeux: 1.0, epaule: 1.5 },
+    yacine: { peau: '#b3825a', ombre: '#8f6444', cheveux: '#150d0a', reflet: '#3a2c25', oeil: '#2e1a0c', haut: '#3b82c4', haut2: '#fff', style: 'ebouriffe', enfant: true, yeux: 1.08, epaule: 1.4 },
+    maman: { peau: '#c99a74', ombre: '#a97a54', cheveux: '#2a1a14', reflet: '#5a4036', oeil: '#3a2616', haut: '#4a8f86', haut2: '#e8f3ef', style: 'voile', voile: '#4a8f86' },
+    papa: { peau: '#b57e58', ombre: '#936143', cheveux: '#17100d', reflet: '#3d2d27', oeil: '#2a180b', haut: '#5a6f8f', haut2: '#fff', style: 'court', epaule: 1.9 },
+    zahra: { peau: '#cfa27c', ombre: '#ad805a', cheveux: '#e6e6e6', reflet: '#fff', oeil: '#3a2a1c', haut: '#f1ece0', haut2: '#c9a24a', style: 'voile', voile: '#f1ece0', bord: '#c9a24a', rides: 3 },
     amal: { peau: '#c4885f', ombre: '#a06a48', cheveux: '#1b1217', reflet: '#4a3340', oeil: '#6b4423', haut: '#e6d5ae', haut2: '#c9b387', style: 'long', cicatrice: true, patch: true },
     ghita: { peau: '#e6bb94', ombre: '#c99a72', cheveux: '#2a1b16', reflet: '#5a3f33', oeil: '#3a6b5a', haut: '#1f2d5c', haut2: '#fff', style: 'bob', broche: true },
     reda: { peau: '#d4a37c', ombre: '#b4835e', cheveux: '#1d1411', reflet: '#4a352c', oeil: '#3a2a1f', haut: '#2b3f73', haut2: '#fff', style: 'court' },
@@ -694,8 +737,8 @@
   }
   function frame(t) {
     ctx.save(); ctx.clearRect(0, 0, W, H);
-    if (t < S.introFin) { carteTitre(S, t, t, S.introFin); ctx.restore(); applyFinish(); return; }
-    if (t >= S.finDebut) { carteFin(S, t, t - S.finDebut); ctx.restore(); applyFinish(); return; }
+    if (t < S.introFin) { carteTitre(S, t, t, S.introFin); ctx.restore(); applyFinish(t); return; }
+    if (t >= S.finDebut) { carteFin(S, t, t - S.finDebut); ctx.restore(); applyFinish(t); return; }
     const sh = plan(t), tl = t - sh.start, d = sh.end - sh.start, k = tl / d;
     camera(sh, k, t);
     (DECORS[sh.bg] || DECORS.atelier)(t);
@@ -751,9 +794,34 @@
     if ((sh.fx || []).includes('flash')) { const a = Math.exp(-tl * 7); if (a > 0.02) { ctx.fillStyle = `rgba(255,255,255,${a * 0.85})`; ctx.fillRect(0, 0, W, H); } }
     const f = Math.max(1 - clamp(tl / 0.3), clamp((tl - (d - 0.25)) / 0.25) * 0.6);
     if (f > 0) { ctx.fillStyle = `rgba(0,0,0,${f * 0.7})`; ctx.fillRect(0, 0, W, H); }
-    applyFinish();
+    applyFinish(t);
   }
-  function applyFinish() {
+  // Styles d'image : la même histoire, un autre « manga ». S.style : 'noir' | 'papier' | 'neon' (2050).
+  let copie = null;
+  function photo() { if (!copie) { copie = document.createElement('canvas'); copie.width = W; copie.height = H; } const g = copie.getContext('2d'); g.clearRect(0, 0, W, H); g.drawImage(cv, 0, 0); return copie; }
+  function styleFinal(t) {
+    const st = S && S.style; if (!st) return;
+    const c = photo();
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (st === 'noir') { // encre et contraste : seinen, polar
+      ctx.clearRect(0, 0, W, H); ctx.filter = 'grayscale(0.92) contrast(1.45) brightness(0.92)'; ctx.drawImage(c, 0, 0); ctx.filter = 'none';
+      ctx.fillStyle = rad(W / 2, H * 0.45, H * 0.18, H * 0.7, [[0, 'rgba(0,0,0,0)'], [1, 'rgba(0,0,0,0.55)']]); ctx.fillRect(0, 0, W, H);
+    } else if (st === 'papier') { // théâtre d'ombres et papier découpé : contes et fables
+      ctx.clearRect(0, 0, W, H); ctx.filter = 'sepia(0.35) saturate(0.85) contrast(1.12)'; ctx.drawImage(c, 0, 0); ctx.filter = 'none';
+      ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgba(245,232,205,0.55)'; ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = 'rgba(120,90,50,0.10)'; ctx.lineWidth = 2; const r = rng(3); for (let i = 0; i < 90; i++) { const x = r() * W, y = r() * H; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (r() - 0.5) * 90, y + (r() - 0.5) * 90); ctx.stroke(); }
+    } else if (st === 'neon') { // 2050 : lueur, couleurs qui se décalent, lignes de balayage
+      ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = 0.5; ctx.filter = 'blur(16px) brightness(1.35) saturate(1.6)'; ctx.drawImage(c, 0, 0);
+      ctx.globalAlpha = 0.22; ctx.filter = 'sepia(1) hue-rotate(-60deg) saturate(5)'; ctx.drawImage(c, 5, 0);
+      ctx.filter = 'sepia(1) hue-rotate(150deg) saturate(5)'; ctx.drawImage(c, -5, 0); ctx.filter = 'none';
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = 'rgba(0,0,0,0.07)'; for (let y = 0; y < H; y += 6) ctx.fillRect(0, y, W, 2);
+      const bande = ((t * 260) % (H + 300)) - 150; ctx.fillStyle = lin(0, bande - 90, 0, bande + 90, [[0, 'rgba(120,220,255,0)'], [0.5, 'rgba(120,220,255,0.10)'], [1, 'rgba(120,220,255,0)']]); ctx.fillRect(0, bande - 90, W, 180);
+      ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = lin(0, 0, W, H, [[0, 'rgba(40,200,255,0.30)'], [1, 'rgba(255,60,200,0.30)']]); ctx.fillRect(0, 0, W, H);
+    }
+    ctx.restore();
+  }
+  function applyFinish(t = 0) {
+    styleFinal(t);
     ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = ctx.createPattern(grain(), 'repeat'); ctx.globalAlpha = 0.9; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
 

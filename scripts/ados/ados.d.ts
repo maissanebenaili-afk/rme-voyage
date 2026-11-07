@@ -32,3 +32,19 @@ declare module '*/scripts/ados/histoire-foot.mjs' {
   export const EPISODES: Episode[];
   export function avecVoix(plan: Plan): boolean;
 }
+
+declare module '*/scripts/ados/histoire-atlas.mjs' {
+  export interface PersoEcran { id: string; x: number; emo: string; emo2?: string; act?: string }
+  export interface Plan { bg: string; tint?: string; parle?: string; ton?: string; texte?: string; persos: PersoEcran[]; insert?: string; duree?: number; cam?: string; fx?: string[]; intensite?: number; theme?: string }
+  export interface Episode { numero: number; titre: string; demain: string; question: string; plans: Plan[] }
+  export const SERIE: { titre: string; etiquette: string; dossier: string; musique: string };
+  export const PERSOS: Record<string, { nom: string; voix: string; hauteur: number }>;
+  export const EPISODES: Episode[];
+  export function avecVoix(plan: Plan): boolean;
+  export function texteParle(plan: Plan): string;
+}
+
+declare module '*/scripts/ados/musique-atlas.mjs' {
+  export const THEMES: Record<string, { bpm: number; acc: number[][]; mel: number[][][] }>;
+  export function composerFondAtlas(total: number, points: number[][], impacts?: number[], themes?: [number, number, string][]): Float32Array[];
+}
