@@ -255,15 +255,16 @@
       ctx.save(); ctx.translate(x, y); ctx.strokeStyle = '#140b0b'; ctx.lineWidth = 0.055 * R; ctx.lineCap = 'round';
       ctx.beginPath(); ctx.arc(0, 0.06 * R, 0.2 * R, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.restore(); return;
     }
-    const k = L.yeux || 1, w = 0.235 * R * k, h = 0.3 * R * ouv * k;
+    const k = L.yeux || 1, w = 0.265 * R * k, h = 0.335 * R * ouv * k; // grands yeux brillants : plus attachants
     ctx.save(); ctx.translate(x, y);
     ctx.beginPath(); ctx.ellipse(0, 0, w, Math.max(2, h), 0, 0, TAU); ctx.save(); ctx.clip();
     ctx.fillStyle = '#fbf6ee'; ctx.fillRect(-w, -h, w * 2, h * 2);
-    const ix = regard * w * 0.35, ir = Math.min(w * 0.98, 0.225 * R * Math.min(1.1, ouv + 0.25));
+    const ix = regard * w * 0.35, ir = Math.min(w * 0.98, 0.25 * R * Math.min(1.1, ouv + 0.25));
     ctx.fillStyle = lin(0, -ir, 0, ir, [[0, L.oeil], [0.7, '#2a1a10'], [1, L.oeil]]); ctx.beginPath(); ctx.arc(ix, 0, ir, 0, TAU); ctx.fill();
     ctx.fillStyle = '#0b0707'; ctx.beginPath(); ctx.arc(ix, 0, ir * 0.55, 0, TAU); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ix - ir * 0.35, -ir * 0.38, ir * 0.3, 0, TAU); ctx.fill();
     ctx.beginPath(); ctx.arc(ix + ir * 0.35, ir * 0.35, ir * 0.14, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(ix + ir * 0.05, -ir * 0.62, ir * 0.09, 0, TAU); ctx.fill();
     if (emo === 'pleure' || emo === 'tendre' || emo === 'triste') { ctx.fillStyle = 'rgba(200,225,255,0.22)'; ctx.fillRect(-w, h * 0.7, w * 2, h * 0.4); }
     ctx.restore();
     ctx.strokeStyle = '#140b0b'; ctx.lineWidth = 0.05 * R; ctx.lineCap = 'round';
@@ -273,8 +274,8 @@
     ctx.restore();
   }
 
-  const COIN = { neutre: 0, joie: -0.07, triste: 0.07, colere: 0.02, surprise: 0, peur: 0.03, malade: 0.05, froid: -0.02, tendre: -0.03, pleure: 0.1 };
-  const ROSE = { neutre: 0.2, joie: 0.38, triste: 0.22, colere: 0.3, surprise: 0.38, peur: 0.38, malade: 0.1, froid: 0.15, tendre: 0.38, pleure: 0.4 };
+  const COIN = { neutre: -0.035, joie: -0.07, triste: 0.07, colere: 0.02, surprise: 0, peur: 0.03, malade: 0.05, froid: -0.02, tendre: -0.03, pleure: 0.1 };
+  const ROSE = { neutre: 0.3, joie: 0.38, triste: 0.22, colere: 0.3, surprise: 0.38, peur: 0.38, malade: 0.1, froid: 0.15, tendre: 0.38, pleure: 0.4 };
   function param(e) { const [bi, bo] = BROWS[e] || [0, 0]; return { bi, bo, ouv: OEIL[e] ?? 1, coin: COIN[e] ?? 0, rose: ROSE[e] ?? 0.2, rond: e === 'surprise' || e === 'peur' ? 1 : 0, pleure: e === 'pleure' ? 1 : 0 }; }
   function melange(a, b, k) { const A = param(a), B = param(b), o = {}; for (const c of Object.keys(A)) o[c] = lerp(A[c], B[c], k); return o; }
 

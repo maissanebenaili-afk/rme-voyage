@@ -7,7 +7,7 @@
 // (NN = numéro du plan, à partir de 01). Sortie : videos-ados/fil-d-or-NN.mp4 et
 // son .srt. Playwright n'est pas une dépendance du projet : on prend celui de la machine.
 
-import { spawn, execFileSync } from 'node:child_process';
+import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, renameSync, rmSync } from 'node:fs';
@@ -33,6 +33,17 @@ const pad = (n) => String(n).padStart(2, '0');
 const sh = (cmd, args) => execFileSync(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 1 << 28 });
 const duree = (f) => Number(sh('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f]).toString().trim());
 
+/** Ramène chaque voix au même niveau moyen (voix off et personnages sonnent à égalité). */
+function egaliser(fichier, cible = -32) {
+  const r = spawnSync('ffmpeg', ['-i', fichier, '-af', 'volumedetect', '-f', 'null', '-'], { encoding: 'utf8' });
+  const m = /mean_volume:\s*(-?[0-9.]+) dB/.exec(r.stderr || '');
+  if (!m) return;
+  const gain = Math.max(-9, Math.min(9, cible - Number(m[1])));
+  const tmp = fichier.replace('.wav', '.egal.wav');
+  sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', fichier, '-af', `volume=${gain.toFixed(2)}dB,alimiter=limit=0.9`, '-ar', '44100', '-ac', '1', tmp]);
+  renameSync(tmp, fichier);
+}
+
 /** Voix d'un plan : hauteur propre au personnage, durée inchangée. */
 function preparerVoix(ep, i, plan, dossier) {
   const src = path.join(SORTIE, 'voix', `ep${ep.numero}`, `${pad(i + 1)}.wav`);
@@ -45,10 +56,12 @@ function preparerVoix(ep, i, plan, dossier) {
   const ARRIERE = 'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse';
   if (plan.parle === 'narration') {
     sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', src, '-af', `${PAUSES},${CONTEUSE},${ARRIERE}`, '-ar', '44100', '-ac', '1', dst]);
+    egaliser(dst);
     return dst;
   }
   const filtre = (h === 1 ? 'anull' : `asetrate=24000*${h},aresample=44100,atempo=${1 / h}`) + ',atempo=0.9,highpass=f=90,deesser=i=0.35,acompressor=threshold=-20dB:ratio=2.5:attack=5:release=120,aecho=0.85:0.4:35:0.10';
   sh('ffmpeg', ['-y', '-loglevel', 'error', '-i', src, '-af', `${filtre},silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse`, '-ar', '44100', '-ac', '1', dst]);
+  egaliser(dst);
   return dst;
 }
 

@@ -14,7 +14,7 @@ Les chapitres 1 à 6 existent déjà (voir `scripts/ados/histoire.mjs`).
 - **Deux garçons qui l'aiment à leur façon** : l'ami loyal (Idriss), le garçon juste (Reda).
 - **Un secret de famille** que le spectateur comprend avant elle.
 - **Des larmes en gros plan**, des pétales, des rayons de lumière, un thème qui monte.
-- **Des gags tendres** (l'oud qui chante faux, les petits qui font des bêtises) pour que le drame frappe plus fort.
+- **Des gags tendres** (la guitare qui chante faux, les petits qui font des bêtises) pour que le drame frappe plus fort.
 - **Chaque épisode finit sur une question.** Chaque arc finit sur un coup de théâtre.
 - **Les personnages grandissent** : Amal a 15 ans au chapitre 1, 17 ans au chapitre 120.
 - **Le fil d'or** revient partout : la broderie, la broche, le serment, le thème musical.
@@ -34,7 +34,7 @@ Les chapitres 1 à 6 existent déjà (voir `scripts/ados/histoire.mjs`).
 | 8 | 71 à 80 | **Le procès** | Au tribunal. Amal doit parler. Idriss est accusé à tort. L'oncle se démasque presque. |
 | 9 | 81 à 90 | **L'exil** | Amal part pour une école de couture à Casablanca. La séparation, la solitude, une rencontre. |
 | 10 | 91 à 100 | **La maison de couture** | Elle crée sa marque « Fil d'Or ». Trahison, dettes, Kenza tombe malade. |
-| 11 | 101 à 110 | **Le retour** | Retour à Taza pour les 20 ans de la maison d'enfants. Idriss et son oud, enfin. Un orage, un choix. |
+| 11 | 101 à 110 | **Le retour** | Retour à Taza pour les 20 ans de la maison d'enfants. Idriss et sa guitare, enfin. Un orage, un choix. |
 | 12 | 111 à 120 | **Le grand gala** | La vérité sur le feu. Le pardon de Kenza. Le choix du cœur d'Amal. Dernier plan : la saison 2. |
 
 ## Le détail à écrire en premier, avant de produire

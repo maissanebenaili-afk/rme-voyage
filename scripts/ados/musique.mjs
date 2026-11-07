@@ -1,5 +1,5 @@
 // Musique originale du « Fil d'or » : un thème en ré hijaz (la seconde augmentée
-// mi♭ → fa♯ donne la couleur orientale), joué à l'oud (corde pincée) puis doublé
+// mi♭ → fa♯ donne la couleur orientale), joué à la guitare (corde pincée) puis doublé
 // par des cordes en trémolo quand l'émotion monte. Composé ici, à la main :
 // aucune mélodie reprise d'une œuvre existante.
 import { writeFile } from 'node:fs/promises';
@@ -28,7 +28,7 @@ function pincer(buf, debut, freq, duree, amp, graine) {
   let p = 0, prev = 0;
   for (let i = debut; i < fin; i++) {
     const v = ligne[p]; const suiv = (v + ligne[(p + 1) % n]) * 0.5 * 0.9965; ligne[p] = suiv; p = (p + 1) % n;
-    prev += (v - prev) * 0.55; // adoucit : son d'oud, pas de guitare métallique
+    prev += (v - prev) * 0.55; // adoucit : son de guitare douce (nylon), pas de métal
     const env = Math.min(1, (i - debut) / 120) * Math.exp(-(i - debut) / SR / (duree * 0.75));
     const o = prev * amp * env; buf[0][i] += o * 0.9; buf[1][i] += o * 1.0;
   }
@@ -64,7 +64,7 @@ function intensiteA(points, t) {
 export function composerFond(total, points, pluie = [], impacts = [], crepit = []) {
   const len = Math.ceil(total * SR), buf = [new Float32Array(len), new Float32Array(len)];
   const temps = 60 / 66; let t = 0, tour = 0, graine = 11;
-  // oud : le thème, en boucle
+  // guitare : le thème, en boucle
   while (t < total) {
     let pos = 0;
     for (const [nom, d] of THEME) {

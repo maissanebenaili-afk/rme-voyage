@@ -19,7 +19,7 @@ un secret. Quand la maison d'enfants risque de fermer, elle doit choisir.
 | Personnage | Rôle |
 |---|---|
 | **Amal** | Héroïne. Cicatrice sur la joue, tête dure, grand cœur. |
-| **Idriss** (16) | Orphelin lui aussi, joue de l'oud, loyal, cicatrice au menton. |
+| **Idriss** (16) | Orphelin lui aussi, joue de la guitare, loyal, cicatrice au menton. |
 | **Ghita** (15) | La riche rivale, seule derrière sa froideur. Sa cousine, en vrai. |
 | **Reda** (17) | Garçon riche et juste. |
 | **Lalla Rkia** | Directrice de la maison d'enfants. Douce et fatiguée. |
@@ -33,7 +33,7 @@ sur une question. La saison entière (120 chapitres) est planifiée dans
 2. **La porte d'Al Andalus** : humiliation, un ami, la broche.
 3. **La maison qui va fermer** : trois semaines pour sauver les enfants.
 4. **Le prix du silence** : un marché avec la rivale.
-5. **La robe** : la trahison au gala, l'oud vendu.
+5. **La robe** : la trahison au gala, la guitare vendue.
 6. **Lalla Kenza** : le secret du feu. Fin de saison, la suite : les années
    passent, les personnages grandissent.
 
@@ -48,7 +48,7 @@ Tout est dans `scripts/ados/` :
 - `montage.mjs` : le minutage et le découpage en shorts ;
 - `assembler.mjs` : film complet ou shorts ;
 - `musique.mjs` : la musique, composée par le code : un thème en ré hijaz à
-  l'oud, doublé par des cordes en trémolo quand l'émotion monte, avec un souffle
+  la guitare, doublé par des cordes en trémolo quand l'émotion monte, avec un souffle
   de pièce et la pluie ;
 - `fabriquer.mjs` : assemble images, voix et musique en vidéo.
 
