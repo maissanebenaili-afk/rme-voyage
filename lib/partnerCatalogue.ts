@@ -91,6 +91,16 @@ const seeds: PartnerSeed[] = [
     commissionNote: "Programme via Travelpayouts ; accès du compte RME à confirmer.",
   },
   {
+    id: "radical-storage",
+    name: "Radical Storage",
+    category: "luggage",
+    description: "Consigne à bagages dans les gares, ports et centres-villes, réservable en ligne.",
+    publicUrl: "https://radicalstorage.com/",
+    envVar: "RADICAL_STORAGE_AFFILIATE_URL",
+    allowedHosts: ["tp.media"],
+    commissionNote: "Programme via Travelpayouts ; lien du compte RME obtenu le 07/11/2026.",
+  },
+  {
     id: "lock-and-goo",
     name: "Lock & Gooo",
     category: "luggage",
