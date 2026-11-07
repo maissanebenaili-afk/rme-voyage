@@ -1,5 +1,5 @@
 import { EPISODES, PERSOS, texteParle, avecVoix } from '../scripts/ados/histoire.mjs'
-import { construire, decouper, FIN, INTRO } from '../scripts/ados/montage.mjs'
+import { construire, decouper, plansParlants, FIN, INTRO } from '../scripts/ados/montage.mjs'
 
 const EMOTIONS = ['neutre', 'joie', 'triste', 'colere', 'surprise', 'peur', 'malade', 'froid', 'tendre', 'pleure']
 const DECORS = ['aube', 'atelier', 'toits', 'lycee', 'villa', 'hopital', 'gala', 'dar', 'feu']
@@ -101,6 +101,22 @@ describe('« Le Fil d’or » : l’histoire', () => {
 })
 
 describe('montage', () => {
+  it('la voix n° i est posée sur le i-ème plan qui parle (les plans muets ne décalent pas le son)', () => {
+    for (const ep of EPISODES) {
+      const S = construire(ep, ep.plans.filter(avecVoix).map(() => 4), PERSOS, 30)
+      const parlants = plansParlants(S)
+      expect(parlants).toHaveLength(ep.plans.filter(avecVoix).length)
+      parlants.forEach((p, i) => {
+        expect(p.voixIndex).toBe(i)
+        expect(p.parle).toBe(ep.plans.filter(avecVoix)[i].parle)
+      })
+    }
+    // preuve que l'ancienne méthode (S.shots[i]) était fausse : il y a des plans muets avant des plans parlants
+    const S1 = construire(EPISODES[0], EPISODES[0].plans.filter(avecVoix).map(() => 4), PERSOS, 30)
+    expect(S1.shots.some((x, i) => x.voixIndex >= 0 && x.voixIndex !== i)).toBe(true)
+  })
+
+
   it('enchaîne les plans sans trou ni recouvrement', () => {
     const ep = EPISODES[0]
     const S = construire(ep, ep.plans.filter(avecVoix).map(() => 3), PERSOS, 24)

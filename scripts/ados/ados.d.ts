@@ -19,6 +19,7 @@ declare module '*/scripts/ados/montage.mjs' {
   export const INTRO: number;
   export const FIN: number;
   export function construire(ep: Episode, durees: number[], persos: Record<string, { nom: string }>, fps?: number): Montage;
+  export function plansParlants(S: Montage): PlanMonte[];
   export function decouper(S: Montage, cible?: number): { debut: number; fin: number }[];
 }
 

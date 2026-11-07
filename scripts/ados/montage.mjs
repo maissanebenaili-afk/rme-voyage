@@ -35,6 +35,9 @@ export function construire(ep, durees, persos, fps = 24) {
   };
 }
 
+/** Les plans qui parlent, dans l'ordre : la voix n° i va avec le i-ème de cette liste (pas avec le i-ème plan). */
+export const plansParlants = (S) => S.shots.filter((x) => x.voixIndex >= 0);
+
 /**
  * Découpe un épisode monté en morceaux d'environ `cible` secondes, toujours
  * aux limites d'un plan (jamais au milieu d'une réplique). Le premier morceau

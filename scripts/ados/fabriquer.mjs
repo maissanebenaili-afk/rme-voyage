@@ -19,7 +19,7 @@ const NOM_SERIE = process.env.SERIE || 'fil-d-or';
 const HISTOIRE = await import(NOM_SERIE === 'fil-d-or' ? './histoire.mjs' : `./histoire-${NOM_SERIE}.mjs`);
 const { EPISODES, PERSOS, avecVoix } = HISTOIRE;
 const SERIE = HISTOIRE.SERIE ?? { titre: 'Le Fil d’or', etiquette: 'ÉPISODE', dossier: 'videos-ados', musique: 'hijaz' };
-import { construire, FIN } from './montage.mjs';
+import { construire, plansParlants, FIN } from './montage.mjs';
 import { composerFond, ecrireWav } from './musique.mjs';
 import { composerFondFoot } from './musique-foot.mjs';
 
@@ -119,7 +119,9 @@ async function fabriquer(ep, nav) {
   await ecrireWav(fond, SERIE.musique === 'foot' ? composerFondFoot(S.total, points, impacts, ovations) : composerFond(S.total, points, pluie, impacts, crepit));
 
   // mixage : voix posées à leur instant, musique qui baisse quand on parle
-  const entrees = ['-i', fond]; const filtres = []; voix.forEach((f, i) => { entrees.push('-i', f); filtres.push(`[${i + 1}:a]adelay=${Math.round(S.shots[i].voixDebut * 1000)}:all=1,volume=1.5[v${i}]`); });
+  // IMPORTANT : la voix n° i va avec le i-ème plan QUI PARLE (les plans muets ne comptent pas)
+  const parlants = plansParlants(S);
+  const entrees = ['-i', fond]; const filtres = []; voix.forEach((f, i) => { entrees.push('-i', f); filtres.push(`[${i + 1}:a]adelay=${Math.round(parlants[i].voixDebut * 1000)}:all=1,volume=1.5[v${i}]`); });
   const lister = voix.map((_, i) => `[v${i}]`).join('');
   filtres.push(`${lister}amix=inputs=${voix.length}:normalize=0,apad=whole_dur=${S.total},asplit=2[voix][cle]`);
   filtres.push('[0:a]volume=0.62[bed]'); filtres.push('[bed][cle]sidechaincompress=threshold=0.04:ratio=6:attack=25:release=500[duck]');
