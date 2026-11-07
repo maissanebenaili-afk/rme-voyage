@@ -164,10 +164,12 @@ export default function LecteurFeuilletons() {
         )}
       </div>
 
-      {seriesDisponibles().map((s) => (
-        <section key={s.id} aria-labelledby={`serie-${s.id}`}>
-          <h2 id={`serie-${s.id}`} className="text-xl font-black">{s.titre}</h2>
-          <p className="text-sm text-slate-600">{s.genre}</p>
+      {seriesDisponibles().map((s, i) => (
+        <details key={s.id} open={i === 0} className="group rounded-2xl bg-white/60 p-3 ring-1 ring-slate-200">
+          <summary className="cursor-pointer list-none">
+            <h2 id={`serie-${s.id}`} className="text-xl font-black">{s.titre} <span className="text-sm font-bold text-slate-500">({episodesDe(s.id).length})</span></h2>
+            <p className="text-sm text-slate-600">{s.genre}</p>
+          </summary>
           <ul className="mt-2 space-y-3">
             {episodesDe(s.id).map((e) => {
               const k = cle(e), p = progression[k];
@@ -187,7 +189,7 @@ export default function LecteurFeuilletons() {
               );
             })}
           </ul>
-        </section>
+        </details>
       ))}
     </div>
   );
