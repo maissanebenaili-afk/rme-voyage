@@ -1,6 +1,6 @@
 # Ce que toi seule peux faire (mis à jour le 7 nov. 2026)
 
-Déjà fait par moi : PR #316 fusionnée, site en production vérifié (pages, audio, hors ligne, lien Radical Storage), saison 1 de l'Atlas, 10 noktas, fiche boutique et politique de confidentialité.
+Déjà fait par moi : PR #316 fusionnée, site en production vérifié (pages, audio, hors ligne, lien Radical Storage), saison 1 de l'Atlas (6 épisodes), 10 noktas, 4 fables, fiche boutique et politique de confidentialité.
 
 1. **Regarder / écouter** un épisode de l'Atlas et 2 noktas : une phrase suffit (« ça marche » ou ce qui gêne).
 2. **Relecture de la darija** et des traductions EN/ES/NL (une personne qui parle ces langues).

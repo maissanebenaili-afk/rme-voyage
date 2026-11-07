@@ -70,14 +70,14 @@ describe('texte synchronisé', () => {
 
 describe('fichiers publiés', () => {
   it('chaque épisode du catalogue existe avec son vrai poids et des répliques ordonnées', () => {
-    expect(EPISODES_AUDIO.length).toBeGreaterThanOrEqual(7);
+    expect(EPISODES_AUDIO.length).toBeGreaterThanOrEqual(26);
     for (const e of EPISODES_AUDIO) {
       const mp3 = resolve(process.cwd(), 'public', e.fichier.slice(1)), json = resolve(process.cwd(), 'public', e.texte.slice(1));
       expect(existsSync(mp3)).toBe(true);
       expect(statSync(mp3).size).toBe(e.octets);
       expect(e.octets).toBeLessThan(3_000_000);
       const { repliques } = JSON.parse(readFileSync(json, 'utf8'));
-      expect(repliques.length).toBeGreaterThan(10);
+      expect(repliques.length).toBeGreaterThanOrEqual(4);
       repliques.forEach((q: { debut: number; fin: number }, i: number) => {
         expect(q.fin).toBeGreaterThan(q.debut);
         if (i) expect(q.debut).toBeGreaterThanOrEqual(repliques[i - 1].fin - 0.01);

@@ -21,8 +21,10 @@ const SORTIE = path.join(RACINE, 'public', 'feuilletons');
 mkdirSync(SORTIE, { recursive: true });
 
 const SERIES = [
-  { id: 'fil-d-or', module: './histoire.mjs', dossier: 'videos-ados', titre: 'Le Fil d’or', genre: 'Drame, pour les grands enfants et les familles' },
-  { id: 'atlas', module: './histoire-atlas.mjs', dossier: 'videos-atlas', titre: 'Les Larmes de l’Atlas', genre: 'Drame familial, voyage France-Maroc' },
+  { id: 'fil-d-or', module: './histoire.mjs', dossier: 'videos-ados', titre: 'Le Fil d’or', genre: 'Drame, pour les grands enfants et les familles', etiquette: 'Épisode' },
+  { id: 'atlas', module: './histoire-atlas.mjs', dossier: 'videos-atlas', titre: 'Les Larmes de l’Atlas', genre: 'Drame familial, voyage France-Maroc', etiquette: 'Épisode' },
+  { id: 'nokta', module: './histoire-nokta.mjs', dossier: 'videos-noktas', titre: 'Les Noktas de Joha', genre: 'Humour populaire, moins d’une minute', etiquette: 'Nokta' },
+  { id: 'fable', module: './histoire-fable.mjs', dossier: 'videos-fables', titre: 'Les Fables de la route', genre: 'Fables anciennes, une morale chacune', etiquette: 'Fable' },
 ];
 
 const sortie = (cmd, args) => execFileSync(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 1 << 28 });
@@ -48,7 +50,7 @@ for (const serie of SERIES) {
 }
 
 const entete = '// Fichier généré par scripts/ados/portail.mjs. Ne pas modifier à la main : relancer le script.\n';
-const series = SERIES.map(({ id, titre, genre }) => ({ id, titre, genre }));
+const series = SERIES.map(({ id, titre, genre, etiquette }) => ({ id, titre, genre, etiquette }));
 writeFileSync(path.join(RACINE, 'lib', 'feuilletons', 'catalogue.generated.ts'),
-  `${entete}export interface SerieAudio { id: string; titre: string; genre: string }\nexport interface EpisodeAudio { serie: string; numero: number; titre: string; question: string; suite: string; duree: number; octets: number; fichier: string; texte: string }\n\nexport const SERIES_AUDIO: SerieAudio[] = ${JSON.stringify(series, null, 2)};\n\nexport const EPISODES_AUDIO: EpisodeAudio[] = ${JSON.stringify(catalogue, null, 2)};\n`);
+  `${entete}export interface SerieAudio { id: string; titre: string; genre: string; etiquette: string }\nexport interface EpisodeAudio { serie: string; numero: number; titre: string; question: string; suite: string; duree: number; octets: number; fichier: string; texte: string }\n\nexport const SERIES_AUDIO: SerieAudio[] = ${JSON.stringify(series, null, 2)};\n\nexport const EPISODES_AUDIO: EpisodeAudio[] = ${JSON.stringify(catalogue, null, 2)};\n`);
 console.log(`catalogue : ${catalogue.length} épisodes`);
