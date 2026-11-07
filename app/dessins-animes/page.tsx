@@ -5,7 +5,7 @@ import LecteurKalimat from '@/components/kalimat/LecteurKalimat';
 export const metadata: Metadata = {
   title: 'Dessins animés Kalimat : la darija en riant',
   description:
-    'Kalimat, les mots du bled : un mini dessin animé par jour, en français plein de darija, pour que les enfants de la diaspora apprennent les mots du Maroc. Gratuit, sans publicité, sans compte.',
+    'Kalimat, les mots du bled : un mini dessin animé par jour, en français plein de darija, pour que les familles de la diaspora apprennent les mots du Maroc. Gratuit, sans publicité, sans compte.',
 };
 
 export default function DessinsAnimesPage() {
@@ -23,6 +23,10 @@ export default function DessinsAnimesPage() {
         <p className="mt-2 rounded-2xl bg-amber-50 p-3 text-sm font-semibold text-amber-900">
           Ouvrez cette page une fois avec du réseau : les épisodes marcheront ensuite même sans réseau, en voiture.
         </p>
+
+        <Link href="/feuilletons" className="mt-4 block rounded-2xl bg-violet-100 p-3 text-sm font-black text-violet-950">
+          🎧 Histoires pour la route : Le Fil d’or, Les Larmes de l’Atlas (à télécharger, sans réseau) →
+        </Link>
 
         <div className="mt-6">
           <LecteurKalimat />

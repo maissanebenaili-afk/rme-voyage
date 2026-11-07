@@ -280,7 +280,7 @@ export async function proxy(request: NextRequest) {
     // Récitation du Coran (/coran) : sans cette ligne, le son suivait
     // default-src 'self' et le navigateur le bloquait.
     // + les flux des radios marocaines (/radio-tv), liste fixe dans lib/radiosMaroc.ts.
-    `media-src 'self' https://cdn.islamic.network ${RADIO_MEDIA_SOURCES.join(' ')}`,
+    `media-src 'self' blob: https://cdn.islamic.network ${RADIO_MEDIA_SOURCES.join(' ')}`,
     "frame-src 'self' https://www.openstreetmap.org",
     "frame-ancestors 'none'",
     "object-src 'none'",

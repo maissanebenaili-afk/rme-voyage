@@ -285,6 +285,14 @@ describe("proxy + Supabase session refresh", () => {
     for (const station of RADIOS) expect([station.id, isAllowedStream(station.stream)]).toEqual([station.id, true]);
   });
 
+  it("lets the offline episodes (blob: copies kept on the phone) play, without opening media to other origins (CSP media-src)", async () => {
+    const csp = (await proxy(buildRequest("/feuilletons"))).headers.get("Content-Security-Policy") ?? "";
+    const media = (csp.split(";").find((d) => d.trim().startsWith("media-src ")) ?? "").trim().split(/\s+/);
+    expect(media).toContain("blob:");
+    expect(media).not.toContain("data:");
+    expect(media).not.toContain("*");
+  });
+
   it("allows the Supabase project origin in connect-src only when configured with https", async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co/some/path";
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";

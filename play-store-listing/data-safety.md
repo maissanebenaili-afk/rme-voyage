@@ -30,6 +30,7 @@ URL de la politique : `https://rme-voyage.netlify.app/api/legal/privacy`
 | Informations de paiement | Non | — | — | — | Le paiement du don est saisi sur la page Stripe (hors application) : RME ne les collecte pas. |
 | Interactions avec l'app | Oui | Non (Netlify = hébergeur, sous-traitant) | Non | Analyse | Journal d'événements anonyme de RME (`/api/events`) : nom de l'action et contexte non personnel, sans cookie ni identifiant. |
 | Diagnostics / performances | Non | — | — | — | Aucun outil de mesure des performances depuis le 27/09/2026. |
+| Histoires audio, jeux, dessins animés (nouveau, 7 nov. 2026) | **Non** | — | — | — | Les épisodes téléchargés, le point de reprise et les scores restent sur l'appareil (stockage local, Cache Storage). Aucun envoi, aucun compte, aucune publicité dans ces pages. |
 | Autres infos (villes saisies pour l'itinéraire) | Oui | Non (traitées par nos serveurs, envoyées à OpenStreetMap/OSRM sans identifiant) | Oui | Fonctionnalités de l'app | Pas de lien avec une identité. |
 
 Identifiant publicitaire (AD_ID) : **non utilisé**. Déclarer « Non » dans la
@@ -41,7 +42,9 @@ section « Identifiant publicitaire » et ne pas demander la permission
 | Section | Réponse proposée |
 |---|---|
 | Contient des annonces | **À décider** : le bandeau livre (`components/BookAd.tsx`) promeut un produit vendu sur Amazon. Soit le masquer dans l'app native (réponse « Non »), soit répondre « Oui ». Les liens d'affiliation seuls ne sont pas des annonces. |
-| Public cible | 18 ans et plus (paris sportifs masqués dans l'app native mais contenus voyage/argent destinés aux adultes). |
+| Public cible | **Recommandé : 13 ans et plus (public général), ne pas cocher les tranches sous 13 ans.** Les jeux, histoires et dessins animés sont présentés « pour toute la famille, sous la responsabilité d'un adulte » (politique §9). Le choix final se fait dans la Play Console : cocher une tranche sous 13 ans impose la politique « Familles » (pas de publicité non certifiée, limites sur la localisation et l'IA), incompatible avec Hadak, la localisation et le bandeau livre. |
+| Contenu généré par IA | **À déclarer.** Les histoires audio, voix, images, musiques et traductions des feuilletons sont fabriquées avec l'aide de l'intelligence artificielle ; Hadak génère aussi des réponses. Mention déjà présente sur Hadak ; l'ajouter à la fiche (voir `listing.md`). |
+| Questionnaire de classification (IARC) | Réponses prévues : pas de violence réaliste, pas de contenu sexuel, pas de langage grossier, pas de jeu d'argent réel dans l'app native, pas d'achat dans l'app. Les feuilletons contiennent des thèmes émotionnels (deuil, séparation, maladie) sans scène choquante : le dire honnêtement, la note finale est attribuée par le questionnaire, pas par nous. |
 | Accès à l'application | Aucune connexion requise : « Toutes les fonctionnalités sont disponibles sans restriction ». |
 | Application d'actualités | Non (le fil d'actualités est un complément). |
 | Applications financières | Non (comparateur de transfert d'argent avec liens externes, pas de service financier). |
