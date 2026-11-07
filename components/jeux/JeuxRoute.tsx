@@ -35,7 +35,7 @@ export default function JeuxRoute() {
                 {j.emoji}
               </span>
               <span>
-                <span className="flex items-center gap-2 text-xl font-black text-[#0f1f3d]">
+                <span className="flex flex-wrap items-center gap-x-2 text-xl font-black text-[#0f1f3d]">
                   {j.nom}
                   {'nouveau' in j && j.nouveau && <span className="rounded-full bg-violet-600 px-2 py-0.5 text-xs font-black uppercase tracking-wide text-white">Nouveau</span>}
                 </span>

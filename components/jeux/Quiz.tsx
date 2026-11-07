@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { battre, charger, enregistrer } from '@/lib/jeux/records';
 import { aRepondu, etoiles, nouvellePartie, repondre, suivante, termine, type Niveau, type Partie } from '@/lib/jeux/quiz';
 
@@ -19,7 +19,11 @@ export default function Quiz() {
   // Le hasard seulement dans le navigateur, pour un affichage serveur stable.
   useEffect(() => { setPartie(nouvellePartie(niveau)); setRecord({ valeur: charger()[`quiz-${niveau}`], nouveau: false }); }, [niveau]);
 
+  const retour = useRef<HTMLDivElement>(null);
   const fini = !!partie && termine(partie);
+  const repondu = !!partie && aRepondu(partie);
+  // Sur téléphone, la bonne réponse et le bouton « suivante » sont sous les propositions : on les amène à l'écran.
+  useEffect(() => { if (repondu) retour.current?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' }); }, [repondu]);
   useEffect(() => {
     if (!partie || !fini) return;
     const { records, nouveau } = battre(charger(), `quiz-${partie.niveau}`, partie.score);
@@ -50,7 +54,6 @@ export default function Quiz() {
   }
 
   const question = partie.questions[partie.index];
-  const repondu = aRepondu(partie);
   const choix = partie.choix[partie.index];
 
   return (
@@ -92,7 +95,7 @@ export default function Quiz() {
       </ul>
 
       {repondu && (
-        <div role="status" className="mt-3">
+        <div ref={retour} role="status" className="mt-3 scroll-mb-4">
           <p className="font-black text-[#0f1f3d]">{choix === question.bonne ? 'Bonne réponse ! 🎉' : `La bonne réponse : ${question.options[question.bonne]}`}</p>
           <button type="button" onClick={() => setPartie((p) => (p ? suivante(p) : p))} className="mt-2 min-h-12 w-full rounded-full bg-[#0f1f3d] px-6 font-bold text-white">
             {partie.index + 1 === total ? 'Voir mon score' : 'Question suivante →'}

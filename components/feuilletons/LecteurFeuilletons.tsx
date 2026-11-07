@@ -5,6 +5,8 @@ import { episodesDe, seriesDisponibles, type EpisodeAudio } from '@/lib/feuillet
 import { ErreurTelechargement, estTelecharge, formaterDuree, formaterTaille, lireLocal, repliqueActive, supprimer, telecharger } from '@/lib/feuilletons/horsLigne';
 
 interface Replique { debut: number; fin: number; qui: string; texte: string }
+type Langue = 'fr' | 'en' | 'es' | 'nl';
+const LANGUES: { id: Langue; nom: string }[] = [{ id: 'fr', nom: 'Français' }, { id: 'en', nom: 'English' }, { id: 'es', nom: 'Español' }, { id: 'nl', nom: 'Nederlands' }];
 const VITESSES = [0.85, 1, 1.25];
 const cle = (e: EpisodeAudio) => `${e.serie}-${e.numero}`;
 
@@ -43,6 +45,8 @@ export default function LecteurFeuilletons() {
   const [enLigne, setEnLigne] = useState(true);
   const [actif, setActif] = useState<EpisodeAudio | null>(null);
   const [repliques, setRepliques] = useState<Replique[]>([]);
+  const [traductions, setTraductions] = useState<Partial<Record<Langue, string[]>> | null>(null);
+  const [langue, setLangue] = useState<Langue>('fr');
   const [temps, setTemps] = useState(0);
   const [vitesse, setVitesse] = useState(1);
   const [message, setMessage] = useState('Touche « Télécharger » avant le départ : l’épisode marchera dans la voiture, sans réseau.');
@@ -69,6 +73,8 @@ export default function LecteurFeuilletons() {
 
   const telechargerEp = useCallback(async (e: EpisodeAudio) => {
     setErreur(null);
+    // Demande au navigateur de ne pas effacer les épisodes quand le téléphone manque de place (sans effet s'il refuse).
+    await navigator.storage?.persist?.().catch(() => false);
     const c = new AbortController();
     controleurs.current[cle(e)] = c;
     setProgression((p) => ({ ...p, [cle(e)]: 0 }));
@@ -97,11 +103,13 @@ export default function LecteurFeuilletons() {
     if (urlLocale.current) { URL.revokeObjectURL(urlLocale.current); urlLocale.current = null; }
     let source = e.fichier;
     if (local) { urlLocale.current = URL.createObjectURL(local); source = urlLocale.current; }
-    setActif(e); setRepliques([]); setTemps(0);
+    setActif(e); setRepliques([]); setTraductions(null); setLangue('fr'); setTemps(0);
     try {
       const texteLocal = local ? await lireLocal(e.texte) : null;
       const reponse = texteLocal ? new Response(texteLocal) : await fetch(e.texte);
-      setRepliques((await reponse.json()).repliques ?? []);
+      const donnees = await reponse.json();
+      setRepliques(donnees.repliques ?? []);
+      setTraductions(donnees.traductions ?? null);
     } catch { /* sans texte on écoute quand même */ }
     const a = audio.current; if (!a) return;
     a.src = source; a.playbackRate = vitesse;
@@ -132,13 +140,22 @@ export default function LecteurFeuilletons() {
           <button type="button" onClick={() => aller(temps + 15)} className="rounded-xl bg-slate-100 px-3 py-2">+15 s</button>
           <button type="button" onClick={changerVitesse} className="rounded-xl bg-slate-100 px-3 py-2" aria-label={`Vitesse ${vitesse}`}>{vitesse}×</button>
         </div>
+        {traductions && (
+          <div className="mt-2 flex flex-wrap items-center gap-1 text-xs font-bold" role="group" aria-label="Langue du texte">
+            {LANGUES.filter((l) => l.id === 'fr' || traductions[l.id]).map((l) => (
+              <button key={l.id} type="button" onClick={() => setLangue(l.id)} aria-pressed={langue === l.id}
+                className={`rounded-full px-3 py-1 ${langue === l.id ? 'bg-[#0f1f3d] text-white' : 'bg-slate-100'}`}>{l.nom}</button>
+            ))}
+            {langue !== 'fr' && <span className="basis-full text-slate-500">Traduction automatique, pas encore relue. La voix reste en français.</span>}
+          </div>
+        )}
         {repliques.length > 0 && (
           <ol className="mt-2 max-h-32 space-y-1 overflow-y-auto" aria-label="Texte de l’épisode">
             {repliques.map((r, i) => (
               <li key={i}>
                 <button type="button" onClick={() => aller(r.debut)} aria-current={i === courante}
                   className={`w-full rounded-lg px-2 py-1 text-left text-sm ${i === courante ? 'bg-amber-100 font-bold' : 'text-slate-600'}`}>
-                  {r.qui && <span className="font-black">{r.qui} : </span>}{r.texte}
+                  {r.qui && <span className="font-black">{r.qui} : </span>}{langue === 'fr' ? r.texte : traductions?.[langue]?.[i] ?? r.texte}
                 </button>
               </li>
             ))}

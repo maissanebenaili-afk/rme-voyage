@@ -92,3 +92,15 @@ describe('fichiers publiés', () => {
     expect(NOM_CACHE.startsWith('rme-voyage-')).toBe(false); // le nettoyage du service worker ne doit jamais supprimer les épisodes téléchargés
   });
 });
+
+describe('traductions du texte', () => {
+  it('chaque traduction a autant de lignes que de répliques, sans ligne vide', () => {
+    const d = JSON.parse(readFileSync(resolve(process.cwd(), 'public/feuilletons/atlas-01.json'), 'utf8'));
+    expect(Object.keys(d.traductions).sort()).toEqual(['en', 'es', 'nl']);
+    for (const lignes of Object.values(d.traductions) as string[][]) {
+      expect(lignes).toHaveLength(d.repliques.length);
+      lignes.forEach((l) => expect(l.trim().length).toBeGreaterThan(5));
+    }
+    expect(d.traductionsNote).toMatch(/non relue/);
+  });
+});
