@@ -60,7 +60,8 @@ function controle(n) {
   const vv = JSON.parse(lire('v:0', 'width,height,duration')).streams[0], aa = JSON.parse(lire('a:0', 'duration')).streams[0];
   const dv = Number(vv.duration), da = Number(aa.duration);
   note(vv.width === 1080 && vv.height === 1920, `format ${vv.width}×${vv.height} (vertical 1080×1920 attendu)`);
-  note(dv > 150 && dv < 270, `durée ${dv.toFixed(1)} s (entre 2 min 30 et 4 min 30 attendu)`);
+  const [dMin, dMax] = SERIE?.duree ?? [150, 270];
+  note(dv > dMin && dv < dMax, `durée ${dv.toFixed(1)} s (entre ${dMin} s et ${dMax} s attendu)`);
   note(Math.abs(dv - da) < 0.3, `image ${dv.toFixed(2)} s / son ${da.toFixed(2)} s (écart ${Math.abs(dv - da).toFixed(2)} s)`);
 
   const vol = spawnSync('ffmpeg', ['-i', video, '-af', 'volumedetect', '-f', 'null', '-'], { encoding: 'utf8' }).stderr;

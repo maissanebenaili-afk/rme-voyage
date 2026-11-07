@@ -203,6 +203,18 @@
       // lanternes
       for (let i = 0; i < 5; i++) { const x = 120 + i * 220, y = 330 + Math.sin(t * 1.3 + i) * 10; ctx.strokeStyle = '#6b4a2a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, y); ctx.stroke(); glow(x, y + 30, 120, 'rgba(255,200,110,0.8)', 0.7 + 0.2 * Math.sin(t * 4 + i)); ctx.fillStyle = '#ffd88a'; ctx.beginPath(); ctx.ellipse(x, y + 30, 22, 34, 0, 0, TAU); ctx.fill(); }
     },
+    // la rue la nuit, un lampadaire seul, un cône de lumière sur le sol (nokta « La clé »)
+    lampadaire(t) {
+      ctx.fillStyle = lin(0, 0, 0, H, [[0, '#0f1736'], [0.5, '#2a2f5e'], [1, '#1c1a2a']]); ctx.fillRect(0, 0, W, H);
+      const r = rng(7); for (let i = 0; i < 60; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.6 * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.fillRect(r() * W, r() * 700, 3, 3); }
+      ctx.fillStyle = '#3a3052'; for (let i = 0; i < 5; i++) { const x = i * 230 - 40, h = 420 + (i % 3) * 120; ctx.fillRect(x, 1250 - h, 210, h); ctx.fillStyle = '#ffd88a'; ctx.fillRect(x + 50, 1250 - h + 90, 34, 46); ctx.fillStyle = '#3a3052'; }
+      ctx.fillStyle = '#1b1722'; ctx.fillRect(0, 1250, W, 670);
+      ctx.fillStyle = '#26232f'; ctx.fillRect(W * 0.18 - 14, 560, 28, 700); ctx.beginPath(); ctx.arc(W * 0.18, 560, 36, 0, TAU); ctx.fill();
+      const flick = 0.85 + 0.1 * Math.sin(t * 9) + 0.05 * Math.sin(t * 23);
+      glow(W * 0.18, 560, 560, 'rgba(255,214,120,0.95)', 0.9 * flick);
+      ctx.fillStyle = 'rgba(255,214,120,0.18)'; ctx.beginPath(); ctx.moveTo(W * 0.18 - 30, 590); ctx.lineTo(W * 0.18 + 30, 590); ctx.lineTo(W * 0.18 + 520, 1500); ctx.lineTo(W * 0.18 - 520, 1500); ctx.closePath(); ctx.fill();
+      poussieresChaudes(t);
+    },
     feu(t) {
       ctx.fillStyle = lin(0, 0, 0, H, [[0, '#120404'], [0.5, '#6a1604'], [1, '#d65a0e']]); ctx.fillRect(0, 0, W, H);
       glow(W / 2, 1500, 1000, 'rgba(255,150,40,0.8)', 0.85 + 0.15 * Math.sin(t * 9));
@@ -277,6 +289,10 @@
     reda: { peau: '#d4a37c', ombre: '#b4835e', cheveux: '#1d1411', reflet: '#4a352c', oeil: '#3a2a1f', haut: '#2b3f73', haut2: '#fff', style: 'court' },
     idriss: { peau: '#b97d56', ombre: '#98603f', cheveux: '#110c0b', reflet: '#3a2a26', oeil: '#2b1a0e', haut: '#4a7a8c', haut2: '#d9a441', style: 'ebouriffe', cicatriceMenton: true },
     rkia: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#222', reflet: '#444', oeil: '#4a2f1a', haut: '#7a3b55', haut2: '#d4a3b6', style: 'voile', voile: '#7a3b55', rides: 1 },
+    // « Les Noktas de Joha » : le sage-farceur, son voisin, un hôte
+    joha: { peau: '#c9976d', ombre: '#a97750', cheveux: '#e9e6df', reflet: '#fff', oeil: '#3a2616', haut: '#7a8f5a', haut2: '#efe4c8', style: 'turban', voile: '#f4eee0', bord: '#c9a24a', barbe: '#e6e2d8', rides: 1, epaule: 1.9 },
+    voisin: { peau: '#b98760', ombre: '#966a47', cheveux: '#2a1c14', reflet: '#5a4036', oeil: '#2e1a0c', haut: '#b5543c', haut2: '#f0dcc0', style: 'court', barbe: '#2a1c14', epaule: 1.9 },
+    hote: { peau: '#c4916a', ombre: '#a3714b', cheveux: '#e0ddd5', reflet: '#fff', oeil: '#3a2616', haut: '#2f5d8a', haut2: '#e8c872', style: 'turban', voile: '#2f5d8a', bord: '#e8c872', barbe: '#c9c5bc', rides: 2, epaule: 1.9 },
     kenza: { peau: '#e0b896', ombre: '#c0976f', cheveux: '#ddd', reflet: '#fff', oeil: '#3b4a5a', haut: '#6e1d3a', haut2: '#caa24a', style: 'voile', voile: '#efe7d6', bord: '#caa24a', rides: 2, perles: true },
   };
 
@@ -388,6 +404,10 @@
       ctx.beginPath(); ctx.moveTo(-0.84 * R, -0.05 * R); ctx.bezierCurveTo(-0.9 * R, -1.1 * R, 0.9 * R, -1.1 * R, 0.84 * R, -0.05 * R);
       ctx.bezierCurveTo(0.6 * R, -0.5 * R, -0.6 * R, -0.5 * R, -0.84 * R, -0.05 * R); ctx.fill();
       ctx.fillStyle = '#e0457b'; for (const sg of [-1, 1]) { ctx.beginPath(); ctx.arc(sg * 0.55 * R, -0.78 * R, 0.1 * R, 0, TAU); ctx.fill(); }
+    } else if (L.style === 'turban') {
+      ctx.fillStyle = L.voile; ctx.beginPath(); ctx.moveTo(-0.9 * R, -0.18 * R); ctx.bezierCurveTo(-1.0 * R, -1.25 * R, 1.0 * R, -1.25 * R, 0.9 * R, -0.18 * R);
+      ctx.bezierCurveTo(0.7 * R, -0.5 * R, -0.7 * R, -0.5 * R, -0.9 * R, -0.18 * R); ctx.fill();
+      ctx.strokeStyle = L.bord || 'rgba(0,0,0,0.25)'; ctx.lineWidth = 0.035 * R; for (const k of [0, 1, 2]) { ctx.beginPath(); ctx.moveTo(-0.9 * R + k * 0.06 * R, -0.22 * R - k * 0.2 * R); ctx.quadraticCurveTo(0, -0.7 * R - k * 0.22 * R, 0.9 * R - k * 0.06 * R, -0.22 * R - k * 0.2 * R + k * 0.12 * R); ctx.stroke(); }
     } else if (L.style === 'voile') {
       ctx.fillStyle = L.voile; ctx.beginPath(); ctx.moveTo(-0.86 * R, 0.25 * R); ctx.bezierCurveTo(-0.95 * R, -1.15 * R, 0.95 * R, -1.15 * R, 0.86 * R, 0.25 * R);
       ctx.bezierCurveTo(0.84 * R, -0.3 * R, 0.55 * R, -0.62 * R, 0, -0.66 * R); ctx.bezierCurveTo(-0.55 * R, -0.62 * R, -0.84 * R, -0.3 * R, -0.86 * R, 0.25 * R); ctx.fill();
@@ -485,6 +505,11 @@
     if (L.cicatriceMenton) { ctx.strokeStyle = '#8f4a3a'; ctx.lineWidth = 0.035 * R; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(0.2 * R, 0.78 * R); ctx.lineTo(0.38 * R, 0.9 * R); ctx.stroke(); }
     if (L.rides) { ctx.strokeStyle = 'rgba(90,50,30,0.35)'; ctx.lineWidth = 0.018 * R; for (let k = 0; k < 2 + L.rides; k++) { ctx.beginPath(); ctx.moveTo(-0.5 * R, -0.1 * R + k * 0.06 * R); ctx.quadraticCurveTo(-0.3 * R, -0.14 * R + k * 0.06 * R, -0.12 * R, -0.1 * R + k * 0.06 * R); ctx.stroke(); } }
     if (L.lunettes) { ctx.strokeStyle = '#1b1b1b'; ctx.lineWidth = 0.045 * R; for (const sg of [-1, 1]) { ctx.beginPath(); ctx.ellipse(sg * 0.38 * R, 0.1 * R, 0.3 * R, 0.29 * R, 0, 0, TAU); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(-0.08 * R, 0.08 * R); ctx.lineTo(0.08 * R, 0.08 * R); ctx.stroke(); }
+    if (L.barbe) { // barbe : joues basses et menton, moustache ; la bouche se dessine par-dessus
+      ctx.save(); ovale(R); ctx.clip(); ctx.fillStyle = L.barbe;
+      ctx.beginPath(); ctx.moveTo(-0.84 * R, 0.22 * R); ctx.quadraticCurveTo(-0.72 * R, 0.52 * R, -0.34 * R, 0.64 * R); ctx.quadraticCurveTo(0, 0.82 * R, 0.34 * R, 0.64 * R); ctx.quadraticCurveTo(0.72 * R, 0.52 * R, 0.84 * R, 0.22 * R); ctx.lineTo(0.9 * R, 1.2 * R); ctx.lineTo(-0.9 * R, 1.2 * R); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
     bouche(R, P, talk);
     if (P.pleure > 0.4) {
       for (const sg of [-1, 1]) {

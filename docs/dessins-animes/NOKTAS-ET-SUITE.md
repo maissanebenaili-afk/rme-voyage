@@ -1,4 +1,7 @@
-# Prêt à produire : 3 noktas de Joha + épisode 2 de l'Atlas
+# 3 noktas de Joha (fabriquées) + épisode 2 de l'Atlas (à produire)
+
+**État (7 nov. 2026)** : les 3 noktas sont fabriquées (32 s, 48 s, 35 s), synchro mesurée à 0,01 s, tous les contrôles passent. Fichiers dans `videos-noktas/` (hors git). **Coût réel mesuré : environ 0,0015 $ par réplique**, soit environ 0,03 $ pour les 3 noktas. Il reste de quoi en faire des centaines. Pas encore écoutées par une personne ; darija à faire relire.
+Commande : `SERIE=nokta node scripts/ados/fabriquer.mjs 1 2 3` (voix dans `videos-noktas/voix/epN/`).
 
 Textes originaux, réécrits avec nos mots à partir d'anecdotes populaires très anciennes. Durée visée : 45 secondes chacune. Les mots de darija sont à faire relire. Style d'image conseillé : « papier » (théâtre d'ombres).
 

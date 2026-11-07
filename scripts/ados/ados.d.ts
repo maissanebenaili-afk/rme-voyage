@@ -49,3 +49,14 @@ declare module '*/scripts/ados/musique-atlas.mjs' {
   export const PROFILS: Record<string, Record<string, number>>;
   export function composerFondAtlas(total: number, points: number[][], impacts?: number[], themes?: [number, number, string, string?][]): Float32Array[];
 }
+
+declare module '*/scripts/ados/histoire-nokta.mjs' {
+  export interface PersoEcran { id: string; x: number; emo: string }
+  export interface Plan { bg: string; parle?: string; ton?: string; texte?: string; persos: PersoEcran[]; theme?: string; cam?: string }
+  export interface Episode { numero: number; titre: string; demain: string; question: string; plans: Plan[] }
+  export const SERIE: { titre: string; etiquette: string; dossier: string; style: string; duree: [number, number] };
+  export const PERSOS: Record<string, { nom: string; voix: string; hauteur: number }>;
+  export const EPISODES: Episode[];
+  export function avecVoix(plan: Plan): boolean;
+  export function texteParle(plan: Plan): string;
+}
