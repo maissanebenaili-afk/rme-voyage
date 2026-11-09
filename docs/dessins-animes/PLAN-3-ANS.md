@@ -3,7 +3,7 @@
 Ce plan ne promet aucun revenu. Personne ne peut garantir qu'une série plaise ou rapporte. Il sert à **tester vite, mesurer, garder ce qui marche, arrêter le reste**, avec très peu d'argent. (« Quantique », ici, veut dire : tester plusieurs pistes en parallèle et garder la meilleure, pas de magie.)
 
 ## Les moyens réels aujourd'hui (7 nov. 2026)
-- Crédits de voix : environ 6,1 $ (Speko). **Mesuré : ~0,0015 $ par réplique**, donc une nokta coûte moins de 0,02 $ et un épisode de 4 minutes environ 0,05 $. Les voix ne sont pas le problème ; le vrai coût est le temps de relecture et de publication.
+- Crédits de voix (Speko) : 6,18 $ le 7 nov., **5,24 $ le 9 nov.** **Mesuré sur 164 répliques fabriquées : 0,94 $, soit environ 0,006 $ la réplique** (la voix de narration coûte plus que celles des personnages ; une première mesure sur une seule phrase courte donnait 0,0015 $, c'était 4 fois trop bas). Donc : une nokta ≈ 0,04 $, un épisode de l'Atlas ≈ 0,09 $, et il reste de quoi faire environ 900 répliques. Les voix ne sont pas le vrai problème ; le vrai coût est le temps de relecture et de publication.
 - vidIQ : 80 crédits, renouvelés en partie le 15 nov.
 - Tout le reste est gratuit : moteur d'animation, musique composée par code, portail RME Voyage, hébergement.
 - Une seule personne pour décider, publier, relire la darija. **C'est le vrai goulot : on produit moins mais mieux.**
