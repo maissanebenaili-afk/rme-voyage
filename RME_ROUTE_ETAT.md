@@ -533,3 +533,17 @@ changement (géocodage, CSP, service worker, documentation).
 
 À la demande du propriétaire, les pages `/marwa-caftan` et `/afarah-nassim`, le widget caftans, les liens d'accueil, les entrées du plan du site, de l'annuaire Services Pro et de `lib/listings.ts` sont supprimés. Les anciens liens renvoient vers `/boutique` (redirections 301 dans `netlify.toml`). Les paragraphes plus haut sur ces deux commerces sont l'historique.
 Prochaine étape : des établissements de plus grande taille, avec accord écrit (voir `docs/PROSPECTION.md`).
+
+## 2026-11-09 : page « Quand partir ? » (calendrier des jours calmes)
+
+Nouvelle page `/quand-partir` : calendrier mois par mois de l'affluence prévue
+pour la traversée (calme / chargé / très chargé), détail d'un jour, jour plus
+calme le plus proche, lien WhatsApp qui rouvre ce jour (`?jour=AAAA-MM-JJ`).
+Aucune donnée nouvelle : tout vient de `lib/crossingPressure.ts` (calendrier
+seul, jamais du direct), via `lib/departureCalendar.ts`. La page le dit, et
+prévient quand les Aïd de l'année ne sont pas encore annoncés. Ajoutée au
+sitemap et liée depuis `/trajet`.
+
+Vérifié : `tsc` 0 erreur, `eslint` 0 erreur, `jest` 1361/1361 (16 tests
+ajoutés). `next build` non vérifiable dans le bac à sable de la session
+(Google Fonts injoignable) : à confirmer par la CI.
