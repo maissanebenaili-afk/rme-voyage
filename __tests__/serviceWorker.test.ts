@@ -41,7 +41,7 @@ describe('Offline service worker boundaries', () => {
   });
   it('keeps the code, images and fonts a precached page needs, so one online visit is enough', async () => {
     const html = '<link rel="stylesheet" href="/_next/static/chunks/a1.css"><script src="/_next/static/chunks/jeu-9x.js"></script>'
-      + '<img src="/coloriages/apercu-fanous-1.png"><a href="/api/affiliates.js">x</a><script src="https://ailleurs.example/x.js"></script>';
+      + '<img src="/coloriages/apercu-fanous-1.png"><a href="/coloriages/echantillon.pdf">pdf</a><a href="/api/affiliates.js">x</a><script src="https://ailleurs.example/x.js"></script>';
     fetchMock.mockImplementation((url: string) => Promise.resolve(
       url === '/jeux' ? new Response(html, { headers: { 'content-type': 'text/html' } })
         : url === '/_next/static/chunks/a1.css' ? new Response('@font-face{src:url(/_next/static/media/police.p.woff2)}')
@@ -53,7 +53,7 @@ describe('Offline service worker boundaries', () => {
     expect(kept).toEqual(expect.arrayContaining([
       '/jeux', '/coloriages', '/kit-retour', '/quand-partir',
       '/_next/static/chunks/a1.css', '/_next/static/chunks/jeu-9x.js',
-      '/coloriages/apercu-fanous-1.png', '/_next/static/media/police.p.woff2',
+      '/coloriages/apercu-fanous-1.png', '/coloriages/echantillon.pdf', '/_next/static/media/police.p.woff2',
     ]));
     expect(kept.some((key) => String(key).includes('/api/') || String(key).includes('ailleurs'))).toBe(false);
     expect(kept.filter((key) => key === '/_next/static/chunks/jeu-9x.js')).toHaveLength(1);

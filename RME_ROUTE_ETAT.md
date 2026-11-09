@@ -556,7 +556,7 @@ sans son code), `/coloriages` et `/kit-retour` tombaient sur « Hors ligne ».
 
 Correctif dans `public/sw.js` (cache `v5`) :
 - à l'installation, chaque page gardée l'est avec les fichiers qu'elle cite
-  (scripts, styles, images des coloriages) et les polices de ses styles ;
+  (scripts, styles, images et PDF des coloriages) et les polices de ses styles ;
 - pages ajoutées : `/coloriages`, `/kit-retour`, `/modeles`, `/quand-partir` ;
 - un lien partagé avec paramètres (`?jour=…`) rouvre la page gardée hors ligne.
 

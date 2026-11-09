@@ -13,7 +13,7 @@ const PUBLIC_PAGES = ['/', '/guide', '/decouvrir', '/telecharger', '/jeux', '/de
 // Fichiers locaux gardés pour le hors-ligne (code des pages, images des coloriages, voix).
 const STATIC_PREFIXES = ['/_next/static/', '/coloriages/', '/kalimat/voix/'];
 // Ce qu'une page ou une feuille de style précachée demande pour fonctionner.
-const LINKED_STATIC = /\/(?:_next\/static|coloriages)\/[A-Za-z0-9_\-.~%\/[\]()@]+\.(?:js|css|woff2|png|jpg|jpeg|webp|svg)/g;
+const LINKED_STATIC = /\/(?:_next\/static|coloriages)\/[A-Za-z0-9_\-.~%\/[\]()@]+\.(?:js|css|woff2|png|jpg|jpeg|webp|svg|pdf)/g;
 const PRECACHE = [OFFLINE, '/manifest.webmanifest', '/icon-192.svg', '/icon-512.svg', '/icons/icon-192.png'];
 
 async function precache(cacheName, paths) {
