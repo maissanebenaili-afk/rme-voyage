@@ -32,6 +32,10 @@ export default function TrajetIndexPage() {
             <Link href="/#planifier" className="underline">
               Calculez-le directement
             </Link>
+            . Pas encore de date ?{' '}
+            <Link href="/quand-partir" className="underline">
+              Voir les jours calmes
+            </Link>
             .
           </p>
         </div>
