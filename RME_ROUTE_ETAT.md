@@ -547,3 +547,20 @@ sitemap et liée depuis `/trajet`.
 Vérifié : `tsc` 0 erreur, `eslint` 0 erreur, `jest` 1361/1361 (16 tests
 ajoutés). `next build` non vérifiable dans le bac à sable de la session
 (Google Fonts injoignable) : à confirmer par la CI.
+
+## 2026-11-10 : hors-ligne complet après une seule visite
+
+Constat (vrai navigateur, `next start`, une visite de l'accueil puis réseau
+coupé) : `/jeux` s'affichait mais ne réagissait plus aux clics (page gardée
+sans son code), `/coloriages` et `/kit-retour` tombaient sur « Hors ligne ».
+
+Correctif dans `public/sw.js` (cache `v5`) :
+- à l'installation, chaque page gardée l'est avec les fichiers qu'elle cite
+  (scripts, styles, images des coloriages) et les polices de ses styles ;
+- pages ajoutées : `/coloriages`, `/kit-retour`, `/modeles`, `/quand-partir` ;
+- un lien partagé avec paramètres (`?jour=…`) rouvre la page gardée hors ligne.
+
+Même essai après correctif : les jeux réagissent, les 9 images de coloriage
+s'affichent, le kit papiers et le calendrier s'ouvrent, le retour à l'accueil
+marche. Reste hors périmètre : police General Sans (externe, repli système),
+feuilletons audio (téléchargement volontaire, inchangé).
