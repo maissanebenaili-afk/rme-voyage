@@ -403,7 +403,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
             crossing={routeStatus === "ready" ? routeInfo?.ferry : undefined}
           />
           <Link
-            href={date ? `/quand-partir?jour=${date}` : "/quand-partir"}
+            href={/^\d{4}-\d{2}-\d{2}$/.test(date) ? `/quand-partir?jour=${encodeURIComponent(date)}` : "/quand-partir"}
             className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-[#0f1f3d] px-4 text-base font-bold text-white"
           >
             {h.calmDaysLink}
