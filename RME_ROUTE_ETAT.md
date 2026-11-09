@@ -544,6 +544,6 @@ seul, jamais du direct), via `lib/departureCalendar.ts`. La page le dit, et
 prévient quand les Aïd de l'année ne sont pas encore annoncés. Ajoutée au
 sitemap et liée depuis `/trajet`.
 
-Vérifié : `tsc` 0 erreur, `eslint` 0 erreur, `jest` 1360/1360 (15 tests
+Vérifié : `tsc` 0 erreur, `eslint` 0 erreur, `jest` 1361/1361 (16 tests
 ajoutés). `next build` non vérifiable dans le bac à sable de la session
 (Google Fonts injoignable) : à confirmer par la CI.

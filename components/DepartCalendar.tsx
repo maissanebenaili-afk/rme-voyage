@@ -24,6 +24,8 @@ const longDate = (iso: string) =>
 const monthTitle = ({ year, month }: YearMonth) =>
   new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, 1)));
 
+const CALMER_SEARCH_DAYS = 45;
+
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 function validDay(value: string | null): string | null {
@@ -50,7 +52,9 @@ export default function DepartCalendar({ initial }: { initial: YearMonth }) {
   const days = monthDays(shown);
   const counts = countByLevel(days);
   const picked = selected ? days.find((d) => d.iso === selected) ?? null : null;
-  const calmer = picked ? nearestCalmerDay(picked.iso) : null;
+  // 45 jours : assez pour qu'un jour d'été trouve toujours mieux (au pire le
+  // 14 juillet → 4 juin, 40 jours). Avec 14 jours, le cœur de saison n'avait rien.
+  const calmer = picked ? nearestCalmerDay(picked.iso, CALMER_SEARCH_DAYS) : null;
 
   function open(iso: string) {
     setSelected(iso);

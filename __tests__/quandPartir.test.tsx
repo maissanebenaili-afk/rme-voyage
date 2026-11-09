@@ -26,6 +26,16 @@ describe('Calendrier « Quand partir »', () => {
     expect(screen.getByRole('heading', { name: 'mercredi 14 juillet 2027' })).toBeInTheDocument()
   })
 
+  it('still proposes a calmer day in the middle of the season, when it is weeks away', () => {
+    render(<DepartCalendar initial={{ year: 2027, month: 8 }} />)
+    fireEvent.click(screen.getByRole('button', { name: 'jeudi 5 août 2027 : Très chargé' }))
+    expect(screen.getByRole('button', { name: 'jeudi 26 août 2027' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mois précédent' }))
+    fireEvent.click(screen.getByRole('button', { name: 'mercredi 14 juillet 2027 : Chargé' }))
+    expect(screen.getByRole('button', { name: 'vendredi 4 juin 2027' })).toBeInTheDocument()
+  })
+
   it('moves across months and years', () => {
     render(<DepartCalendar initial={{ year: 2026, month: 12 }} />)
     fireEvent.click(screen.getByRole('button', { name: 'Mois suivant' }))
