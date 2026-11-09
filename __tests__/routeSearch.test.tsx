@@ -85,6 +85,14 @@ describe('RouteSearch', () => {
     expect(screen.getByRole('button', { name: /Partager mon trajet/i })).toBeDisabled()
   })
 
+  it('links to the calm-days calendar, opened on the chosen date when there is one', () => {
+    render(<RouteSearch />)
+    const link = screen.getByRole('link', { name: /Voir les jours calmes/ })
+    expect(link).toHaveAttribute('href', '/quand-partir')
+    fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2031-07-10' } })
+    expect(link).toHaveAttribute('href', '/quand-partir?jour=2031-07-10')
+  })
+
   it('validates that the date is not in the past', () => {
     render(<RouteSearch />)
     const dateInput = screen.getByLabelText('Date')
