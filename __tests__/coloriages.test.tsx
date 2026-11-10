@@ -2,7 +2,8 @@ import { existsSync, readFileSync } from 'fs'
 import { render, screen } from '@testing-library/react'
 import ColoriagesPage from '../app/coloriages/page'
 import { PAGES, svgPage, rosace, zellige, hasard } from '../scripts/coloriages/pages.mjs'
-import { BOUTIQUES, LIVRE, boutiquesActives, lienValide } from '../lib/coloriages'
+import { PAGES_PERSO } from '../scripts/coloriages/personnages.mjs'
+import { BOUTIQUES, BOUTIQUES_PAR_LIVRE, LIVRE, LIVRES, boutiquesActives, lienValide } from '../lib/coloriages'
 
 describe('Coloriages du Maroc : les dessins', () => {
   it('compte au moins 24 dessins (minimum d’un livre broché) aux identifiants uniques', () => {
@@ -34,16 +35,42 @@ describe('Coloriages du Maroc : les dessins', () => {
   })
 })
 
+describe('Coloriages de Nour, Joha et la fée : les dessins', () => {
+  it('compte 25 dessins aux identifiants et titres uniques, tous différents', () => {
+    expect(PAGES_PERSO).toHaveLength(25)
+    expect(new Set(PAGES_PERSO.map((p) => p.id)).size).toBe(25)
+    expect(new Set(PAGES_PERSO.map((p) => p.titre)).size).toBe(25)
+    const corps = PAGES_PERSO.map((p) => p.dessin())
+    expect(new Set(corps).size).toBe(25)
+  })
+  it('produit des SVG valides dans la page 850 × 1100, avec la marque du livre', () => {
+    PAGES_PERSO.forEach((p, i) => {
+      const svg = svgPage(p, i + 3, 'Nour, Joha et la fée')
+      expect(svg).toContain('viewBox="0 0 850 1100"')
+      expect(svg).toContain('Nour, Joha et la fée · ')
+      expect(svg).not.toContain('NaN')
+      expect(svg).not.toContain('undefined')
+      expect(svg.match(/<svg/g)).toHaveLength(1)
+    })
+  })
+  it('garde le décor du livre 1 inchangé par défaut', () => {
+    expect(svgPage(PAGES[0], 3)).toContain('Coloriages du Maroc · 3')
+  })
+})
+
 describe('Coloriages du Maroc : fichiers et boutiques', () => {
   it('publie un échantillon PDF valide et des aperçus', () => {
-    const pdf = readFileSync(`public${LIVRE.echantillon}`)
-    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
-    expect(pdf.length).toBeLessThan(500_000)
-    for (const { id } of LIVRE.apercus) expect(existsSync(`public/coloriages/apercu-${id}.png`)).toBe(true)
-    expect(existsSync(`public${LIVRE.couverture}`)).toBe(true)
+    for (const livre of LIVRES) {
+      const pdf = readFileSync(`public${livre.echantillon}`)
+      expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+      expect(pdf.length).toBeLessThan(500_000)
+      for (const { id } of livre.apercus) expect(existsSync(`public/coloriages/${livre.prefixe}${id}.png`)).toBe(true)
+      expect(existsSync(`public${livre.couverture}`)).toBe(true)
+    }
   })
   it('n’affiche aucun lien tant que le livre n’est pas publié', () => {
     expect(boutiquesActives()).toEqual([])
+    for (const livre of LIVRES) expect(boutiquesActives(BOUTIQUES_PAR_LIVRE[livre.id])).toEqual([])
     expect(BOUTIQUES.every((b) => b.url === '' || lienValide(b.url))).toBe(true)
   })
   it('n’accepte que des liens https vers des boutiques connues', () => {
@@ -59,12 +86,15 @@ describe('Coloriages du Maroc : fichiers et boutiques', () => {
 })
 
 describe('page /coloriages', () => {
-  it('propose l’échantillon gratuit et dit honnêtement que le livre arrive bientôt', () => {
+  it('propose l’échantillon gratuit de chaque livre et dit honnêtement qu’ils arrivent bientôt', () => {
     render(<ColoriagesPage />)
-    expect(screen.getByRole('heading', { level: 1, name: /Coloriages du Maroc/ })).toBeInTheDocument()
-    const lien = screen.getByRole('link', { name: /Télécharger le PDF gratuit/ })
-    expect(lien).toHaveAttribute('href', LIVRE.echantillon)
-    expect(screen.getByRole('status')).toHaveTextContent(/Bientôt disponible/)
-    expect(screen.getAllByRole('img').length).toBeGreaterThanOrEqual(LIVRE.apercus.length)
+    expect(screen.getByRole('heading', { level: 1, name: /Livres de coloriage/ })).toBeInTheDocument()
+    for (const livre of LIVRES) {
+      expect(screen.getByRole('heading', { level: 2, name: livre.titre })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: `Télécharger le PDF gratuit : ${livre.titre}` })).toHaveAttribute('href', livre.echantillon)
+    }
+    expect(screen.getAllByRole('status')).toHaveLength(LIVRES.length)
+    screen.getAllByRole('status').forEach((s) => expect(s).toHaveTextContent(/Bientôt disponible/))
+    expect(screen.getAllByRole('img').length).toBeGreaterThanOrEqual(LIVRES.reduce((n, l) => n + l.apercus.length, 0))
   })
 })

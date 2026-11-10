@@ -32,3 +32,11 @@ Plongez dans les couleurs du Maroc ! 25 dessins originaux à colorier : rosaces 
 - **PDF à imprimer** : Etsy ou Gumroad (aucun coût d'impression). Même `interieur.pdf`.
 - **Livre papier ailleurs** : Lulu, ou la distribution élargie de KDP (à lire dans KDP).
 - Pour chaque lien publié, remplir `lib/coloriages.ts` : seuls les liens https vers des boutiques connues sont affichés.
+
+## Livre 2 : « Coloriages de Nour, Joha et la fée »
+Mêmes étapes que ci-dessus. Régénérer : `node scripts/coloriages/fabriquer.mjs nour` (écrit dans `coloriages-livres/coloriages-nour-joha-et-la-fee/`).
+- Titre : `Coloriages de Nour, Joha et la fée` ; sous-titre : `25 dessins à colorier : personnages, scènes de voyage et mandalas`.
+- Description : Retrouvez Nour, Yacine, Joha le malicieux, Lalla Zahra et la fée Nejma, les héros des histoires RME Voyage ! 25 dessins originaux : portraits, scènes de voyage (voiture, bateau, cèdres de l'Atlas, médina) et 12 mandalas. Traits nets et grandes zones pour les crayons de couleur. Format 8,5 × 11 pouces, noir et blanc. Un livre à offrir ou à emporter sur la route des vacances.
+- Mots-clés : coloriage fée enfant ; coloriage personnages histoire ; mandala enfant ; coloriage maroc enfant ; livre coloriage voyage ; cadeau enfant coloriage ; activité voiture vacances.
+- Les personnages sont des créations originales : aucun personnage, lieu ou marque existant. Répondre « oui, créé avec une IA » à la question KDP.
+- Version PDF à vendre 2 € à 3 € : voir `FICHE-VENTE-PDF.md`.

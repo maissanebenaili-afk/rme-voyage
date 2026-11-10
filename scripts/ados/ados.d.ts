@@ -75,10 +75,18 @@ declare module '*/scripts/ados/histoire-fable.mjs' {
 declare module '*/scripts/coloriages/pages.mjs' {
   export interface PageColoriage { id: string; titre: string; dessin: () => string }
   export const PAGES: PageColoriage[];
-  export function svgPage(page: PageColoriage, numero: number): string;
+  export function svgPage(page: PageColoriage, numero: number, marque?: string): string;
   export function rosace(n: number, graine: number): string;
   export function zellige(variante: number): string;
   export function hasard(graine: number): () => number;
+}
+
+declare module '*/scripts/coloriages/personnages.mjs' {
+  import type { PageColoriage } from '*/scripts/coloriages/pages.mjs';
+  export const PAGES_PERSO: PageColoriage[];
+  export function buste(id: string): string;
+  export function scene(nom: string): string;
+  export function avecFond<T>(couleur: string, fn: () => T, encre?: string): T;
 }
 
 declare module '*/scripts/ados/histoire-patronne.mjs' {
