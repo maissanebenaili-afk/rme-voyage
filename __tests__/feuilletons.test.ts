@@ -104,3 +104,23 @@ describe('traductions du texte', () => {
     expect(d.traductionsNote).toMatch(/non relue/);
   });
 });
+
+describe('toutes les traductions publiées', () => {
+  it('ont autant de lignes que de répliques, dans des langues connues, avec la mention « non relue »', () => {
+    const { readdirSync } = require('fs') as typeof import('fs')
+    const fichiers = readdirSync(resolve(process.cwd(), 'public/feuilletons')).filter((f: string) => f.endsWith('.json'))
+    let avecTraduction = 0
+    for (const f of fichiers) {
+      const d = JSON.parse(readFileSync(resolve(process.cwd(), 'public/feuilletons', f), 'utf8'))
+      if (!d.traductions) continue
+      avecTraduction++
+      expect(d.traductionsNote).toMatch(/non relue/)
+      for (const [langue, lignes] of Object.entries(d.traductions) as [string, string[]][]) {
+        expect(['en', 'es', 'nl']).toContain(langue)
+        expect(lignes).toHaveLength(d.repliques.length)
+        lignes.forEach((l) => expect(l.trim().length).toBeGreaterThan(1))
+      }
+    }
+    expect(avecTraduction).toBeGreaterThanOrEqual(20)
+  })
+})

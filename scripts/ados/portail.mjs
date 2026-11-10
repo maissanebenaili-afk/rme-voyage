@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { construire, plansParlants } from './montage.mjs';
 import { TRADUCTIONS } from './traductions-atlas.mjs';
+import { TRADUCTIONS_EN } from './traductions-en.mjs';
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SORTIE = path.join(RACINE, 'public', 'feuilletons');
@@ -41,7 +42,7 @@ for (const serie of SERIES) {
     const durees = ep.plans.filter(avecVoix).map((_, i) => duree(path.join(travail, `${String(i + 1).padStart(2, '0')}.wav`)));
     const S = construire(ep, durees, PERSOS, 30);
     const repliques = plansParlants(S).map((s) => ({ debut: +s.voixDebut.toFixed(2), fin: +(s.voixDebut + s.voixDuree).toFixed(2), qui: s.parle === 'narration' ? '' : PERSOS[s.parle].nom, texte: s.texte.replace(/\*/g, '') }));
-    const traductions = TRADUCTIONS[`${serie.id}-${ep.numero}`];
+    const cleT = `${serie.id}-${ep.numero}`, base = { ...(TRADUCTIONS[cleT] ?? {}), ...(TRADUCTIONS_EN[cleT] ? { en: TRADUCTIONS_EN[cleT] } : {}) }, traductions = Object.keys(base).length ? base : undefined;
     if (traductions) for (const [langue, lignes] of Object.entries(traductions)) if (lignes.length !== repliques.length) throw new Error(`traduction ${langue} de ${nom} : ${lignes.length} lignes pour ${repliques.length} répliques`);
     writeFileSync(path.join(SORTIE, `${nom}.json`), JSON.stringify({ serie: serie.id, numero: ep.numero, titre: ep.titre, repliques, ...(traductions ? { traductions, traductionsNote: 'Traduction automatique, non relue par une personne.' } : {}) }));
     catalogue.push({ serie: serie.id, numero: ep.numero, titre: ep.titre, question: ep.question, suite: ep.demain, duree: Math.round(duree(path.join(SORTIE, `${nom}.mp3`))), octets: statSync(path.join(SORTIE, `${nom}.mp3`)).size, fichier: `/feuilletons/${nom}.mp3`, texte: `/feuilletons/${nom}.json` });
