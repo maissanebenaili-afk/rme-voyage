@@ -308,6 +308,13 @@
     reda: { peau: '#d4a37c', ombre: '#b4835e', cheveux: '#1d1411', reflet: '#4a352c', oeil: '#3a2a1f', haut: '#2b3f73', haut2: '#fff', style: 'court' },
     idriss: { peau: '#b97d56', ombre: '#98603f', cheveux: '#110c0b', reflet: '#3a2a26', oeil: '#2b1a0e', haut: '#4a7a8c', haut2: '#d9a441', style: 'ebouriffe', cicatriceMenton: true },
     rkia: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#222', reflet: '#444', oeil: '#4a2f1a', haut: '#7a3b55', haut2: '#d4a3b6', style: 'voile', voile: '#7a3b55', rides: 1 },
+    // « La Patronne cachée » : Salma (robe simple), les Bennani (riches), sa mère Mina, l'avocat
+    salma: { peau: '#c4885f', ombre: '#a06a48', cheveux: '#1b1217', reflet: '#4a3340', oeil: '#4a2f1a', haut: '#8fa3a8', haut2: '#e8eef0', style: 'long' },
+    nadia: { peau: '#e6bb94', ombre: '#c99a72', cheveux: '#3a2418', reflet: '#7a5a3a', oeil: '#3a2a1c', haut: '#7a1626', haut2: '#f2d089', style: 'bob', broche: true, rides: 1 },
+    sofia: { peau: '#e3b48a', ombre: '#c4936a', cheveux: '#5a3a22', reflet: '#a67c52', oeil: '#3a6b5a', haut: '#d946a8', haut2: '#fde68a', style: 'long' },
+    omar: { peau: '#d4a37c', ombre: '#b4835e', cheveux: '#1d1411', reflet: '#4a352c', oeil: '#3a2a1f', haut: '#1f2d5c', haut2: '#fff', style: 'court', epaule: 1.9 },
+    mina: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#ddd', reflet: '#fff', oeil: '#4a2f1a', haut: '#5a6f5a', haut2: '#d9e3d4', style: 'voile', voile: '#5a6f5a', rides: 3 },
+    adam: { peau: '#c79a74', ombre: '#a67a56', cheveux: '#8a8a8a', reflet: '#c8c8c8', oeil: '#3a2a1c', haut: '#2a2a2a', haut2: '#fff', style: 'court', rides: 1, epaule: 1.9, lunettes: true },
     // « Les Noktas de Joha » : le sage-farceur, son voisin, un hôte
     joha: { peau: '#c9976d', ombre: '#a97750', cheveux: '#e9e6df', reflet: '#fff', oeil: '#3a2616', haut: '#7a8f5a', haut2: '#efe4c8', style: 'turban', voile: '#f4eee0', bord: '#c9a24a', barbe: '#e6e2d8', rides: 1, epaule: 1.9 },
     voisin: { peau: '#b98760', ombre: '#966a47', cheveux: '#2a1c14', reflet: '#5a4036', oeil: '#2e1a0c', haut: '#b5543c', haut2: '#f0dcc0', style: 'court', barbe: '#2a1c14', epaule: 1.9 },
