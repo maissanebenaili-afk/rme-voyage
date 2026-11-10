@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import LecteurKalimat from '@/components/kalimat/LecteurKalimat';
+import { CHAINE_YOUTUBE } from '@/lib/chaineYoutube';
 
 export const metadata: Metadata = {
   title: 'Dessins animés Kalimat : la darija en riant',
@@ -31,6 +32,10 @@ export default function DessinsAnimesPage() {
         <Link href="/coloriages" className="mt-3 block rounded-2xl bg-amber-100 p-3 text-sm font-black text-amber-950">
           🖍️ Livres de coloriage : 2 livres, 4 dessins gratuits chacun à imprimer, livres bientôt disponibles →
         </Link>
+
+        <a href={CHAINE_YOUTUBE} target="_blank" rel="noopener noreferrer" className="mt-3 block rounded-2xl bg-rose-100 p-3 text-sm font-black text-rose-950">
+          ▶️ Voir les séries en vidéo sur YouTube (Le Fil d’or, Les Larmes de l’Atlas) →
+        </a>
 
         <div className="mt-6">
           <LecteurKalimat />
