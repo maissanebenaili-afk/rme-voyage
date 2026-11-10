@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import LecteurFeuilletons from '@/components/feuilletons/LecteurFeuilletons';
+import { CHAINE_YOUTUBE } from '@/lib/chaineYoutube';
 
 export const metadata: Metadata = {
   title: 'Feuilletons audio à écouter hors ligne',
@@ -18,6 +19,9 @@ export default function FeuilletonsPage() {
           Des feuilletons à écouter en voiture ou en bateau. Appuyez sur « Télécharger » quand vous avez du réseau :
           rien ne se télécharge tout seul, et vous pouvez tout supprimer à tout moment.
         </p>
+        <a href={CHAINE_YOUTUBE} target="_blank" rel="noopener noreferrer" className="mt-3 block rounded-2xl bg-rose-100 p-3 text-sm font-black text-rose-950">
+          ▶️ Préférez la vidéo ? Les séries sont sur notre chaîne YouTube →
+        </a>
         <div className="mt-6"><LecteurFeuilletons /></div>
       </div>
     </main>
