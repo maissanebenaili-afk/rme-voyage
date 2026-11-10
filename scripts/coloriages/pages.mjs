@@ -4,7 +4,7 @@
 
 export const L = 850, H = 1100, CX = 425, CY = 535;
 const f = (n) => +n.toFixed(2);
-const rad = (d) => (d * Math.PI) / 180;
+export const rad = (d) => (d * Math.PI) / 180;
 
 /** Petit générateur pseudo-aléatoire reproductible : une même graine donne toujours le même dessin. */
 export function hasard(graine) {
@@ -12,19 +12,19 @@ export function hasard(graine) {
   return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
 }
 
-const polygone = (pts) => `M${pts.map((p) => `${f(p[0])} ${f(p[1])}`).join('L')}Z`;
+export const polygone = (pts) => `M${pts.map((p) => `${f(p[0])} ${f(p[1])}`).join('L')}Z`;
 /** Étoile à n branches centrée en (0,0). */
 export function etoile(n, R, r, rot = 0) {
   const pts = [];
   for (let k = 0; k < 2 * n; k++) { const a = rot + (k * Math.PI) / n - Math.PI / 2, q = k % 2 ? r : R; pts.push([q * Math.cos(a), q * Math.sin(a)]); }
   return polygone(pts);
 }
-const petale = (r0, r1, w) => `M${f(r0)} 0C${f(r0 + (r1 - r0) * 0.3)} ${f(-w)} ${f(r0 + (r1 - r0) * 0.7)} ${f(-w)} ${f(r1)} 0C${f(r0 + (r1 - r0) * 0.7)} ${f(w)} ${f(r0 + (r1 - r0) * 0.3)} ${f(w)} ${f(r0)} 0Z`;
-const cercle = (r, x = 0, y = 0) => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}"/>`;
-const chemin = (d, t = '') => `<path d="${d}"${t ? ` transform="${t}"` : ''}/>`;
+export const petale = (r0, r1, w) => `M${f(r0)} 0C${f(r0 + (r1 - r0) * 0.3)} ${f(-w)} ${f(r0 + (r1 - r0) * 0.7)} ${f(-w)} ${f(r1)} 0C${f(r0 + (r1 - r0) * 0.7)} ${f(w)} ${f(r0 + (r1 - r0) * 0.3)} ${f(w)} ${f(r0)} 0Z`;
+export const cercle = (r, x = 0, y = 0) => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}"/>`;
+export const chemin = (d, t = '') => `<path d="${d}"${t ? ` transform="${t}"` : ''}/>`;
 const arche = (x, y, w, h) => `M${x} ${y + h}L${x} ${f(y + w / 2)}A${f(w / 2)} ${f(w / 2)} 0 0 1 ${x + w} ${f(y + w / 2)}L${x + w} ${y + h}Z`;
 /** Arche brisée (style mauresque) : base de largeur 2w, centre cx, épaule à ys, rayon R > w. */
-function archeBrisee(cx, w, ys, yb, R) {
+export function archeBrisee(cx, w, ys, yb, R) {
   const h = Math.sqrt(2 * R * w - w * w), x1 = cx - w, x2 = cx + w;
   return `M${f(x1)} ${yb}L${f(x1)} ${ys}A${f(R)} ${f(R)} 0 0 1 ${cx} ${f(ys - h)}A${f(R)} ${f(R)} 0 0 1 ${f(x2)} ${ys}L${f(x2)} ${yb}Z`;
 }
@@ -35,7 +35,7 @@ export function rosace(n, graine) {
   while (r > 70) {
     const t = 38 + a() * 52, r1 = Math.max(r - t, 40), type = ['petale', 'etoile', 'perles', 'petale'][Math.floor(a() * 4)];
     const mid = (r + r1) / 2, larg = Math.max(11, Math.min(60, ((2 * Math.PI * r1) / n) * 0.42));
-    if (type === 'petale') for (let i = 0; i < n; i++) g += chemin(petale(r1, r, larg), `rotate(${f((360 * i) / n + (a() < 0.5 ? 0 : 180 / n))})`);
+    if (type === 'petale') { const dec = a() < 0.5 ? 0 : 180 / n; for (let i = 0; i < n; i++) g += chemin(petale(r1, r, larg), `rotate(${f((360 * i) / n + dec)})`); }
     else if (type === 'etoile') g += chemin(etoile(n, r, r1 + (r - r1) * 0.25, rad(a() < 0.5 ? 0 : 180 / n)));
     else for (let i = 0; i < n; i++) g += cercle(Math.max(9, t * 0.22), mid * Math.cos(rad((360 * i) / n)), mid * Math.sin(rad((360 * i) / n)));
     g += cercle(r1); r = r1 - 14; if (r > 70) g += cercle(r);
@@ -143,9 +143,9 @@ export function khamsa(variante = 0) {
   return g;
 }
 
-const cadre = (titre, n) => `<rect x="25" y="25" width="800" height="1050" rx="22"/><rect x="42" y="42" width="766" height="1016" rx="14"/>` +
+const cadre = (titre, n, marque = 'Coloriages du Maroc') => `<rect x="25" y="25" width="800" height="1050" rx="22"/><rect x="42" y="42" width="766" height="1016" rx="14"/>` +
   `<text x="${CX}" y="118" text-anchor="middle" font-size="46" font-family="Georgia, 'DejaVu Serif', serif" stroke="none" fill="#111">${titre}</text>` +
-  `<path d="M${CX - 130} 140H${CX + 130}"/><text x="${CX}" y="1038" text-anchor="middle" font-size="19" font-family="Georgia, 'DejaVu Serif', serif" stroke="none" fill="#444">RME Voyage · Coloriages du Maroc · ${n}</text>`;
+  `<path d="M${CX - 130} 140H${CX + 130}"/><text x="${CX}" y="1038" text-anchor="middle" font-size="19" font-family="Georgia, 'DejaVu Serif', serif" stroke="none" fill="#444">RME Voyage · ${marque} · ${n}</text>`;
 
 const VILLES = ['Fès', 'Marrakech', 'Meknès', 'Chefchaouen', 'Tétouan', 'Rabat', 'Tanger', 'Taza'];
 const N_ROSACE = [12, 8, 10, 16, 12, 8, 10, 12];
@@ -162,6 +162,6 @@ export const PAGES = [
 ];
 
 /** SVG complet d'une page (numérotée à partir de 1). */
-export function svgPage(p, n) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L} ${H}" width="${L}" height="${H}" fill="none" stroke="#111" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">${cadre(p.titre, n)}${p.dessin()}</svg>`;
+export function svgPage(p, n, marque) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L} ${H}" width="${L}" height="${H}" fill="none" stroke="#111" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">${cadre(p.titre, n, marque)}${p.dessin()}</svg>`;
 }

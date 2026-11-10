@@ -29,7 +29,7 @@ export default function DessinsAnimesPage() {
         </Link>
 
         <Link href="/coloriages" className="mt-3 block rounded-2xl bg-amber-100 p-3 text-sm font-black text-amber-950">
-          🖍️ Coloriages du Maroc : 4 dessins gratuits à imprimer, livre bientôt disponible →
+          🖍️ Livres de coloriage : 2 livres, 4 dessins gratuits chacun à imprimer, livres bientôt disponibles →
         </Link>
 
         <div className="mt-6">
