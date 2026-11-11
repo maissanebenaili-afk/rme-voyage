@@ -428,6 +428,7 @@ export const EPISODES = [
       dit('villa', 'narration', 'tense, then relieved', 'La poignée tourna… puis s’arrêta. Le téléphone de Karim sonnait. Il repartit en grognant. Les filles ne respirèrent qu’une minute plus tard.', [un('amal', -0.5, 'peur', { emo2: 'surprise' }), un('ghita', 0.5, 'peur', { emo2: 'surprise' })], { tint: 'nuit', cam: 'push' }),
       dit('villa', 'ghita', 'nervous laughter', 'Je crois que j’ai perdu dix ans de vie. J’en ai quinze. Il m’en reste cinq.', [un('amal', -0.5, 'joie'), un('ghita', 0.5, 'joie', { act: 'rire' })]),
       dit('villa', 'amal', 'laughing', 'Tu fais de l’humour maintenant ? La peur te va bien, Ghita.', [un('amal', -0.5, 'joie', { act: 'rire' }), un('ghita', 0.5, 'joie')]),
+      reac('villa', [un('amal', -0.5, 'joie'), un('ghita', 0.5, 'tendre')], 2.4, { tint: 'nuit' }),
       dit('lycee', 'narration', 'warm, storyteller', 'Le lendemain, au lycée, Amal montra la chemise bleue à Reda. Son père était avocat. Il lut tout, deux fois.', [un('amal', -0.5, 'neutre'), un('reda', 0.5, 'neutre')], { cam: 'pan' }),
       dit('lycee', 'reda', 'serious, careful', 'C’est un testament, Amal. Celui de ta mère, Zineb.', [un('amal', -0.5, 'surprise'), un('reda', 0.5, 'neutre', { act: 'explique' })], { cam: 'push' }),
       dit('lycee', 'amal', 'stunned', 'Un testament ? Ma mère avait quelque chose à me laisser ?', [un('amal', 0, 'surprise')]),
