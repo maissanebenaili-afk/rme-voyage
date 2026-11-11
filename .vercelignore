@@ -1,7 +1,0 @@
-.git
-.next
-node_modules
-.qa-shots
-.qa-geocode-test
-coverage
-*.tsbuildinfo
