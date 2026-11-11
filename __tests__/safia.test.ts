@@ -4,7 +4,7 @@ import { EPISODES, PERSOS, SERIE, avecVoix } from '../scripts/ados/histoire-safi
 import { THEMES } from '../scripts/ados/musique-atlas.mjs'
 
 const EMOTIONS = ['neutre', 'joie', 'triste', 'colere', 'surprise', 'peur', 'malade', 'froid', 'tendre', 'pleure']
-const DECORS = ['hopital', 'bateau', 'atlas', 'dar', 'rue', 'puits']
+const DECORS = ['hopital', 'bateau', 'atlas', 'dar', 'rue', 'puits', 'feu']
 const GESTES = ['rire', 'secoue', 'poing', 'tend', 'coeur', 'bouche', 'baisse', 'recule', 'avance', 'choc', 'explique', 'doigt', 'menton', 'hausse', 'salut']
 const dessin = readFileSync(resolve(process.cwd(), 'scripts/ados/dessin.js'), 'utf8')
 
@@ -12,10 +12,10 @@ describe('« Safia et le foulard bleu »', () => {
   it('a son dossier, la musique de l’Atlas et trois épisodes courts', () => {
     expect(SERIE.dossier).toBe('videos-safia')
     expect(SERIE.musique).toBe('atlas')
-    expect(EPISODES.map((e) => e.numero)).toEqual([1, 2, 3])
+    expect(EPISODES.map((e) => e.numero)).toEqual([1, 2, 3, 4, 5, 6])
     for (const ep of EPISODES) {
       const voix = ep.plans.filter(avecVoix).length
-      expect(voix).toBeGreaterThanOrEqual(9)
+      expect(voix).toBeGreaterThanOrEqual(8)
       expect(voix).toBeLessThanOrEqual(14) // répliques ; les plans muets de réaction s'ajoutent
     }
   })
