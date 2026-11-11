@@ -16,7 +16,7 @@ describe('« La Patronne cachée »', () => {
     for (const ep of EPISODES) {
       const voix = ep.plans.filter(avecVoix).length
       expect(voix).toBeGreaterThanOrEqual(10)
-      expect(voix).toBeLessThanOrEqual(14)
+      expect(voix).toBeLessThanOrEqual(14) // répliques ; les plans muets de réaction s'ajoutent
     }
   })
 
