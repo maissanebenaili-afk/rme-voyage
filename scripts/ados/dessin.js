@@ -122,6 +122,27 @@
       }
       poussieresChaudes(t);
     },
+    // le pont du ferry à l'aube : mer qui bouge, reflet du soleil, bastingage
+    bateau(t) {
+      ctx.fillStyle = lin(0, 0, 0, 1120, [[0, '#14143f'], [0.4, '#5a3a7a'], [0.75, '#e08a6c'], [1, '#f9c27a']]); ctx.fillRect(0, 0, W, 1120);
+      const r = rng(11); for (let i = 0; i < 50; i++) { ctx.fillStyle = `rgba(255,255,255,${0.15 + r() * 0.5 * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.fillRect(r() * W, r() * 520, 3, 3); }
+      glow(W * 0.5, 1090, 620, 'rgba(255,196,120,0.95)', 0.95);
+      ctx.fillStyle = '#ffe2a8'; ctx.beginPath(); ctx.arc(W * 0.5, 1120, 110, Math.PI, TAU); ctx.fill();
+      oiseaux(t, 420, 5, 9);
+      ctx.fillStyle = lin(0, 1120, 0, H, [[0, '#3b4f86'], [0.35, '#1f2f5e'], [1, '#0d1430']]); ctx.fillRect(0, 1120, W, H - 1120);
+      for (let i = 0; i < 16; i++) { // reflet du soleil, qui danse
+        const y = 1132 + i * 30, w = 260 - i * 9 + 60 * Math.sin(t * 1.6 + i * 0.9);
+        ctx.fillStyle = `rgba(255,214,150,${0.5 - i * 0.026})`; ctx.fillRect(W * 0.5 - w / 2 + 24 * Math.sin(t * 1.1 + i), y, w, 9);
+      }
+      const v = rng(23); for (let i = 0; i < 46; i++) { // petites vagues
+        const y = 1140 + v() * 520, x = (v() * W + t * (18 + v() * 26)) % (W + 160) - 80, w = 50 + v() * 90;
+        ctx.strokeStyle = `rgba(190,210,255,${0.12 + v() * 0.22})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + w / 2, y - 9, x + w, y); ctx.stroke();
+      }
+      ctx.fillStyle = '#1a1326'; ctx.fillRect(0, 1700, W, H - 1700); // le pont
+      ctx.strokeStyle = '#e9e2d0'; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(0, 1500); ctx.lineTo(W, 1500); ctx.stroke(); // bastingage
+      ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1600); ctx.lineTo(W, 1600); ctx.stroke();
+      ctx.lineWidth = 12; for (let x = 60; x < W; x += 240) { ctx.beginPath(); ctx.moveTo(x, 1500); ctx.lineTo(x, 1710); ctx.stroke(); }
+    },
     aube(t) {
       ctx.fillStyle = lin(0, 0, 0, H, [[0, '#14143f'], [0.35, '#5a3a7a'], [0.62, '#d97b6c'], [0.8, '#f6b26b'], [1, '#2a1a2a']]); ctx.fillRect(0, 0, W, H);
       const r = rng(7); for (let i = 0; i < 60; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.6 * (0.6 + 0.4 * Math.sin(t * 2 + i))})`; ctx.fillRect(r() * W, r() * 700, 3, 3); }
@@ -308,6 +329,14 @@
     reda: { peau: '#d4a37c', ombre: '#b4835e', cheveux: '#1d1411', reflet: '#4a352c', oeil: '#3a2a1f', haut: '#2b3f73', haut2: '#fff', style: 'court' },
     idriss: { peau: '#b97d56', ombre: '#98603f', cheveux: '#110c0b', reflet: '#3a2a26', oeil: '#2b1a0e', haut: '#4a7a8c', haut2: '#d9a441', style: 'ebouriffe', cicatriceMenton: true },
     rkia: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#222', reflet: '#444', oeil: '#4a2f1a', haut: '#7a3b55', haut2: '#d4a3b6', style: 'voile', voile: '#7a3b55', rides: 1 },
+    // « Safia et le foulard bleu » : Safia (9 ans), sa mère, sa grand-mère, les enfants du village, le gardien du puits
+    safia: { peau: '#b07a52', ombre: '#8d5c3b', cheveux: '#1a100c', reflet: '#46362d', oeil: '#3a2212', haut: '#f5efe2', haut2: '#3f7fd1', style: 'afro', enfant: true, yeux: 1.04, epaule: 1.45, foulard: '#2f6fd6' },
+    safia2: { peau: '#b07a52', ombre: '#8d5c3b', cheveux: '#1a100c', reflet: '#46362d', oeil: '#3a2212', haut: '#f5efe2', haut2: '#3f7fd1', style: 'afro', enfant: true, yeux: 1.04, epaule: 1.45 }, // Safia sans son foulard (épisode 3, quand il est au fond du puits)
+    yemma: { peau: '#b98760', ombre: '#966a47', cheveux: '#1b1217', reflet: '#4a3340', oeil: '#3a2616', haut: '#9fb6c9', haut2: '#fff', style: 'long' },
+    jedda: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#e2e2e2', reflet: '#fff', oeil: '#3a2a1c', haut: '#6b3f2a', haut2: '#e9d9b8', style: 'voile', voile: '#6b3f2a', bord: '#c9a24a', rides: 3 },
+    driss: { peau: '#b3825a', ombre: '#8f6444', cheveux: '#150d0a', reflet: '#3a2c25', oeil: '#2e1a0c', haut: '#7a8f5a', haut2: '#efe4c8', style: 'ebouriffe', enfant: true, yeux: 1.06, epaule: 1.4 },
+    hind: { peau: '#c4885f', ombre: '#a06a48', cheveux: '#1a100b', reflet: '#45332a', oeil: '#3a2212', haut: '#c2410c', haut2: '#fde68a', style: 'macarons', enfant: true, yeux: 0.96, epaule: 1.5 },
+    larbi: { peau: '#b97d56', ombre: '#98603f', cheveux: '#dcd8cf', reflet: '#fff', oeil: '#3a2616', haut: '#4a5a6a', haut2: '#d9d2c0', style: 'turban', voile: '#e9e2d0', bord: '#8a7a5a', barbe: '#dcd8cf', rides: 3, epaule: 1.9 },
     // « La Patronne cachée » : Salma (robe simple), les Bennani (riches), sa mère Mina, l'avocat
     salma: { peau: '#c4885f', ombre: '#a06a48', cheveux: '#1b1217', reflet: '#4a3340', oeil: '#4a2f1a', haut: '#8fa3a8', haut2: '#e8eef0', style: 'long' },
     nadia: { peau: '#e6bb94', ombre: '#c99a72', cheveux: '#3a2418', reflet: '#7a5a3a', oeil: '#3a2a1c', haut: '#7a1626', haut2: '#f2d089', style: 'bob', broche: true, rides: 1 },
@@ -459,6 +488,16 @@
     else { ctx.beginPath(); ctx.moveTo(-0.4 * R, 1.1 * R); ctx.quadraticCurveTo(0, 1.55 * R, 0.4 * R, 1.1 * R); ctx.lineTo(0.3 * R, 1.08 * R); ctx.quadraticCurveTo(0, 1.35 * R, -0.3 * R, 1.08 * R); ctx.fill(); }
     ctx.globalAlpha = 1;
     if (L.patch) { ctx.fillStyle = '#9b7a4e'; ctx.fillRect(0.7 * R, 1.8 * R, 0.4 * R, 0.4 * R); ctx.strokeStyle = '#f2e2bb'; ctx.lineWidth = 3; ctx.setLineDash([8, 6]); ctx.strokeRect(0.7 * R, 1.8 * R, 0.4 * R, 0.4 * R); ctx.setLineDash([]); }
+    if (L.foulard) { // le foulard noué autour du cou, avec son nœud et ses deux pans
+      ctx.save(); ctx.strokeStyle = L.foulard; ctx.lineWidth = 0.2 * R; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-0.46 * R, 1.04 * R); ctx.quadraticCurveTo(0, 1.52 * R, 0.46 * R, 1.04 * R); ctx.stroke();
+      ctx.fillStyle = L.foulard;
+      ctx.beginPath(); ctx.moveTo(-0.3 * R, 1.36 * R); ctx.lineTo(-0.58 * R, 2.02 * R); ctx.lineTo(-0.34 * R, 1.96 * R); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-0.22 * R, 1.36 * R); ctx.lineTo(-0.12 * R, 2.08 * R); ctx.lineTo(0.02 * R, 1.9 * R); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.arc(-0.26 * R, 1.34 * R, 0.13 * R, 0, TAU); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 0.04 * R;
+      ctx.beginPath(); ctx.moveTo(-0.36 * R, 1.1 * R); ctx.quadraticCurveTo(0, 1.44 * R, 0.36 * R, 1.1 * R); ctx.stroke(); ctx.restore();
+    }
     if (L.broche) { glow(-0.75 * R, 1.8 * R, 60, 'rgba(255,215,120,0.9)', 0.9); ctx.fillStyle = GOLD; ctx.beginPath(); ctx.arc(-0.75 * R, 1.8 * R, 0.09 * R, 0, TAU); ctx.fill(); }
     if (L.perles) { ctx.fillStyle = '#f7f1e4'; for (let i = -4; i <= 4; i++) { ctx.beginPath(); ctx.arc(i * 0.1 * R, 1.17 * R + Math.abs(i) * 0.03 * R + 0.22 * R * (1 - Math.cos(i * 0.4)), 0.05 * R, 0, TAU); ctx.fill(); } }
   }
