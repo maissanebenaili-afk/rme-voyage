@@ -25,6 +25,7 @@ export function construire(ep, durees, persos, fps = 24) {
     numero: ep.numero,
     titre: ep.titre,
     demain: ep.demain,
+    fin: !!ep.fin,
     question: ep.question ?? "",
     noms: Object.fromEntries(Object.entries(persos).map(([k, v2]) => [k, v2.nom])),
     fps,

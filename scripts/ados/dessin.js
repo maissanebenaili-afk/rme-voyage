@@ -645,11 +645,11 @@
     glow(W / 2, 900, 700, 'rgba(242,193,78,0.3)', 1); poussieres(t, 40, '#ffe9a8');
     const a = ease(clamp(tl / 0.7)), b = ease(clamp((tl - 0.7) / 0.7));
     filOr(tl / 1.2, 860, 40);
-    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.globalAlpha = a; ctx.fillStyle = '#fff'; ctx.font = '900 120px Georgia, serif'; ctx.shadowColor = GOLD; ctx.shadowBlur = 30; ctx.fillText('À suivre…', W / 2, 720);
-    ctx.globalAlpha = b; ctx.shadowBlur = 0; ctx.fillStyle = GOLD; ctx.font = '800 42px "Segoe UI", Arial, sans-serif'; ctx.fillText('DEMAIN', W / 2, 1000);
+    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.globalAlpha = a; ctx.fillStyle = '#fff'; ctx.font = '900 120px Georgia, serif'; ctx.shadowColor = GOLD; ctx.shadowBlur = 30; ctx.fillText(S.fin ? 'Fin' : 'À suivre…', W / 2, 720);
+    ctx.globalAlpha = b; ctx.shadowBlur = 0; ctx.fillStyle = GOLD; ctx.font = '800 42px "Segoe UI", Arial, sans-serif'; ctx.fillText(S.fin ? 'MERCI D’AVOIR SUIVI' : 'DEMAIN', W / 2, 1000);
     ctx.fillStyle = '#fff'; ctx.font = '800 68px "Segoe UI", Arial, sans-serif'; ctx.fillText(S.demain, W / 2, 1100);
     if (S.question) { ctx.globalAlpha = ease(clamp((tl - 1.4) / 0.7)); ctx.fillStyle = GOLD; ctx.font = 'italic 800 46px Georgia, serif'; ctx.fillText(S.question, W / 2, 1290); }
-    ctx.globalAlpha = ease(clamp((tl - 2.0) / 0.6)); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.font = '800 44px "Segoe UI", Arial, sans-serif'; ctx.fillText('Abonne-toi pour la suite', W / 2, 1480); ctx.restore();
+    ctx.globalAlpha = ease(clamp((tl - 2.0) / 0.6)); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.font = '800 44px "Segoe UI", Arial, sans-serif'; ctx.fillText(S.fin ? 'Abonne-toi pour les autres séries' : 'Abonne-toi pour la suite', W / 2, 1480); ctx.restore();
   }
 
 
