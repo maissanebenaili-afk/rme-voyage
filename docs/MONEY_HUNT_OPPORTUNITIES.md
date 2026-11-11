@@ -686,3 +686,156 @@ Le programme Welcome Pickups rémunère l'apport de partenaires qui génèrent d
 | Niveau de preuve | Coordonnées et services vérifiés sur sites officiels ; aucune réponse commerciale ni revenu constaté |
 
 Aucun contact externe, candidature, compte, paiement, intégration de code ou déploiement n'a été effectué par cette préparation.
+
+
+---
+
+# MONEY HUNT 360° — audit approfondi et nouveaux leviers 2026-11-11
+
+## 0. État opérationnel du dépôt au 2026-11-11
+
+Dépôt : maissanebenaili-afk/rme-voyage ; branche principale : main ; accès push confirmé.
+Derniers commits observés :
+- 097a491 — lien vers la chaîne YouTube (#330), 2026-11-10.
+- 9c037f3 — livre de coloriage 2 et fiche de vente PDF (#329), 2026-11-10.
+- fc652bd / ec264a6 — kit YouTube de 26 vidéos, sous-titres et traductions anglaises (#328), 2026-11-10.
+- b764555 — série « La Patronne cachée » (#327), 2026-11-10.
+- 729526f et suivants — consulter l'historique GitHub pour le détail des autres changements récents.
+
+PR ouvertes examinées :
+- #331 « La Patronne cachée : 3 épisodes en vidéo » : ouverte, non fusionnée ; rapport indique contrôles techniques vidéo réussis, mais les voix n'ont pas été écoutées et l'envoi YouTube a été refusé le 10/11 par limite quotidienne de la chaîne.
+- #317 Weekly Oil Bulletin carburants du 02/11 : ouverte, non fusionnée au moment de la consultation.
+- #309 priorités produit RME ; #305 dépendances.
+Issues commerciales :
+- #295 « Growth international à coût zéro » contient déjà le plan de référence : revenus vérifiés avant nouvelle fonctionnalité, Digital Sales Sprint, prospection manuelle de 30 entreprises, pilotes B2B sans promesse de volume, preuve des conversions et revenus.
+- #233 cartographie de financement non dilutif, à reprendre avec les critères et la structure juridique exacte.
+Décision de pilotage : ne pas créer un autre chantier de fonctionnalités. Exécuter les voies d'acquisition et de monétisation décrites dans #295. Les activités de livres jeunesse, coloriages et vidéos sont désormais visibles dans le même dépôt ; les traiter comme ligne de revenus distincte et ne pas les mélanger aux chiffres de RME Voyage travel-tech. Mesurer séparément revenus, coûts, audience et propriété des contenus.
+
+## P1 — Moramara Affiliate : 5 % des séjours surf au Maroc
+
+Type : affiliation de séjours surf/camps au Maroc.
+Statut : programme public, gratuit et conditions commerciales publiées ; compte RME non inscrit, attribution et paiements RME non prouvés.
+Conditions officielles vérifiées le 2026-11-11 :
+- 5 % du prix de réservation avant remise pour chaque séjour achevé.
+- Le client reçoit un code de réduction pouvant aller jusqu'à 50 € ; la remise est financée par Moramara.
+- Cookie d'attribution de 90 jours si le visiteur accepte le suivi dans le bandeau ; sans consentement, le lien ne fonctionne que pour la visite, mais le code peut être saisi au paiement.
+- Commission payable après le séjour, au plus tard 7 jours après, sauf réclamation ; demande de versement hebdomadaire possible à partir de 70 €, par PayPal en euros.
+- Pas de minimum d'audience annoncé ; candidature revue manuellement sous cinq jours ouvrés.
+- Interdictions : sites de coupons/cashback, enchères publicitaires sur la marque et auto-réservation.
+Économie illustrative à partir de prix affichés publiquement : un séjour à 350 € donnerait 17,50 € à 5 % ; un séjour à 910 € donnerait 45,50 €, si ce montant est bien la base de réservation éligible et si le séjour est réalisé. Les tarifs affichés sont par personne dans le catalogue consulté ; ne pas extrapoler à plusieurs voyageurs sans connaître la valeur de réservation réelle.
+Adéquation RME : P1 uniquement comme lien contextuel dans les contenus Maroc / activités, pas comme nouvelle fonctionnalité prioritaire.
+Prochaine action : candidature, validation du compte et obtention du code ; aucun lien ni revenu actif RME confirmé.
+Sources officielles :
+- https://moramara.com/affiliate-program
+- https://moramara.com/fr/surf-camps
+
+## P1 — Nomad eSIM Affiliate : taux public à partir de 10 %
+
+Type : affiliation eSIM internationale, intégration par lien ou code.
+Statut : programme officiel vérifié ; taux standard annoncé à partir de 10 % par achat réussi ; taux final du compte RME, base nette/brute et validation restent à confirmer.
+Conditions publiées :
+- Candidature via Impact.com.
+- Suivi temps réel des clics, conversions et revenus.
+- Paiements mensuels.
+- Attribution annoncée pendant 30 jours.
+- Les sites de comparaison et de découverte sont explicitement une catégorie de partenaires ciblée ; pas de minimum d'audience publié sur la page consultée.
+Prochaine action : candidature au programme via le site officiel, obtenir les conditions propres au compte et un lien/coupon, puis demander au responsable technique de comparer avec Airalo déjà dans le registre. Ne pas multiplier les intégrations avant comparaison du taux, du catalogue Maroc/Europe, des remboursements, du tracking et du payout.
+Source officielle :
+- https://www.nomadesim.com/about/partner
+
+## P1 — Kalonca Affiliate : transferts privés, chauffeurs et excursions au Maroc
+
+Type : apport d'affaires sur réservations payées de transferts privés, trajets sur mesure et tours au Maroc.
+Statut : programme public et gratuit vérifié ; candidature revue manuellement ; taux individuel non publié et à négocier ; aucun compte RME ni revenu confirmé.
+Conditions officielles :
+- Commission = pourcentage du prix de la prestation, négocié individuellement ; elle est prélevée sur les frais de Kalonca, le voyageur ne paie pas de supplément.
+- Attribution annoncée 30 jours sur le même appareil.
+- Réservation payée confirmée ; commission annulée si remboursement intégral.
+- Tableau de bord partenaire annoncé pour liens, réservations, revenus et paiements.
+- Mode et calendrier de versement convenus à l'adhésion.
+- La documentation d'aide Kalonca indique une commission de plateforme de 12 % sur paiement réussi ; ce 12 % n'est PAS le taux d'affiliation. Le taux reversé au partenaire reste à négocier.
+Adéquation RME : forte pour les intentions d'arrivée au Maroc, mais chevauchement possible avec des partenaires existants ; évaluer fiabilité, couverture réelle, conditions de responsabilité, support et statut légal avant recommandation.
+Prochaine action : demander le taux écrit, les villes et services couverts, les délais de paiement, le traitement des litiges/remboursements et les justificatifs d'assurance/licence des transporteurs. Aucun lien de production à ce stade.
+Sources officielles :
+- https://www.kalonca.com/affiliate
+- https://www.kalonca.com/fr/help
+- https://www.kalonca.com/terms
+
+## P2 — AWS Activate Founders : jusqu'à 5 000 USD de crédits conditionnels
+
+Type : crédits d'infrastructure et services AWS, pas du revenu.
+Statut : programme officiel en vigueur ; éligibilité de l'entité qui exploite RME non établie.
+Conditions affichées : start-up pré-série B, créée au cours des dix dernières années, site web ou profil entreprise, compte AWS sur forfait payant ; parcours Founders pour start-up autofinancée, jusqu'à 5 000 USD selon éligibilité. Les crédits sont soumis aux conditions promotionnelles et ne sont pas de l'argent liquide.
+Prochaine action : vérifier quelle personne morale porte réellement RME, l'ancienneté, l'existence d'un compte AWS payant et les coûts AWS réellement prévus. Ne pas ouvrir un compte ou migrer une production juste pour les crédits.
+Source officielle :
+- https://startups.aws.com/fr/credits-lp?lang=fr
+
+## P2 — Scaleway Startup Program : jusqu'à 36 000 € de crédits, mais seuils de consommation
+
+Type : crédits cloud, accompagnement et co-marketing.
+Statut : offre officielle vérifiée ; éligibilité de RME à confirmer.
+Conditions publiques :
+- Entreprise de moins de cinq ans et moins de cinquante salariés ; ne pas être déjà client Scaleway.
+- Founders : 1 000 € sur douze mois.
+- Early Stage : 9 000 € sur six mois, seuil de consommation cloud supérieur à 500 €/mois.
+- Growth : 36 000 € sur douze mois, seuil de consommation supérieur à 1 500 €/mois.
+- Early et Growth non cumulables ; candidature examinée, pas de droit automatique.
+Décision : Founders seulement à étudier si la personne morale et l'absence de compte client satisfont les critères. Early/Growth à REJECT tant que les dépenses cloud mensuelles minimales ne sont pas déjà justifiées : ne pas créer artificiellement des coûts pour obtenir des crédits.
+Sources officielles :
+- https://www.scaleway.com/fr/programme-founders/
+- https://www.scaleway.com/fr/programme-startup/
+
+## P2 — Google for Startups Cloud : Start à 2 000 USD, critères stricts
+
+Statut : programme officiel vérifié ; éligibilité RME UNVERIFIED.
+Le niveau Start annonce 2 000 USD de crédits pour les startups créées au cours des deux dernières années, avec MVP fonctionnel, modèle économique clair et perspective de levée de fonds. Les niveaux supérieurs jusqu'à 350 000 USD concernent des startups ayant obtenu des financements pré-seed à série A ; ils ne doivent pas être présentés comme accessibles à une société autofinancée sans financement VC vérifiable.
+Prochaine action : n'étudier le niveau Start que si la structure qui porte RME, son âge, son MVP et son modèle satisfont réellement les critères.
+Source officielle :
+- https://cloud.google.com/startup?hl=fr
+
+## REJECT — SYSTEMEU 2026 : montant spectaculaire mais géographie non compatible
+
+L'appel affiche 7,55 M€ au total, avec des financements par projet jusqu'à 2,2 M€, mais cible des consortiums interrégionaux situés dans les territoires SYSTEMEU : Bavière, Norte (Portugal), Castille-et-León, Roumanie et canton de Tuzla. La France n'est pas dans la liste des territoires éligibles publiée. Le projet doit être au TRL 6 à 8 et impliquer des partenaires des territoires concernés. Date limite annoncée : 16 novembre 2026 à 17 h CET.
+Décision : REJECT pour une candidature RME française seule ; ne pas poursuivre sauf partenaire éligible déjà identifié dans un territoire du programme et confirmation écrite de l'éligibilité d'un partenaire français.
+Source officielle :
+- https://eismea.ec.europa.eu/funding-opportunities/calls-proposals/systemeu-project-open-call-interregional-innovation-proposals-areas-digital-transformation_en
+
+## REJECT / EXPIRÉ — anciennes pistes à nettoyer de la file active
+
+- Marché Nantes Métropole 26-92637 : échéance annoncée au 2 novembre 2026 ; au 11 novembre, échéance passée. REJECT sauf avis rectificatif ou nouvelle consultation officielle.
+- France Tourisme Tech quatrième promotion : date limite publiée 27 septembre 2026 ; clôturée. Veille prochaine promotion uniquement.
+- Ne pas confondre montant global d'un appel, plafond par projet et financement attribuable à RME.
+
+## Synthèse de décision — filtre économique au 2026-11-11
+
+| Piste | Revenu potentiel | Économie / financement | Vitesse | Coût initial | Effort humain | Récurrence | Dépendance | Preuve |
+|---|---|---|---|---|---|---|---|---|
+| Moramara | 5 % d'un séjour achevé ; exemples 17,50–45,50 € pour une base éligible de 350–910 € | — | Candidature revue sous 5 jours ouvrés ; vente inconnue | Gratuit | Faible | Par séjour | Forte : attribution, consentement cookies, séjour réalisé | Conditions officielles publiées ; compte RME non accepté |
+| Nomad eSIM | À partir de 10 % d'un achat réussi ; panier et assiette inconnus | — | Candidature Impact, délai inconnu | Gratuit annoncé | Faible | Par achat | Forte : validation et tracking | Taux standard et payout mensuel publiés |
+| Kalonca | % du prix de trajet, négocié ; taux inconnu | — | Réponse annoncée sous quelques jours ouvrés | Gratuit | Faible | Par réservation payée | Forte : taux, service, remboursements | Programme officiel publié ; taux individuel inconnu |
+| AWS Activate Founders | 0 € de revenu | Jusqu'à 5 000 USD de crédits conditionnels | Après compte/candidature | Compte payant requis | Faible à moyen | Crédit limité | Forte : éligibilité et dépenses compatibles | Conditions officielles publiées |
+| Scaleway Founders | 0 € de revenu | 1 000 € de crédits conditionnels | Examen annoncé sous 21 jours ouvrés | Gratuit ; migration éventuelle coûteuse | Moyen | 12 mois | Forte : entreprise <5 ans, <50 salariés, non-client | Conditions officielles publiées |
+| Google Cloud Start | 0 € de revenu | 2 000 USD de crédits conditionnels | En général 5–7 jours annoncés après demande | Gratuit ; coûts d'usage au-delà | Moyen | Crédit limité | Forte : âge, MVP, modèle, perspective VC | Conditions officielles publiées |
+
+## Exécution recommandée — ordre strict
+
+1. Candidater à Moramara si les séjours surf marocains sont cohérents avec les audiences et contenus RME ; récupérer code/lien, taux et règles écrites.
+2. Candidater à Nomad eSIM et comparer à Airalo sur le taux réel, l'offre Maroc/Europe, les cookies, les exclusions et le paiement ; choisir un seul partenaire eSIM principal au départ.
+3. Demander à Kalonca une proposition écrite (taux, zones, assurance/licences, remboursements, payout) avant toute recommandation.
+4. Vérifier l'éligibilité AWS/Scaleway/Google uniquement après identification de la personne morale porteuse de RME et de ses dépenses réelles ; aucun cloud migration pour des crédits seuls.
+5. Appliquer l'issue #295 : lancer le test « Digital Sales Sprint » sur 30 prospects manuels avec offre, prix et métriques avant toute nouvelle fonctionnalité. Distinguer le test RME des prospects agroalimentaires de Nova Presta.
+
+## Préparation commerciale — éléments à mesurer pour le Digital Sales Sprint
+
+Offre test (à valider avant diffusion) : « Installation en 5 jours ouvrés d'une mini-page commerciale avec formulaire de demande, bouton contact et suivi des demandes, pour une seule offre/activité. »
+Ne pas annoncer de délai ferme avant estimation des capacités réelles et du périmètre. Ne pas offrir gratuitement une prestation complète sans contrepartie mesurable.
+Hypothèse de prix à tester, pas prix de marché ni engagement : 290–490 € HT pour un pilote simple, hors abonnements tiers et demandes spécifiques. Un acompte ou paiement est exigé selon devis accepté ; aucune recette n'est comptabilisée avant encaissement.
+Mesures : 30 prospects qualifiés ; taux de réponse ; rendez-vous ; devis ; ventes signées ; paiements encaissés ; heures de réalisation ; marge brute. Stopper/ajuster après le lot si aucun signal commercial.
+
+## Garde-fous
+
+- Les nouvelles affiliations sont des offres publiques, pas des partenariats RME acceptés.
+- Aucune candidature, compte, message externe, intégration, paiement ou déploiement n'a été effectué par cette mise à jour.
+- Ne pas ajouter trois fournisseurs concurrents à la même surface avant comparaison des conditions.
+- Divulguer clairement les liens affiliés et respecter RGPD/cookies et les règles publicitaires de chaque programme.
+- Comptabilité : revenu réalisé = paiement encaissé ou commission partenaire définitivement validée ; clics, crédits cloud et subventions non attribuées = 0 € de revenu.
