@@ -331,6 +331,7 @@
     rkia: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#222', reflet: '#444', oeil: '#4a2f1a', haut: '#7a3b55', haut2: '#d4a3b6', style: 'voile', voile: '#7a3b55', rides: 1 },
     // « Safia et le foulard bleu » : Safia (9 ans), sa mère, sa grand-mère, les enfants du village, le gardien du puits
     safia: { peau: '#b07a52', ombre: '#8d5c3b', cheveux: '#1a100c', reflet: '#46362d', oeil: '#3a2212', haut: '#f5efe2', haut2: '#3f7fd1', style: 'afro', enfant: true, yeux: 1.04, epaule: 1.45, foulard: '#2f6fd6' },
+    safia2: { peau: '#b07a52', ombre: '#8d5c3b', cheveux: '#1a100c', reflet: '#46362d', oeil: '#3a2212', haut: '#f5efe2', haut2: '#3f7fd1', style: 'afro', enfant: true, yeux: 1.04, epaule: 1.45 }, // Safia sans son foulard (épisode 3, quand il est au fond du puits)
     yemma: { peau: '#b98760', ombre: '#966a47', cheveux: '#1b1217', reflet: '#4a3340', oeil: '#3a2616', haut: '#9fb6c9', haut2: '#fff', style: 'long' },
     jedda: { peau: '#c6926c', ombre: '#a6724f', cheveux: '#e2e2e2', reflet: '#fff', oeil: '#3a2a1c', haut: '#6b3f2a', haut2: '#e9d9b8', style: 'voile', voile: '#6b3f2a', bord: '#c9a24a', rides: 3 },
     driss: { peau: '#b3825a', ombre: '#8f6444', cheveux: '#150d0a', reflet: '#3a2c25', oeil: '#2e1a0c', haut: '#7a8f5a', haut2: '#efe4c8', style: 'ebouriffe', enfant: true, yeux: 1.06, epaule: 1.4 },

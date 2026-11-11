@@ -15,6 +15,7 @@ export const SERIE = {
 
 export const PERSOS = {
   safia: { nom: 'Safia', voix: 'sQfOhaIRbFZ7R8bP1x9f', hauteur: 1.12 },
+  safia2: { nom: 'Safia', voix: 'sQfOhaIRbFZ7R8bP1x9f', hauteur: 1.12 }, // sans foulard à l'image
   yemma: { nom: 'Yemma', voix: 'w85ZODduJOHPSdpVT1ia', hauteur: 0.98 },
   jedda: { nom: 'Jedda Fatima', voix: 'EXAVITQu4vr4xnSDxMaL', hauteur: 0.84 },
   driss: { nom: 'Idriss', voix: 'IbTlccXlWxGVwnbGUHEd', hauteur: 1.22 },
@@ -70,15 +71,15 @@ export const EPISODES = [
     demain: 'La lettre de Lyon',
     question: 'Que dit la lettre venue de l’hôpital ?',
     plans: [
-      dit('puits', 'hind', 'spiteful, jealous girl', 'Tu l’aimes tant, ton foulard ? Alors va le chercher !', [un('hind', -0.5, 'colere', { act: 'poing' }), un('safia', 0.5, 'peur', { act: 'tend' })], { theme: 'mystere', cam: 'shake' }),
-      dit('puits', 'safia', 'screaming, desperate child', 'Non ! Pas dans le puits ! C’est tout ce qu’il me reste d’elle !', [un('safia', 0, 'pleure', { act: 'choc' })], { theme: 'separation', fx: ['flash'], cam: 'push' }),
-      reac('puits', [un('hind', -0.5, 'colere', { emo2: 'peur', act: 'bouche' }), un('safia', 0.5, 'pleure', { act: 'baisse' })], 3, { theme: 'separation', cam: 'push' }),
-      dit('puits', 'larbi', 'gruff, old man, grumbling', 'Qui crie près de mon puits ? Écartez-vous, les enfants. Laissez faire un vieux qui connaît sa corde.', [un('larbi', -0.5, 'colere', { act: 'avance' }), un('safia', 0.5, 'pleure', { emo2: 'surprise' })], { theme: 'mystere', cam: 'pan' }),
+      dit('puits', 'hind', 'spiteful, jealous girl', 'Tu l’aimes tant, ton foulard ? Alors va le chercher !', [un('hind', -0.5, 'colere', { act: 'poing' }), un('safia2', 0.5, 'peur', { act: 'tend' })], { theme: 'mystere', cam: 'shake' }),
+      dit('puits', 'safia2', 'screaming, desperate child', 'Non ! Pas dans le puits ! C’est tout ce qu’il me reste d’elle !', [un('safia2', 0, 'pleure', { act: 'choc' })], { theme: 'separation', fx: ['flash'], cam: 'push' }),
+      reac('puits', [un('hind', -0.5, 'colere', { emo2: 'peur', act: 'bouche' }), un('safia2', 0.5, 'pleure', { act: 'baisse' })], 3, { theme: 'separation', cam: 'push' }),
+      dit('puits', 'larbi', 'gruff, old man, grumbling', 'Qui crie près de mon puits ? Écartez-vous, les enfants. Laissez faire un vieux qui connaît sa corde.', [un('larbi', -0.5, 'colere', { act: 'avance' }), un('safia2', 0.5, 'pleure', { emo2: 'surprise' })], { theme: 'mystere', cam: 'pan' }),
       dit('puits', 'narration', 'low, slow', 'Le vieil homme remonta le seau. Au fond, trempé, le foulard bleu. Il le prit dans ses mains… et ses mains se mirent à trembler.', [un('larbi', 0, 'neutre', { emo2: 'surprise' })], { theme: 'mystere', cam: 'push' }),
-      dit('puits', 'larbi', 'shaken, soft, old man', 'Ce foulard… c’est moi qui l’ai vendu à ta mère. Le matin où elle a quitté le village. Elle avait ton âge dans les yeux.', [un('larbi', -0.5, 'triste', { act: 'tend' }), un('safia', 0.5, 'surprise')], { theme: 'nour', cam: 'push' }),
-      dit('puits', 'safia', 'breathless, child', 'Vous connaissiez Yemma ? Pourquoi elle est partie ? Pourquoi Jedda ne veut plus dire son nom ?', [un('larbi', -0.5, 'triste', { act: 'baisse' }), un('safia', 0.5, 'surprise', { act: 'avance' })], { theme: 'mystere' }),
-      dit('puits', 'larbi', 'grave, gentle, old man', 'Ce n’est pas à moi de le dire, petite. Mais sache une chose : depuis ce matin-là, ta grand-mère n’a jamais refermé ses volets. Elle regarde la route. Tous les soirs.', [un('larbi', -0.5, 'tendre', { act: 'explique' }), un('safia', 0.5, 'triste', { emo2: 'tendre' })], { theme: 'famille', cam: 'push' }),
-      dit('puits', 'hind', 'ashamed, small voice, girl', 'Pardon, Safia. Je ne savais pas. Tiens… je vais t’aider à le faire sécher.', [un('hind', -0.5, 'triste', { act: 'baisse' }), un('safia', 0.5, 'triste', { emo2: 'joie' })], { theme: 'retrouvailles' }),
+      dit('puits', 'larbi', 'shaken, soft, old man', 'Ce foulard… c’est moi qui l’ai vendu à ta mère. Le matin où elle a quitté le village. Elle avait ton âge dans les yeux.', [un('larbi', -0.5, 'triste', { act: 'tend' }), un('safia2', 0.5, 'surprise')], { theme: 'nour', cam: 'push' }),
+      dit('puits', 'safia2', 'breathless, child', 'Vous connaissiez Yemma ? Pourquoi elle est partie ? Pourquoi Jedda ne veut plus dire son nom ?', [un('larbi', -0.5, 'triste', { act: 'baisse' }), un('safia2', 0.5, 'surprise', { act: 'avance' })], { theme: 'mystere' }),
+      dit('puits', 'larbi', 'grave, gentle, old man', 'Ce n’est pas à moi de le dire, petite. Mais sache une chose : depuis ce matin-là, ta grand-mère n’a jamais refermé ses volets. Elle regarde la route. Tous les soirs.', [un('larbi', -0.5, 'tendre', { act: 'explique' }), un('safia2', 0.5, 'triste', { emo2: 'tendre' })], { theme: 'famille', cam: 'push' }),
+      dit('puits', 'hind', 'ashamed, small voice, girl', 'Pardon, Safia. Je ne savais pas. Tiens… je vais t’aider à le faire sécher.', [un('hind', -0.5, 'triste', { act: 'baisse' }), un('safia2', 0.5, 'triste', { emo2: 'joie' })], { theme: 'retrouvailles' }),
       dit('dar', 'narration', 'warm, soft', 'Ce soir-là, sans un mot, Jedda Fatima renoua elle-même le foulard au poignet de Safia. Ses doigts s’attardèrent un instant.', [un('safia', -0.5, 'joie'), un('jedda', 0.5, 'triste', { emo2: 'tendre', act: 'tend' })], { theme: 'retrouvailles', tint: 'nuit', cam: 'push' }),
       dit('dar', 'narration', 'low, mysterious', 'On frappa à la porte. Le facteur tendit une lettre. Elle venait de Lyon. De l’hôpital.', [un('safia', -0.5, 'joie', { emo2: 'peur' }), un('jedda', 0.5, 'tendre', { emo2: 'peur', act: 'choc' })], { theme: 'mystere', insert: 'lettre', tint: 'nuit', fx: ['flash'], cam: 'shake' }),
     ],
