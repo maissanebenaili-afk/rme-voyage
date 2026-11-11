@@ -32,6 +32,36 @@ Généré par `scripts/ados/controle.mjs`. Chaque ligne est une mesure réelle s
 - OK  : 0 silence(s) de plus de 2,5 s
 - OK  : synchronisation : 10 voix mesurées sûres, pire écart 0.01 s (voix n° 2), seuil 0,05 s ; 0 voix trop mélangées à la musique pour être mesurées, 0 trop courtes
 
+## Épisode 4 — La lettre de Lyon
+
+- OK  : format 1080×1920 (vertical 1080×1920 attendu)
+- OK  : durée 75.4 s (entre 60 s et 180 s attendu)
+- OK  : image 75.37 s / son 75.41 s (écart 0.04 s)
+- OK  : niveau moyen -17.6 dB (entre −24 et −10 attendu)
+- OK  : crête -1.5 dB (pas de saturation si ≤ −0,5)
+- OK  : 0 silence(s) de plus de 2,5 s
+- OK  : synchronisation : 8 voix mesurées sûres, pire écart 0.01 s (voix n° 5), seuil 0,05 s ; 0 voix trop mélangées à la musique pour être mesurées, 0 trop courtes
+
+## Épisode 5 — La nuit du départ
+
+- OK  : format 1080×1920 (vertical 1080×1920 attendu)
+- OK  : durée 88.3 s (entre 60 s et 180 s attendu)
+- OK  : image 88.30 s / son 88.41 s (écart 0.11 s)
+- OK  : niveau moyen -17.7 dB (entre −24 et −10 attendu)
+- OK  : crête -1.7 dB (pas de saturation si ≤ −0,5)
+- OK  : 0 silence(s) de plus de 2,5 s
+- OK  : synchronisation : 9 voix mesurées sûres, pire écart 0.01 s (voix n° 1), seuil 0,05 s ; 0 voix trop mélangées à la musique pour être mesurées, 1 trop courtes
+
+## Épisode 6 — Les volets ouverts
+
+- OK  : format 1080×1920 (vertical 1080×1920 attendu)
+- OK  : durée 84.7 s (entre 60 s et 180 s attendu)
+- OK  : image 84.67 s / son 84.68 s (écart 0.01 s)
+- OK  : niveau moyen -17.3 dB (entre −24 et −10 attendu)
+- OK  : crête -1.5 dB (pas de saturation si ≤ −0,5)
+- OK  : 0 silence(s) de plus de 2,5 s
+- OK  : synchronisation : 8 voix mesurées sûres, pire écart 0.01 s (voix n° 7), seuil 0,05 s ; 0 voix trop mélangées à la musique pour être mesurées, 1 trop courtes
+
 **Résultat : tous les contrôles passent.**
 
 Ce que ce rapport ne mesure PAS : si la voix est agréable, si la musique touche, si l'histoire émeut, si la darija est juste. Cela demande une écoute humaine.
