@@ -4,6 +4,9 @@ import { defaultOgImage } from '@/lib/seo';
 // Only what RME can stand behind (issue #227): no price, delivery time,
 // guarantee or quality claim that the business has not published itself.
 export const metadata: Metadata = {
+  // Hors sujet pour un site de voyage : page gardée pour le partenaire, mais
+  // retirée des liens publics, du plan du site et des moteurs de recherche.
+  robots: { index: false, follow: false },
   title: 'Belisamae — Reiki et géobiologie',
   description: 'Contact de Belisamae, référencé gratuitement sur RME Voyage. Séances et tarifs sur son site.',
   openGraph: { title: 'Belisamae — Reiki et géobiologie', description: 'Contact de Belisamae, référencé gratuitement sur RME Voyage. Séances et tarifs sur son site.', type: 'website', images: [defaultOgImage] },

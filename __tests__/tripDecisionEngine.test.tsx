@@ -1,24 +1,19 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import TripDecisionEngine from "../components/TripDecisionEngine";
 
-describe("TripDecisionEngine — cost breakdown labels match their values", () => {
-  it("labels the car-only line distinctly from the car+ferry line", () => {
+describe("TripDecisionEngine — cost breakdown before a route is computed", () => {
+  it("does not offer a car-only trip for the default Europe → Morocco journey", () => {
     render(<TripDecisionEngine />);
 
-    const carOnly = screen.getByText("Voiture (sans ferry)");
-    // "Voiture + ferry" also labels the mode-selector button; the breakdown
-    // row is the one inside a flex "justify-between" line item.
-    const carPlusFerry = screen
-      .getAllByText("Voiture + ferry")
-      .find((el) => el.parentElement?.classList.contains("justify-between"));
-    expect(carOnly).toBeInTheDocument();
-    expect(carPlusFerry).toBeInTheDocument();
+    // Europe → Maroc passe forcément par un bateau : la ligne et le bouton
+    // « voiture sans ferry » afficheraient un prix impossible (285 € pour
+    // Paris → Tanger) à côté d'un message disant que le ferry est moins cher.
+    expect(screen.queryByText("Voiture (sans ferry)")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Voiture(?!\s*\+)/ })).not.toBeInTheDocument();
 
-    const carOnlyValue = carOnly.parentElement?.querySelector("strong")?.textContent;
-    const carPlusFerryValue = carPlusFerry?.parentElement?.querySelector("strong")?.textContent;
-    // The ferry-inclusive scenario must cost strictly more than the car-only one
-    // with the default ferry price (180 €); a shared/duplicate label previously
-    // made both rows show the same figure.
-    expect(carOnlyValue).not.toBe(carPlusFerryValue);
+    const breakdown = screen.getByTestId("scenario-breakdown");
+    const carPlusFerry = within(breakdown).getByText("Voiture + ferry");
+    expect(carPlusFerry.parentElement?.querySelector("strong")?.textContent).toMatch(/€/);
+    expect(screen.getByRole("button", { name: /Voiture \+ ferry/ })).toHaveAttribute("aria-pressed", "true");
   });
 });

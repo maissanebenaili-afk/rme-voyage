@@ -73,7 +73,12 @@ describe("Homepage branding", () => {
     expect(container.querySelector("#preparer")).toHaveTextContent(/Checklist voyage/i);
     expect(screen.getByText("Liste de bagages intelligente")).toBeInTheDocument();
     expect(container.querySelector("#sport-tv")).toHaveTextContent("Le match, les chaînes, les analyses.");
-    expect(container.querySelector("#boutique")).toHaveTextContent("MouniaWidget");
+    expect(container.querySelector("#boutique")).toHaveTextContent("ColisWidget");
+    // Reiki / géobiologie : hors sujet pour un site de voyage, retiré de l'accueil.
+    expect(container).not.toHaveTextContent("MouniaWidget");
+    // 3 à 5 jours sans réseau (route, bateau, hôtel) : le pack hors ligne est en haut.
+    expect(container.querySelector("#sans-reseau")).toHaveTextContent(/Sans réseau/);
+    expect(container.querySelector('a[href="/mentions-legales"]')).not.toBeNull();
     expect(container).not.toHaveTextContent(/Marwa|Afarah/);
     expect(container.querySelector("#argent")).toHaveTextContent("RemittanceComparator");
     expect(screen.getByText("TVWidget")).toBeInTheDocument();
