@@ -52,10 +52,11 @@ export default function TripDecisionEngine() {
   );
 
   // Le scénario routier suit l'itinéraire calculé : traversée imposée →
-  // « voiture + ferry » ; itinéraire sans traversée → « voiture ».
-  const routeNeedsFerry = route?.legs ? hasFerry(route.legs) : null;
+  // « voiture + ferry » ; itinéraire sans traversée → « voiture ». Sans
+  // itinéraire calculé, on garde le trajet type Europe → Maroc, qui passe
+  // forcément par un bateau : proposer « voiture sans ferry » y serait faux.
+  const routeNeedsFerry = route?.legs ? hasFerry(route.legs) : true;
   useEffect(() => {
-    if (routeNeedsFerry === null) return;
     setMode((current) => {
       if (current === 'flight') return current;
       return routeNeedsFerry ? 'mixed' : 'car';
@@ -99,12 +100,12 @@ export default function TripDecisionEngine() {
             un itinéraire réel a été calculé) au lieu d'un simple sélecteur —
             comparer doit se voir, pas se déduire. Aucune durée n'est affichée
             pour l'avion : aucune source réelle de temps de vol n'existe ici. */}
-        <div className="mt-4 grid grid-cols-3 gap-2">
+        <div className={`mt-4 grid gap-2 ${routeNeedsFerry ? 'grid-cols-2' : 'grid-cols-3'}`}>
           {([
             ['car', h.car, Car, result.carTrip],
             ['mixed', h.carFerry, Ship, result.mixedTrip],
             ['flight', h.flight, Plane, result.flightTrip],
-          ] as const).map(([value, label, Icon, price]) => (
+          ] as const).filter(([value]) => !(routeNeedsFerry && value === 'car')).map(([value, label, Icon, price]) => (
             <button key={value} type="button" onClick={() => { setMode(value); markUsed(); }} className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`} aria-pressed={mode === value}>
               <Icon size={17} className="mb-2" />
               <span className="block">{label}</span>
@@ -128,8 +129,8 @@ export default function TripDecisionEngine() {
           </div>
           <div data-testid="scenario-breakdown" className="mt-6 space-y-3 border-t border-[#e2e8f0] pt-5 text-sm">
             <div className="flex justify-between"><span>{h.fuel}</span><strong>{eur(result.fuel)}</strong></div>
-            {routeNeedsFerry !== true && <div className="flex justify-between"><span>{h.carNoFerry}</span><strong>{eur(result.carTrip)}</strong></div>}
-            {routeNeedsFerry !== false && <div className="flex justify-between"><span>{h.carFerry}</span><strong>{eur(result.mixedTrip)}</strong></div>}
+            {!routeNeedsFerry && <div className="flex justify-between"><span>{h.carNoFerry}</span><strong>{eur(result.carTrip)}</strong></div>}
+            {routeNeedsFerry && <div className="flex justify-between"><span>{h.carFerry}</span><strong>{eur(result.mixedTrip)}</strong></div>}
             <div className="flex justify-between"><span>{h.flightFor(travelers)}</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
           <p className="mt-5 text-xs leading-5 text-[#64748b]">{h.assumptionsNote}</p>

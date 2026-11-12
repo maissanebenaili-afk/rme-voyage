@@ -22,13 +22,12 @@ import FaicalWidget from '@/components/FaicalWidget';
 import SportsHub from '@/components/SportsHub';
 import TVWidget from '@/components/TVWidget';
 import ServicesProWidget from '@/components/ServicesProWidget';
-import MouniaWidget from '@/components/MouniaWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
 import StepHeader from '@/components/home/StepHeader';
 import ToolDrawer from '@/components/home/ToolDrawer';
 import TripNav from '@/components/home/TripNav';
-import LiveNews from '@/components/home/LiveNews';
+import OfflinePack from '@/components/home/OfflinePack';
 import { Bell, Coins, Handshake, MoonStar, ShoppingBag, Smartphone, Trophy } from 'lucide-react';
 import MoroccoFlag from '@/components/MoroccoFlag';
 import { useHomeText } from '@/lib/LanguageContext';
@@ -75,11 +74,13 @@ export default function HomeClient() {
               {h.heroTitle}<span className="sr-only">{h.heroTitleSr}</span>
             </h1>
           }
-          belowHero={<><TripNav /><LiveNews /></>}
+          belowHero={<TripNav />}
         />
       </div>
 
       <div className="mx-auto max-w-2xl px-5 pb-16">
+        <OfflinePack />
+
         <section id="route" aria-labelledby="cout-title" className="mt-14 scroll-mt-20">
           <StepHeader id="cout-title" step={3} title={h.costTitle} text={h.costText} />
           <TripDecisionEngine />
@@ -190,7 +191,6 @@ export default function HomeClient() {
               <TVWidget />
             </ToolDrawer>
             <ToolDrawer id="boutique" icon={<ShoppingBag size={20} />} title={h.drawerShopTitle} text={h.drawerShopText}>
-              <MouniaWidget />
               <ColisWidget />
               <ServicesProWidget />
               <Link href="/boutique" className="inline-flex min-h-11 items-center rounded-full bg-[#0f1f3d] px-5 text-sm font-extrabold text-white">{h.shopAll}</Link>
@@ -243,7 +243,7 @@ export default function HomeClient() {
             <div>
               <h3 className="font-bold text-[#0f1f3d]">{h.footerPartners}</h3>
               <ul className="mt-3 space-y-2 text-sm">
-                <li><Link href="/belisamae" className="inline-block py-1.5 hover:text-[#0f1f3d]">Belisamae</Link></li>
+                <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerShop}</Link></li>
               </ul>
             </div>
             <div>
@@ -258,6 +258,8 @@ export default function HomeClient() {
               <a href="/api/legal/privacy" className="underline hover:text-[#0f1f3d]">{h.footerPrivacy}</a>
               {" · "}
               <a href="/api/legal/terms" className="underline hover:text-[#0f1f3d]">{h.footerTerms}</a>
+              {" · "}
+              <Link href="/mentions-legales" className="underline hover:text-[#0f1f3d]">{h.footerLegal}</Link>
             </p>
           </div>
         </div>

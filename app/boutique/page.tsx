@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ArrowLeft, Sparkles } from 'lucide-react';
-import MouniaWidget from '@/components/MouniaWidget';
 import ServicesProWidget from '@/components/ServicesProWidget';
 import ColisWidget from '@/components/ColisWidget';
 import BookBanner from '@/components/BookBanner';
@@ -12,7 +11,6 @@ import { contactMailto } from '@/lib/contact';
 const joinMailto = contactMailto('Rejoindre la Boutique RME Voyage');
 
 const RUBRIQUES = [
-  { href: '#bienetre', label: '🌿 Bien-être' },
   { href: '#colis', label: '📦 Colis' },
   { href: '#services', label: '🔧 Services' },
 ];
@@ -41,8 +39,8 @@ export default function BoutiquePage() {
               <span className="text-[#f59e0b]">de la France au Maroc.</span>
             </h1>
             <p className="mt-5 text-lg leading-8 text-white/65">
-              Des espaces pour découvrir des professionnels et prendre contact. Bien-être, colis,
-              services et mobilité. Les professionnels sont référencés gratuitement, sans
+              Des espaces pour découvrir des professionnels et prendre contact. Colis, services
+              et mobilité. Les professionnels sont référencés gratuitement, sans
               accord commercial : prix et conditions se demandent directement.
             </p>
           </div>
@@ -61,32 +59,6 @@ export default function BoutiquePage() {
         </div>
       </header>
 
-
-      <section id="bienetre" className="scroll-mt-6 bg-[#f7f6f2] py-16">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <Reveal>
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-[#40634f]">
-              Bien-être
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-[#2f3a33] sm:text-4xl">
-              Souffler, avant et après la route.
-            </h2>
-            <p className="mt-3 max-w-2xl text-[#5d6a60]">
-              Un accompagnement énergétique pour traverser les périodes de fatigue, de stress ou de
-              transition — en cabinet comme à distance.
-            </p>
-          </Reveal>
-          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
-            <InspirationImage
-              image={INSPIRATION_IMAGES.wellness}
-              caption="Photo d’ambiance — elle ne représente pas une prestation Belisamae."
-            />
-            <Reveal delay={90}>
-              <MouniaWidget />
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
       <section id="colis" className="scroll-mt-6 bg-[#f8fafc] py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
@@ -148,7 +120,7 @@ export default function BoutiquePage() {
             Vous êtes professionnel ?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-white/65">
-            Caftans, traiteur, transport, garage, bien-être : rejoignez l&apos;annuaire et touchez
+            Caftans, traiteur, transport, garage : rejoignez l&apos;annuaire et touchez
             des voyageurs et familles MRE à la recherche de services adaptés.
           </p>
           {joinMailto ? (
