@@ -29,3 +29,16 @@ if (typeof window !== 'undefined' && !window.matchMedia) {
     dispatchEvent: () => false,
   });
 }
+
+// Ensure test runner environment variables (e.g. from CI/runner) do not leak
+// into isolated unit tests expecting clean defaults for LLM routing.
+for (const key of [
+  'AI_ROUTER_FREE_ONLY',
+  'GROQ_API_KEY',
+  'GEMINI_API_KEY',
+  'OPENROUTER_API_KEY',
+  'OPENAI_API_KEY',
+  'ANTHROPIC_API_KEY',
+]) {
+  delete process.env[key];
+}

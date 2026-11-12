@@ -4,7 +4,6 @@ import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import { Inter, Plus_Jakarta_Sans, Amiri } from 'next/font/google';
 import PWAInstall from '@/components/PWAInstall';
 import Accessibility from '@/components/Accessibility';
-import RegisterSW from './register-sw';
 import PageViewBeacon from '@/components/PageViewBeacon';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import { siteUrl } from '@/lib/siteUrl';
@@ -99,9 +98,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="" />
         <link
+          rel="preload"
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
+          as="style"
+        />
+        <link
           href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
           rel="stylesheet"
         />
+        <link rel="preload" href="/icon-192.svg" as="image" type="image/svg+xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -137,7 +142,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a className="skip-link" href="#main-content">Aller au contenu principal</a>
           {children}
           <ServiceWorkerRegistration />
-          <RegisterSW />
           <PWAInstall />
           <Accessibility />
           <PageViewBeacon />
