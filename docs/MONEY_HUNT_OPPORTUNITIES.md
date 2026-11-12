@@ -839,3 +839,66 @@ Mesures : 30 prospects qualifiés ; taux de réponse ; rendez-vous ; devis ; ven
 - Ne pas ajouter trois fournisseurs concurrents à la même surface avant comparaison des conditions.
 - Divulguer clairement les liens affiliés et respecter RGPD/cookies et les règles publicitaires de chaque programme.
 - Comptabilité : revenu réalisé = paiement encaissé ou commission partenaire définitivement validée ; clics, crédits cloud et subventions non attribuées = 0 € de revenu.
+
+
+---
+
+# MONEY HUNT — addendum 2026-11-12 (sources nouvelles, contrôle des conditions)
+
+## P1 candidat — Ajili.ma : affiliation d'expériences au Maroc, barème contradictoire
+
+Statut : programme d'affiliation public repéré ; conditions financières UNVERIFIED en raison d'une contradiction entre pages officielles.
+- La page anglaise principale annonce 1 MAD par visite qualifiée (plafond de 50 MAD par visiteur) + 10 MAD par réservation terminée, sans plafond annoncé sur les réservations.
+- Une autre page anglaise du même domaine annonce 10 % du montant total de chaque réservation.
+- La page française reprend le barème 1 MAD / visite qualifiée + 10 MAD / réservation.
+- Seuil de retrait annoncé : 500 MAD ; commission confirmée après réalisation de la réservation. Le crédit de bienvenue annoncé de 100 MAD est un crédit de compte promotionnel, pas du cash ni une commission encaissable.
+Décision : CANDIDATE / UNVERIFIED. Ne pas publier de taux, ne pas intégrer au catalogue, ne pas valoriser le bonus de bienvenue. Avant toute utilisation, obtenir une confirmation écrite du taux applicable, de la base de calcul, du délai d'attribution, des exclusions, des pays de paiement et du moyen de retrait.
+Adéquation : expériences, visites, cours de cuisine et excursions au Maroc ; complément potentiel à Kalonca/Viator, mais pas de valeur ajoutée prouvée tant que l'offre et les commissions ne sont pas clarifiées.
+Sources officielles consultées le 2026-11-12 :
+- https://ajili.ma/fr/affiliate
+- https://ajili.ma/en/affiliate
+- https://www.ajili.ma/en/affiliate
+
+## P2 candidat — Lgrima : apporteurs d'affaires transport au Maroc
+
+Statut : programme partenaire public ; candidature soumise à approbation ; taux, base de commission, seuil et calendrier de paiement non publiés dans la page consultée.
+- Le programme vise hôtels, riads, maisons d'hôtes, conciergeries, guides, créateurs de contenu et professionnels du tourisme.
+- Outils annoncés : lien, code ou carte QR ; portail de suivi des parrainages et commissions éligibles.
+- Le service permet aux voyageurs de créer et gérer des demandes de transport ; la page ne garantit ni disponibilité dans toutes les villes ni taux de rémunération.
+Décision : CANDIDATE / P2. Demander d'abord la couverture géographique, les licences/assurances des chauffeurs, la gestion des incidents, le taux écrit, les règles d'attribution, les remboursements et le payout. Aucun compte ni contact créé ; aucun revenu.
+Source officielle consultée le 2026-11-12 :
+- https://www.lgrima.com/fr/affiliates
+
+## P1 économies — France Num « Les Défis Numériques » (Nouvelle-Aquitaine)
+
+Statut : dispositif officiel référencé ; accompagnement entièrement pris en charge, jusqu'à quatre jours maximum, pas de versement de trésorerie.
+Périmètre : entreprise immatriculée au RNE, moins de 10 salariés, CA inférieur à 2 M€, territoire Nouvelle-Aquitaine. Thèmes : conquête web, visibilité, conversion numérique, relation client, cybersécurité et sobriété numérique. Les secteurs listés incluent notamment commerce, culture/médias, tourisme et PME tous secteurs.
+Décision : piste d'économie à vérifier uniquement si l'établissement qui porte le projet et l'entreprise bénéficiaire entrent dans le périmètre géographique et les critères. Ne pas confondre résidence du dirigeant et implantation de l'établissement. Si l'entité bénéficiaire est située hors Nouvelle-Aquitaine, REJECT pour cette aide précise.
+Source officielle consultée le 2026-11-12 :
+- https://www.francenum.gouv.fr/aides-financieres/programme-transformation-numerique-des-tpe-les-defis-numeriques
+
+## P2 financement conditionnel — Agefiph : aide création/reprise, plafond 3 000 €
+
+La fiche officielle actuelle affiche un plafond de 3 000 €, mais les conditions d'accès sont substantielles : projet global d'au moins 7 500 €, apport personnel d'au moins 1 200 €, activité pérenne constituant l'activité professionnelle principale, dirigeant détenant la majorité des parts, plan de financement équilibré et validation par un prestataire expert habilité.
+Décision : ne pas inscrire 3 000 € comme acquis ou immédiatement disponible. Piste à examiner uniquement pour un véritable projet de création/reprise encore admissible, avec accompagnement et justificatifs ; ne pas monter artificiellement un projet ou une nouvelle structure pour capter l'aide.
+Source officielle consultée le 2026-11-12 :
+- https://www.agefiph.fr/aides-financieres/aide-la-creation-ou-la-reprise-dune-entreprise
+
+## Rappel réglementaire 2026 — ACRE / ARCE
+
+- ACRE : les règles affichées par France Travail depuis le 1er janvier 2026 exigent notamment un début d'activité, l'absence d'ACRE au cours des trois années précédentes et l'appartenance à une catégorie éligible. L'existence d'une société déjà créée ne permet pas de présumer une nouvelle éligibilité.
+- ARCE : 60 % du capital des droits ARE restants, avec déduction de 3 % pour les retraites complémentaires, versés en deux fois ; il faut notamment être bénéficiaire de l'ARE et de l'ACRE et avoir créé/repris après la fin du contrat de travail et au plus tôt après l'inscription comme demandeur d'emploi. Le second versement intervient six mois après sous conditions. L'ARCE n'est pas cumulable avec le maintien mensuel de l'ARE.
+- Conséquence opérationnelle : vérifier dates exactes, personne morale, statut France Travail, droits ARE restants et ACRE antérieure avant tout calcul. Ne pas appliquer automatiquement ces dispositifs à une société préexistante.
+Sources officielles consultées le 2026-11-12 :
+- https://www.francetravail.fr/candidat/je-creereprends-une-entreprise/les-aides-financieres-creation-d/laide-aux-createurs-ou-repreneur.html
+- https://www.francetravail.fr/candidat/je-creereprends-une-entreprise/les-aides-financieres-creation-d/aide-a-la-reprise-et-a-la-creati.html
+- https://entreprendre.service-public.gouv.fr/vosdroits/F15252
+
+## Décisions et actions de contrôle
+
+1. Ajili : garder en UNVERIFIED ; le taux contradictoire interdit toute projection.
+2. Lgrima : garder en CANDIDATE ; demander conditions contractuelles avant toute recommandation commerciale.
+3. France Num : vérifier le lieu d'implantation de la personne morale bénéficiaire ; valeur = jours d'accompagnement économisés, pas trésorerie.
+4. Agefiph / ACRE / ARCE : préparer une vérification d'éligibilité documentaire, sans déposer de demande et sans créer de structure.
+5. Aucune candidature, aucun message externe, aucun compte, aucune dépense, aucun changement de code, aucune intégration et aucun déploiement effectués dans cet addendum.
+6. Revenus confirmés RME : inchangés à zéro tant qu'aucun tableau de bord partenaire ou encaissement ne prouve une commission.
