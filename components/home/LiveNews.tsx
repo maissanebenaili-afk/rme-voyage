@@ -81,7 +81,7 @@ export default function LiveNews() {
                     {item.image ? (
                       // Vignette fournie par le flux du média : pas de next/image (domaines variables).
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.image} alt="" loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-cover" />
+                      <img src={item.image} alt="" width={320} height={128} loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-cover" />
                     ) : (
                       <Newspaper aria-hidden="true" className="absolute inset-0 m-auto h-10 w-10 text-white/30" />
                     )}

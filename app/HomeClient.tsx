@@ -226,6 +226,7 @@ export default function HomeClient() {
                 <li><Link href="/" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerHome}</Link></li>
                 <li><Link href="/guide" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.guide}</Link></li>
                 <li><Link href="/trajet" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerRoutes}</Link></li>
+                <li><Link href="/quand-partir" className="inline-block py-1.5 hover:text-[#0f1f3d]">Quand partir ? (jours calmes)</Link></li>
                 <li><Link href="/decouvrir" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerDiscover}</Link></li>
                 <li><Link href="/boutique" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerShop}</Link></li>
                 <li><Link href="/kit-retour" className="inline-block py-1.5 hover:text-[#0f1f3d]">{h.footerKit}</Link></li>
