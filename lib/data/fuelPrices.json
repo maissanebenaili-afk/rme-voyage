@@ -1,83 +1,83 @@
 {
   "source": "Commission européenne — Weekly Oil Bulletin, prix moyens nationaux TTC",
   "sourceUrl": "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en",
-  "observedAt": "2026-10-26",
+  "observedAt": "2026-11-09",
   "unit": "EUR/L",
   "prices": {
     "AT": {
-      "petrol95": 1.772,
-      "diesel": 2.132
+      "petrol95": 1.67,
+      "diesel": 2.087
     },
     "BE": {
-      "petrol95": 1.953,
-      "diesel": 2.375
+      "petrol95": 1.844,
+      "diesel": 2.357
     },
     "BG": {
-      "petrol95": 1.625,
-      "diesel": 1.89
+      "petrol95": 1.582,
+      "diesel": 1.896
     },
     "CY": {
-      "petrol95": 1.73,
-      "diesel": 2.005
+      "petrol95": 1.699,
+      "diesel": 2.0
     },
     "CZ": {
-      "petrol95": 1.798,
-      "diesel": 1.95
+      "petrol95": 1.653,
+      "diesel": 1.899
     },
     "DE": {
-      "petrol95": 2.167,
-      "diesel": 2.298
+      "petrol95": 2.067,
+      "diesel": 2.253
     },
     "DK": {
-      "petrol95": 2.525,
-      "diesel": 2.502
+      "petrol95": 2.391,
+      "diesel": 2.435
     },
     "EE": {
-      "petrol95": 1.887,
-      "diesel": 2.101
+      "petrol95": 1.805,
+      "diesel": 2.084
     },
     "ES": {
-      "petrol95": 1.751,
-      "diesel": 1.888
+      "petrol95": 1.73,
+      "diesel": 1.898
     },
     "FI": {
-      "petrol95": 2.346,
-      "diesel": 2.547
+      "petrol95": 2.144,
+      "diesel": 2.485
     },
     "FR": {
-      "petrol95": 2.181,
-      "diesel": 2.352
+      "petrol95": 2.088,
+      "diesel": 2.178
     },
     "GR": {
-      "petrol95": 2.143,
-      "diesel": 2.127
+      "petrol95": 2.042,
+      "diesel": 2.099
     },
     "HR": {
-      "petrol95": 1.791,
-      "diesel": 2.005
+      "petrol95": 1.749,
+      "diesel": 2.025
     },
     "HU": {
-      "petrol95": 1.754,
-      "diesel": 1.93
+      "petrol95": 1.673,
+      "diesel": 1.985
     },
     "IE": {
-      "petrol95": 1.971,
-      "diesel": 2.137
+      "petrol95": 1.958,
+      "diesel": 2.119
     },
     "IT": {
-      "petrol95": 2.006,
-      "diesel": 2.247
+      "petrol95": 1.995,
+      "diesel": 2.218
     },
     "LT": {
-      "petrol95": 1.927,
-      "diesel": 2.222
+      "petrol95": 1.843,
+      "diesel": 2.225
     },
     "LU": {
-      "petrol95": 1.746,
-      "diesel": 2.054
+      "petrol95": 1.627,
+      "diesel": 1.987
     },
     "LV": {
-      "petrol95": 1.932,
+      "petrol95": 1.846,
       "diesel": 2.083
     },
     "MT": {
@@ -85,32 +85,32 @@
       "diesel": 1.21
     },
     "NL": {
-      "petrol95": 2.313,
-      "diesel": 2.469
+      "petrol95": 2.196,
+      "diesel": 2.361
     },
     "PL": {
-      "petrol95": 1.467,
-      "diesel": 1.781
+      "petrol95": 1.384,
+      "diesel": 1.753
     },
     "PT": {
-      "petrol95": 2.04,
-      "diesel": 2.189
+      "petrol95": 1.922,
+      "diesel": 2.135
     },
     "RO": {
-      "petrol95": 1.886,
-      "diesel": 2.037
+      "petrol95": 1.844,
+      "diesel": 2.033
     },
     "SE": {
-      "petrol95": 1.56,
-      "diesel": 2.037
+      "petrol95": 1.437,
+      "diesel": 1.954
     },
     "SI": {
-      "petrol95": 1.732,
-      "diesel": 1.909
+      "petrol95": 1.634,
+      "diesel": 1.95
     },
     "SK": {
-      "petrol95": 1.82,
-      "diesel": 1.97
+      "petrol95": 1.691,
+      "diesel": 1.965
     }
   }
 }
