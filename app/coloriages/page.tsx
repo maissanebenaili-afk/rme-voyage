@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BOUTIQUES_PAR_LIVRE, LIVRES, boutiquesActives, type Livre } from '@/lib/coloriages';
+import { netlifyImageUrl, netlifyImageSrcSet } from '@/lib/netlifyImage';
 
 export const metadata: Metadata = {
   title: 'Livres de coloriage : Maroc, Nour, Joha et la fée',
@@ -33,7 +34,16 @@ function LivreSection({ livre }: { livre: Livre }) {
         {livre.apercus.map(({ id, alt }) => (
           <li key={id} className="overflow-hidden rounded-2xl bg-white shadow-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/coloriages/${livre.prefixe}${id}.png`} alt={alt} width={425} height={550} loading="lazy" className="h-auto w-full" />
+            <img
+              src={netlifyImageUrl(`/coloriages/${livre.prefixe}${id}.png`, 400)}
+              srcSet={netlifyImageSrcSet(`/coloriages/${livre.prefixe}${id}.png`, [400, 800, 1200])}
+              sizes="(max-width: 640px) 50vw, 25vw"
+              alt={alt}
+              width={425}
+              height={550}
+              loading="lazy"
+              className="h-auto w-full"
+            />
           </li>
         ))}
       </ul>
@@ -50,7 +60,16 @@ function LivreSection({ livre }: { livre: Livre }) {
         <h3 className="text-xl font-black">Le livre complet</h3>
         <div className="mt-3 flex gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={livre.couverture} alt={`Couverture du livre ${livre.titre}`} width={425} height={550} className="h-auto w-32 shrink-0 rounded-xl shadow" />
+          <img
+            src={netlifyImageUrl(livre.couverture, 400)}
+            srcSet={netlifyImageSrcSet(livre.couverture, [400, 800, 1200])}
+            sizes="(max-width: 640px) 128px, 200px"
+            alt={`Couverture du livre ${livre.titre}`}
+            width={425}
+            height={550}
+            loading="lazy"
+            className="h-auto w-32 shrink-0 rounded-xl shadow"
+          />
           <ul className="space-y-1 text-slate-700">
             <li>{livre.dessins} dessins, {livre.pages} pages</li>
             <li>{livre.format}</li>

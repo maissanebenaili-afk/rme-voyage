@@ -20,11 +20,51 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+# Netlify Image CDN remote image allowlist
+[images]
+  remote_images = ['https://images\.unsplash\.com/.*', 'https://commons\.wikimedia\.org/.*']
+
 # Netlify serves .webmanifest as application/octet-stream by default.
 [[headers]]
   for = "/manifest.webmanifest"
   [headers.values]
     Content-Type = "application/manifest+json"
+
+# HTML pages: Stale-While-Revalidate caching at the Netlify CDN layer
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
+    Netlify-CDN-Cache-Control = "public, max-age=0, stale-while-revalidate=86400"
+
+# Long-term immutable caching for hashed Next.js static assets, images, and fonts
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/coloriages/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/kalimat/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/feuilletons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
 # Pages retirées le 2026-11-05 à la demande du propriétaire : on renvoie vers la boutique
 # plutôt que vers une erreur 404 pour les anciens liens.

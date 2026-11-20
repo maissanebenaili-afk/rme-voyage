@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import type { InspirationImage as InspirationImageData } from '@/lib/inspirationImages';
+import { netlifyImageUrl, netlifyImageSrcSet } from '@/lib/netlifyImage';
 
 export default function InspirationImage({
   image,
@@ -12,12 +12,15 @@ export default function InspirationImage({
 }) {
   return (
     <figure className={`overflow-hidden rounded-3xl border border-black/10 bg-white ${className}`}>
-      <Image
-        src={image.src}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={netlifyImageUrl(image.src, 800)}
+        srcSet={netlifyImageSrcSet(image.src, [400, 800, 1200])}
         alt={image.alt}
         width={1200}
         height={800}
         sizes="(max-width: 768px) 100vw, 50vw"
+        loading="lazy"
         className="aspect-[3/2] h-auto w-full object-cover"
       />
       <figcaption className="flex flex-wrap items-center justify-between gap-1 px-3 py-2 text-[10px] leading-4 text-[#64748b]">
