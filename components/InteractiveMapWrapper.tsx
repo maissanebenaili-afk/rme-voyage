@@ -20,6 +20,7 @@ type InteractiveMapWrapperProps = {
   routeInfo?: RouteInfo;
   status?: "idle" | "loading" | "error" | "ready";
   errorMessage?: string;
+  onRetry?: () => void;
 };
 
 export default function InteractiveMapWrapper(props: InteractiveMapWrapperProps) {

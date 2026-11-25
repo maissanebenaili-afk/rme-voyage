@@ -100,12 +100,15 @@ export default function TripDecisionEngine() {
             un itinéraire réel a été calculé) au lieu d'un simple sélecteur —
             comparer doit se voir, pas se déduire. Aucune durée n'est affichée
             pour l'avion : aucune source réelle de temps de vol n'existe ici. */}
-        <div className={`mt-4 grid gap-2 ${routeNeedsFerry ? 'grid-cols-2' : 'grid-cols-3'}`}>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {/* Trajet avec traversée → voiture+ferry vs avion ; trajet sans
+              traversée → voiture vs avion. On ne propose jamais « voiture +
+              ferry » là où l'itinéraire ne passe par aucun bateau. */}
           {([
             ['car', h.car, Car, result.carTrip],
             ['mixed', h.carFerry, Ship, result.mixedTrip],
             ['flight', h.flight, Plane, result.flightTrip],
-          ] as const).filter(([value]) => !(routeNeedsFerry && value === 'car')).map(([value, label, Icon, price]) => (
+          ] as const).filter(([value]) => (routeNeedsFerry ? value !== 'car' : value !== 'mixed')).map(([value, label, Icon, price]) => (
             <button key={value} type="button" onClick={() => { setMode(value); markUsed(); }} className={`rounded-xl border px-3 py-3 text-left text-sm font-bold transition ${mode === value ? 'border-[#f59e0b] bg-[#f59e0b] text-[#0f1f3d]' : 'border-white/15 bg-white/5 text-white hover:bg-white/10'}`} aria-pressed={mode === value}>
               <Icon size={17} className="mb-2" />
               <span className="block">{label}</span>
@@ -134,7 +137,7 @@ export default function TripDecisionEngine() {
             <div className="flex justify-between"><span>{h.flightFor(travelers)}</span><strong>{eur(result.flightTrip)}</strong></div>
           </div>
           <p className="mt-5 text-xs leading-5 text-[#64748b]">{h.assumptionsNote}</p>
-          <a href="#ferry" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">{h.compareFerriesFlights} <ArrowRight size={16} /></a>
+          <a href="#ferry" onClick={() => trackFunnelEvent({ event: 'reality_check_cta', placement: 'trip_decision_engine' })} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#0f1f3d] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[#1e3a5f]">{routeNeedsFerry ? h.compareFerriesFlights : h.compareFlights} <ArrowRight size={16} /></a>
         </div>
         {/* Les hypothèses restent modifiables, repliées : un visiteur voit d'abord le résultat, pas 7 cases à remplir. */}
         <details className="group rounded-2xl ring-1 ring-[#e2e8f0]">
@@ -152,7 +155,7 @@ export default function TripDecisionEngine() {
             [h.fieldFerry, ferry, setFerry, 0, 1500, 10],
             [h.fieldTravelers, travelers, setTravelers, 1, 12, 1],
             [h.fieldFlight, flightPerPerson, setFlightPerPerson, 20, 2000, 10],
-          ].map(([label, value, setter, min, max, step]) => (
+          ].filter(([label]) => routeNeedsFerry || label !== h.fieldFerry).map(([label, value, setter, min, max, step]) => (
             <label key={label as string} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
               <span className="font-semibold text-[#334155]">{label as string}</span>
               <input type="number" min={min as number} max={max as number} step={step as number} value={value as number} onChange={(e) => { (setter as (v: number) => void)(boundedNumber(e.target.value, min as number, max as number, value as number)); markUsed(); }} className="w-28 rounded-xl border border-[#cbd5e1] px-3 py-2 text-right font-bold text-[#0f1f3d] outline-none focus:ring-2 focus:ring-[#f59e0b]/40" />

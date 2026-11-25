@@ -5,6 +5,7 @@ import { useHomeText } from '@/lib/LanguageContext';
 import type { HomeText } from '@/lib/homeI18n';
 
 export const TRIP_STEPS = [
+  { id: 'planifier', label: 'Mon trajet', key: 'navTrip' },
   { id: 'la-route', label: 'Route', key: 'navRoute' },
   { id: 'ferry', label: 'Ferry', key: 'navFerry' },
   { id: 'route', label: 'Coût', key: 'navCost' },
