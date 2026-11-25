@@ -2,7 +2,7 @@
 
 import { MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 import L from "leaflet";
-import { AlertCircle, LoaderCircle, MapPinned } from "lucide-react";
+import { AlertCircle, LoaderCircle, MapPinned, RefreshCw } from "lucide-react";
 
 export type RoutePoint = [number, number];
 
@@ -18,6 +18,8 @@ type InteractiveMapProps = {
   routeInfo?: RouteInfo;
   status?: "idle" | "loading" | "error" | "ready";
   errorMessage?: string;
+  /** Relance le calcul depuis l'état d'erreur (affiche un bouton « Réessayer »). */
+  onRetry?: () => void;
 };
 
 function markerIcon(color: string) {
@@ -47,6 +49,7 @@ export default function InteractiveMap({
   routeInfo,
   status = "idle",
   errorMessage,
+  onRetry,
 }: InteractiveMapProps) {
   const hasRoute = status === "ready" && Boolean(routeGeometry && routeGeometry.length >= 2);
   const distance = formatDistance(routeInfo?.distanceMeters);
@@ -68,9 +71,28 @@ export default function InteractiveMap({
       )}
 
       {status === "error" && (
-        <div className="mt-4 flex min-h-40 items-center gap-3 rounded-2xl bg-terracotta-50 p-5 text-sm text-terracotta-700" role="alert">
-          <AlertCircle size={20} className="shrink-0" aria-hidden="true" />
-          {errorMessage || "L’itinéraire est indisponible. Réessayez plus tard."}
+        <div className="mt-4 rounded-2xl bg-terracotta-50 p-5 text-sm text-terracotta-700" role="alert">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <p>{errorMessage || "L’itinéraire est indisponible. Réessayez plus tard."}</p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {onRetry && (
+              <button
+                type="button"
+                onClick={onRetry}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-terracotta-600 px-4 text-sm font-bold text-white transition hover:bg-terracotta-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta-600"
+              >
+                <RefreshCw size={16} aria-hidden="true" /> Réessayer
+              </button>
+            )}
+            <a
+              href="#planifier"
+              className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-bold text-terracotta-700 underline-offset-2 transition hover:underline"
+            >
+              Modifier mon trajet
+            </a>
+          </div>
         </div>
       )}
 

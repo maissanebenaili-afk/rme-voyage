@@ -388,6 +388,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
                 routeGeometry={routeGeometry}
                 routeInfo={routeInfo}
                 errorMessage={routeError}
+                onRetry={calculateRoute}
               />
               <RouteJourney />
             </>
