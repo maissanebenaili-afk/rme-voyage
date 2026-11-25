@@ -71,10 +71,14 @@ export default function HomeClient() {
           }
           title={
             <>
+              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 py-1.5 pl-2.5 pr-3.5 text-[0.7rem] font-bold uppercase tracking-wide text-[#fcd34d] ring-1 ring-white/15 backdrop-blur-sm">
+                <span aria-hidden="true" className="grid h-4 w-4 place-items-center rounded-full bg-[#f59e0b] text-[0.55rem] font-black text-[#0f1f3d]">R</span>
+                {h.heroEyebrow}
+              </span>
               <h1 className="font-display text-[2.6rem] font-semibold leading-none tracking-tight sm:text-6xl">
                 {h.heroTitle}<span className="sr-only">{h.heroTitleSr}</span>
               </h1>
-              <p className="mt-3 max-w-xl text-[0.95rem] font-medium leading-snug text-white/80 sm:text-base">
+              <p className="mt-3 max-w-xl text-[0.95rem] font-medium leading-snug text-white/85 sm:text-base">
                 {h.heroPitch}
               </p>
             </>
