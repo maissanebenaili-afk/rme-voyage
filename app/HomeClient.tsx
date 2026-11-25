@@ -70,9 +70,14 @@ export default function HomeClient() {
             </nav>
           }
           title={
-            <h1 className="font-display text-[2.6rem] font-semibold leading-none tracking-tight sm:text-6xl">
-              {h.heroTitle}<span className="sr-only">{h.heroTitleSr}</span>
-            </h1>
+            <>
+              <h1 className="font-display text-[2.6rem] font-semibold leading-none tracking-tight sm:text-6xl">
+                {h.heroTitle}<span className="sr-only">{h.heroTitleSr}</span>
+              </h1>
+              <p className="mt-3 max-w-xl text-[0.95rem] font-medium leading-snug text-white/80 sm:text-base">
+                {h.heroPitch}
+              </p>
+            </>
           }
           belowHero={<TripNav />}
         />
