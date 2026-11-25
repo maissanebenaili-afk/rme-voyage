@@ -14,6 +14,8 @@ type Props = {
   crossing?: string;
   /** Titre gardé pour les lecteurs d'écran seulement (l'accueil l'annonce déjà par « Ferry et vols »). */
   hideTitle?: boolean;
+  /** Masque la carte ferry quand le trajet ne comporte aucune traversée (ex. Le Mans → Paris). */
+  showFerry?: boolean;
 };
 
 type ConfiguredPartner = { url: string; provider: string; prefilled?: boolean };
@@ -40,7 +42,7 @@ async function lookupPartner(type: BookingType, trip: Trip, signal: AbortSignal)
   return { url, provider, ...(data.prefilled === true ? { prefilled: true } : {}) };
 }
 
-export default function BookingCards({ origin, destination, date, crossing, hideTitle = false }: Props) {
+export default function BookingCards({ origin, destination, date, crossing, hideTitle = false, showFerry = true }: Props) {
   const h = useHomeText();
   const [partners, setPartners] = useState<Partial<Record<BookingType, ConfiguredPartner>>>({});
   // The ferry link comes from the dashboard and does not depend on the trip.
@@ -101,8 +103,8 @@ export default function BookingCards({ origin, destination, date, crossing, hide
       <p className="mt-2 text-sm leading-6 text-sable-700">
         {flightPrefilled ? h.bookingPrefilled : h.bookingManual}
       </p>
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {(['ferry', 'flight'] as const).map((type) => {
+      <div className={`mt-5 grid gap-3 ${showFerry ? 'sm:grid-cols-2' : ''}`}>
+        {(showFerry ? (['ferry', 'flight'] as const) : (['flight'] as const)).map((type) => {
           const Icon = type === 'ferry' ? Ship : Plane;
           const partner = partners[type];
           return (

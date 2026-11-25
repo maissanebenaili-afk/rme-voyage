@@ -402,6 +402,7 @@ export default function RouteSearch({ header, title, belowHero }: { header?: Rea
             destination={destination}
             date={date || undefined}
             crossing={routeStatus === "ready" ? routeInfo?.ferry : undefined}
+            showFerry={showsFerry}
           />
           <Link
             href={/^\d{4}-\d{2}-\d{2}$/.test(date) ? `/quand-partir?jour=${encodeURIComponent(date)}` : "/quand-partir"}
